@@ -11,6 +11,7 @@ import { createAuditedWriteRepository } from './auditedWriteRepository';
 import type { MockDatabase } from './database';
 import { copy, delay, findOrThrow } from './query';
 import type { WriteKit } from './writeKit';
+import { assertCodeChecks, codeChecks } from './MockMasterDataRepository';
 
 interface Related {
   relatedApplicationIds: string[];
@@ -55,7 +56,9 @@ export function createMockOperationalRepositories(
       idPrefix: 'risk',
       nameOf: (input) => input.title,
       build: (input, id, audit) => ({ ...input, id, audit }),
-      validate(input) {
+      validate(input, excludeId) {
+        const previous = excludeId ? db.risks.find((row) => row.id === excludeId) : undefined;
+        assertCodeChecks(db, codeChecks.risk(input), previous ? codeChecks.risk(previous) : []);
         kit.assertRefs([input.ownerId], db.people, 'kişi', 'ownerId');
         assertRelated(input);
       },
@@ -76,7 +79,13 @@ export function createMockOperationalRepositories(
       idPrefix: 'esc',
       nameOf: (input) => input.title,
       build: (input, id, audit) => ({ ...input, id, audit }),
-      validate(input) {
+      validate(input, excludeId) {
+        const previous = excludeId ? db.escalations.find((row) => row.id === excludeId) : undefined;
+        assertCodeChecks(
+          db,
+          codeChecks.escalation(input),
+          previous ? codeChecks.escalation(previous) : [],
+        );
         kit.assertRefs([input.ownerId, input.raisedById], db.people, 'kişi', 'ownerId');
         kit.assertRefs([input.responsibleTeamId], db.teams, 'ekip', 'responsibleTeamId');
         assertRelated(input);
@@ -98,7 +107,13 @@ export function createMockOperationalRepositories(
       idPrefix: 'dec',
       nameOf: (input) => input.title,
       build: (input, id, audit) => ({ ...input, id, audit }),
-      validate(input) {
+      validate(input, excludeId) {
+        const previous = excludeId ? db.decisions.find((row) => row.id === excludeId) : undefined;
+        assertCodeChecks(
+          db,
+          codeChecks.decision(input),
+          previous ? codeChecks.decision(previous) : [],
+        );
         kit.assertRefs(input.decidedByIds, db.people, 'kişi', 'decidedByIds');
         assertRelated(input);
       },
@@ -137,6 +152,14 @@ export function createMockOperationalRepositories(
           `${input.sourceApplicationId}-${input.targetApplicationId}`.replace(/app-/g, ''),
         build: (input, id, audit) => ({ ...input, id, audit }),
         validate(input, excludeId) {
+          const previous = excludeId
+            ? db.dependencies.find((row) => row.id === excludeId)
+            : undefined;
+          assertCodeChecks(
+            db,
+            codeChecks.dependency(input),
+            previous ? codeChecks.dependency(previous) : [],
+          );
           kit.assertRefs(
             [input.sourceApplicationId, input.targetApplicationId],
             db.applications,
@@ -171,7 +194,15 @@ export function createMockOperationalRepositories(
         idPrefix: 'int',
         nameOf: (input) => input.name,
         build: (input, id, audit) => ({ ...input, id, audit }),
-        validate(input) {
+        validate(input, excludeId) {
+          const previous = excludeId
+            ? db.integrations.find((row) => row.id === excludeId)
+            : undefined;
+          assertCodeChecks(
+            db,
+            codeChecks.integration(input),
+            previous ? codeChecks.integration(previous) : [],
+          );
           kit.assertRefs(
             [input.fromApplicationId, input.toApplicationId],
             db.applications,

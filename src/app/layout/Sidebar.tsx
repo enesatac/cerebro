@@ -1,16 +1,20 @@
+import { DataObjectIconOutlinedRounded } from '@takeoff-icons/react/data-object';
 import { UserSettingsIconOutlinedRounded } from '@takeoff-icons/react/user-settings';
 import { NavLink } from 'react-router';
 import { usePermission } from '@/domains/auth/api/queries';
 import { paths } from '../router/paths';
 import { PRIMARY_NAVIGATION, type NavigationItem } from './navigation';
 
-const ADMIN_NAVIGATION: NavigationItem[] = [
-  {
-    label: 'Kullanıcılar ve roller',
-    to: paths.admin.users(),
-    icon: UserSettingsIconOutlinedRounded,
-  },
-];
+const MASTER_DATA_NAVIGATION: NavigationItem = {
+  label: 'Ana veriler',
+  to: paths.admin.masterData(),
+  icon: DataObjectIconOutlinedRounded,
+};
+const USERS_NAVIGATION: NavigationItem = {
+  label: 'Kullanıcılar ve roller',
+  to: paths.admin.users(),
+  icon: UserSettingsIconOutlinedRounded,
+};
 
 function NavList({ items }: { items: NavigationItem[] }) {
   return (
@@ -33,15 +37,20 @@ function NavList({ items }: { items: NavigationItem[] }) {
  */
 export function Sidebar() {
   const canManageUsers = usePermission('users:manage');
+  const canManageMasterData = usePermission('masterData:manage');
+  const adminItems = [
+    ...(canManageMasterData ? [MASTER_DATA_NAVIGATION] : []),
+    ...(canManageUsers ? [USERS_NAVIGATION] : []),
+  ];
   return (
     <nav className="c-sidebar" aria-label="Ana menü">
       <NavList items={PRIMARY_NAVIGATION} />
-      {canManageUsers && (
+      {adminItems.length > 0 && (
         <div className="c-sidebar__section">
           <p className="c-sidebar__heading" id="nav-admin-heading">
             Yönetim
           </p>
-          <NavList items={ADMIN_NAVIGATION} />
+          <NavList items={adminItems} />
         </div>
       )}
     </nav>

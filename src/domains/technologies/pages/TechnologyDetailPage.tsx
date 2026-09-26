@@ -1,7 +1,6 @@
 import { Alert, Table, type TableColumnDef } from '@takeoff-ui/react-spar';
 import { useParams } from 'react-router';
 import { paths } from '@/app/router/paths';
-import { StatusBadge } from '@/components/data-display/StatusBadge';
 import { EntityLink } from '@/components/data-display/EntityLink';
 import { EmptyState } from '@/components/feedback/EmptyState';
 import { ErrorState } from '@/components/feedback/ErrorState';
@@ -12,16 +11,12 @@ import { PageHeader } from '@/components/layout/PageHeader';
 import { SectionCard } from '@/components/layout/SectionCard';
 import { useApplicationList } from '@/domains/applications/api/queries';
 import type { ApplicationListItem } from '@/domains/applications/types';
-import { LIFECYCLE_PRESENTATION } from '@/domains/applications/utils/applicationPresentation';
-import { CRITICALITY_PRESENTATION } from '@/domains/shared/utils/presentation';
 import { isNotFoundError } from '@/lib/errors';
 import { useTechnology } from '../api/queries';
 import type { Technology } from '../types';
-import {
-  TECHNOLOGY_CATEGORY_LABELS,
-  TECHNOLOGY_STATUS_PRESENTATION,
-} from '../utils/technologyPresentation';
 import { EditAction } from '@/domains/auth/components/RecordActions';
+import { MasterBadge } from '@/domains/master-data/components/MasterBadge';
+import { MasterLabel } from '@/domains/master-data/components/MasterLabel';
 
 const USAGE_PAGE_SIZE = 100;
 
@@ -40,12 +35,12 @@ const columns: TableColumnDef<ApplicationListItem>[] = [
   {
     id: 'lifecycle',
     header: 'Yaşam döngüsü',
-    cell: ({ row }) => <StatusBadge {...LIFECYCLE_PRESENTATION[row.original.lifecycle]} />,
+    cell: ({ row }) => <MasterBadge list="applicationLifecycles" code={row.original.lifecycle} />,
   },
   {
     id: 'criticality',
     header: 'Kritiklik',
-    cell: ({ row }) => <StatusBadge {...CRITICALITY_PRESENTATION[row.original.criticality]} />,
+    cell: ({ row }) => <MasterBadge list="criticalities" code={row.original.criticality} />,
   },
   {
     id: 'owner',
@@ -120,8 +115,10 @@ export default function TechnologyDetailPage() {
         subtitle={technology.description}
         meta={
           <>
-            <span className="c-muted">{TECHNOLOGY_CATEGORY_LABELS[technology.category]}</span>
-            <StatusBadge context="Durum:" {...TECHNOLOGY_STATUS_PRESENTATION[technology.status]} />
+            <span className="c-muted">
+              <MasterLabel list="technologyCategories" code={technology.category} />
+            </span>
+            <MasterBadge list="technologyStatuses" code={technology.status} context="Durum:" />
           </>
         }
       />
@@ -132,7 +129,7 @@ export default function TechnologyDetailPage() {
         >
           <Alert.Content>
             <Alert.Title level={2}>
-              {technology.name}: {TECHNOLOGY_STATUS_PRESENTATION[technology.status].label}
+              {technology.name}: <MasterLabel list="technologyStatuses" code={technology.status} />
             </Alert.Title>
             <Alert.Description>
               {technology.status === 'retired'

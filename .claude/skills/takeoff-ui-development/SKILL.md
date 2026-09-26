@@ -45,7 +45,7 @@ Never rely on memory for Takeoff APIs. `npm run typecheck` must pass — it is t
 | Need                              | Use                                                                                    |
 | --------------------------------- | -------------------------------------------------------------------------------------- |
 | Page title + breadcrumb + actions | `components/layout/PageHeader` (Takeoff `Breadcrumb` + `Button` inside)                |
-| Status / lifecycle / criticality  | `Badge` via domain `*Presentation.ts` mapping (text always visible)                    |
+| Status / lifecycle / criticality  | `MasterBadge` (master data label + colour, text always visible)                        |
 | Tabular lists                     | `Table` in `manual` mode, controlled `sorting` + `pagination`, `emptyState`, `loading` |
 | Filters                           | `Input` (search) + `Select` in a `Toolbar`; state in URL search params                 |
 | Detail sections                   | `Card` + `components/data-display/DetailList`                                          |

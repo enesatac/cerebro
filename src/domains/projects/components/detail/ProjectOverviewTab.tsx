@@ -4,20 +4,18 @@ import { SectionCard } from '@/components/layout/SectionCard';
 import { formatDate } from '@/lib/dates';
 import { formatCurrency } from '@/lib/format';
 import type { Project } from '../../types';
-import {
-  CONFIDENTIALITY_LABELS,
-  PROJECT_PHASE_LABELS,
-  PROJECT_TYPE_LABELS,
-} from '../../utils/projectPresentation';
+import { MasterLabel } from '@/domains/master-data/components/MasterLabel';
+import { useMasterData } from '@/domains/master-data/context';
 
 export function ProjectOverviewTab({ project }: { project: Project }) {
+  const masterData = useMasterData();
   const { timeline, financials } = project;
   return (
     <div className="c-two-column">
       <div className="c-stack">
         <SectionCard
           title="Son durum"
-          description={`Mevcut aşama: ${PROJECT_PHASE_LABELS[project.currentPhase]}`}
+          description={`Mevcut aşama: ${masterData.label('projectPhases', project.currentPhase)}`}
         >
           <DetailList
             items={[
@@ -33,8 +31,14 @@ export function ProjectOverviewTab({ project }: { project: Project }) {
               { label: 'Hedef', value: project.objective },
               { label: 'Kapsam', value: project.scope },
               { label: 'Kapsam dışı', value: project.outOfScope },
-              { label: 'Proje türü', value: PROJECT_TYPE_LABELS[project.type] },
-              { label: 'Gizlilik', value: CONFIDENTIALITY_LABELS[project.confidentiality] },
+              {
+                label: 'Proje türü',
+                value: <MasterLabel list="projectTypes" code={project.type} />,
+              },
+              {
+                label: 'Gizlilik',
+                value: <MasterLabel list="confidentialityLevels" code={project.confidentiality} />,
+              },
               {
                 label: 'Etiketler',
                 value: project.tags.length > 0 ? <TagList tags={project.tags} /> : null,

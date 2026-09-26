@@ -25,7 +25,9 @@ catalogue — kept simple.
 - **Governance** — completeness scoring, review staleness, ownership gaps, audit history.
 - **Create / edit forms for every entity** — validation summary, server-side field errors,
   unsaved-changes guard, and a deletion-impact confirmation before destructive actions.
-- **Roles** — `admin` (full access, user management) and `user` (read-only). Permissions are
+- **Master data** — one admin page for every value offered in forms and shown as a label or badge
+  (statuses, types, categories, scales…), plus business units and people. Changes apply site-wide.
+- **Roles** — `admin` (full access, user and master data management) and `user` (read-only). Permissions are
   enforced in the repository layer and mirrored in the UI.
 
 ## Tech stack
@@ -59,7 +61,7 @@ picker only):
 ### Demo data
 
 Seed data lives in `src/services/mock/data/` and is entirely fictional. In development, changes
-are persisted to `localStorage` (`cerebro.demo-db.v2`, session in `cerebro.demo-session`). Clear
+are persisted to `localStorage` (`cerebro.demo-db.v3`, session in `cerebro.demo-session`). Clear
 those keys (or the site data) to reset to the seed.
 
 ## Scripts

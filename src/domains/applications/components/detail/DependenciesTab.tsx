@@ -1,19 +1,18 @@
 import { Table, type TableColumnDef } from '@takeoff-ui/react-spar';
-import { StatusBadge } from '@/components/data-display/StatusBadge';
 import { EmptyState } from '@/components/feedback/EmptyState';
 import { QueryView } from '@/components/feedback/QueryView';
 import { SectionCard } from '@/components/layout/SectionCard';
 import { useApplicationDependencies } from '@/domains/connections/api/queries';
 import type { ApplicationDependency, DependencyDirection } from '@/domains/connections/types';
-import { DEPENDENCY_TYPE_LABELS } from '@/domains/connections/utils/connectionPresentation';
 import { CRITICALITIES } from '@/domains/shared/types';
-import { CRITICALITY_PRESENTATION } from '@/domains/shared/utils/presentation';
 import type { Application } from '../../types';
 import { ApplicationRefLink } from '../ApplicationRefLink';
 import { paths } from '@/app/router/paths';
 import { editColumn } from '@/components/data-display/editColumn';
 import { usePermission } from '@/domains/auth/api/queries';
 import { SmallCreateAction } from '@/domains/auth/components/RecordActions';
+import { MasterBadge } from '@/domains/master-data/components/MasterBadge';
+import { MasterLabel } from '@/domains/master-data/components/MasterLabel';
 
 /** Most critical first — that is what someone assessing impact needs to see. */
 const byCriticalityDesc = (a: ApplicationDependency, b: ApplicationDependency) =>
@@ -37,11 +36,15 @@ function columns(
         />
       ),
     },
-    { id: 'type', header: 'Tür', cell: ({ row }) => DEPENDENCY_TYPE_LABELS[row.original.type] },
+    {
+      id: 'type',
+      header: 'Tür',
+      cell: ({ row }) => <MasterLabel list="dependencyTypes" code={row.original.type} />,
+    },
     {
       id: 'criticality',
       header: 'Erişilemezse etkisi',
-      cell: ({ row }) => <StatusBadge {...CRITICALITY_PRESENTATION[row.original.criticality]} />,
+      cell: ({ row }) => <MasterBadge list="criticalities" code={row.original.criticality} />,
     },
     { id: 'description', header: 'Açıklama', accessor: 'description' },
     ...(canEdit

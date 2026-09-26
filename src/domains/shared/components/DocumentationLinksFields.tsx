@@ -1,16 +1,10 @@
 import { useFieldArray, type Control, type FieldValues } from 'react-hook-form';
 import { arrayPath, fieldPath } from '@/components/forms/fieldPath';
-import { SelectField, TextField } from '@/components/forms/fields';
+import { TextField } from '@/components/forms/fields';
 import { RepeatableList } from '@/components/forms/RepeatableList';
 import { SectionCard } from '@/components/layout/SectionCard';
 import { emptyDocumentationLink } from '../schemas/sharedFormSchemas';
-import { DOCUMENTATION_LINK_TYPES } from '../types';
-import { DOCUMENTATION_LINK_TYPE_LABELS } from '../utils/presentation';
-
-const TYPE_OPTIONS = DOCUMENTATION_LINK_TYPES.map((value) => ({
-  value,
-  label: DOCUMENTATION_LINK_TYPE_LABELS[value],
-}));
+import { MasterSelectField } from '@/domains/master-data/components/MasterSelectField';
 
 /** Expects `documentation: DocumentationLinkFormValues[]` in the form. */
 export function DocumentationLinksFields<T extends FieldValues>({
@@ -36,12 +30,12 @@ export function DocumentationLinksFields<T extends FieldValues>({
         emptyText="Henüz dokümantasyon bağlanmadı."
         renderItem={(index) => (
           <div className="c-form-grid c-form-grid--three">
-            <SelectField
+            <MasterSelectField
               control={control}
               name={fieldPath<T>(`documentation.${index}.type`)}
               label="Tür"
               required
-              options={TYPE_OPTIONS}
+              list="documentationLinkTypes"
             />
             <TextField
               control={control}

@@ -91,7 +91,7 @@ export const env = (
   return {
     id,
     type,
-    name: names[type],
+    name: names[type] ?? type,
     url: host ? `https://${host}.corp.example` : null,
     status,
     region,

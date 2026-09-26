@@ -9,7 +9,8 @@ export const DEPENDENCY_TYPES = [
   'batch',
   'build',
 ] as const;
-export type DependencyType = (typeof DEPENDENCY_TYPES)[number];
+/** Code from an administrable master data list; `DEPENDENCY_TYPES` are the system values. */
+export type DependencyType = string;
 
 /** `sourceApplicationId` depends on `targetApplicationId`. */
 export interface ApplicationDependency {
@@ -35,7 +36,8 @@ export const INTEGRATION_TYPES = [
   'event',
   'other',
 ] as const;
-export type IntegrationType = (typeof INTEGRATION_TYPES)[number];
+/** Code from an administrable master data list; `INTEGRATION_TYPES` are the system values. */
+export type IntegrationType = string;
 
 export const INTEGRATION_FREQUENCIES = [
   'real-time',
@@ -44,7 +46,8 @@ export const INTEGRATION_FREQUENCIES = [
   'daily',
   'on-demand',
 ] as const;
-export type IntegrationFrequency = (typeof INTEGRATION_FREQUENCIES)[number];
+/** Code from an administrable master data list; `INTEGRATION_FREQUENCIES` are the system values. */
+export type IntegrationFrequency = string;
 
 /**
  * A concrete technical interface. `fromApplicationId` initiates or produces; the receiver is

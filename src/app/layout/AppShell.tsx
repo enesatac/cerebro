@@ -3,6 +3,7 @@ import { Link, Outlet } from 'react-router';
 import { LoadingState } from '@/components/feedback/LoadingState';
 import { RequireAuth } from '@/domains/auth/components/RequireAuth';
 import { UserMenu } from '@/domains/auth/components/UserMenu';
+import { MasterDataProvider } from '@/domains/master-data/components/MasterDataProvider';
 import { paths } from '../router/paths';
 import { GlobalSearch } from './GlobalSearch';
 import { Sidebar } from './Sidebar';
@@ -26,9 +27,11 @@ export function AppShell() {
       <Sidebar />
       <main id="main-content" className="c-main" tabIndex={-1}>
         <RequireAuth>
-          <Suspense fallback={<LoadingState label="Sayfa yükleniyor" />}>
-            <Outlet />
-          </Suspense>
+          <MasterDataProvider>
+            <Suspense fallback={<LoadingState label="Sayfa yükleniyor" />}>
+              <Outlet />
+            </Suspense>
+          </MasterDataProvider>
         </RequireAuth>
       </main>
     </div>

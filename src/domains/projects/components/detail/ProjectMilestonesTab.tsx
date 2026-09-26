@@ -1,10 +1,9 @@
 import { Table, type TableColumnDef } from '@takeoff-ui/react-spar';
-import { StatusBadge } from '@/components/data-display/StatusBadge';
 import { EmptyState } from '@/components/feedback/EmptyState';
 import { SectionCard } from '@/components/layout/SectionCard';
 import { formatDate, toIsoDate } from '@/lib/dates';
 import type { Milestone, Project } from '../../types';
-import { MILESTONE_STATUS_PRESENTATION } from '../../utils/projectPresentation';
+import { MasterBadge } from '@/domains/master-data/components/MasterBadge';
 
 function isOverdue(milestone: Milestone, today: string): boolean {
   return milestone.status !== 'completed' && milestone.dueDate < today;
@@ -17,7 +16,7 @@ export function ProjectMilestonesTab({ project }: { project: Project }) {
     {
       id: 'status',
       header: 'Durum',
-      cell: ({ row }) => <StatusBadge {...MILESTONE_STATUS_PRESENTATION[row.original.status]} />,
+      cell: ({ row }) => <MasterBadge list="milestoneStatuses" code={row.original.status} />,
     },
     {
       id: 'due',

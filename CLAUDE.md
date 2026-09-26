@@ -36,8 +36,10 @@ Design system: **Takeoff UI v2** — `@takeoff-ui/react-spar` (compound React AP
 - **Server state = TanStack Query.** Local state first; narrow React Context second; no Redux.
 - **Explicit relationships:** reference entities by id (`teamId`, `personId`), never by name strings.
   Roles are contextual (`RoleAssignment` on an application/project), not global person attributes.
-- **Central mappings:** status/lifecycle/criticality → label + badge variant live in
-  `domains/*/utils/*Presentation.ts`. Never map status → colour inline in JSX.
+- **Master data:** every enumerated value (status, lifecycle, criticality, types, categories…) is
+  administrable at `/admin/master-data`. Render with `MasterBadge`/`MasterLabel`, offer with
+  `MasterSelectField` or `useMasterData().options()`. Never hard-code a label, colour or option list.
+  Codes the logic depends on are `systemCodes` in `domains/master-data/catalog.ts`.
 - **Dates** are ISO-8601 strings in the domain; format only through `src/lib/dates.ts`.
 - **No secrets** (passwords, tokens, keys, connection strings) in any Cerebro record or mock.
 

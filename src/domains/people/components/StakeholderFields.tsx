@@ -7,32 +7,27 @@ import {
   emptyRoleAssignment,
   emptyTeamAssignment,
 } from '@/domains/shared/schemas/sharedFormSchemas';
-import { STAKEHOLDER_ROLES, TEAM_RESPONSIBILITIES } from '@/domains/shared/types';
-import {
-  STAKEHOLDER_ROLE_LABELS,
-  TEAM_RESPONSIBILITY_LABELS,
-} from '@/domains/shared/utils/presentation';
+import { MasterSelectField } from '@/domains/master-data/components/MasterSelectField';
 import { useTeamOptions } from '@/domains/teams/api/queries';
 import { usePersonOptions } from '../api/queries';
 
 interface StakeholderFieldsProps<T extends FieldValues> {
   control: Control<T>;
-  /** Roles offered first in the list, e.g. owners for applications. */
-  roleOrder?: readonly (typeof STAKEHOLDER_ROLES)[number][];
+  /** Roles offered first in the list, e.g. owners for applications; the rest follow admin order. */
+  roleOrder?: readonly string[];
   description: string;
 }
 
 /** Expects `roles: RoleAssignment[]` and `teams: TeamAssignment[]` in the form. */
 export function StakeholderFields<T extends FieldValues>({
   control,
-  roleOrder = STAKEHOLDER_ROLES,
+  roleOrder,
   description,
 }: StakeholderFieldsProps<T>) {
   const people = usePersonOptions();
   const teams = useTeamOptions();
   const roles = useFieldArray({ control, name: arrayPath<T>('roles') });
   const teamRows = useFieldArray({ control, name: arrayPath<T>('teams') });
-  const roleOptions = roleOrder.map((value) => ({ value, label: STAKEHOLDER_ROLE_LABELS[value] }));
 
   return (
     <>
@@ -53,12 +48,13 @@ export function StakeholderFields<T extends FieldValues>({
                 required
                 options={people}
               />
-              <SelectField
+              <MasterSelectField
                 control={control}
                 name={fieldPath<T>(`roles.${index}.role`)}
                 label="Rol"
                 required
-                options={roleOptions}
+                list="stakeholderRoles"
+                prefer={roleOrder}
               />
             </div>
           )}
@@ -81,15 +77,12 @@ export function StakeholderFields<T extends FieldValues>({
                 required
                 options={teams}
               />
-              <SelectField
+              <MasterSelectField
                 control={control}
                 name={fieldPath<T>(`teams.${index}.responsibility`)}
                 label="Sorumluluk"
                 required
-                options={TEAM_RESPONSIBILITIES.map((value) => ({
-                  value,
-                  label: TEAM_RESPONSIBILITY_LABELS[value],
-                }))}
+                list="teamResponsibilities"
               />
             </div>
           )}

@@ -13,6 +13,7 @@ import { findPrimaryRoleHolder } from '@/domains/shared/utils/roles';
 import { deleteProjectCascade, projectDeletionImpact } from './cascade';
 import type { MockDatabase } from './database';
 import type { Lookup } from './lookup';
+import { assertCodeChecks, codeChecks } from './MockMasterDataRepository';
 import {
   compareValues,
   copy,
@@ -67,6 +68,8 @@ export class MockProjectRepository implements ProjectRepository {
       `"${input.code}" kodu başka bir proje tarafından kullanılıyor.`,
       'code',
     );
+    const previous = excludeId ? db.projects.find((p) => p.id === excludeId) : undefined;
+    assertCodeChecks(db, codeChecks.project(input), previous ? codeChecks.project(previous) : []);
     kit.assertRefs([input.businessUnitId], db.businessUnits, 'iş birimi', 'businessUnitId');
     kit.assertRefs(
       input.roles.map((r) => r.personId),

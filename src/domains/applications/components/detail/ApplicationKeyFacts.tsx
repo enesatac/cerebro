@@ -6,9 +6,9 @@ import { findPrimaryRoleHolder } from '@/domains/shared/utils/roles';
 import { useTeamsById } from '@/domains/teams/api/queries';
 import { formatCompactNumber } from '@/lib/format';
 import type { Application } from '../../types';
-import { HOSTING_MODEL_LABELS } from '../../utils/applicationPresentation';
 import { paths } from '@/app/router/paths';
 import { EntityLink } from '@/components/data-display/EntityLink';
+import { MasterLabel } from '@/domains/master-data/components/MasterLabel';
 
 /** The facts someone needs in the first 30 seconds: ownership, organisation, hosting, reach. */
 export function ApplicationKeyFacts({ application }: { application: Application }) {
@@ -42,7 +42,10 @@ export function ApplicationKeyFacts({ application }: { application: Application 
               : null,
           },
           { label: 'Ekipler', value: teamLinks },
-          { label: 'Barındırma', value: HOSTING_MODEL_LABELS[application.hosting.model] },
+          {
+            label: 'Barındırma',
+            value: <MasterLabel list="hostingModels" code={application.hosting.model} />,
+          },
           {
             label: 'Tahmini kullanıcı',
             value: formatCompactNumber(application.estimatedUserCount, ''),

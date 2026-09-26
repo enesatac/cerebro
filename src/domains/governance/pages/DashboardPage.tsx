@@ -2,19 +2,18 @@ import { paths } from '@/app/router/paths';
 import { BarList } from '@/components/data-display/BarList';
 import { EntityLink } from '@/components/data-display/EntityLink';
 import { StatTile } from '@/components/data-display/StatTile';
-import { StatusBadge } from '@/components/data-display/StatusBadge';
 import { EmptyState } from '@/components/feedback/EmptyState';
 import { QueryView } from '@/components/feedback/QueryView';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { SectionCard } from '@/components/layout/SectionCard';
-import { LIFECYCLE_PRESENTATION } from '@/domains/applications/utils/applicationPresentation';
-import { MILESTONE_STATUS_PRESENTATION } from '@/domains/projects/utils/projectPresentation';
+import { useMasterData } from '@/domains/master-data/context';
 import { formatDate, formatRelative } from '@/lib/dates';
 import { pluralize } from '@/lib/format';
 import { usePortfolioOverview } from '../api/queries';
 import { AttentionTable } from '../components/AttentionTable';
 import type { PortfolioOverview } from '../types';
 import { UPCOMING_MILESTONE_DAYS } from '../utils/portfolio';
+import { MasterBadge } from '@/domains/master-data/components/MasterBadge';
 
 function KeyFigures({ overview }: { overview: PortfolioOverview }) {
   const { applications, projects, risks, escalations } = overview;
@@ -101,6 +100,7 @@ function RecentlyUpdated({ overview }: { overview: PortfolioOverview }) {
 }
 
 function LifecycleDistribution({ overview }: { overview: PortfolioOverview }) {
+  const masterData = useMasterData();
   return (
     <SectionCard
       title="Yaşam döngüsüne göre uygulamalar"
@@ -110,7 +110,7 @@ function LifecycleDistribution({ overview }: { overview: PortfolioOverview }) {
         label="Yaşam döngüsüne göre uygulamalar"
         items={overview.lifecycleDistribution.map(({ lifecycle, count }) => ({
           id: lifecycle,
-          label: LIFECYCLE_PRESENTATION[lifecycle].label,
+          label: masterData.label('applicationLifecycles', lifecycle),
           value: count,
           to: `${paths.applications.list()}?lifecycle=${lifecycle}`,
         }))}
@@ -142,7 +142,7 @@ function UpcomingMilestones({ overview }: { overview: PortfolioOverview }) {
               </span>
               <span className="c-cell-stack c-align-end">
                 <span>{formatDate(milestone.dueDate)}</span>
-                <StatusBadge {...MILESTONE_STATUS_PRESENTATION[milestone.status]} />
+                <MasterBadge list="milestoneStatuses" code={milestone.status} />
               </span>
             </li>
           ))}

@@ -23,7 +23,11 @@ export const PROJECT_TYPES = [
   'infrastructure',
   'decommissioning',
 ] as const;
-export type ProjectType = (typeof PROJECT_TYPES)[number];
+/** Code from an administrable master data list; `PROJECT_TYPES` are the system values. */
+export type ProjectType = string;
+
+/** Seed currencies (ISO 4217); administrators can add more as master data. */
+export const CURRENCIES = ['EUR', 'USD', 'GBP', 'TRY'] as const;
 
 export const PROJECT_PRIORITIES = ['low', 'medium', 'high', 'critical'] as const;
 export type ProjectPriority = (typeof PROJECT_PRIORITIES)[number];
@@ -51,10 +55,12 @@ export const PROJECT_PHASES = [
   'hypercare',
   'closure',
 ] as const;
-export type ProjectPhase = (typeof PROJECT_PHASES)[number];
+/** Code from an administrable master data list; `PROJECT_PHASES` are the system values. */
+export type ProjectPhase = string;
 
 export const CONFIDENTIALITY_LEVELS = ['public', 'internal', 'confidential', 'restricted'] as const;
-export type ConfidentialityLevel = (typeof CONFIDENTIALITY_LEVELS)[number];
+/** Code from an administrable master data list; `CONFIDENTIALITY_LEVELS` are the system values. */
+export type ConfidentialityLevel = string;
 
 export const APPLICATION_IMPACT_TYPES = [
   'creates',
@@ -62,7 +68,8 @@ export const APPLICATION_IMPACT_TYPES = [
   'integrates-with',
   'decommissions',
 ] as const;
-export type ApplicationImpactType = (typeof APPLICATION_IMPACT_TYPES)[number];
+/** Code from an administrable master data list; `APPLICATION_IMPACT_TYPES` are the system values. */
+export type ApplicationImpactType = string;
 
 /** A project's explicit relationship to an application it affects. */
 export interface ProjectApplicationImpact {

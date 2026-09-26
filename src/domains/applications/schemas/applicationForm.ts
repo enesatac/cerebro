@@ -8,7 +8,6 @@ import {
   toDocumentationLinks,
   uniqueRoleAssignments,
 } from '@/domains/shared/schemas/sharedFormSchemas';
-import { TECHNOLOGY_CATEGORIES } from '@/domains/technologies/types';
 import {
   emptyToNull,
   enumChoice,
@@ -24,19 +23,14 @@ import {
 } from '@/lib/validation';
 import {
   APPLICATION_LIFECYCLES,
-  APPLICATION_TYPES,
-  ENVIRONMENT_STATUSES,
-  ENVIRONMENT_TYPES,
-  HOSTING_MODELS,
   OPERATIONAL_STATUSES,
-  SOURCE_REPOSITORY_TYPES,
   type Application,
   type ApplicationInput,
 } from '../types';
 
 const technologyUsageSchema = z.object({
   technologyId: requiredChoice('bir teknoloji'),
-  layer: enumChoice(TECHNOLOGY_CATEGORIES, 'bir katman'),
+  layer: requiredChoice('bir katman'),
   version: optionalText('Sürüm', 30),
 });
 
@@ -50,10 +44,10 @@ const dataStoreSchema = z.object({
 
 const environmentSchema = z.object({
   id: z.string(),
-  type: enumChoice(ENVIRONMENT_TYPES, 'bir ortam türü'),
+  type: requiredChoice('bir ortam türü'),
   name: requiredText('Ortam adı', 60),
   url: optionalUrl,
-  status: enumChoice(ENVIRONMENT_STATUSES, 'bir durum'),
+  status: requiredChoice('bir durum'),
   region: optionalText('Bölge', 40),
   notes: secretFreeText('Notlar', 500),
 });
@@ -61,7 +55,7 @@ const environmentSchema = z.object({
 const repositorySchema = z.object({
   id: z.string(),
   name: requiredText('Kod deposu adı', 120),
-  type: enumChoice(SOURCE_REPOSITORY_TYPES, 'bir tür'),
+  type: requiredChoice('bir tür'),
   url: requiredUrl('Kod deposu adresi'),
   defaultBranch: requiredText('Varsayılan dal', 60),
   description: optionalText('Açıklama', 300),
@@ -74,7 +68,7 @@ export const applicationFormSchema = z
       /^[A-Z0-9-]+$/,
       'Yalnızca büyük harf, rakam ve kısa çizgi kullanın.',
     ),
-    type: enumChoice(APPLICATION_TYPES, 'bir uygulama türü'),
+    type: requiredChoice('bir uygulama türü'),
     lifecycle: enumChoice(APPLICATION_LIFECYCLES, 'bir yaşam döngüsü aşaması'),
     criticality: enumChoice(CRITICALITIES, 'bir kritiklik'),
     operationalStatus: enumChoice(OPERATIONAL_STATUSES, 'bir çalışma durumu'),
@@ -90,7 +84,7 @@ export const applicationFormSchema = z
     teams: z.array(teamAssignmentSchema),
     technologies: z.array(technologyUsageSchema),
     dataStores: z.array(dataStoreSchema),
-    hostingModel: enumChoice(HOSTING_MODELS, 'bir barındırma modeli'),
+    hostingModel: requiredChoice('bir barındırma modeli'),
     cloudProvider: optionalText('Bulut sağlayıcı', 60),
     hostingNotes: secretFreeText('Barındırma notları', 500),
     environments: z.array(environmentSchema),

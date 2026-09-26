@@ -1,6 +1,5 @@
 import { Table, type TableColumnDef } from '@takeoff-ui/react-spar';
 import { useSearchParams } from 'react-router';
-import { StatusBadge } from '@/components/data-display/StatusBadge';
 import { EmptyState } from '@/components/feedback/EmptyState';
 import { QueryView } from '@/components/feedback/QueryView';
 import { FilterSelect } from '@/components/forms/FilterSelect';
@@ -8,27 +7,21 @@ import { FilterSummary } from '@/components/layout/FilterSummary';
 import { Toolbar } from '@/components/layout/Toolbar';
 import { ApplicationRefLink } from '@/domains/applications/components/ApplicationRefLink';
 import { CRITICALITIES } from '@/domains/shared/types';
-import { CRITICALITY_PRESENTATION } from '@/domains/shared/utils/presentation';
 import { pluralize } from '@/lib/format';
 import { oneOf } from '@/lib/urlParams';
 import { useAllDependencies, useAllIntegrations } from '../api/queries';
-import {
-  DEPENDENCY_TYPES,
-  INTEGRATION_TYPES,
-  type ApplicationDependency,
-  type Integration,
-} from '../types';
-import {
-  DEPENDENCY_TYPE_LABELS,
-  INTEGRATION_FREQUENCY_LABELS,
-  INTEGRATION_TYPE_LABELS,
-} from '../utils/connectionPresentation';
+import type { ApplicationDependency, Integration } from '../types';
 import { paths } from '@/app/router/paths';
 import { editColumn } from '@/components/data-display/editColumn';
 import { usePermission } from '@/domains/auth/api/queries';
 import { SmallCreateAction } from '@/domains/auth/components/RecordActions';
+import { MasterBadge } from '@/domains/master-data/components/MasterBadge';
+import { MasterLabel } from '@/domains/master-data/components/MasterLabel';
+import { useMasterData } from '@/domains/master-data/context';
 
 const PAGINATION = { pageSize: 25, pageSizeOptions: [25, 50, 100] };
+
+const codesOf = (items: readonly { code: string }[]) => items.map((item) => item.code);
 
 function useParamFilter<T extends string>(key: string, allowed: readonly T[]) {
   const [params, setParams] = useSearchParams();
@@ -59,21 +52,22 @@ const dependencyColumns: TableColumnDef<ApplicationDependency>[] = [
     id: 'type',
     header: 'Tür',
     width: 130,
-    cell: ({ row }) => DEPENDENCY_TYPE_LABELS[row.original.type],
+    cell: ({ row }) => <MasterLabel list="dependencyTypes" code={row.original.type} />,
   },
   {
     id: 'criticality',
     header: 'Erişilemezse etkisi',
     width: 150,
-    cell: ({ row }) => <StatusBadge {...CRITICALITY_PRESENTATION[row.original.criticality]} />,
+    cell: ({ row }) => <MasterBadge list="criticalities" code={row.original.criticality} />,
   },
   { id: 'description', header: 'Açıklama', accessor: 'description' },
 ];
 
 export function DependencyRegister() {
+  const masterData = useMasterData();
   const query = useAllDependencies();
   const canEdit = usePermission('portfolio:edit');
-  const [type, setType] = useParamFilter('type', DEPENDENCY_TYPES);
+  const [type, setType] = useParamFilter('type', codesOf(masterData.items('dependencyTypes')));
   const [criticality, setCriticality] = useParamFilter('criticality', CRITICALITIES);
   return (
     <QueryView
@@ -109,20 +103,14 @@ export function DependencyRegister() {
                 label="Tür"
                 allLabel="Tüm türler"
                 value={type}
-                options={DEPENDENCY_TYPES.map((value) => ({
-                  value,
-                  label: DEPENDENCY_TYPE_LABELS[value],
-                }))}
+                options={masterData.options('dependencyTypes', type)}
                 onChange={setType}
               />
               <FilterSelect
                 label="Etki"
                 allLabel="Tüm etki düzeyleri"
                 value={criticality}
-                options={CRITICALITIES.map((value) => ({
-                  value,
-                  label: CRITICALITY_PRESENTATION[value].label,
-                }))}
+                options={masterData.options('criticalities', criticality)}
                 onChange={setCriticality}
               />
             </Toolbar>
@@ -186,20 +174,21 @@ const integrationColumns: TableColumnDef<Integration>[] = [
     id: 'type',
     header: 'Tür',
     width: 120,
-    cell: ({ row }) => INTEGRATION_TYPE_LABELS[row.original.type],
+    cell: ({ row }) => <MasterLabel list="integrationTypes" code={row.original.type} />,
   },
   {
     id: 'frequency',
     header: 'Sıklık',
     width: 130,
-    cell: ({ row }) => INTEGRATION_FREQUENCY_LABELS[row.original.frequency],
+    cell: ({ row }) => <MasterLabel list="integrationFrequencies" code={row.original.frequency} />,
   },
 ];
 
 export function IntegrationRegister() {
+  const masterData = useMasterData();
   const query = useAllIntegrations();
   const canEdit = usePermission('portfolio:edit');
-  const [type, setType] = useParamFilter('itype', INTEGRATION_TYPES);
+  const [type, setType] = useParamFilter('itype', codesOf(masterData.items('integrationTypes')));
   return (
     <QueryView
       query={query}
@@ -227,10 +216,7 @@ export function IntegrationRegister() {
                 label="Tür"
                 allLabel="Tüm türler"
                 value={type}
-                options={INTEGRATION_TYPES.map((value) => ({
-                  value,
-                  label: INTEGRATION_TYPE_LABELS[value],
-                }))}
+                options={masterData.options('integrationTypes', type)}
                 onChange={setType}
               />
             </Toolbar>

@@ -35,7 +35,8 @@ function expectAll(values: (string | null)[], known: Set<string>, what: string) 
 describe('mock data integrity', () => {
   it('has unique ids per table', () => {
     for (const [name, rows] of Object.entries(seedTables)) {
-      expect(ids(rows).size, name).toBe(rows.length);
+      if (name === 'masterData') continue;
+      expect(ids(rows as { id: string }[]).size, name).toBe(rows.length);
     }
   });
 

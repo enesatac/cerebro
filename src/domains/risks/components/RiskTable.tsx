@@ -1,15 +1,14 @@
 import { Table, type TableColumnDef } from '@takeoff-ui/react-spar';
 import type { ReactNode } from 'react';
-import { StatusBadge } from '@/components/data-display/StatusBadge';
 import { usePeopleById } from '@/domains/people/api/queries';
-import { CRITICALITY_PRESENTATION } from '@/domains/shared/utils/presentation';
 import { formatDate } from '@/lib/dates';
 import type { Risk } from '../types';
-import { RISK_CATEGORY_LABELS, RISK_STATUS_PRESENTATION } from '../utils/riskPresentation';
 import { RelatedEntityLinks } from './RelatedEntityLinks';
 import { paths } from '@/app/router/paths';
 import { editColumn } from '@/components/data-display/editColumn';
 import { usePermission } from '@/domains/auth/api/queries';
+import { MasterBadge } from '@/domains/master-data/components/MasterBadge';
+import { MasterLabel } from '@/domains/master-data/components/MasterLabel';
 
 interface RiskTableProps {
   risks: Risk[];
@@ -37,17 +36,17 @@ export function RiskTable({ risks, showRelated = false, emptyState, pagination }
     {
       id: 'category',
       header: 'Kategori',
-      cell: ({ row }) => RISK_CATEGORY_LABELS[row.original.category],
+      cell: ({ row }) => <MasterLabel list="riskCategories" code={row.original.category} />,
     },
     {
       id: 'severity',
       header: 'Önem derecesi',
-      cell: ({ row }) => <StatusBadge {...CRITICALITY_PRESENTATION[row.original.severity]} />,
+      cell: ({ row }) => <MasterBadge list="criticalities" code={row.original.severity} />,
     },
     {
       id: 'status',
       header: 'Durum',
-      cell: ({ row }) => <StatusBadge {...RISK_STATUS_PRESENTATION[row.original.status]} />,
+      cell: ({ row }) => <MasterBadge list="riskStatuses" code={row.original.status} />,
     },
     {
       id: 'owner',

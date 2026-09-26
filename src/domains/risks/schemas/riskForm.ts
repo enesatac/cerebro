@@ -3,17 +3,12 @@ import { CRITICALITIES } from '@/domains/shared/types';
 import {
   emptyToNull,
   enumChoice,
+  requiredChoice,
   optionalDate,
   optionalText,
   requiredText,
 } from '@/lib/validation';
-import {
-  RISK_CATEGORIES,
-  RISK_LIKELIHOODS,
-  RISK_STATUSES,
-  type Risk,
-  type RiskInput,
-} from '../types';
+import { RISK_LIKELIHOODS, RISK_STATUSES, type Risk, type RiskInput } from '../types';
 
 /** At least one application or project — an unlinked record is invisible where people look. */
 export const relatedEntitiesSchema = z.object({
@@ -38,7 +33,7 @@ export const riskFormSchema = z
   .object({
     title: requiredText('Başlık', 160),
     description: optionalText('Açıklama', 2000),
-    category: enumChoice(RISK_CATEGORIES, 'bir kategori'),
+    category: requiredChoice('bir kategori'),
     probability: enumChoice(RISK_LIKELIHOODS, 'bir olasılık'),
     impact: enumChoice(RISK_LIKELIHOODS, 'bir etki'),
     severity: enumChoice(CRITICALITIES, 'bir önem derecesi'),

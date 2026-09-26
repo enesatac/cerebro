@@ -1,16 +1,14 @@
 import { Table, type TableColumnDef } from '@takeoff-ui/react-spar';
 import type { ReactNode } from 'react';
-import { StatusBadge } from '@/components/data-display/StatusBadge';
 import { usePeopleById } from '@/domains/people/api/queries';
 import { RelatedEntityLinks } from '@/domains/risks/components/RelatedEntityLinks';
-import { CRITICALITY_PRESENTATION } from '@/domains/shared/utils/presentation';
 import { useTeamsById } from '@/domains/teams/api/queries';
 import { formatDate } from '@/lib/dates';
 import type { Escalation } from '../types';
-import { ESCALATION_STATUS_PRESENTATION } from '../utils/escalationPresentation';
 import { paths } from '@/app/router/paths';
 import { editColumn } from '@/components/data-display/editColumn';
 import { usePermission } from '@/domains/auth/api/queries';
+import { MasterBadge } from '@/domains/master-data/components/MasterBadge';
 
 interface EscalationTableProps {
   escalations: Escalation[];
@@ -45,12 +43,12 @@ export function EscalationTable({
     {
       id: 'severity',
       header: 'Önem derecesi',
-      cell: ({ row }) => <StatusBadge {...CRITICALITY_PRESENTATION[row.original.severity]} />,
+      cell: ({ row }) => <MasterBadge list="criticalities" code={row.original.severity} />,
     },
     {
       id: 'status',
       header: 'Durum',
-      cell: ({ row }) => <StatusBadge {...ESCALATION_STATUS_PRESENTATION[row.original.status]} />,
+      cell: ({ row }) => <MasterBadge list="escalationStatuses" code={row.original.status} />,
     },
     {
       id: 'owner',

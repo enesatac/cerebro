@@ -1,15 +1,14 @@
 import { Field, Select, Table, type TableColumnDef } from '@takeoff-ui/react-spar';
 import { useSearchParams } from 'react-router';
-import { StatusBadge } from '@/components/data-display/StatusBadge';
 import { EmptyState } from '@/components/feedback/EmptyState';
 import { QueryView } from '@/components/feedback/QueryView';
 import { SectionCard } from '@/components/layout/SectionCard';
 import { useApplicationRefs } from '@/domains/applications/api/queries';
 import { ApplicationRefLink } from '@/domains/applications/components/ApplicationRefLink';
-import { CRITICALITY_PRESENTATION } from '@/domains/shared/utils/presentation';
 import { pluralize } from '@/lib/format';
 import { useAllDependencies } from '../api/queries';
 import { analyseImpact, type ImpactNode } from '../utils/impact';
+import { MasterBadge } from '@/domains/master-data/components/MasterBadge';
 
 function impactColumns(nameOf: (id: string) => string): TableColumnDef<ImpactNode>[] {
   return [
@@ -30,9 +29,7 @@ function impactColumns(nameOf: (id: string) => string): TableColumnDef<ImpactNod
       id: 'criticality',
       header: 'Etki',
       width: 120,
-      cell: ({ row }) => (
-        <StatusBadge {...CRITICALITY_PRESENTATION[row.original.pathCriticality]} />
-      ),
+      cell: ({ row }) => <MasterBadge list="criticalities" code={row.original.pathCriticality} />,
     },
     {
       id: 'path',

@@ -1,20 +1,27 @@
 import { Table, type TableColumnDef } from '@takeoff-ui/react-spar';
 import { DetailList } from '@/components/data-display/DetailList';
-import { StatusBadge } from '@/components/data-display/StatusBadge';
 import { EmptyState } from '@/components/feedback/EmptyState';
 import { SectionCard } from '@/components/layout/SectionCard';
 import { useTechnologiesById } from '@/domains/technologies/api/queries';
-import { TECHNOLOGY_CATEGORIES, type Technology } from '@/domains/technologies/types';
-import {
-  TECHNOLOGY_CATEGORY_LABELS,
-  TECHNOLOGY_STATUS_PRESENTATION,
-} from '@/domains/technologies/utils/technologyPresentation';
+import type { Technology } from '@/domains/technologies/types';
+import { MasterBadge } from '@/domains/master-data/components/MasterBadge';
+import { useMasterData } from '@/domains/master-data/context';
 import type { Application, DataStore } from '../../types';
-import { HOSTING_MODEL_LABELS } from '../../utils/applicationPresentation';
 import { paths } from '@/app/router/paths';
 import { EntityLink } from '@/components/data-display/EntityLink';
+import { MasterLabel } from '@/domains/master-data/components/MasterLabel';
+
+/** Layers used by the application, in admin order; layers missing from the list come last. */
+function layersInUse(order: string[], application: Application): string[] {
+  const used = new Set(application.technologies.map((usage) => usage.layer));
+  return [
+    ...order.filter((layer) => used.has(layer)),
+    ...[...used].filter((l) => !order.includes(l)),
+  ];
+}
 
 export function TechnicalTab({ application }: { application: Application }) {
+  const masterData = useMasterData();
   const technologies = useTechnologiesById();
   const catalogue = technologies.data ?? new Map<string, Technology>();
 
@@ -36,19 +43,17 @@ export function TechnicalTab({ application }: { application: Application }) {
           />
         ) : (
           <DetailList
-            items={TECHNOLOGY_CATEGORIES.filter((layer) =>
-              application.technologies.some((usage) => usage.layer === layer),
+            items={layersInUse(
+              masterData.items('technologyCategories').map((item) => item.code),
+              application,
             ).map((layer) => ({
-              label: TECHNOLOGY_CATEGORY_LABELS[layer],
+              label: masterData.label('technologyCategories', layer),
               value: (
                 <ul className="c-inline-list">
                   {application.technologies
                     .filter((usage) => usage.layer === layer)
                     .map((usage) => {
                       const technology = catalogue.get(usage.technologyId);
-                      const status = technology
-                        ? TECHNOLOGY_STATUS_PRESENTATION[technology.status]
-                        : null;
                       return (
                         <li key={`${usage.technologyId}-${layer}`} className="c-tech-item">
                           <span>
@@ -59,8 +64,13 @@ export function TechnicalTab({ application }: { application: Application }) {
                           </span>
                           {technology &&
                             technology.status !== 'preferred' &&
-                            technology.status !== 'supported' &&
-                            status && <StatusBadge {...status} context="Teknoloji durumu:" />}
+                            technology.status !== 'supported' && (
+                              <MasterBadge
+                                list="technologyStatuses"
+                                code={technology.status}
+                                context="Teknoloji durumu:"
+                              />
+                            )}
                         </li>
                       );
                     })}
@@ -86,7 +96,10 @@ export function TechnicalTab({ application }: { application: Application }) {
       <SectionCard title="Barındırma">
         <DetailList
           items={[
-            { label: 'Barındırma modeli', value: HOSTING_MODEL_LABELS[application.hosting.model] },
+            {
+              label: 'Barındırma modeli',
+              value: <MasterLabel list="hostingModels" code={application.hosting.model} />,
+            },
             {
               label: 'Bulut sağlayıcı',
               value: application.hosting.cloudProvider,

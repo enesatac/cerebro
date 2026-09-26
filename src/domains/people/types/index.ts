@@ -13,3 +13,5 @@ export interface Person {
   businessUnitId: BusinessUnitId | null;
   location: string | null;
 }
+
+export type PersonInput = Omit<Person, 'id'>;

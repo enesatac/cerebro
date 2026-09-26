@@ -1,18 +1,11 @@
 import { paths } from '@/app/router/paths';
 import { DetailList } from '@/components/data-display/DetailList';
 import { EntityLink } from '@/components/data-display/EntityLink';
-import {
-  STAKEHOLDER_ROLES,
-  type RoleAssignment,
-  type TeamAssignment,
-} from '@/domains/shared/types';
-import {
-  STAKEHOLDER_ROLE_LABELS,
-  TEAM_RESPONSIBILITY_LABELS,
-} from '@/domains/shared/utils/presentation';
+import type { RoleAssignment, TeamAssignment } from '@/domains/shared/types';
 import { useTeamsById } from '@/domains/teams/api/queries';
 import { usePeopleById } from '../api/queries';
 import { PersonSummary } from './PersonSummary';
+import { useMasterData } from '@/domains/master-data/context';
 
 interface StakeholderListProps {
   roles: readonly RoleAssignment[];
@@ -21,17 +14,20 @@ interface StakeholderListProps {
 
 /** People (by contextual role, owners first) and teams (by responsibility) with contact details. */
 export function StakeholderList({ roles, teams }: StakeholderListProps) {
+  const masterData = useMasterData();
   const people = usePeopleById();
   const teamsById = useTeamsById();
-  const orderedRoles = [...roles].sort(
-    (a, b) => STAKEHOLDER_ROLES.indexOf(a.role) - STAKEHOLDER_ROLES.indexOf(b.role),
-  );
+  // Owners first: roles follow the order administrators give them in master data.
+  const roleOrder = masterData.items('stakeholderRoles').map((item) => item.code);
+  const rank = (role: string) =>
+    roleOrder.includes(role) ? roleOrder.indexOf(role) : roleOrder.length;
+  const orderedRoles = [...roles].sort((a, b) => rank(a.role) - rank(b.role));
 
   return (
     <DetailList
       items={[
         ...orderedRoles.map((assignment) => ({
-          label: STAKEHOLDER_ROLE_LABELS[assignment.role],
+          label: masterData.label('stakeholderRoles', assignment.role),
           value: (
             <PersonSummary
               person={people.data?.get(assignment.personId)}
@@ -43,7 +39,7 @@ export function StakeholderList({ roles, teams }: StakeholderListProps) {
         ...teams.map((assignment) => {
           const team = teamsById.data?.get(assignment.teamId);
           return {
-            label: `${TEAM_RESPONSIBILITY_LABELS[assignment.responsibility]} ekibi`,
+            label: `${masterData.label('teamResponsibilities', assignment.responsibility)} ekibi`,
             value: (
               <span className="c-cell-stack">
                 <EntityLink to={paths.teams.detail(assignment.teamId)}>

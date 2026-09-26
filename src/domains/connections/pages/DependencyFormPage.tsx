@@ -9,8 +9,6 @@ import { QueryView } from '@/components/feedback/QueryView';
 import { SectionCard } from '@/components/layout/SectionCard';
 import { useApplicationOptions } from '@/domains/applications/api/queries';
 import { Can } from '@/domains/auth/components/Can';
-import { CRITICALITIES } from '@/domains/shared/types';
-import { CRITICALITY_PRESENTATION } from '@/domains/shared/utils/presentation';
 import { useRepositories } from '@/services/RepositoryContext';
 import { useDeleteDependency, useSaveDependency } from '../api/mutations';
 import { useDependency } from '../api/queries';
@@ -20,8 +18,8 @@ import {
   toDependencyInput,
   type DependencyFormValues,
 } from '../schemas/connectionForms';
-import { DEPENDENCY_TYPES, type ApplicationDependency } from '../types';
-import { DEPENDENCY_TYPE_LABELS } from '../utils/connectionPresentation';
+import { type ApplicationDependency } from '../types';
+import { MasterSelectField } from '@/domains/master-data/components/MasterSelectField';
 
 function DependencyForm({ dependency }: { dependency?: ApplicationDependency }) {
   const navigate = useNavigate();
@@ -87,25 +85,19 @@ function DependencyForm({ dependency }: { dependency?: ApplicationDependency }) 
             required
             options={applications}
           />
-          <SelectField
+          <MasterSelectField
             control={control}
             name="type"
             label="Tür"
             required
-            options={DEPENDENCY_TYPES.map((value) => ({
-              value,
-              label: DEPENDENCY_TYPE_LABELS[value],
-            }))}
+            list="dependencyTypes"
           />
-          <SelectField
+          <MasterSelectField
             control={control}
             name="criticality"
             label="Erişilemezse etkisi"
             required
-            options={CRITICALITIES.map((value) => ({
-              value,
-              label: CRITICALITY_PRESENTATION[value].label,
-            }))}
+            list="criticalities"
           />
           <TextField
             control={control}

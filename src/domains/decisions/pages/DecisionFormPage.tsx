@@ -4,7 +4,7 @@ import { useNavigate, useParams, useSearchParams } from 'react-router';
 import { paths } from '@/app/router/paths';
 import { DeleteAction } from '@/components/actions/DeleteAction';
 import { DateField } from '@/components/forms/DateField';
-import { ChipsField, MultiSelectField, SelectField, TextField } from '@/components/forms/fields';
+import { ChipsField, MultiSelectField, TextField } from '@/components/forms/fields';
 import { FormPage } from '@/components/forms/FormPage';
 import { QueryView } from '@/components/feedback/QueryView';
 import { SectionCard } from '@/components/layout/SectionCard';
@@ -22,8 +22,8 @@ import {
   toDecisionInput,
   type DecisionFormValues,
 } from '../schemas/decisionForm';
-import { DECISION_STATUSES, type Decision } from '../types';
-import { DECISION_STATUS_PRESENTATION } from '../utils/decisionPresentation';
+import { type Decision } from '../types';
+import { MasterSelectField } from '@/domains/master-data/components/MasterSelectField';
 
 function DecisionForm({ decision }: { decision?: Decision }) {
   const navigate = useNavigate();
@@ -91,15 +91,12 @@ function DecisionForm({ decision }: { decision?: Decision }) {
             required
             className="c-form-grid__wide"
           />
-          <SelectField
+          <MasterSelectField
             control={control}
             name="status"
             label="Durum"
             required
-            options={DECISION_STATUSES.map((value) => ({
-              value,
-              label: DECISION_STATUS_PRESENTATION[value].label,
-            }))}
+            list="decisionStatuses"
           />
           <DateField control={control} name="decisionDate" label="Karar tarihi" required />
           <MultiSelectField

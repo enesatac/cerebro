@@ -1,13 +1,11 @@
 import { Table, type TableColumnDef } from '@takeoff-ui/react-spar';
 import { ExternalLink } from '@/components/data-display/ExternalLink';
-import { StatusBadge } from '@/components/data-display/StatusBadge';
 import { EmptyState } from '@/components/feedback/EmptyState';
 import { SectionCard } from '@/components/layout/SectionCard';
-import { ENVIRONMENT_TYPES, type Application, type Environment } from '../../types';
-import {
-  ENVIRONMENT_STATUS_PRESENTATION,
-  ENVIRONMENT_TYPE_LABELS,
-} from '../../utils/applicationPresentation';
+import type { Application, Environment } from '../../types';
+import { useMasterData } from '@/domains/master-data/context';
+import { MasterBadge } from '@/domains/master-data/components/MasterBadge';
+import { MasterLabel } from '@/domains/master-data/components/MasterLabel';
 
 const columns: TableColumnDef<Environment>[] = [
   {
@@ -17,7 +15,7 @@ const columns: TableColumnDef<Environment>[] = [
       <span className="c-cell-stack">
         <span>{row.original.name}</span>
         <span className="c-muted c-cell-stack__secondary">
-          {ENVIRONMENT_TYPE_LABELS[row.original.type]}
+          <MasterLabel list="environmentTypes" code={row.original.type} />
         </span>
       </span>
     ),
@@ -25,7 +23,7 @@ const columns: TableColumnDef<Environment>[] = [
   {
     id: 'status',
     header: 'Durum',
-    cell: ({ row }) => <StatusBadge {...ENVIRONMENT_STATUS_PRESENTATION[row.original.status]} />,
+    cell: ({ row }) => <MasterBadge list="environmentStatuses" code={row.original.status} />,
   },
   {
     id: 'url',
@@ -46,10 +44,12 @@ const columns: TableColumnDef<Environment>[] = [
 ];
 
 export function EnvironmentsTab({ application }: { application: Application }) {
-  // Promotion order (dev → prod → DR) reads naturally.
-  const environments = [...application.environments].sort(
-    (a, b) => ENVIRONMENT_TYPES.indexOf(a.type) - ENVIRONMENT_TYPES.indexOf(b.type),
-  );
+  // Promotion order (dev → prod → DR, as ordered in master data) reads naturally.
+  const order = useMasterData()
+    .items('environmentTypes')
+    .map((item) => item.code);
+  const rank = (type: string) => (order.includes(type) ? order.indexOf(type) : order.length);
+  const environments = [...application.environments].sort((a, b) => rank(a.type) - rank(b.type));
   return (
     <SectionCard
       title="Ortamlar"

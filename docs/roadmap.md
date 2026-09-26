@@ -8,7 +8,7 @@ Repository setup, Takeoff UI v2 integration, project Skills, `CLAUDE.md`, `AGENT
 architecture docs, core domain types for all MVP entities, repository abstraction with mock
 implementation, realistic connected seed data, app shell, routing, base page patterns.
 
-## Phase 1 — Core Inventory (read views ✅, editing next)
+## Phase 1 — Core Inventory ✅
 
 | Item                                                                                                    | Status |
 | ------------------------------------------------------------------------------------------------------- | ------ |
@@ -16,20 +16,23 @@ implementation, realistic connected seed data, app shell, routing, base page pat
 | Projects list + detail (8 tabs incl. milestones, decisions, financials)                                 | ✅     |
 | Dashboard (key figures, needs attention, recently updated, lifecycle distribution, upcoming milestones) | ✅     |
 | Global search (links to applications, projects, teams, technologies)                                    | ✅     |
-| Create / Edit Application and Project (React Hook Form + Zod, unsaved-changes guard)                    | ⏭ next |
+| Create / Edit for every entity (React Hook Form + Zod, unsaved-changes guard, deletion impact)          | ✅     |
+| Roles: admin (full access) / user (read-only), enforced in the repository                               | ✅     |
+| Master data administration (28 value lists, business units, people)                                     | ✅     |
+| Turkish user interface and demo data                                                                    | ✅     |
 
 Next: corporate SSO (OIDC) instead of the demo sign-in; a real backend implementing the repository
-interfaces; People and Business Unit administration.
+interfaces; person and business unit detail pages.
 
 ## Phase 2 — Organisational Context (read views ✅)
 
 Teams list + detail (owned applications, delivered projects, members), Technologies catalogue +
-where-used detail. Still open: People pages, Business Unit pages, editing reference data.
+where-used detail. People and business units are administered as master data; still open: their detail pages.
 
 ## Phase 3 — Operational Knowledge (read views ✅)
 
 Risks and escalations registers with filters; decisions (ADR) per project; milestones.
-Still open: creating/updating risks, escalations and decisions; a portfolio-wide decision log.
+Create/edit for risks, escalations and decisions ✅. Still open: a portfolio-wide decision log.
 
 ## Phase 4 — Connections (structured view ✅)
 

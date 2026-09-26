@@ -20,20 +20,14 @@ import {
   toNumberOrNull,
 } from '@/lib/validation';
 import {
-  APPLICATION_IMPACT_TYPES,
-  CONFIDENTIALITY_LEVELS,
   MILESTONE_STATUSES,
   PROJECT_HEALTHS,
-  PROJECT_PHASES,
   PROJECT_PRIORITIES,
   PROJECT_STATUSES,
-  PROJECT_TYPES,
   type Milestone,
   type Project,
   type ProjectInput,
 } from '../types';
-
-export const CURRENCIES = ['EUR', 'USD', 'GBP', 'TRY'] as const;
 
 const milestoneSchema = z.object({
   id: z.string(),
@@ -45,7 +39,7 @@ const milestoneSchema = z.object({
 
 const impactSchema = z.object({
   applicationId: requiredChoice('bir uygulama'),
-  impactType: enumChoice(APPLICATION_IMPACT_TYPES, 'bir etki'),
+  impactType: requiredChoice('bir etki'),
   description: optionalText('Ne değişiyor', 300),
 });
 
@@ -57,11 +51,11 @@ export const projectFormSchema = z
       'Yalnızca büyük harf, rakam ve kısa çizgi kullanın.',
     ),
     shortName: optionalText('Kısa ad', 60),
-    type: enumChoice(PROJECT_TYPES, 'bir proje türü'),
+    type: requiredChoice('bir proje türü'),
     priority: enumChoice(PROJECT_PRIORITIES, 'bir öncelik'),
     status: enumChoice(PROJECT_STATUSES, 'bir durum'),
     health: enumChoice(PROJECT_HEALTHS, 'bir sağlık durumu'),
-    confidentiality: enumChoice(CONFIDENTIALITY_LEVELS, 'bir gizlilik düzeyi'),
+    confidentiality: requiredChoice('bir gizlilik düzeyi'),
     tags: z.array(z.string().trim().toLowerCase().min(1).max(40)),
     description: requiredText('Açıklama', 1000),
     objective: optionalText('Hedef', 1000),
@@ -78,11 +72,11 @@ export const projectFormSchema = z
       (v) => v !== '',
       'İlerleme zorunludur.',
     ),
-    currentPhase: enumChoice(PROJECT_PHASES, 'bir aşama'),
+    currentPhase: requiredChoice('bir aşama'),
     latestStatusSummary: optionalText('Durum özeti', 1000),
     nextSteps: optionalText('Sonraki adımlar', 1000),
     hasFinancials: z.boolean(),
-    currency: z.enum(CURRENCIES),
+    currency: requiredChoice('bir para birimi'),
     budget: optionalWholeNumber('Bütçe'),
     actualCost: optionalWholeNumber('Gerçekleşen maliyet'),
     forecastCost: optionalWholeNumber('Tahmini maliyet'),
@@ -190,9 +184,7 @@ export function toProjectFormValues(project?: Project): ProjectFormValues {
     latestStatusSummary: project?.latestStatusSummary ?? '',
     nextSteps: project?.nextSteps ?? '',
     hasFinancials: Boolean(financials),
-    currency: (CURRENCIES as readonly string[]).includes(financials?.currency ?? '')
-      ? (financials?.currency as (typeof CURRENCIES)[number])
-      : 'EUR',
+    currency: financials?.currency ?? 'EUR',
     budget: numberText(financials?.budget),
     actualCost: numberText(financials?.actualCost),
     forecastCost: numberText(financials?.forecastCost),

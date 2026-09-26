@@ -12,8 +12,6 @@ import { Can } from '@/domains/auth/components/Can';
 import { usePersonOptions } from '@/domains/people/api/queries';
 import { RelatedEntitiesFields } from '@/domains/risks/components/RelatedEntitiesFields';
 import { readRelatedPrefill, relatedReturnPath } from '@/domains/risks/utils/relatedPrefill';
-import { CRITICALITIES } from '@/domains/shared/types';
-import { CRITICALITY_PRESENTATION } from '@/domains/shared/utils/presentation';
 import { useTeamOptions } from '@/domains/teams/api/queries';
 import { toIsoDate } from '@/lib/dates';
 import { useRepositories } from '@/services/RepositoryContext';
@@ -25,8 +23,8 @@ import {
   toEscalationInput,
   type EscalationFormValues,
 } from '../schemas/escalationForm';
-import { ESCALATION_STATUSES, type Escalation } from '../types';
-import { ESCALATION_STATUS_PRESENTATION } from '../utils/escalationPresentation';
+import { type Escalation } from '../types';
+import { MasterSelectField } from '@/domains/master-data/components/MasterSelectField';
 
 function EscalationForm({ escalation }: { escalation?: Escalation }) {
   const navigate = useNavigate();
@@ -101,25 +99,19 @@ function EscalationForm({ escalation }: { escalation?: Escalation }) {
             rows={3}
             className="c-form-grid__wide"
           />
-          <SelectField
+          <MasterSelectField
             control={control}
             name="severity"
             label="Önem derecesi"
             required
-            options={CRITICALITIES.map((value) => ({
-              value,
-              label: CRITICALITY_PRESENTATION[value].label,
-            }))}
+            list="criticalities"
           />
-          <SelectField
+          <MasterSelectField
             control={control}
             name="status"
             label="Durum"
             required
-            options={ESCALATION_STATUSES.map((value) => ({
-              value,
-              label: ESCALATION_STATUS_PRESENTATION[value].label,
-            }))}
+            list="escalationStatuses"
           />
         </div>
       </SectionCard>

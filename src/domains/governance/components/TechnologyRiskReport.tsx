@@ -1,14 +1,11 @@
 import { Table, type TableColumnDef } from '@takeoff-ui/react-spar';
 import { paths } from '@/app/router/paths';
 import { EntityLink } from '@/components/data-display/EntityLink';
-import { StatusBadge } from '@/components/data-display/StatusBadge';
 import { EmptyState } from '@/components/feedback/EmptyState';
 import { SectionCard } from '@/components/layout/SectionCard';
-import { LIFECYCLE_PRESENTATION } from '@/domains/applications/utils/applicationPresentation';
 import { CRITICALITIES } from '@/domains/shared/types';
-import { CRITICALITY_PRESENTATION } from '@/domains/shared/utils/presentation';
-import { TECHNOLOGY_STATUS_PRESENTATION } from '@/domains/technologies/utils/technologyPresentation';
 import type { ApplicationHealthRow } from '../types';
+import { MasterBadge } from '@/domains/master-data/components/MasterBadge';
 
 const columns: TableColumnDef<ApplicationHealthRow>[] = [
   {
@@ -26,13 +23,13 @@ const columns: TableColumnDef<ApplicationHealthRow>[] = [
     id: 'lifecycle',
     header: 'Yaşam döngüsü',
     width: 120,
-    cell: ({ row }) => <StatusBadge {...LIFECYCLE_PRESENTATION[row.original.lifecycle]} />,
+    cell: ({ row }) => <MasterBadge list="applicationLifecycles" code={row.original.lifecycle} />,
   },
   {
     id: 'criticality',
     header: 'Kritiklik',
     width: 110,
-    cell: ({ row }) => <StatusBadge {...CRITICALITY_PRESENTATION[row.original.criticality]} />,
+    cell: ({ row }) => <MasterBadge list="criticalities" code={row.original.criticality} />,
   },
   {
     id: 'technologies',
@@ -42,10 +39,7 @@ const columns: TableColumnDef<ApplicationHealthRow>[] = [
         {row.original.outdatedTechnologies.map((tech) => (
           <li key={tech.id} className="c-tech-item">
             <EntityLink to={paths.technologies.detail(tech.id)}>{tech.name}</EntityLink>
-            <StatusBadge
-              {...TECHNOLOGY_STATUS_PRESENTATION[tech.status]}
-              context="Teknoloji durumu:"
-            />
+            <MasterBadge list="technologyStatuses" code={tech.status} context="Teknoloji durumu:" />
           </li>
         ))}
       </ul>

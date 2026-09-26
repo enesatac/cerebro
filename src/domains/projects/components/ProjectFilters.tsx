@@ -4,21 +4,8 @@ import { FilterSummary } from '@/components/layout/FilterSummary';
 import { Toolbar } from '@/components/layout/Toolbar';
 import { useBusinessUnits } from '@/domains/business-units/api/queries';
 import { useTeams } from '@/domains/teams/api/queries';
-import { PROJECT_HEALTHS, PROJECT_STATUSES } from '../types';
-import {
-  PROJECT_HEALTH_PRESENTATION,
-  PROJECT_STATUS_PRESENTATION,
-} from '../utils/projectPresentation';
 import { countActiveProjectFilters, type ProjectListState } from '../utils/projectListParams';
-
-const STATUS_OPTIONS = PROJECT_STATUSES.map((value) => ({
-  value,
-  label: PROJECT_STATUS_PRESENTATION[value].label,
-}));
-const HEALTH_OPTIONS = PROJECT_HEALTHS.map((value) => ({
-  value,
-  label: PROJECT_HEALTH_PRESENTATION[value].label,
-}));
+import { useMasterData } from '@/domains/master-data/context';
 
 type FilterPatch = Partial<Omit<ProjectListState, 'sort' | 'page' | 'pageSize'>>;
 
@@ -30,6 +17,7 @@ interface ProjectFiltersProps {
 }
 
 export function ProjectFilters({ state, onChange, onReset, resultSummary }: ProjectFiltersProps) {
+  const masterData = useMasterData();
   const businessUnits = useBusinessUnits();
   const teams = useTeams();
 
@@ -53,14 +41,14 @@ export function ProjectFilters({ state, onChange, onReset, resultSummary }: Proj
         label="Durum"
         allLabel="Tüm durumlar"
         value={state.status}
-        options={STATUS_OPTIONS}
+        options={masterData.options('projectStatuses', state.status)}
         onChange={(value) => onChange({ status: value as ProjectListState['status'] })}
       />
       <FilterSelect
         label="Sağlık"
         allLabel="Tüm sağlık durumları"
         value={state.health}
-        options={HEALTH_OPTIONS}
+        options={masterData.options('projectHealths', state.health)}
         onChange={(value) => onChange({ health: value as ProjectListState['health'] })}
       />
       <FilterSelect

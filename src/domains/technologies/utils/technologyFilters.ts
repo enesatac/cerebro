@@ -1,6 +1,5 @@
 import { oneOf } from '@/lib/urlParams';
 import {
-  TECHNOLOGY_CATEGORIES,
   TECHNOLOGY_STATUSES,
   type TechnologyCategory,
   type TechnologyListItem,
@@ -16,7 +15,8 @@ export interface TechnologyFilterState {
 export function parseTechnologyFilters(params: URLSearchParams): TechnologyFilterState {
   return {
     search: params.get('q')?.trim() ?? '',
-    category: oneOf(TECHNOLOGY_CATEGORIES, params.get('category')),
+    // Categories are administrable master data, so any code is accepted here.
+    category: params.get('category') || null,
     status: oneOf(TECHNOLOGY_STATUSES, params.get('status')),
   };
 }

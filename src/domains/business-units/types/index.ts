@@ -9,3 +9,5 @@ export interface BusinessUnit {
   description: string;
   headId: PersonId | null;
 }
+
+export type BusinessUnitInput = Omit<BusinessUnit, 'id'>;

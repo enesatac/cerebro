@@ -46,7 +46,8 @@ export const STAKEHOLDER_ROLES = [
   'support',
   'stakeholder',
 ] as const;
-export type StakeholderRole = (typeof STAKEHOLDER_ROLES)[number];
+/** Code from an administrable master data list; `STAKEHOLDER_ROLES` are the system values. */
+export type StakeholderRole = string;
 
 /** A person holding a role *in the context of* an application or project. */
 export interface RoleAssignment {
@@ -55,7 +56,8 @@ export interface RoleAssignment {
 }
 
 export const TEAM_RESPONSIBILITIES = ['development', 'support', 'operations', 'delivery'] as const;
-export type TeamResponsibility = (typeof TEAM_RESPONSIBILITIES)[number];
+/** Code from an administrable master data list; `TEAM_RESPONSIBILITIES` are the system values. */
+export type TeamResponsibility = string;
 
 export interface TeamAssignment {
   teamId: TeamId;
@@ -76,7 +78,8 @@ export const DOCUMENTATION_LINK_TYPES = [
   'dashboard',
   'other',
 ] as const;
-export type DocumentationLinkType = (typeof DOCUMENTATION_LINK_TYPES)[number];
+/** Code from an administrable master data list; `DOCUMENTATION_LINK_TYPES` are the system values. */
+export type DocumentationLinkType = string;
 
 export interface DocumentationLink {
   id: EntityId;

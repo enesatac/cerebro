@@ -136,3 +136,76 @@ export function technologyDeletionImpact(db: MockDatabase, id: string): Deletion
 }
 
 export const NO_IMPACT: DeletionImpact = { references: [], blockedReason: null };
+
+/** People are referenced from history and ownership; deleting a referenced person is refused. */
+export function personDeletionImpact(db: MockDatabase, id: string): DeletionImpact {
+  const portfolio = [...db.applications, ...db.projects];
+  const audited = [
+    ...portfolio,
+    ...db.risks,
+    ...db.escalations,
+    ...db.decisions,
+    ...db.dependencies,
+    ...db.integrations,
+    ...db.teams,
+  ];
+  const references = nonZero([
+    {
+      label: 'uygulama/proje rolü',
+      count: portfolio.filter((r) => r.roles.some((a) => a.personId === id)).length,
+    },
+    {
+      label: 'ekip üyeliği',
+      count: db.teams.filter((t) => t.managerId === id || t.memberIds.includes(id)).length,
+    },
+    {
+      label: 'iş birimi yöneticiliği',
+      count: db.businessUnits.filter((b) => b.headId === id).length,
+    },
+    {
+      label: 'risk/eskalasyon/karar',
+      count:
+        db.risks.filter((r) => r.ownerId === id).length +
+        db.escalations.filter((e) => e.ownerId === id || e.raisedById === id).length +
+        db.decisions.filter((d) => d.decidedByIds.includes(id)).length,
+    },
+    { label: 'kullanıcı hesabı', count: db.users.filter((u) => u.personId === id).length },
+    {
+      label: 'kayıt geçmişi',
+      count: audited.filter(
+        (r) =>
+          r.audit.createdBy === id || r.audit.updatedBy === id || r.audit.lastReviewedBy === id,
+      ).length,
+    },
+  ]);
+  return {
+    references,
+    blockedReason:
+      references.length > 0
+        ? 'Bu kişi başka kayıtlarda geçiyor. Önce bu kayıtlardan kaldırın; kayıt geçmişinde yer alan kişiler silinemez.'
+        : null,
+  };
+}
+
+/** Business units in use by applications or projects cannot be deleted; people are unassigned. */
+export function businessUnitDeletionImpact(db: MockDatabase, id: string): DeletionImpact {
+  const applications = db.applications.filter((a) => a.businessUnitId === id).length;
+  const projects = db.projects.filter((p) => p.businessUnitId === id).length;
+  return {
+    references: nonZero([
+      { label: 'uygulama', count: applications },
+      { label: 'proje', count: projects },
+      { label: 'kişi', count: db.people.filter((p) => p.businessUnitId === id).length },
+    ]),
+    blockedReason:
+      applications + projects > 0
+        ? 'Bu iş birimi uygulama veya projelerde kullanılıyor. Önce bu kayıtları başka bir birime taşıyın.'
+        : null,
+  };
+}
+
+export function deleteBusinessUnitCascade(db: MockDatabase, id: string) {
+  for (const person of db.people) {
+    if (person.businessUnitId === id) person.businessUnitId = null;
+  }
+}

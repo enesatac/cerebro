@@ -2,21 +2,16 @@ import { Table, type TableColumnDef } from '@takeoff-ui/react-spar';
 import { useMemo, type ReactNode } from 'react';
 import { paths } from '@/app/router/paths';
 import { EntityLink } from '@/components/data-display/EntityLink';
-import { StatusBadge } from '@/components/data-display/StatusBadge';
 import type { PagedResult, SortSpec } from '@/domains/shared/types';
-import { CRITICALITY_PRESENTATION } from '@/domains/shared/utils/presentation';
 import { formatRelative } from '@/lib/dates';
 import {
   APPLICATION_SORT_FIELDS,
   type ApplicationListItem,
   type ApplicationSortField,
 } from '../types';
-import {
-  LIFECYCLE_PRESENTATION,
-  OPERATIONAL_STATUS_PRESENTATION,
-} from '../utils/applicationPresentation';
 import { APPLICATION_PAGE_SIZES } from '../utils/applicationListParams';
 import { getPrimaryTeams } from '../utils/applicationTeams';
+import { MasterBadge } from '@/domains/master-data/components/MasterBadge';
 
 interface ApplicationsTableProps {
   result: PagedResult<ApplicationListItem> | undefined;
@@ -53,7 +48,7 @@ function buildColumns(now: Date): TableColumnDef<ApplicationListItem>[] {
       header: 'Yaşam döngüsü',
       accessor: 'lifecycle',
       sortable: true,
-      cell: ({ row }) => <StatusBadge {...LIFECYCLE_PRESENTATION[row.original.lifecycle]} />,
+      cell: ({ row }) => <MasterBadge list="applicationLifecycles" code={row.original.lifecycle} />,
     },
     {
       id: 'criticality',
@@ -61,14 +56,14 @@ function buildColumns(now: Date): TableColumnDef<ApplicationListItem>[] {
       header: 'Kritiklik',
       accessor: 'criticality',
       sortable: true,
-      cell: ({ row }) => <StatusBadge {...CRITICALITY_PRESENTATION[row.original.criticality]} />,
+      cell: ({ row }) => <MasterBadge list="criticalities" code={row.original.criticality} />,
     },
     {
       id: 'operationalStatus',
       width: 115,
       header: 'Durum',
       cell: ({ row }) => (
-        <StatusBadge {...OPERATIONAL_STATUS_PRESENTATION[row.original.operationalStatus]} />
+        <MasterBadge list="operationalStatuses" code={row.original.operationalStatus} />
       ),
     },
     {

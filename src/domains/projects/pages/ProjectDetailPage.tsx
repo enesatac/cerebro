@@ -2,7 +2,6 @@ import type { ReactNode } from 'react';
 import { useParams } from 'react-router';
 import { paths } from '@/app/router/paths';
 import { CopyLinkButton } from '@/components/actions/CopyLinkButton';
-import { StatusBadge } from '@/components/data-display/StatusBadge';
 import { ErrorState } from '@/components/feedback/ErrorState';
 import { LoadingState } from '@/components/feedback/LoadingState';
 import { NotFoundState } from '@/components/feedback/NotFoundState';
@@ -17,7 +16,6 @@ import { AuditHistory } from '@/domains/governance/components/AuditHistory';
 import { StakeholderList } from '@/domains/people/components/StakeholderList';
 import { RelatedRisksAndEscalations } from '@/domains/risks/components/RelatedRisksAndEscalations';
 import { DocumentationTable } from '@/domains/shared/components/DocumentationTable';
-import { CRITICALITY_PRESENTATION } from '@/domains/shared/utils/presentation';
 import { useTabParam } from '@/hooks/useTabParam';
 import { isNotFoundError } from '@/lib/errors';
 import { useProject } from '../api/queries';
@@ -26,14 +24,11 @@ import { ProjectKeyFacts } from '../components/detail/ProjectKeyFacts';
 import { ProjectMilestonesTab } from '../components/detail/ProjectMilestonesTab';
 import { ProjectOverviewTab } from '../components/detail/ProjectOverviewTab';
 import type { Project } from '../types';
-import {
-  PROJECT_HEALTH_PRESENTATION,
-  PROJECT_STATUS_PRESENTATION,
-} from '../utils/projectPresentation';
 import { EditAction } from '@/domains/auth/components/RecordActions';
 import { Can } from '@/domains/auth/components/Can';
 import { ActionMenu } from '@/components/actions/ActionMenu';
 import { SmallCreateAction } from '@/domains/auth/components/RecordActions';
+import { MasterBadge } from '@/domains/master-data/components/MasterBadge';
 
 const TABS = [
   { id: 'overview', label: 'Genel bakış' },
@@ -132,11 +127,12 @@ export default function ProjectDetailPage() {
         meta={
           <>
             <span className="c-code-chip">{project.code}</span>
-            <StatusBadge context="Durum:" {...PROJECT_STATUS_PRESENTATION[project.status]} />
-            <StatusBadge context="Sağlık:" {...PROJECT_HEALTH_PRESENTATION[project.health]} />
-            <StatusBadge
-              {...CRITICALITY_PRESENTATION[project.priority]}
-              label={`${CRITICALITY_PRESENTATION[project.priority].label} öncelik`}
+            <MasterBadge list="projectStatuses" code={project.status} context="Durum:" />
+            <MasterBadge list="projectHealths" code={project.health} context="Sağlık:" />
+            <MasterBadge
+              list="criticalities"
+              code={project.priority}
+              format={(label) => `${label} öncelik`}
             />
           </>
         }

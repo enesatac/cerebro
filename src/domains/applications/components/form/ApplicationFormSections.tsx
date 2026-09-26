@@ -3,11 +3,8 @@ import { ChipsField, SelectField, SwitchField, TextField } from '@/components/fo
 import { RepeatableList } from '@/components/forms/RepeatableList';
 import { SectionCard } from '@/components/layout/SectionCard';
 import { useBusinessUnitOptions } from '@/domains/business-units/api/queries';
-import { CRITICALITIES } from '@/domains/shared/types';
-import { CRITICALITY_PRESENTATION } from '@/domains/shared/utils/presentation';
+import { MasterSelectField } from '@/domains/master-data/components/MasterSelectField';
 import { useTechnologyOptions } from '@/domains/technologies/api/queries';
-import { TECHNOLOGY_CATEGORIES } from '@/domains/technologies/types';
-import { TECHNOLOGY_CATEGORY_LABELS } from '@/domains/technologies/utils/technologyPresentation';
 import {
   emptyDataStore,
   emptyEnvironment,
@@ -15,29 +12,8 @@ import {
   emptyTechnologyUsage,
   type ApplicationFormValues,
 } from '../../schemas/applicationForm';
-import {
-  APPLICATION_LIFECYCLES,
-  APPLICATION_TYPES,
-  ENVIRONMENT_STATUSES,
-  ENVIRONMENT_TYPES,
-  HOSTING_MODELS,
-  OPERATIONAL_STATUSES,
-  SOURCE_REPOSITORY_TYPES,
-} from '../../types';
-import {
-  APPLICATION_TYPE_LABELS,
-  ENVIRONMENT_STATUS_PRESENTATION,
-  ENVIRONMENT_TYPE_LABELS,
-  HOSTING_MODEL_LABELS,
-  LIFECYCLE_PRESENTATION,
-  OPERATIONAL_STATUS_PRESENTATION,
-  SOURCE_REPOSITORY_TYPE_LABELS,
-} from '../../utils/applicationPresentation';
 
 type Props = { control: Control<ApplicationFormValues> };
-
-const options = <T extends string>(values: readonly T[], label: (value: T) => string) =>
-  values.map((value) => ({ value, label: label(value) }));
 
 export function ApplicationGeneralSection({ control }: Props) {
   return (
@@ -57,33 +33,33 @@ export function ApplicationGeneralSection({ control }: Props) {
           required
           description="Kısa ve benzersiz kod, ör. PAYGW."
         />
-        <SelectField
+        <MasterSelectField
           control={control}
           name="type"
           label="Tür"
           required
-          options={options(APPLICATION_TYPES, (v) => APPLICATION_TYPE_LABELS[v])}
+          list="applicationTypes"
         />
-        <SelectField
+        <MasterSelectField
           control={control}
           name="lifecycle"
           label="Yaşam döngüsü"
           required
-          options={options(APPLICATION_LIFECYCLES, (v) => LIFECYCLE_PRESENTATION[v].label)}
+          list="applicationLifecycles"
         />
-        <SelectField
+        <MasterSelectField
           control={control}
           name="criticality"
           label="Kritiklik"
           required
-          options={options(CRITICALITIES, (v) => CRITICALITY_PRESENTATION[v].label)}
+          list="criticalities"
         />
-        <SelectField
+        <MasterSelectField
           control={control}
           name="operationalStatus"
           label="Çalışma durumu"
           required
-          options={options(OPERATIONAL_STATUSES, (v) => OPERATIONAL_STATUS_PRESENTATION[v].label)}
+          list="operationalStatuses"
         />
         <ChipsField control={control} name="tags" label="Etiketler" className="c-form-grid__wide" />
       </div>
@@ -144,7 +120,6 @@ export function ApplicationTechnologySection({ control }: Props) {
   const usages = useFieldArray({ control, name: 'technologies' });
   const stores = useFieldArray({ control, name: 'dataStores' });
   const hostingModel = useWatch({ control, name: 'hostingModel' });
-  const layers = options(TECHNOLOGY_CATEGORIES, (v) => TECHNOLOGY_CATEGORY_LABELS[v]);
 
   return (
     <>
@@ -168,12 +143,12 @@ export function ApplicationTechnologySection({ control }: Props) {
                 required
                 options={technologies}
               />
-              <SelectField
+              <MasterSelectField
                 control={control}
                 name={`technologies.${index}.layer`}
                 label="Katman"
                 required
-                options={layers}
+                list="technologyCategories"
               />
               <TextField control={control} name={`technologies.${index}.version`} label="Sürüm" />
             </div>
@@ -213,12 +188,12 @@ export function ApplicationTechnologySection({ control }: Props) {
       </SectionCard>
       <SectionCard title="Barındırma">
         <div className="c-form-grid c-form-grid--three">
-          <SelectField
+          <MasterSelectField
             control={control}
             name="hostingModel"
             label="Barındırma modeli"
             required
-            options={options(HOSTING_MODELS, (v) => HOSTING_MODEL_LABELS[v])}
+            list="hostingModels"
           />
           <TextField
             control={control}
@@ -249,23 +224,20 @@ export function ApplicationEnvironmentsSection({ control }: Props) {
         emptyText="Henüz ortam kaydedilmedi."
         renderItem={(index) => (
           <div className="c-form-grid c-form-grid--three">
-            <SelectField
+            <MasterSelectField
               control={control}
               name={`environments.${index}.type`}
               label="Tür"
               required
-              options={options(ENVIRONMENT_TYPES, (v) => ENVIRONMENT_TYPE_LABELS[v])}
+              list="environmentTypes"
             />
             <TextField control={control} name={`environments.${index}.name`} label="Ad" required />
-            <SelectField
+            <MasterSelectField
               control={control}
               name={`environments.${index}.status`}
               label="Durum"
               required
-              options={options(
-                ENVIRONMENT_STATUSES,
-                (v) => ENVIRONMENT_STATUS_PRESENTATION[v].label,
-              )}
+              list="environmentStatuses"
             />
             <TextField
               control={control}
@@ -303,12 +275,12 @@ export function ApplicationRepositoriesSection({ control }: Props) {
               required
               placeholder="group/repository"
             />
-            <SelectField
+            <MasterSelectField
               control={control}
               name={`repositories.${index}.type`}
               label="Tür"
               required
-              options={options(SOURCE_REPOSITORY_TYPES, (v) => SOURCE_REPOSITORY_TYPE_LABELS[v])}
+              list="sourceRepositoryTypes"
             />
             <TextField
               control={control}

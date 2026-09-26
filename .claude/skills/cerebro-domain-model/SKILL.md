@@ -23,7 +23,8 @@ Full reference: `docs/domain-model.md`. Types live in `src/domains/<domain>/type
    `Integration`, `Risk`, `Escalation`, `Decision` reference applications/projects by id arrays
    (`relatedApplicationIds`, `relatedProjectIds`) so they can link many-to-many.
 6. **Enumerations** are `const` arrays + derived union types (`LIFECYCLES`, `CRITICALITIES`).
-   Values are kebab-case; human labels come from presentation mappings, never from the value.
+   Values are kebab-case codes; human labels come from master data, never from the value.
+   Lists admins may extend are typed `string`; fixed workflow lists keep their literal union.
 7. **Dates** are ISO-8601 strings (`'2026-03-14'` for dates, full ISO for timestamps).
 8. **Audit metadata** on every aggregate: `audit: AuditMetadata`
    (`createdAt/By`, `updatedAt/By`, `lastReviewedAt/By`). `*By` are person ids.

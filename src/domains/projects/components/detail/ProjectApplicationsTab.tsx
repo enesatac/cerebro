@@ -3,7 +3,7 @@ import { EmptyState } from '@/components/feedback/EmptyState';
 import { SectionCard } from '@/components/layout/SectionCard';
 import { ApplicationRefLink } from '@/domains/applications/components/ApplicationRefLink';
 import type { Project, ProjectApplicationImpact } from '../../types';
-import { APPLICATION_IMPACT_LABELS } from '../../utils/projectPresentation';
+import { MasterLabel } from '@/domains/master-data/components/MasterLabel';
 
 const columns: TableColumnDef<ProjectApplicationImpact>[] = [
   {
@@ -16,7 +16,7 @@ const columns: TableColumnDef<ProjectApplicationImpact>[] = [
     id: 'impact',
     header: 'Etki',
     width: 150,
-    cell: ({ row }) => APPLICATION_IMPACT_LABELS[row.original.impactType],
+    cell: ({ row }) => <MasterLabel list="applicationImpactTypes" code={row.original.impactType} />,
   },
   { id: 'description', header: 'Ne değişiyor', accessor: 'description' },
 ];

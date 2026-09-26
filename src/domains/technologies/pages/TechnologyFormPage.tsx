@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router';
 import { paths } from '@/app/router/paths';
 import { DeleteAction } from '@/components/actions/DeleteAction';
-import { SelectField, TextField } from '@/components/forms/fields';
+import { TextField } from '@/components/forms/fields';
 import { FormPage } from '@/components/forms/FormPage';
 import { QueryView } from '@/components/feedback/QueryView';
 import { SectionCard } from '@/components/layout/SectionCard';
@@ -17,20 +17,8 @@ import {
   toTechnologyInput,
   type TechnologyFormValues,
 } from '../schemas/technologyForm';
-import { TECHNOLOGY_CATEGORIES, TECHNOLOGY_STATUSES, type Technology } from '../types';
-import {
-  TECHNOLOGY_CATEGORY_LABELS,
-  TECHNOLOGY_STATUS_PRESENTATION,
-} from '../utils/technologyPresentation';
-
-const CATEGORY_OPTIONS = TECHNOLOGY_CATEGORIES.map((value) => ({
-  value,
-  label: TECHNOLOGY_CATEGORY_LABELS[value],
-}));
-const STATUS_OPTIONS = TECHNOLOGY_STATUSES.map((value) => ({
-  value,
-  label: TECHNOLOGY_STATUS_PRESENTATION[value].label,
-}));
+import { type Technology } from '../types';
+import { MasterSelectField } from '@/domains/master-data/components/MasterSelectField';
 
 function TechnologyForm({ technology }: { technology?: Technology }) {
   const navigate = useNavigate();
@@ -78,18 +66,18 @@ function TechnologyForm({ technology }: { technology?: Technology }) {
       <SectionCard title="Teknoloji">
         <div className="c-form-grid">
           <TextField control={control} name="name" label="Ad" required />
-          <SelectField
+          <MasterSelectField
             control={control}
             name="category"
             label="Kategori"
-            options={CATEGORY_OPTIONS}
+            list="technologyCategories"
             required
           />
-          <SelectField
+          <MasterSelectField
             control={control}
             name="status"
             label="Durum"
-            options={STATUS_OPTIONS}
+            list="technologyStatuses"
             required
             description="Yeni işler için tercih edilen, desteklenen, kullanımdan kalkan (geçiş planlayın) veya emekli (desteklenmiyor)."
           />

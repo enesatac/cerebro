@@ -1,8 +1,6 @@
 import { Table, type TableColumnDef } from '@takeoff-ui/react-spar';
 import { EntityLink } from '@/components/data-display/EntityLink';
-import { StatusBadge } from '@/components/data-display/StatusBadge';
 import { EmptyState } from '@/components/feedback/EmptyState';
-import { CRITICALITY_PRESENTATION } from '@/domains/shared/utils/presentation';
 import { formatDate } from '@/lib/dates';
 import type { AttentionItem } from '../types';
 import {
@@ -10,6 +8,7 @@ import {
   ATTENTION_SUBJECT_LABELS,
   attentionHref,
 } from '../utils/attentionPresentation';
+import { MasterBadge } from '@/domains/master-data/components/MasterBadge';
 
 /** "Application · Ownership gap"; risks and escalations are already named by their kind. */
 function subtitle(item: AttentionItem): string {
@@ -24,7 +23,7 @@ const columns: TableColumnDef<AttentionItem>[] = [
     id: 'severity',
     header: 'Önem derecesi',
     width: 105,
-    cell: ({ row }) => <StatusBadge {...CRITICALITY_PRESENTATION[row.original.severity]} />,
+    cell: ({ row }) => <MasterBadge list="criticalities" code={row.original.severity} />,
   },
   {
     id: 'subject',

@@ -5,37 +5,10 @@ import { RepeatableList } from '@/components/forms/RepeatableList';
 import { SectionCard } from '@/components/layout/SectionCard';
 import { useApplicationOptions } from '@/domains/applications/api/queries';
 import { useBusinessUnitOptions } from '@/domains/business-units/api/queries';
-import { CRITICALITY_PRESENTATION } from '@/domains/shared/utils/presentation';
-import {
-  CURRENCIES,
-  emptyImpact,
-  emptyMilestone,
-  type ProjectFormValues,
-} from '../../schemas/projectForm';
-import {
-  APPLICATION_IMPACT_TYPES,
-  CONFIDENTIALITY_LEVELS,
-  MILESTONE_STATUSES,
-  PROJECT_HEALTHS,
-  PROJECT_PHASES,
-  PROJECT_PRIORITIES,
-  PROJECT_STATUSES,
-  PROJECT_TYPES,
-} from '../../types';
-import {
-  APPLICATION_IMPACT_LABELS,
-  CONFIDENTIALITY_LABELS,
-  MILESTONE_STATUS_PRESENTATION,
-  PROJECT_HEALTH_PRESENTATION,
-  PROJECT_PHASE_LABELS,
-  PROJECT_STATUS_PRESENTATION,
-  PROJECT_TYPE_LABELS,
-} from '../../utils/projectPresentation';
+import { MasterSelectField } from '@/domains/master-data/components/MasterSelectField';
+import { emptyImpact, emptyMilestone, type ProjectFormValues } from '../../schemas/projectForm';
 
 type Props = { control: Control<ProjectFormValues> };
-
-const options = <T extends string>(values: readonly T[], label: (value: T) => string) =>
-  values.map((value) => ({ value, label: label(value) }));
 
 export function ProjectGeneralSection({ control }: Props) {
   const businessUnits = useBusinessUnitOptions();
@@ -64,40 +37,34 @@ export function ProjectGeneralSection({ control }: Props) {
           options={businessUnits}
           emptyLabel="Belirlenmemiş"
         />
-        <SelectField
-          control={control}
-          name="type"
-          label="Tür"
-          required
-          options={options(PROJECT_TYPES, (v) => PROJECT_TYPE_LABELS[v])}
-        />
-        <SelectField
+        <MasterSelectField control={control} name="type" label="Tür" required list="projectTypes" />
+        <MasterSelectField
           control={control}
           name="status"
           label="Durum"
           required
-          options={options(PROJECT_STATUSES, (v) => PROJECT_STATUS_PRESENTATION[v].label)}
+          list="projectStatuses"
         />
-        <SelectField
+        <MasterSelectField
           control={control}
           name="health"
           label="Sağlık"
           required
-          options={options(PROJECT_HEALTHS, (v) => PROJECT_HEALTH_PRESENTATION[v].label)}
+          list="projectHealths"
         />
-        <SelectField
+        <MasterSelectField
           control={control}
           name="priority"
           label="Öncelik"
           required
-          options={options(PROJECT_PRIORITIES, (v) => CRITICALITY_PRESENTATION[v].label)}
+          list="criticalities"
         />
-        <SelectField
+        <MasterSelectField
           control={control}
           name="confidentiality"
           label="Gizlilik"
           required
-          options={options(CONFIDENTIALITY_LEVELS, (v) => CONFIDENTIALITY_LABELS[v])}
+          list="confidentialityLevels"
         />
         <ChipsField control={control} name="tags" label="Etiketler" className="c-form-grid__wide" />
       </div>
@@ -121,12 +88,12 @@ export function ProjectProgressSection({ control }: Props) {
         <DateField control={control} name="plannedEndDate" label="Planlanan bitiş" />
         <DateField control={control} name="actualStartDate" label="Gerçekleşen başlangıç" />
         <DateField control={control} name="actualEndDate" label="Gerçekleşen bitiş" />
-        <SelectField
+        <MasterSelectField
           control={control}
           name="currentPhase"
           label="Mevcut aşama"
           required
-          options={options(PROJECT_PHASES, (v) => PROJECT_PHASE_LABELS[v])}
+          list="projectPhases"
         />
         <TextField
           control={control}
@@ -158,12 +125,12 @@ export function ProjectFinancialsSection({ control }: Props) {
       />
       {enabled && (
         <div className="c-form-grid c-form-grid--four c-form-stack">
-          <SelectField
+          <MasterSelectField
             control={control}
             name="currency"
             label="Para birimi"
             required
-            options={CURRENCIES.map((value) => ({ value, label: value }))}
+            list="currencies"
           />
           <TextField control={control} name="budget" label="Bütçe" type="number" />
           <TextField
@@ -203,12 +170,12 @@ export function ProjectApplicationsSection({ control }: Props) {
               required
               options={applications}
             />
-            <SelectField
+            <MasterSelectField
               control={control}
               name={`applicationImpacts.${index}.impactType`}
               label="Etki"
               required
-              options={options(APPLICATION_IMPACT_TYPES, (v) => APPLICATION_IMPACT_LABELS[v])}
+              list="applicationImpactTypes"
             />
             <TextField
               control={control}
@@ -247,12 +214,12 @@ export function ProjectMilestonesSection({ control }: Props) {
               label="Termin"
               required
             />
-            <SelectField
+            <MasterSelectField
               control={control}
               name={`milestones.${index}.status`}
               label="Durum"
               required
-              options={options(MILESTONE_STATUSES, (v) => MILESTONE_STATUS_PRESENTATION[v].label)}
+              list="milestoneStatuses"
             />
             <DateField
               control={control}

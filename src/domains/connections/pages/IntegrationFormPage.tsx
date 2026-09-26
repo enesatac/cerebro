@@ -18,11 +18,8 @@ import {
   toIntegrationInput,
   type IntegrationFormValues,
 } from '../schemas/connectionForms';
-import { INTEGRATION_FREQUENCIES, INTEGRATION_TYPES, type Integration } from '../types';
-import {
-  INTEGRATION_FREQUENCY_LABELS,
-  INTEGRATION_TYPE_LABELS,
-} from '../utils/connectionPresentation';
+import { type Integration } from '../types';
+import { MasterSelectField } from '@/domains/master-data/components/MasterSelectField';
 
 const TARGET_OPTIONS = [
   { value: 'application', label: 'Başka bir Cerebro uygulaması' },
@@ -81,25 +78,19 @@ function IntegrationForm({ integration }: { integration?: Integration }) {
       <SectionCard title="Entegrasyon">
         <div className="c-form-grid">
           <TextField control={control} name="name" label="Ad" required />
-          <SelectField
+          <MasterSelectField
             control={control}
             name="type"
             label="Tür"
             required
-            options={INTEGRATION_TYPES.map((value) => ({
-              value,
-              label: INTEGRATION_TYPE_LABELS[value],
-            }))}
+            list="integrationTypes"
           />
-          <SelectField
+          <MasterSelectField
             control={control}
             name="frequency"
             label="Sıklık"
             required
-            options={INTEGRATION_FREQUENCIES.map((value) => ({
-              value,
-              label: INTEGRATION_FREQUENCY_LABELS[value],
-            }))}
+            list="integrationFrequencies"
           />
         </div>
       </SectionCard>

@@ -3,22 +3,10 @@ import { SearchField } from '@/components/forms/SearchField';
 import { FilterSummary } from '@/components/layout/FilterSummary';
 import { Toolbar } from '@/components/layout/Toolbar';
 import { useBusinessUnits } from '@/domains/business-units/api/queries';
-import { CRITICALITIES } from '@/domains/shared/types';
-import { CRITICALITY_PRESENTATION } from '@/domains/shared/utils/presentation';
+import { useMasterData } from '@/domains/master-data/context';
 import { useTeams } from '@/domains/teams/api/queries';
 import { useTechnologies } from '@/domains/technologies/api/queries';
-import { APPLICATION_LIFECYCLES } from '../types';
-import { LIFECYCLE_PRESENTATION } from '../utils/applicationPresentation';
 import { countActiveFilters, type ApplicationListState } from '../utils/applicationListParams';
-
-const LIFECYCLE_OPTIONS = APPLICATION_LIFECYCLES.map((value) => ({
-  value,
-  label: LIFECYCLE_PRESENTATION[value].label,
-}));
-const CRITICALITY_OPTIONS = CRITICALITIES.map((value) => ({
-  value,
-  label: CRITICALITY_PRESENTATION[value].label,
-}));
 
 type FilterPatch = Partial<Omit<ApplicationListState, 'sort' | 'page' | 'pageSize'>>;
 
@@ -35,6 +23,7 @@ export function ApplicationFilters({
   onReset,
   resultSummary,
 }: ApplicationFiltersProps) {
+  const masterData = useMasterData();
   const teams = useTeams();
   const technologies = useTechnologies();
   const businessUnits = useBusinessUnits();
@@ -59,14 +48,14 @@ export function ApplicationFilters({
         label="Yaşam döngüsü"
         allLabel="Tüm yaşam döngüleri"
         value={state.lifecycle}
-        options={LIFECYCLE_OPTIONS}
+        options={masterData.options('applicationLifecycles', state.lifecycle)}
         onChange={(value) => onChange({ lifecycle: value as ApplicationListState['lifecycle'] })}
       />
       <FilterSelect
         label="Kritiklik"
         allLabel="Tüm kritiklik düzeyleri"
         value={state.criticality}
-        options={CRITICALITY_OPTIONS}
+        options={masterData.options('criticalities', state.criticality)}
         onChange={(value) =>
           onChange({ criticality: value as ApplicationListState['criticality'] })
         }

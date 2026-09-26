@@ -2,13 +2,11 @@ import type { ReactNode } from 'react';
 import { useParams } from 'react-router';
 import { paths } from '@/app/router/paths';
 import { CopyLinkButton } from '@/components/actions/CopyLinkButton';
-import { StatusBadge } from '@/components/data-display/StatusBadge';
 import { ErrorState } from '@/components/feedback/ErrorState';
 import { LoadingState } from '@/components/feedback/LoadingState';
 import { NotFoundState } from '@/components/feedback/NotFoundState';
 import { DetailTabs } from '@/components/layout/DetailTabs';
 import { PageHeader } from '@/components/layout/PageHeader';
-import { CRITICALITY_PRESENTATION } from '@/domains/shared/utils/presentation';
 import { AttentionNotices } from '@/domains/governance/components/AttentionNotices';
 import { useTabParam } from '@/hooks/useTabParam';
 import { isNotFoundError } from '@/lib/errors';
@@ -26,11 +24,6 @@ import { RisksEscalationsTab } from '../components/detail/RisksEscalationsTab';
 import { TechnicalTab } from '../components/detail/TechnicalTab';
 import type { Application } from '../types';
 import {
-  LIFECYCLE_PRESENTATION,
-  OPERATIONAL_STATUS_PRESENTATION,
-  APPLICATION_TYPE_LABELS,
-} from '../utils/applicationPresentation';
-import {
   APPLICATION_DETAIL_TAB_IDS,
   APPLICATION_DETAIL_TABS,
   type ApplicationDetailTab,
@@ -38,6 +31,8 @@ import {
 import { EditAction } from '@/domains/auth/components/RecordActions';
 import { Can } from '@/domains/auth/components/Can';
 import { ActionMenu } from '@/components/actions/ActionMenu';
+import { MasterBadge } from '@/domains/master-data/components/MasterBadge';
+import { MasterLabel } from '@/domains/master-data/components/MasterLabel';
 
 const TAB_CONTENT: Record<ApplicationDetailTab, (application: Application) => ReactNode> = {
   overview: (a) => <OverviewTab application={a} />,
@@ -99,19 +94,23 @@ export default function ApplicationDetailPage() {
         meta={
           <>
             <span className="c-code-chip">{application.code}</span>
-            <span className="c-muted">{APPLICATION_TYPE_LABELS[application.type]}</span>
-            <StatusBadge
+            <span className="c-muted">
+              <MasterLabel list="applicationTypes" code={application.type} />
+            </span>
+            <MasterBadge
+              list="applicationLifecycles"
+              code={application.lifecycle}
               context="Yaşam döngüsü:"
-              {...LIFECYCLE_PRESENTATION[application.lifecycle]}
             />
-            <StatusBadge
-              context="Kritiklik:"
-              {...CRITICALITY_PRESENTATION[application.criticality]}
-              label={`Kritiklik: ${CRITICALITY_PRESENTATION[application.criticality].label}`}
+            <MasterBadge
+              list="criticalities"
+              code={application.criticality}
+              format={(label) => `Kritiklik: ${label}`}
             />
-            <StatusBadge
+            <MasterBadge
+              list="operationalStatuses"
+              code={application.operationalStatus}
               context="Durum:"
-              {...OPERATIONAL_STATUS_PRESENTATION[application.operationalStatus]}
             />
           </>
         }

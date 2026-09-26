@@ -2,6 +2,20 @@
 
 Short records of decisions that shape the codebase. Newest first.
 
+## D-014 · Enumerated values are administrable master data (2026-09-26)
+
+Labels, descriptions, badge colours, order and active flags of every enumerated value (28 lists:
+lifecycles, statuses, types, categories, scales…) live in a `masterData` store edited at
+`/admin/master-data`, together with business units and people. Records keep storing stable codes.
+Lists that drive logic (workflow statuses, criticality scale, lifecycle) are **fixed**: admins may
+rename/recolour/reorder but not add or remove. Other lists are **extensible**: admins add their own
+values; their TypeScript type widens to `string`. Codes the logic depends on are `systemCodes` and
+can never be deleted or deactivated. Custom values in use can only be deactivated — inactive values
+stay readable on records and in edit forms but are not offered for new input. Writes are validated
+server-side against the lists (`assertCodeChecks`). The UI reads the lists once per session via
+`MasterDataProvider` (synchronous `useMasterData()`); saving invalidates the query so changes appear
+everywhere immediately. Permission: `masterData:manage` (admin). Dev storage key: `cerebro.demo-db.v3`.
+
 ## D-013 · Turkish user interface, English code (2026-09-26)
 
 Everything a user sees — labels, messages, validation, toasts and mock data — is Turkish; code,

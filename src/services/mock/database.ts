@@ -1,5 +1,6 @@
 import { applications } from './data/applications';
 import { businessUnits } from './data/businessUnits';
+import { masterData } from './data/masterData';
 import { dependencies, integrations } from './data/connections';
 import { decisions, escalations, risks } from './data/operations';
 import { people } from './data/people';
@@ -22,6 +23,7 @@ export const seedTables = {
   escalations,
   decisions,
   users,
+  masterData,
 };
 
 export type MockDatabase = typeof seedTables;

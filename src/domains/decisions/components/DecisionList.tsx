@@ -1,14 +1,13 @@
 import { Accordion } from '@takeoff-ui/react-spar';
 import { DetailList } from '@/components/data-display/DetailList';
-import { StatusBadge } from '@/components/data-display/StatusBadge';
 import { EmptyState } from '@/components/feedback/EmptyState';
 import { usePeopleById } from '@/domains/people/api/queries';
 import { formatDate } from '@/lib/dates';
 import type { Decision } from '../types';
-import { DECISION_STATUS_PRESENTATION } from '../utils/decisionPresentation';
 import { Link } from 'react-router';
 import { paths } from '@/app/router/paths';
 import { usePermission } from '@/domains/auth/api/queries';
+import { MasterBadge } from '@/domains/master-data/components/MasterBadge';
 
 interface DecisionListProps {
   decisions: Decision[];
@@ -39,8 +38,9 @@ export function DecisionList({ decisions, emptyTitle }: DecisionListProps) {
               <span className="c-decision-list__heading">
                 <span className="c-decision-list__title">{decision.title}</span>
                 <span className="c-decision-list__meta">
-                  <StatusBadge
-                    {...DECISION_STATUS_PRESENTATION[decision.status]}
+                  <MasterBadge
+                    list="decisionStatuses"
+                    code={decision.status}
                     context="Karar durumu:"
                   />
                   <span className="c-muted">{formatDate(decision.decisionDate)}</span>

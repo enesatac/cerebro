@@ -1,19 +1,15 @@
 import { Table, type TableColumnDef } from '@takeoff-ui/react-spar';
-import { StatusBadge } from '@/components/data-display/StatusBadge';
 import { EmptyState } from '@/components/feedback/EmptyState';
 import { QueryView } from '@/components/feedback/QueryView';
 import { SectionCard } from '@/components/layout/SectionCard';
 import { useProjectsByApplication } from '@/domains/projects/api/queries';
 import type { ApplicationProjectLink } from '@/domains/projects/types';
-import {
-  APPLICATION_IMPACT_LABELS,
-  PROJECT_HEALTH_PRESENTATION,
-  PROJECT_STATUS_PRESENTATION,
-} from '@/domains/projects/utils/projectPresentation';
 import { formatDate } from '@/lib/dates';
 import type { Application } from '../../types';
 import { paths } from '@/app/router/paths';
 import { EntityLink } from '@/components/data-display/EntityLink';
+import { MasterBadge } from '@/domains/master-data/components/MasterBadge';
+import { MasterLabel } from '@/domains/master-data/components/MasterLabel';
 
 const columns: TableColumnDef<ApplicationProjectLink>[] = [
   {
@@ -33,7 +29,9 @@ const columns: TableColumnDef<ApplicationProjectLink>[] = [
     header: 'Etki',
     cell: ({ row }) => (
       <span className="c-cell-stack">
-        <span>{APPLICATION_IMPACT_LABELS[row.original.impact.impactType]}</span>
+        <span>
+          <MasterLabel list="applicationImpactTypes" code={row.original.impact.impactType} />
+        </span>
         <span className="c-muted c-cell-stack__secondary">{row.original.impact.description}</span>
       </span>
     ),
@@ -41,16 +39,12 @@ const columns: TableColumnDef<ApplicationProjectLink>[] = [
   {
     id: 'status',
     header: 'Durum',
-    cell: ({ row }) => (
-      <StatusBadge {...PROJECT_STATUS_PRESENTATION[row.original.project.status]} />
-    ),
+    cell: ({ row }) => <MasterBadge list="projectStatuses" code={row.original.project.status} />,
   },
   {
     id: 'health',
     header: 'Sağlık',
-    cell: ({ row }) => (
-      <StatusBadge {...PROJECT_HEALTH_PRESENTATION[row.original.project.health]} />
-    ),
+    cell: ({ row }) => <MasterBadge list="projectHealths" code={row.original.project.health} />,
   },
   {
     id: 'manager',

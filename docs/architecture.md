@@ -80,7 +80,10 @@ No Redux or Zustand. Adding a global client store requires a decision record.
 - Custom CSS (`styles/global.css`) covers layout and composition only and uses Takeoff tokens.
   Custom components exist only where Takeoff has no equivalent: app shell/sidebar navigation,
   `PageHeader`, `DetailList`, `EmptyState`, `Toolbar`.
-- Status → label/badge variant mappings are central (`*Presentation.ts`); badges always show text.
+- Labels, badge colours, order and options of enumerated values come from **master data**
+  (`domains/master-data`: `MasterBadge`, `MasterLabel`, `MasterSelectField`, `useMasterData()`);
+  badges always show text. Only app-internal values (user roles, account status) keep a static
+  `*Presentation.ts` mapping.
 - List pages use Takeoff `Table` in `manual` mode with controlled sorting and pagination.
 - Detail pages use Takeoff `Tabs` synced to `?tab=`; each tab loads its own data lazily.
 
@@ -137,11 +140,24 @@ teams and technologies.
 - URLs must be http(s); free text next to environments/integrations is rejected when it looks like
   a credential (`looksLikeSecret`).
 
+## Master data
+
+- Catalogue of lists: `domains/master-data/catalog.ts` (label, group, `systemCodes`, `extensible`,
+  `colored`, where used). Seed items: `services/mock/data/masterData.ts`.
+- Repository: `MasterDataRepository` (`listAll`, `getUsage`, `update(key, items)`), plus writes on
+  `people` and `businessUnits` with deletion impact (referenced people / units in use are blocked).
+- Reading: `MasterDataProvider` (inside the authenticated shell) → `useMasterData()` with `label`,
+  `badge`, `options(key, keep)`, `items`. Components: `MasterBadge`, `MasterLabel`,
+  `MasterSelectField` (keeps an inactive current value selectable).
+- Page: `/admin/master-data?section=<list key | business-units | people>` — searchable navigation,
+  a value list editor (reorder, rename, recolour, (de)activate, add/remove custom values, usage
+  counts) and table + dialog editors for business units and people.
+
 ## Development persistence
 
 The mock database and session are persisted in `localStorage` in the browser
-(`cerebro.demo-db.v2`, `cerebro.demo-session`) so records survive a reload. Tests use in-memory
-stores. To reset the demo data, clear the site's storage (or remove `cerebro.demo-db.v2`).
+(`cerebro.demo-db.v3`, `cerebro.demo-session`) so records survive a reload. Tests use in-memory
+stores. To reset the demo data, clear the site's storage (or remove `cerebro.demo-db.v3`).
 
 ## Security posture (frontend)
 

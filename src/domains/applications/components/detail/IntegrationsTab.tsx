@@ -4,16 +4,13 @@ import { QueryView } from '@/components/feedback/QueryView';
 import { SectionCard } from '@/components/layout/SectionCard';
 import { useApplicationIntegrations } from '@/domains/connections/api/queries';
 import type { Integration, IntegrationDirection } from '@/domains/connections/types';
-import {
-  INTEGRATION_FREQUENCY_LABELS,
-  INTEGRATION_TYPE_LABELS,
-} from '@/domains/connections/utils/connectionPresentation';
 import type { Application } from '../../types';
 import { ApplicationRefLink } from '../ApplicationRefLink';
 import { paths } from '@/app/router/paths';
 import { editColumn } from '@/components/data-display/editColumn';
 import { usePermission } from '@/domains/auth/api/queries';
 import { SmallCreateAction } from '@/domains/auth/components/RecordActions';
+import { MasterLabel } from '@/domains/master-data/components/MasterLabel';
 
 function Counterpart({
   integration,
@@ -50,11 +47,17 @@ function columns(direction: IntegrationDirection, canEdit: boolean): TableColumn
       header: direction === 'outbound' ? 'Hedef' : 'Kaynak',
       cell: ({ row }) => <Counterpart integration={row.original} direction={direction} />,
     },
-    { id: 'type', header: 'Tür', cell: ({ row }) => INTEGRATION_TYPE_LABELS[row.original.type] },
+    {
+      id: 'type',
+      header: 'Tür',
+      cell: ({ row }) => <MasterLabel list="integrationTypes" code={row.original.type} />,
+    },
     {
       id: 'frequency',
       header: 'Sıklık',
-      cell: ({ row }) => INTEGRATION_FREQUENCY_LABELS[row.original.frequency],
+      cell: ({ row }) => (
+        <MasterLabel list="integrationFrequencies" code={row.original.frequency} />
+      ),
     },
     { id: 'data', header: 'Aktarılan veri', accessor: 'dataExchanged' },
     ...(canEdit

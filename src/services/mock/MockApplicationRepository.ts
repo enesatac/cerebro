@@ -22,6 +22,7 @@ import {
   type SortValue,
 } from './query';
 import { removeRow, replaceRow, type WriteKit } from './writeKit';
+import { assertCodeChecks, codeChecks } from './MockMasterDataRepository';
 
 export function toApplicationListItem(
   application: Application,
@@ -102,6 +103,12 @@ export class MockApplicationRepository implements ApplicationRepository {
       excludeId,
       `"${input.code}" kodu başka bir uygulama tarafından kullanılıyor.`,
       'code',
+    );
+    const previous = excludeId ? db.applications.find((a) => a.id === excludeId) : undefined;
+    assertCodeChecks(
+      db,
+      codeChecks.application(input),
+      previous ? codeChecks.application(previous) : [],
     );
     kit.assertRefs([input.businessUnitId], db.businessUnits, 'iş birimi', 'businessUnitId');
     kit.assertRefs(

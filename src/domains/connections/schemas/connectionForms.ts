@@ -8,9 +8,6 @@ import {
   secretFreeText,
 } from '@/lib/validation';
 import {
-  DEPENDENCY_TYPES,
-  INTEGRATION_FREQUENCIES,
-  INTEGRATION_TYPES,
   type ApplicationDependency,
   type DependencyInput,
   type Integration,
@@ -21,7 +18,7 @@ export const dependencyFormSchema = z
   .object({
     sourceApplicationId: requiredChoice('bağımlı uygulamayı'),
     targetApplicationId: requiredChoice('bağımlı olunan uygulamayı'),
-    type: enumChoice(DEPENDENCY_TYPES, 'bir tür'),
+    type: requiredChoice('bir tür'),
     criticality: enumChoice(CRITICALITIES, 'bir etki düzeyi'),
     description: optionalText('Açıklama', 500),
   })
@@ -55,8 +52,8 @@ export const INTEGRATION_TARGET_KINDS = ['application', 'external'] as const;
 export const integrationFormSchema = z
   .object({
     name: requiredText('Ad', 120),
-    type: enumChoice(INTEGRATION_TYPES, 'bir tür'),
-    frequency: enumChoice(INTEGRATION_FREQUENCIES, 'bir sıklık'),
+    type: requiredChoice('bir tür'),
+    frequency: requiredChoice('bir sıklık'),
     fromApplicationId: requiredChoice('başlatan uygulamayı'),
     targetKind: z.enum(INTEGRATION_TARGET_KINDS),
     toApplicationId: z.string(),

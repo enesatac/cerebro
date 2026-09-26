@@ -10,8 +10,6 @@ import { QueryView } from '@/components/feedback/QueryView';
 import { SectionCard } from '@/components/layout/SectionCard';
 import { Can } from '@/domains/auth/components/Can';
 import { usePersonOptions } from '@/domains/people/api/queries';
-import { CRITICALITIES } from '@/domains/shared/types';
-import { CRITICALITY_PRESENTATION } from '@/domains/shared/utils/presentation';
 import { useRepositories } from '@/services/RepositoryContext';
 import { useDeleteRisk, useSaveRisk } from '../api/mutations';
 import { useRisk } from '../api/queries';
@@ -22,18 +20,9 @@ import {
   toRiskInput,
   type RiskFormValues,
 } from '../schemas/riskForm';
-import { RISK_CATEGORIES, RISK_LIKELIHOODS, RISK_STATUSES, type Risk } from '../types';
+import { RISK_LIKELIHOODS, type Risk } from '../types';
 import { readRelatedPrefill, relatedReturnPath } from '../utils/relatedPrefill';
-import { RISK_CATEGORY_LABELS, RISK_STATUS_PRESENTATION } from '../utils/riskPresentation';
-
-const LIKELIHOOD_OPTIONS = RISK_LIKELIHOODS.map((value) => ({
-  value,
-  label: CRITICALITY_PRESENTATION[value].label,
-}));
-const SEVERITY_OPTIONS = CRITICALITIES.map((value) => ({
-  value,
-  label: CRITICALITY_PRESENTATION[value].label,
-}));
+import { MasterSelectField } from '@/domains/master-data/components/MasterSelectField';
 
 function RiskForm({ risk }: { risk?: Risk }) {
   const navigate = useNavigate();
@@ -103,50 +92,46 @@ function RiskForm({ risk }: { risk?: Risk }) {
             rows={3}
             className="c-form-grid__wide"
           />
-          <SelectField
+          <MasterSelectField
             control={control}
             name="category"
             label="Kategori"
             required
-            options={RISK_CATEGORIES.map((value) => ({
-              value,
-              label: RISK_CATEGORY_LABELS[value],
-            }))}
+            list="riskCategories"
           />
-          <SelectField
+          <MasterSelectField
             control={control}
             name="status"
             label="Durum"
             required
-            options={RISK_STATUSES.map((value) => ({
-              value,
-              label: RISK_STATUS_PRESENTATION[value].label,
-            }))}
+            list="riskStatuses"
           />
         </div>
       </SectionCard>
       <SectionCard title="Değerlendirme">
         <div className="c-form-grid c-form-grid--three">
-          <SelectField
+          <MasterSelectField
             control={control}
             name="probability"
             label="Olasılık"
             required
-            options={LIKELIHOOD_OPTIONS}
+            list="criticalities"
+            only={RISK_LIKELIHOODS}
           />
-          <SelectField
+          <MasterSelectField
             control={control}
             name="impact"
             label="Etki"
             required
-            options={LIKELIHOOD_OPTIONS}
+            list="criticalities"
+            only={RISK_LIKELIHOODS}
           />
-          <SelectField
+          <MasterSelectField
             control={control}
             name="severity"
             label="Önem derecesi"
             required
-            options={SEVERITY_OPTIONS}
+            list="criticalities"
             description="Önceliklendirmede kullanılan genel derece."
           />
         </div>

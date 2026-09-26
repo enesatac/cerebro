@@ -17,7 +17,8 @@ export const RISK_CATEGORIES = [
   'financial',
   'vendor',
 ] as const;
-export type RiskCategory = (typeof RISK_CATEGORIES)[number];
+/** Code from an administrable master data list; `RISK_CATEGORIES` are the system values. */
+export type RiskCategory = string;
 
 export const RISK_LIKELIHOODS = ['low', 'medium', 'high'] as const;
 export type RiskLikelihood = (typeof RISK_LIKELIHOODS)[number];

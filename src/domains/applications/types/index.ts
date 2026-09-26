@@ -36,7 +36,8 @@ export const APPLICATION_TYPES = [
   'mobile-backend',
   'saas-product',
 ] as const;
-export type ApplicationType = (typeof APPLICATION_TYPES)[number];
+/** Code from an administrable master data list; `APPLICATION_TYPES` are the system values. */
+export type ApplicationType = string;
 
 /** Current operational condition — independent of lifecycle. */
 export const OPERATIONAL_STATUSES = ['operational', 'degraded', 'outage', 'not-deployed'] as const;
@@ -49,7 +50,8 @@ export const HOSTING_MODELS = [
   'hybrid',
   'saas',
 ] as const;
-export type HostingModel = (typeof HOSTING_MODELS)[number];
+/** Code from an administrable master data list; `HOSTING_MODELS` are the system values. */
+export type HostingModel = string;
 
 export interface Hosting {
   model: HostingModel;
@@ -81,7 +83,8 @@ export const SOURCE_REPOSITORY_TYPES = [
   'library',
   'other',
 ] as const;
-export type SourceRepositoryType = (typeof SOURCE_REPOSITORY_TYPES)[number];
+/** Code from an administrable master data list; `SOURCE_REPOSITORY_TYPES` are the system values. */
+export type SourceRepositoryType = string;
 
 export interface SourceRepository {
   id: EntityId;
@@ -100,7 +103,8 @@ export const ENVIRONMENT_TYPES = [
   'production',
   'disaster-recovery',
 ] as const;
-export type EnvironmentType = (typeof ENVIRONMENT_TYPES)[number];
+/** Code from an administrable master data list; `ENVIRONMENT_TYPES` are the system values. */
+export type EnvironmentType = string;
 
 export const ENVIRONMENT_STATUSES = [
   'available',
@@ -108,7 +112,8 @@ export const ENVIRONMENT_STATUSES = [
   'unavailable',
   'decommissioned',
 ] as const;
-export type EnvironmentStatus = (typeof ENVIRONMENT_STATUSES)[number];
+/** Code from an administrable master data list; `ENVIRONMENT_STATUSES` are the system values. */
+export type EnvironmentStatus = string;
 
 /** A deployment environment. Never holds credentials — URLs and notes only. */
 export interface Environment {

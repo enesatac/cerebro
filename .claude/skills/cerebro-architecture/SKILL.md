@@ -22,7 +22,7 @@ src/
 │   └── <domain>/             # applications, projects, teams, people, technologies, ...
 │       ├── types/            # domain types (entities, value objects, read models, queries)
 │       ├── api/              # <Domain>Repository interface + TanStack Query hooks + query keys
-│       ├── utils/            # pure functions: presentation mappings, filters, derivations
+│       ├── utils/            # pure functions: filters, derivations
 │       ├── schemas/          # Zod schemas (forms, input validation)
 │       ├── components/       # domain UI (used by this domain's pages or other domains' pages)
 │       └── pages/            # route-level components (lazy-loaded)
@@ -92,7 +92,9 @@ Redux is not used.
 - Split a component when it owns more than one of: querying, transformation, form state,
   complex presentation, multiple independent sections.
 - Pure derivations live in `utils/` and are unit-tested.
-- Presentation mappings (status → label/badge variant) live in `utils/*Presentation.ts`.
+- Labels/colours/options of enumerated values live in master data (`domains/master-data`), editable
+  by admins; a new enumerated field needs a list in `catalog.ts`, seed items and usage counting in
+  `MockMasterDataRepository`.
 
 ## 6. Naming
 

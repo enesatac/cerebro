@@ -3,7 +3,7 @@ import { ExternalLink } from '@/components/data-display/ExternalLink';
 import { EmptyState } from '@/components/feedback/EmptyState';
 import { SectionCard } from '@/components/layout/SectionCard';
 import type { Application, SourceRepository } from '../../types';
-import { SOURCE_REPOSITORY_TYPE_LABELS } from '../../utils/applicationPresentation';
+import { MasterLabel } from '@/domains/master-data/components/MasterLabel';
 
 const columns: TableColumnDef<SourceRepository>[] = [
   {
@@ -14,7 +14,7 @@ const columns: TableColumnDef<SourceRepository>[] = [
   {
     id: 'type',
     header: 'Tür',
-    cell: ({ row }) => SOURCE_REPOSITORY_TYPE_LABELS[row.original.type],
+    cell: ({ row }) => <MasterLabel list="sourceRepositoryTypes" code={row.original.type} />,
   },
   {
     id: 'branch',

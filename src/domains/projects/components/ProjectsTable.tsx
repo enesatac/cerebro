@@ -2,18 +2,13 @@ import { Table, type TableColumnDef } from '@takeoff-ui/react-spar';
 import type { ReactNode } from 'react';
 import { paths } from '@/app/router/paths';
 import { EntityLink } from '@/components/data-display/EntityLink';
-import { StatusBadge } from '@/components/data-display/StatusBadge';
 import type { PagedResult, SortSpec } from '@/domains/shared/types';
-import { CRITICALITY_PRESENTATION } from '@/domains/shared/utils/presentation';
 import { formatDate } from '@/lib/dates';
 import { PROJECT_SORT_FIELDS, type ProjectListItem, type ProjectSortField } from '../types';
-import {
-  PROJECT_HEALTH_PRESENTATION,
-  PROJECT_PHASE_LABELS,
-  PROJECT_STATUS_PRESENTATION,
-} from '../utils/projectPresentation';
 import { PROJECT_PAGE_SIZES } from '../utils/projectListParams';
 import { PercentMeter } from '@/components/data-display/PercentMeter';
+import { MasterBadge } from '@/domains/master-data/components/MasterBadge';
+import { MasterLabel } from '@/domains/master-data/components/MasterLabel';
 
 const isSortField = (id: string): id is ProjectSortField =>
   (PROJECT_SORT_FIELDS as readonly string[]).includes(id);
@@ -38,7 +33,7 @@ const columns: TableColumnDef<ProjectListItem>[] = [
     accessor: 'status',
     sortable: true,
     width: 115,
-    cell: ({ row }) => <StatusBadge {...PROJECT_STATUS_PRESENTATION[row.original.status]} />,
+    cell: ({ row }) => <MasterBadge list="projectStatuses" code={row.original.status} />,
   },
   {
     id: 'health',
@@ -46,7 +41,7 @@ const columns: TableColumnDef<ProjectListItem>[] = [
     accessor: 'health',
     sortable: true,
     width: 105,
-    cell: ({ row }) => <StatusBadge {...PROJECT_HEALTH_PRESENTATION[row.original.health]} />,
+    cell: ({ row }) => <MasterBadge list="projectHealths" code={row.original.health} />,
   },
   {
     id: 'priority',
@@ -54,7 +49,7 @@ const columns: TableColumnDef<ProjectListItem>[] = [
     accessor: 'priority',
     sortable: true,
     width: 100,
-    cell: ({ row }) => <StatusBadge {...CRITICALITY_PRESENTATION[row.original.priority]} />,
+    cell: ({ row }) => <MasterBadge list="criticalities" code={row.original.priority} />,
   },
   {
     id: 'progress',
@@ -67,7 +62,7 @@ const columns: TableColumnDef<ProjectListItem>[] = [
           label={`${row.original.name} ilerleme`}
         />
         <span className="c-muted c-cell-stack__secondary">
-          {PROJECT_PHASE_LABELS[row.original.currentPhase]}
+          <MasterLabel list="projectPhases" code={row.original.currentPhase} />
         </span>
       </span>
     ),

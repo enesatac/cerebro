@@ -10,13 +10,13 @@ import { FilterSelect } from '@/components/forms/FilterSelect';
 import { FilterSummary } from '@/components/layout/FilterSummary';
 import { Toolbar } from '@/components/layout/Toolbar';
 import { PercentMeter } from '@/components/data-display/PercentMeter';
-import { CRITICALITY_PRESENTATION } from '@/domains/shared/utils/presentation';
 import { downloadCsv, toCsv } from '@/lib/csv';
 import { toIsoDate } from '@/lib/dates';
 import { pluralize } from '@/lib/format';
 import { oneOf } from '@/lib/urlParams';
 import type { ApplicationHealthRow } from '../types';
 import { reviewStateLabel, reviewStatePresentation } from '../utils/reviewPresentation';
+import { MasterBadge } from '@/domains/master-data/components/MasterBadge';
 
 /** Scores below this are flagged; tuned so one missing required rule falls under it. */
 export const COMPLETENESS_TARGET = 90;
@@ -53,7 +53,7 @@ const columns: TableColumnDef<ApplicationHealthRow>[] = [
     id: 'criticality',
     header: 'Kritiklik',
     width: 110,
-    cell: ({ row }) => <StatusBadge {...CRITICALITY_PRESENTATION[row.original.criticality]} />,
+    cell: ({ row }) => <MasterBadge list="criticalities" code={row.original.criticality} />,
   },
   {
     id: 'completeness',

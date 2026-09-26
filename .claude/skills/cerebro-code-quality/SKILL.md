@@ -21,7 +21,8 @@ description: Cerebro code-quality bar and completion gate — strict TypeScript,
 - Props are typed interfaces named `<Component>Props`.
 - Stable `key`s from entity ids — never array indices for entity lists.
 - No business logic inside JSX — derive in `utils/` (pure, tested) or a hook.
-- No inline status → colour/label logic; use `*Presentation.ts` mappings.
+- No inline status → colour/label logic or hard-coded option lists; use master data
+  (`MasterBadge`, `MasterLabel`, `MasterSelectField`, `useMasterData`).
 - No duplicated visual patterns: reuse `PageHeader`, `DetailList`, `EmptyState`, `ErrorState`,
   `LoadingState`, `EntityLink`, `Toolbar`.
 
@@ -44,7 +45,7 @@ description: Cerebro code-quality bar and completion gate — strict TypeScript,
 
 Prioritise, in order:
 
-1. Domain utils (filters, sorting, derivations, completeness, presentation mappings).
+1. Domain utils (filters, sorting, derivations, completeness, master data rules).
 2. Zod schemas (valid + each invalid branch that matters).
 3. Repository behaviour (query, filter, paging, not-found).
 4. Mock data integrity (all references resolve).

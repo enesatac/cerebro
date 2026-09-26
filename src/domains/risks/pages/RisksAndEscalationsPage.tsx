@@ -9,12 +9,8 @@ import { Toolbar } from '@/components/layout/Toolbar';
 import { useEscalations } from '@/domains/escalations/api/queries';
 import { EscalationTable } from '@/domains/escalations/components/EscalationTable';
 import { ESCALATION_STATUSES } from '@/domains/escalations/types';
-import {
-  ESCALATION_STATUS_PRESENTATION,
-  isActiveEscalation,
-} from '@/domains/escalations/utils/escalationPresentation';
+import { isActiveEscalation } from '@/domains/escalations/utils/escalationPresentation';
 import { CRITICALITIES } from '@/domains/shared/types';
-import { CRITICALITY_PRESENTATION } from '@/domains/shared/utils/presentation';
 import { useTabParam } from '@/hooks/useTabParam';
 import { pluralize } from '@/lib/format';
 import { oneOf } from '@/lib/urlParams';
@@ -22,19 +18,16 @@ import { useRisks } from '../api/queries';
 import { RiskTable } from '../components/RiskTable';
 import { RISK_STATUSES } from '../types';
 import { prioritise } from '../utils/prioritise';
-import { isActiveRisk, RISK_STATUS_PRESENTATION } from '../utils/riskPresentation';
+import { isActiveRisk } from '../utils/riskPresentation';
 import { paths } from '@/app/router/paths';
 import { CreateAction } from '@/domains/auth/components/RecordActions';
+import { useMasterData } from '@/domains/master-data/context';
 
 const TABS = [
   { id: 'escalations', label: 'Eskalasyonlar' },
   { id: 'risks', label: 'Riskler' },
 ] as const;
 const TAB_IDS = TABS.map((tab) => tab.id);
-const SEVERITY_OPTIONS = CRITICALITIES.map((value) => ({
-  value,
-  label: CRITICALITY_PRESENTATION[value].label,
-}));
 const ALL_FILTER = {};
 
 /** Severity + status filters shared by both registers; status options differ per register. */
@@ -58,6 +51,7 @@ function useRegisterFilters<S extends string>(statuses: readonly S[]) {
 }
 
 function EscalationRegister() {
+  const masterData = useMasterData();
   const query = useEscalations(ALL_FILTER);
   const filters = useRegisterFilters(ESCALATION_STATUSES);
   return (
@@ -91,17 +85,14 @@ function EscalationRegister() {
                 label="Durum"
                 allLabel="Tüm durumlar"
                 value={filters.status}
-                options={ESCALATION_STATUSES.map((value) => ({
-                  value,
-                  label: ESCALATION_STATUS_PRESENTATION[value].label,
-                }))}
+                options={masterData.options('escalationStatuses', filters.status)}
                 onChange={(value) => filters.set('status', value)}
               />
               <FilterSelect
                 label="Önem derecesi"
                 allLabel="Tüm önem dereceleri"
                 value={filters.severity}
-                options={SEVERITY_OPTIONS}
+                options={masterData.options('criticalities', filters.severity)}
                 onChange={(value) => filters.set('severity', value)}
               />
             </Toolbar>
@@ -119,6 +110,7 @@ function EscalationRegister() {
 }
 
 function RiskRegister() {
+  const masterData = useMasterData();
   const query = useRisks(ALL_FILTER);
   const filters = useRegisterFilters(RISK_STATUSES);
   return (
@@ -148,17 +140,14 @@ function RiskRegister() {
                 label="Durum"
                 allLabel="Tüm durumlar"
                 value={filters.status}
-                options={RISK_STATUSES.map((value) => ({
-                  value,
-                  label: RISK_STATUS_PRESENTATION[value].label,
-                }))}
+                options={masterData.options('riskStatuses', filters.status)}
                 onChange={(value) => filters.set('status', value)}
               />
               <FilterSelect
                 label="Önem derecesi"
                 allLabel="Tüm önem dereceleri"
                 value={filters.severity}
-                options={SEVERITY_OPTIONS}
+                options={masterData.options('criticalities', filters.severity)}
                 onChange={(value) => filters.set('severity', value)}
               />
             </Toolbar>

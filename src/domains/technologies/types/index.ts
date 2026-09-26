@@ -12,7 +12,8 @@ export const TECHNOLOGY_CATEGORIES = [
   'monitoring',
   'testing',
 ] as const;
-export type TechnologyCategory = (typeof TECHNOLOGY_CATEGORIES)[number];
+/** Code from an administrable master data list; `TECHNOLOGY_CATEGORIES` are the system values. */
+export type TechnologyCategory = string;
 
 /** The layer in which an application uses a technology (same vocabulary as categories). */
 export type TechnologyLayer = TechnologyCategory;

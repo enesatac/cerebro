@@ -58,14 +58,14 @@ export const requiredUrl = (label: string) =>
     .string()
     .trim()
     .min(1, `${label} zorunludur.`)
-    .refine(isHttpUrl, 'Enter a full http(s) address, e.g. https://…');
+    .refine(isHttpUrl, 'Tam bir http(s) adresi girin, ör. https://…');
 
 export const optionalUrl = z
   .string()
   .trim()
   .refine(
     (value) => value === '' || isHttpUrl(value),
-    'Enter a full http(s) address, e.g. https://…',
+    'Tam bir http(s) adresi girin, ör. https://…',
   );
 
 export const email = (label: string) =>

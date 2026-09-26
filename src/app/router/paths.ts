@@ -69,6 +69,9 @@ export const paths = {
   },
   reports: () => '/reports',
   admin: {
+    /** `section` is a master data list key, `business-units` or `people`. */
+    masterData: (section?: string) =>
+      section ? `/admin/master-data?section=${encodeURIComponent(section)}` : '/admin/master-data',
     users: () => '/admin/users',
     createUser: () => '/admin/users/new',
     editUser: (userId: string) => `/admin/users/${id(userId)}/edit`,

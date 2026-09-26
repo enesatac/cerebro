@@ -1,15 +1,10 @@
 import { z } from 'zod';
-import { enumChoice, optionalText, requiredText } from '@/lib/validation';
-import {
-  TECHNOLOGY_CATEGORIES,
-  TECHNOLOGY_STATUSES,
-  type Technology,
-  type TechnologyInput,
-} from '../types';
+import { enumChoice, optionalText, requiredChoice, requiredText } from '@/lib/validation';
+import { TECHNOLOGY_STATUSES, type Technology, type TechnologyInput } from '../types';
 
 export const technologyFormSchema = z.object({
   name: requiredText('Ad', 80),
-  category: enumChoice(TECHNOLOGY_CATEGORIES, 'bir kategori'),
+  category: requiredChoice('bir kategori'),
   status: enumChoice(TECHNOLOGY_STATUSES, 'bir durum'),
   description: optionalText('Açıklama', 500),
 });

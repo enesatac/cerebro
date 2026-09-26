@@ -2,7 +2,7 @@ import { Badge, Table, type TableColumnDef } from '@takeoff-ui/react-spar';
 import { ExternalLink } from '@/components/data-display/ExternalLink';
 import { EmptyState } from '@/components/feedback/EmptyState';
 import type { DocumentationLink } from '../types';
-import { DOCUMENTATION_LINK_TYPE_LABELS } from '../utils/presentation';
+import { MasterLabel } from '@/domains/master-data/components/MasterLabel';
 
 const columns: TableColumnDef<DocumentationLink>[] = [
   {
@@ -15,7 +15,7 @@ const columns: TableColumnDef<DocumentationLink>[] = [
     header: 'Tür',
     cell: ({ row }) => (
       <Badge variant="neutral" appearance="outlined" size="small">
-        {DOCUMENTATION_LINK_TYPE_LABELS[row.original.type]}
+        <MasterLabel list="documentationLinkTypes" code={row.original.type} />
       </Badge>
     ),
   },

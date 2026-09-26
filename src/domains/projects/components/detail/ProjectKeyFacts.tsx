@@ -6,11 +6,12 @@ import type { StakeholderRole } from '@/domains/shared/types';
 import { findPrimaryRoleHolder } from '@/domains/shared/utils/roles';
 import { formatDate } from '@/lib/dates';
 import type { Project } from '../../types';
-import { PROJECT_PHASE_LABELS } from '../../utils/projectPresentation';
 import { PercentMeter } from '@/components/data-display/PercentMeter';
+import { useMasterData } from '@/domains/master-data/context';
 
 /** Who leads the project, when it lands and how far along it is. */
 export function ProjectKeyFacts({ project }: { project: Project }) {
+  const masterData = useMasterData();
   const people = usePeopleById();
   const businessUnits = useBusinessUnitsById();
   const person = (role: StakeholderRole) => {
@@ -38,7 +39,7 @@ export function ProjectKeyFacts({ project }: { project: Project }) {
             value: `${formatDate(timeline.plannedStartDate)} – ${formatDate(timeline.plannedEndDate)}`,
           },
           {
-            label: `İlerleme · ${PROJECT_PHASE_LABELS[project.currentPhase]}`,
+            label: `İlerleme · ${masterData.label('projectPhases', project.currentPhase)}`,
             value: (
               <PercentMeter value={project.progressPercentage} label={`${project.name} ilerleme`} />
             ),

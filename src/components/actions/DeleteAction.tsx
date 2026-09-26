@@ -77,9 +77,20 @@ export function DeleteAction({
           {impact.isPending ? (
             <p className="c-muted">Bu kayda bağlı diğer kayıtlar kontrol ediliyor…</p>
           ) : impact.data?.blockedReason ? (
-            <p>
-              <strong>Bu kayıt silinemez.</strong> {impact.data.blockedReason}
-            </p>
+            <>
+              <p>
+                <strong>Bu kayıt silinemez.</strong> {impact.data.blockedReason}
+              </p>
+              {references.length > 0 && (
+                <ul className="c-form-error-list">
+                  {references.map((ref) => (
+                    <li key={ref.label}>
+                      {ref.count} {ref.label}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </>
           ) : references.length > 0 ? (
             <>
               <p>

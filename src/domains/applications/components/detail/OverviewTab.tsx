@@ -6,7 +6,7 @@ import { StakeholderList } from '@/domains/people/components/StakeholderList';
 import { formatInteger } from '@/lib/format';
 import type { Application } from '../../types';
 import { evaluateApplicationCompleteness } from '../../utils/applicationCompleteness';
-import { APPLICATION_TYPE_LABELS } from '../../utils/applicationPresentation';
+import { MasterLabel } from '@/domains/master-data/components/MasterLabel';
 
 export function OverviewTab({ application }: { application: Application }) {
   return (
@@ -29,7 +29,10 @@ function AboutSection({ application }: { application: Application }) {
       <DetailList
         items={[
           { label: 'İş amacı', value: application.businessPurpose },
-          { label: 'Uygulama türü', value: APPLICATION_TYPE_LABELS[application.type] },
+          {
+            label: 'Uygulama türü',
+            value: <MasterLabel list="applicationTypes" code={application.type} />,
+          },
           { label: 'İş süreçleri', value: application.businessProcesses.join(', ') },
           { label: 'Kullanıcı grupları', value: application.userGroups.join(', ') },
           { label: 'Tahmini kullanıcı', value: formatInteger(application.estimatedUserCount, '') },

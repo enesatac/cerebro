@@ -1,34 +1,26 @@
 import { z } from 'zod';
 import {
-  enumChoice,
   newRowId,
   requiredChoice,
   requiredText,
   requiredUrl,
   secretFreeText,
 } from '@/lib/validation';
-import {
-  DOCUMENTATION_LINK_TYPES,
-  STAKEHOLDER_ROLES,
-  TEAM_RESPONSIBILITIES,
-  type DocumentationLink,
-  type RoleAssignment,
-  type TeamAssignment,
-} from '../types';
+import { type DocumentationLink, type RoleAssignment, type TeamAssignment } from '../types';
 
 export const roleAssignmentSchema = z.object({
   personId: requiredChoice('bir kişi'),
-  role: enumChoice(STAKEHOLDER_ROLES, 'bir rol'),
+  role: requiredChoice('bir rol'),
 });
 
 export const teamAssignmentSchema = z.object({
   teamId: requiredChoice('bir ekip'),
-  responsibility: enumChoice(TEAM_RESPONSIBILITIES, 'bir sorumluluk'),
+  responsibility: requiredChoice('bir sorumluluk'),
 });
 
 export const documentationLinkSchema = z.object({
   id: z.string(),
-  type: enumChoice(DOCUMENTATION_LINK_TYPES, 'bir tür'),
+  type: requiredChoice('bir tür'),
   title: requiredText('Bağlantı başlığı', 160),
   url: requiredUrl('Adres'),
   description: secretFreeText('Açıklama', 300),

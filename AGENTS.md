@@ -97,4 +97,5 @@ with the supporting detail in the `references/` directory beside it.
   `node_modules/@takeoff-ui/react-spar/dist/index.d.ts` is authoritative; the docs URL above is the
   secondary reference. If sources disagree, the installed version wins — note the discrepancy.
 - Never import from `src/services/mock` in UI code; go through repository hooks.
-- Status → label/variant mappings are centralised in `domains/*/utils/*Presentation.ts`.
+- Enumerated values (statuses, types, categories…) are administrable master data: render them with
+  `MasterBadge` / `MasterLabel` and offer them with `MasterSelectField` (`domains/master-data`).
