@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import { paths } from '@/app/router/paths';
 import { CopyLinkButton } from '@/components/actions/CopyLinkButton';
 import { ErrorState } from '@/components/feedback/ErrorState';
@@ -29,6 +29,7 @@ import { Can } from '@/domains/auth/components/Can';
 import { ActionMenu } from '@/components/actions/ActionMenu';
 import { SmallCreateAction } from '@/domains/auth/components/RecordActions';
 import { MasterBadge } from '@/domains/master-data/components/MasterBadge';
+import { ProjectDeleteAction } from '../components/ProjectDeleteAction';
 
 const TABS = [
   { id: 'overview', label: 'Genel bakış' },
@@ -99,6 +100,7 @@ function tabCount(tab: ProjectTab, project: Project): number | null {
 }
 
 export default function ProjectDetailPage() {
+  const navigate = useNavigate();
   const { projectId = '' } = useParams();
   const [activeTab, selectTab] = useTabParam(TAB_IDS);
   const query = useProject(projectId);
@@ -139,6 +141,10 @@ export default function ProjectDetailPage() {
         actions={
           <>
             <EditAction to={paths.projects.edit(project.id)} />
+            <ProjectDeleteAction
+              record={project}
+              onDeleted={() => void navigate(paths.projects.list())}
+            />
             <Can permission="portfolio:edit">
               <ActionMenu
                 items={[

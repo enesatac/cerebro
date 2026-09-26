@@ -2,15 +2,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router';
 import { paths } from '@/app/router/paths';
-import { DeleteAction } from '@/components/actions/DeleteAction';
 import { FormPage } from '@/components/forms/FormPage';
 import { QueryView } from '@/components/feedback/QueryView';
-import { Can } from '@/domains/auth/components/Can';
 import { StakeholderFields } from '@/domains/people/components/StakeholderFields';
 import { DocumentationLinksFields } from '@/domains/shared/components/DocumentationLinksFields';
-import { useRepositories } from '@/services/RepositoryContext';
 import { useProject } from '../api/queries';
-import { useDeleteProject, useSaveProject } from '../api/mutations';
+import { useSaveProject } from '../api/mutations';
 import {
   ProjectApplicationsSection,
   ProjectFinancialsSection,
@@ -25,6 +22,7 @@ import {
   type ProjectFormValues,
 } from '../schemas/projectForm';
 import type { Project } from '../types';
+import { ProjectDeleteAction } from '../components/ProjectDeleteAction';
 
 const PROJECT_ROLE_ORDER = [
   'sponsor',
@@ -43,9 +41,7 @@ const PROJECT_ROLE_ORDER = [
 
 function ProjectForm({ project }: { project?: Project }) {
   const navigate = useNavigate();
-  const { projects } = useRepositories();
   const save = useSaveProject(project?.id);
-  const remove = useDeleteProject();
   const form = useForm<ProjectFormValues>({
     resolver: zodResolver(projectFormSchema),
     defaultValues: toProjectFormValues(project),
@@ -69,16 +65,10 @@ function ProjectForm({ project }: { project?: Project }) {
       }
       deleteAction={
         project && (
-          <Can permission="portfolio:delete">
-            <DeleteAction
-              entityLabel="proje"
-              entityName={project.name}
-              impactKey={['project', project.id]}
-              loadImpact={() => projects.getDeletionImpact(project.id)}
-              onDelete={() => remove.mutateAsync(project.id)}
-              onDeleted={() => void navigate(paths.projects.list())}
-            />
-          </Can>
+          <ProjectDeleteAction
+            record={project}
+            onDeleted={() => void navigate(paths.projects.list())}
+          />
         )
       }
     >

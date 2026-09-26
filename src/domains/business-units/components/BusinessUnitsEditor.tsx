@@ -95,7 +95,7 @@ export function BusinessUnitsEditor() {
       id: 'actions',
       header: <span className="c-visually-hidden">İşlemler</span>,
       align: 'end',
-      width: 240,
+      width: 150,
       cell: ({ row }) => (
         <span className="c-row-actions">
           <Button
@@ -114,7 +114,7 @@ export function BusinessUnitsEditor() {
             impactKey={['business-unit', row.original.id]}
             loadImpact={() => businessUnits.getDeletionImpact(row.original.id)}
             onDelete={() => remove.mutateAsync(row.original.id)}
-            onDeleted={() => undefined}
+            compact
           />
         </span>
       ),

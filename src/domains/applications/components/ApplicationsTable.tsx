@@ -12,6 +12,9 @@ import {
 import { APPLICATION_PAGE_SIZES } from '../utils/applicationListParams';
 import { getPrimaryTeams } from '../utils/applicationTeams';
 import { MasterBadge } from '@/domains/master-data/components/MasterBadge';
+import { editColumn } from '@/components/data-display/editColumn';
+import { usePermission } from '@/domains/auth/api/queries';
+import { ApplicationDeleteAction } from './ApplicationDeleteAction';
 
 interface ApplicationsTableProps {
   result: PagedResult<ApplicationListItem> | undefined;
@@ -30,7 +33,7 @@ function buildColumns(now: Date): TableColumnDef<ApplicationListItem>[] {
     {
       id: 'name',
       header: 'Uygulama',
-      width: 250,
+      width: 170,
       accessor: 'name',
       sortable: true,
       cell: ({ row }) => (
@@ -68,7 +71,7 @@ function buildColumns(now: Date): TableColumnDef<ApplicationListItem>[] {
     },
     {
       id: 'businessUnit',
-      width: 150,
+      width: 125,
       header: 'İş birimi',
       accessor: (row) => row.businessUnit?.name ?? '',
       sortable: true,
@@ -77,7 +80,7 @@ function buildColumns(now: Date): TableColumnDef<ApplicationListItem>[] {
     },
     {
       id: 'technicalOwner',
-      width: 150,
+      width: 125,
       header: 'Teknik sahip',
       accessor: (row) => row.technicalOwner?.name ?? '',
       sortable: true,
@@ -87,7 +90,7 @@ function buildColumns(now: Date): TableColumnDef<ApplicationListItem>[] {
     {
       id: 'team',
       header: 'Ekip',
-      width: 165,
+      width: 130,
       cell: ({ row }) => {
         const teams = getPrimaryTeams(row.original.teams);
         return teams.length > 0 ? (
@@ -99,7 +102,7 @@ function buildColumns(now: Date): TableColumnDef<ApplicationListItem>[] {
     },
     {
       id: 'updatedAt',
-      width: 105,
+      width: 95,
       header: 'Güncellendi',
       accessor: 'updatedAt',
       sortable: true,
@@ -118,7 +121,22 @@ export function ApplicationsTable({
   loading,
   emptyState,
 }: ApplicationsTableProps) {
-  const columns = useMemo(() => buildColumns(new Date()), []);
+  const canEdit = usePermission('portfolio:edit');
+  const columns = useMemo(
+    () => [
+      ...buildColumns(new Date()),
+      ...(canEdit
+        ? [
+            editColumn<ApplicationListItem>(
+              (app) => paths.applications.edit(app.id),
+              (app) => app.name,
+              (app) => <ApplicationDeleteAction record={app} compact />,
+            ),
+          ]
+        : []),
+    ],
+    [canEdit],
+  );
 
   return (
     <Table

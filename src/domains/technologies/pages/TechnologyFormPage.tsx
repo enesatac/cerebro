@@ -2,15 +2,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router';
 import { paths } from '@/app/router/paths';
-import { DeleteAction } from '@/components/actions/DeleteAction';
 import { TextField } from '@/components/forms/fields';
 import { FormPage } from '@/components/forms/FormPage';
 import { QueryView } from '@/components/feedback/QueryView';
 import { SectionCard } from '@/components/layout/SectionCard';
-import { Can } from '@/domains/auth/components/Can';
-import { useRepositories } from '@/services/RepositoryContext';
 import { useTechnology } from '../api/queries';
-import { useDeleteTechnology, useSaveTechnology } from '../api/mutations';
+import { useSaveTechnology } from '../api/mutations';
 import {
   technologyFormSchema,
   toTechnologyFormValues,
@@ -19,12 +16,11 @@ import {
 } from '../schemas/technologyForm';
 import { type Technology } from '../types';
 import { MasterSelectField } from '@/domains/master-data/components/MasterSelectField';
+import { TechnologyDeleteAction } from '../components/TechnologyDeleteAction';
 
 function TechnologyForm({ technology }: { technology?: Technology }) {
   const navigate = useNavigate();
-  const { technologies } = useRepositories();
   const save = useSaveTechnology(technology?.id);
-  const remove = useDeleteTechnology();
   const form = useForm<TechnologyFormValues>({
     resolver: zodResolver(technologyFormSchema),
     defaultValues: toTechnologyFormValues(technology),
@@ -50,16 +46,10 @@ function TechnologyForm({ technology }: { technology?: Technology }) {
       }
       deleteAction={
         technology && (
-          <Can permission="portfolio:delete">
-            <DeleteAction
-              entityLabel="teknoloji"
-              entityName={technology.name}
-              impactKey={['technology', technology.id]}
-              loadImpact={() => technologies.getDeletionImpact(technology.id)}
-              onDelete={() => remove.mutateAsync(technology.id)}
-              onDeleted={() => void navigate(paths.technologies.list())}
-            />
-          </Can>
+          <TechnologyDeleteAction
+            record={technology}
+            onDeleted={() => void navigate(paths.technologies.list())}
+          />
         )
       }
     >

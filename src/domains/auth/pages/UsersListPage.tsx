@@ -13,6 +13,7 @@ import { formatRelative } from '@/lib/dates';
 import { useCurrentUser, useUserAccounts } from '../api/queries';
 import { USER_ROLES, type UserAccount } from '../types';
 import { ACCOUNT_STATUS_PRESENTATION, ROLE_PRESENTATION } from '../utils/rolePresentation';
+import { UserDeleteAction } from '../components/UserDeleteAction';
 
 export default function UsersListPage() {
   const query = useUserAccounts();
@@ -70,6 +71,15 @@ export default function UsersListPage() {
       align: 'end',
       width: 140,
       cell: ({ row }) => formatRelative(row.original.lastSignInAt, new Date(), 'Hiç'),
+    },
+    {
+      id: 'actions',
+      header: <span className="c-visually-hidden">İşlemler</span>,
+      align: 'end',
+      width: 90,
+      // Your own account cannot be deleted, so no action is offered for it.
+      cell: ({ row }) =>
+        row.original.id === me?.id ? null : <UserDeleteAction record={row.original} compact />,
     },
   ];
 

@@ -2,15 +2,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, useWatch } from 'react-hook-form';
 import { useNavigate, useParams, useSearchParams } from 'react-router';
 import { paths } from '@/app/router/paths';
-import { DeleteAction } from '@/components/actions/DeleteAction';
 import { SelectField, TextField } from '@/components/forms/fields';
 import { FormPage } from '@/components/forms/FormPage';
 import { QueryView } from '@/components/feedback/QueryView';
 import { SectionCard } from '@/components/layout/SectionCard';
 import { useApplicationOptions } from '@/domains/applications/api/queries';
-import { Can } from '@/domains/auth/components/Can';
-import { useRepositories } from '@/services/RepositoryContext';
-import { useDeleteIntegration, useSaveIntegration } from '../api/mutations';
+import { useSaveIntegration } from '../api/mutations';
 import { useIntegration } from '../api/queries';
 import {
   integrationFormSchema,
@@ -20,6 +17,7 @@ import {
 } from '../schemas/connectionForms';
 import { type Integration } from '../types';
 import { MasterSelectField } from '@/domains/master-data/components/MasterSelectField';
+import { IntegrationDeleteAction } from '../components/IntegrationDeleteAction';
 
 const TARGET_OPTIONS = [
   { value: 'application', label: 'Başka bir Cerebro uygulaması' },
@@ -29,9 +27,7 @@ const TARGET_OPTIONS = [
 function IntegrationForm({ integration }: { integration?: Integration }) {
   const navigate = useNavigate();
   const [params] = useSearchParams();
-  const { connections } = useRepositories();
   const save = useSaveIntegration(integration?.id);
-  const remove = useDeleteIntegration();
   const applications = useApplicationOptions();
   const form = useForm<IntegrationFormValues>({
     resolver: zodResolver(integrationFormSchema),
@@ -62,16 +58,7 @@ function IntegrationForm({ integration }: { integration?: Integration }) {
       }}
       deleteAction={
         integration && (
-          <Can permission="portfolio:delete">
-            <DeleteAction
-              entityLabel="entegrasyon"
-              entityName={integration.name}
-              impactKey={['integration', integration.id]}
-              loadImpact={() => connections.integrations.getDeletionImpact(integration.id)}
-              onDelete={() => remove.mutateAsync(integration.id)}
-              onDeleted={() => void navigate(returnTo)}
-            />
-          </Can>
+          <IntegrationDeleteAction record={integration} onDeleted={() => void navigate(returnTo)} />
         )
       }
     >

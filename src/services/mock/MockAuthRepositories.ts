@@ -1,10 +1,11 @@
 import type { AuthRepository, UserRepository } from '@/domains/auth/api/AuthRepository';
 import type { UserAccount, UserAccountInput } from '@/domains/auth/types';
+import type { DeletionImpact } from '@/domains/shared/types';
 import { ValidationError } from '@/lib/errors';
 import type { MockDatabase } from './database';
 import { copy, delay, findOrThrow } from './query';
 import type { MockAuthority } from './session';
-import { replaceRow, type WriteKit } from './writeKit';
+import { removeRow, replaceRow, type WriteKit } from './writeKit';
 
 export function createMockAuthRepositories(
   db: MockDatabase,
@@ -58,6 +59,19 @@ export function createMockAuthRepositories(
     }
   }
 
+  function userDeletionImpact(user: UserAccount, actor: UserAccount | null): DeletionImpact {
+    const otherAdmins = db.users.filter(
+      (u) => u.role === 'admin' && u.active && u.id !== user.id,
+    ).length;
+    const blockedReason =
+      user.id === actor?.id
+        ? 'Kendi hesabınızı silemezsiniz.'
+        : user.role === 'admin' && user.active && otherAdmins === 0
+          ? 'En az bir aktif yönetici gereklidir; son yöneticinin hesabı silinemez.'
+          : null;
+    return { references: [], blockedReason };
+  }
+
   const users: UserRepository = {
     async list() {
       await kit.begin('users:manage');
@@ -90,6 +104,17 @@ export function createMockAuthRepositories(
           audit: kit.touch(current.audit, actor),
         }),
       );
+    },
+    async remove(id) {
+      const actor = await kit.begin('users:manage');
+      const user = findOrThrow(db.users, id, 'Kullanıcı');
+      const { blockedReason } = userDeletionImpact(user, actor);
+      if (blockedReason) throw new ValidationError(blockedReason);
+      removeRow(db.users, id);
+    },
+    async getDeletionImpact(id) {
+      const actor = await kit.begin('users:manage');
+      return userDeletionImpact(findOrThrow(db.users, id, 'Kullanıcı'), actor);
     },
   };
 

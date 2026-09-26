@@ -119,7 +119,7 @@ export function PeopleEditor() {
       id: 'actions',
       header: <span className="c-visually-hidden">İşlemler</span>,
       align: 'end',
-      width: 200,
+      width: 150,
       cell: ({ row }) => (
         <span className="c-row-actions">
           <Button
@@ -138,7 +138,7 @@ export function PeopleEditor() {
             impactKey={['person', row.original.id]}
             loadImpact={() => people.getDeletionImpact(row.original.id)}
             onDelete={() => remove.mutateAsync(row.original.id)}
-            onDeleted={() => undefined}
+            compact
           />
         </span>
       ),

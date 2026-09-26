@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import { paths } from '@/app/router/paths';
 import { SelectField, SwitchField, TextField } from '@/components/forms/fields';
 import { FormPage } from '@/components/forms/FormPage';
@@ -17,6 +17,7 @@ import {
 } from '../schemas/userForm';
 import { USER_ROLES, type UserAccount } from '../types';
 import { ROLE_PRESENTATION } from '../utils/rolePresentation';
+import { UserDeleteAction } from '../components/UserDeleteAction';
 
 const ROLE_OPTIONS = USER_ROLES.map((role) => ({
   value: role,
@@ -27,6 +28,7 @@ function UserForm({ user }: { user?: UserAccount }) {
   const save = useSaveUser(user?.id);
   const people = usePeopleById();
   const me = useCurrentUser();
+  const navigate = useNavigate();
   const isSelf = user?.id === me?.id;
   const form = useForm<UserFormValues>({
     resolver: zodResolver(userFormSchema),
@@ -48,6 +50,12 @@ function UserForm({ user }: { user?: UserAccount }) {
       ]}
       cancelTo={paths.admin.users()}
       submitLabel={user ? 'Değişiklikleri kaydet' : 'Kullanıcı ekle'}
+      deleteAction={
+        user &&
+        !isSelf && (
+          <UserDeleteAction record={user} onDeleted={() => void navigate(paths.admin.users())} />
+        )
+      }
       onSubmit={async (values) => {
         await save.mutateAsync(toUserInput(values));
         return paths.admin.users();

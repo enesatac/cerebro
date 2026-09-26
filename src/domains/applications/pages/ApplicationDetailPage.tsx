@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import { paths } from '@/app/router/paths';
 import { CopyLinkButton } from '@/components/actions/CopyLinkButton';
 import { ErrorState } from '@/components/feedback/ErrorState';
@@ -33,6 +33,7 @@ import { Can } from '@/domains/auth/components/Can';
 import { ActionMenu } from '@/components/actions/ActionMenu';
 import { MasterBadge } from '@/domains/master-data/components/MasterBadge';
 import { MasterLabel } from '@/domains/master-data/components/MasterLabel';
+import { ApplicationDeleteAction } from '../components/ApplicationDeleteAction';
 
 const TAB_CONTENT: Record<ApplicationDetailTab, (application: Application) => ReactNode> = {
   overview: (a) => <OverviewTab application={a} />,
@@ -62,6 +63,7 @@ function tabCount(tab: ApplicationDetailTab, application: Application): number |
 }
 
 export default function ApplicationDetailPage() {
+  const navigate = useNavigate();
   const { applicationId = '' } = useParams();
   const [activeTab, selectTab] = useTabParam(APPLICATION_DETAIL_TAB_IDS);
   const query = useApplication(applicationId);
@@ -117,6 +119,10 @@ export default function ApplicationDetailPage() {
         actions={
           <>
             <EditAction to={paths.applications.edit(application.id)} />
+            <ApplicationDeleteAction
+              record={application}
+              onDeleted={() => void navigate(paths.applications.list())}
+            />
             <Can permission="portfolio:edit">
               <ActionMenu
                 items={[

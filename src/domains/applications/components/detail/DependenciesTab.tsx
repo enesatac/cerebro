@@ -13,6 +13,7 @@ import { usePermission } from '@/domains/auth/api/queries';
 import { SmallCreateAction } from '@/domains/auth/components/RecordActions';
 import { MasterBadge } from '@/domains/master-data/components/MasterBadge';
 import { MasterLabel } from '@/domains/master-data/components/MasterLabel';
+import { DependencyDeleteAction } from '@/domains/connections/components/DependencyDeleteAction';
 
 /** Most critical first — that is what someone assessing impact needs to see. */
 const byCriticalityDesc = (a: ApplicationDependency, b: ApplicationDependency) =>
@@ -51,7 +52,8 @@ function columns(
       ? [
           editColumn<ApplicationDependency>(
             (dependency) => paths.dependencies.edit(dependency.id),
-            () => 'dependency',
+            () => 'bağımlılık',
+            (dependency) => <DependencyDeleteAction record={dependency} compact />,
           ),
         ]
       : []),

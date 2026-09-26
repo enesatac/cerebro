@@ -20,3 +20,16 @@ export function useSaveUser(id?: string) {
     },
   );
 }
+
+export function useDeleteUser() {
+  const { users } = useRepositories();
+  const queryClient = useQueryClient();
+  return useRepositoryMutation(
+    async (id: string) => {
+      await users.remove(id);
+      await queryClient.invalidateQueries({ queryKey: authKeys.users });
+      await queryClient.invalidateQueries({ queryKey: authKeys.signInAccounts });
+    },
+    { successTitle: () => 'Kullanıcı hesabı silindi' },
+  );
+}

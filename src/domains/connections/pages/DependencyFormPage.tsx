@@ -2,15 +2,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useParams, useSearchParams } from 'react-router';
 import { paths } from '@/app/router/paths';
-import { DeleteAction } from '@/components/actions/DeleteAction';
 import { SelectField, TextField } from '@/components/forms/fields';
 import { FormPage } from '@/components/forms/FormPage';
 import { QueryView } from '@/components/feedback/QueryView';
 import { SectionCard } from '@/components/layout/SectionCard';
 import { useApplicationOptions } from '@/domains/applications/api/queries';
-import { Can } from '@/domains/auth/components/Can';
-import { useRepositories } from '@/services/RepositoryContext';
-import { useDeleteDependency, useSaveDependency } from '../api/mutations';
+import { useSaveDependency } from '../api/mutations';
 import { useDependency } from '../api/queries';
 import {
   dependencyFormSchema,
@@ -20,13 +17,12 @@ import {
 } from '../schemas/connectionForms';
 import { type ApplicationDependency } from '../types';
 import { MasterSelectField } from '@/domains/master-data/components/MasterSelectField';
+import { DependencyDeleteAction } from '../components/DependencyDeleteAction';
 
 function DependencyForm({ dependency }: { dependency?: ApplicationDependency }) {
   const navigate = useNavigate();
   const [params] = useSearchParams();
-  const { connections } = useRepositories();
   const save = useSaveDependency(dependency?.id);
-  const remove = useDeleteDependency();
   const applications = useApplicationOptions();
   const form = useForm<DependencyFormValues>({
     resolver: zodResolver(dependencyFormSchema),
@@ -56,16 +52,7 @@ function DependencyForm({ dependency }: { dependency?: ApplicationDependency }) 
       }}
       deleteAction={
         dependency && (
-          <Can permission="portfolio:delete">
-            <DeleteAction
-              entityLabel="bağımlılık"
-              entityName="bu bağımlılık"
-              impactKey={['dependency', dependency.id]}
-              loadImpact={() => connections.dependencies.getDeletionImpact(dependency.id)}
-              onDelete={() => remove.mutateAsync(dependency.id)}
-              onDeleted={() => void navigate(returnTo)}
-            />
-          </Can>
+          <DependencyDeleteAction record={dependency} onDeleted={() => void navigate(returnTo)} />
         )
       }
     >

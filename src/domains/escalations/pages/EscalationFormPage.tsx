@@ -2,20 +2,17 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useParams, useSearchParams } from 'react-router';
 import { paths } from '@/app/router/paths';
-import { DeleteAction } from '@/components/actions/DeleteAction';
 import { DateField } from '@/components/forms/DateField';
 import { SelectField, TextField } from '@/components/forms/fields';
 import { FormPage } from '@/components/forms/FormPage';
 import { QueryView } from '@/components/feedback/QueryView';
 import { SectionCard } from '@/components/layout/SectionCard';
-import { Can } from '@/domains/auth/components/Can';
 import { usePersonOptions } from '@/domains/people/api/queries';
 import { RelatedEntitiesFields } from '@/domains/risks/components/RelatedEntitiesFields';
 import { readRelatedPrefill, relatedReturnPath } from '@/domains/risks/utils/relatedPrefill';
 import { useTeamOptions } from '@/domains/teams/api/queries';
 import { toIsoDate } from '@/lib/dates';
-import { useRepositories } from '@/services/RepositoryContext';
-import { useDeleteEscalation, useSaveEscalation } from '../api/mutations';
+import { useSaveEscalation } from '../api/mutations';
 import { useEscalation } from '../api/queries';
 import {
   escalationFormSchema,
@@ -25,13 +22,12 @@ import {
 } from '../schemas/escalationForm';
 import { type Escalation } from '../types';
 import { MasterSelectField } from '@/domains/master-data/components/MasterSelectField';
+import { EscalationDeleteAction } from '../components/EscalationDeleteAction';
 
 function EscalationForm({ escalation }: { escalation?: Escalation }) {
   const navigate = useNavigate();
   const [params] = useSearchParams();
-  const { escalations } = useRepositories();
   const save = useSaveEscalation(escalation?.id);
-  const remove = useDeleteEscalation();
   const people = usePersonOptions();
   const teams = useTeamOptions();
   const form = useForm<EscalationFormValues>({
@@ -70,16 +66,10 @@ function EscalationForm({ escalation }: { escalation?: Escalation }) {
       }}
       deleteAction={
         escalation && (
-          <Can permission="portfolio:delete">
-            <DeleteAction
-              entityLabel="eskalasyon"
-              entityName={escalation.title}
-              impactKey={['escalation', escalation.id]}
-              loadImpact={() => escalations.getDeletionImpact(escalation.id)}
-              onDelete={() => remove.mutateAsync(escalation.id)}
-              onDeleted={() => void navigate(paths.risks('escalations'))}
-            />
-          </Can>
+          <EscalationDeleteAction
+            record={escalation}
+            onDeleted={() => void navigate(paths.risks('escalations'))}
+          />
         )
       }
     >

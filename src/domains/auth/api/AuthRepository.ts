@@ -1,3 +1,4 @@
+import type { DeletionImpact } from '@/domains/shared/types';
 import type { UserAccount, UserAccountId, UserAccountInput } from '../types';
 
 /**
@@ -23,4 +24,10 @@ export interface UserRepository {
   create(input: UserAccountInput): Promise<UserAccount>;
   /** @throws ValidationError (e.g. removing the last active admin, deactivating yourself) */
   update(id: UserAccountId, input: UserAccountInput): Promise<UserAccount>;
+  /**
+   * Deletes the login only; the linked person and the record history stay untouched.
+   * @throws ValidationError when deleting yourself or the last active admin
+   */
+  remove(id: UserAccountId): Promise<void>;
+  getDeletionImpact(id: UserAccountId): Promise<DeletionImpact>;
 }

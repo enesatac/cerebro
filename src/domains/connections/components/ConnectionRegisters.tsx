@@ -18,6 +18,8 @@ import { SmallCreateAction } from '@/domains/auth/components/RecordActions';
 import { MasterBadge } from '@/domains/master-data/components/MasterBadge';
 import { MasterLabel } from '@/domains/master-data/components/MasterLabel';
 import { useMasterData } from '@/domains/master-data/context';
+import { DependencyDeleteAction } from './DependencyDeleteAction';
+import { IntegrationDeleteAction } from './IntegrationDeleteAction';
 
 const PAGINATION = { pageSize: 25, pageSizeOptions: [25, 50, 100] };
 
@@ -122,7 +124,8 @@ export function DependencyRegister() {
                       ...dependencyColumns,
                       editColumn<ApplicationDependency>(
                         (d) => paths.dependencies.edit(d.id),
-                        () => 'dependency',
+                        () => 'bağımlılık',
+                        (d) => <DependencyDeleteAction record={d} compact />,
                       ),
                     ]
                   : dependencyColumns
@@ -229,6 +232,7 @@ export function IntegrationRegister() {
                       editColumn<Integration>(
                         (i) => paths.integrations.edit(i.id),
                         (i) => i.name,
+                        (i) => <IntegrationDeleteAction record={i} compact />,
                       ),
                     ]
                   : integrationColumns

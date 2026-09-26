@@ -218,3 +218,25 @@ describe('afterWrites', () => {
     expect(onWrite).toHaveBeenCalledTimes(2);
   });
 });
+
+describe('user account deletion', () => {
+  it('deletes other accounts but never your own or the last active admin', async () => {
+    const repos = createMockRepositories({ signedInAs: ADMIN });
+    await expect(repos.users.remove(ADMIN)).rejects.toThrow(/Kendi hesabınızı silemezsiniz/);
+
+    await repos.users.remove('user-nadia-petrova');
+    expect((await repos.users.list()).some((u) => u.id === 'user-nadia-petrova')).toBe(false);
+    // The linked person and their history stay.
+    expect(await repos.people.getById('person-nadia-petrova')).toBeDefined();
+
+    // Selin is the only other admin: after she goes, Can is the last admin — and cannot delete himself.
+    await repos.users.remove('user-selin-aydin');
+    const impact = await repos.users.getDeletionImpact(ADMIN);
+    expect(impact.blockedReason).not.toBeNull();
+  });
+
+  it('is limited to user managers', async () => {
+    const repos = createMockRepositories({ signedInAs: VIEWER });
+    await expect(repos.users.remove('user-tom-brennan')).rejects.toBeInstanceOf(ForbiddenError);
+  });
+});

@@ -1,5 +1,5 @@
 import { Table, type TableColumnDef } from '@takeoff-ui/react-spar';
-import { useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import { paths } from '@/app/router/paths';
 import { CopyLinkButton } from '@/components/actions/CopyLinkButton';
 import { DetailList } from '@/components/data-display/DetailList';
@@ -24,6 +24,7 @@ import type { Team } from '../types';
 import { EditAction } from '@/domains/auth/components/RecordActions';
 import { MasterBadge } from '@/domains/master-data/components/MasterBadge';
 import { useMasterData } from '@/domains/master-data/context';
+import { TeamDeleteAction } from '../components/TeamDeleteAction';
 
 /** Upper bound for "everything this team owns" — teams own tens, not hundreds, of systems. */
 const OWNERSHIP_PAGE_SIZE = 100;
@@ -162,6 +163,7 @@ function Members({ team }: { team: Team }) {
 }
 
 export default function TeamDetailPage() {
+  const navigate = useNavigate();
   const { teamId = '' } = useParams();
   const query = useTeam(teamId);
   const people = usePeopleById();
@@ -190,6 +192,7 @@ export default function TeamDetailPage() {
         actions={
           <>
             <EditAction to={paths.teams.edit(team.id)} />
+            <TeamDeleteAction record={team} onDeleted={() => void navigate(paths.teams.list())} />
             <CopyLinkButton />
           </>
         }

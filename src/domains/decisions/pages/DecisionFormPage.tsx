@@ -2,19 +2,16 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useParams, useSearchParams } from 'react-router';
 import { paths } from '@/app/router/paths';
-import { DeleteAction } from '@/components/actions/DeleteAction';
 import { DateField } from '@/components/forms/DateField';
 import { ChipsField, MultiSelectField, TextField } from '@/components/forms/fields';
 import { FormPage } from '@/components/forms/FormPage';
 import { QueryView } from '@/components/feedback/QueryView';
 import { SectionCard } from '@/components/layout/SectionCard';
-import { Can } from '@/domains/auth/components/Can';
 import { usePersonOptions } from '@/domains/people/api/queries';
 import { RelatedEntitiesFields } from '@/domains/risks/components/RelatedEntitiesFields';
 import { readRelatedPrefill, relatedReturnPath } from '@/domains/risks/utils/relatedPrefill';
 import { toIsoDate } from '@/lib/dates';
-import { useRepositories } from '@/services/RepositoryContext';
-import { useDeleteDecision, useSaveDecision } from '../api/mutations';
+import { useSaveDecision } from '../api/mutations';
 import { useDecision } from '../api/queries';
 import {
   decisionFormSchema,
@@ -24,13 +21,12 @@ import {
 } from '../schemas/decisionForm';
 import { type Decision } from '../types';
 import { MasterSelectField } from '@/domains/master-data/components/MasterSelectField';
+import { DecisionDeleteAction } from '../components/DecisionDeleteAction';
 
 function DecisionForm({ decision }: { decision?: Decision }) {
   const navigate = useNavigate();
   const [params] = useSearchParams();
-  const { decisions } = useRepositories();
   const save = useSaveDecision(decision?.id);
-  const remove = useDeleteDecision();
   const people = usePersonOptions();
   const form = useForm<DecisionFormValues>({
     resolver: zodResolver(decisionFormSchema),
@@ -69,16 +65,7 @@ function DecisionForm({ decision }: { decision?: Decision }) {
       }}
       deleteAction={
         decision && (
-          <Can permission="portfolio:delete">
-            <DeleteAction
-              entityLabel="karar"
-              entityName={decision.title}
-              impactKey={['decision', decision.id]}
-              loadImpact={() => decisions.getDeletionImpact(decision.id)}
-              onDelete={() => remove.mutateAsync(decision.id)}
-              onDeleted={() => void navigate(returnTo)}
-            />
-          </Can>
+          <DecisionDeleteAction record={decision} onDeleted={() => void navigate(returnTo)} />
         )
       }
     >

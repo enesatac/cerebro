@@ -13,6 +13,9 @@ import { useTeamSummaries } from '../api/queries';
 import type { TeamListItem } from '../types';
 import { filterTeams } from '../utils/teamFilters';
 import { CreateAction } from '@/domains/auth/components/RecordActions';
+import { editColumn } from '@/components/data-display/editColumn';
+import { usePermission } from '@/domains/auth/api/queries';
+import { TeamDeleteAction } from '../components/TeamDeleteAction';
 
 const columns: TableColumnDef<TeamListItem>[] = [
   {
@@ -61,7 +64,14 @@ const columns: TableColumnDef<TeamListItem>[] = [
   },
 ];
 
+const actionsColumn = editColumn<TeamListItem>(
+  (team) => paths.teams.edit(team.id),
+  (team) => team.name,
+  (team) => <TeamDeleteAction record={team} compact />,
+);
+
 export default function TeamsListPage() {
+  const canEdit = usePermission('portfolio:edit');
   const [searchParams, setSearchParams] = useSearchParams();
   const search = searchParams.get('q')?.trim() ?? '';
   const query = useTeamSummaries();
@@ -98,7 +108,7 @@ export default function TeamsListPage() {
               </Toolbar>
               <Table
                 data={visible}
-                columns={columns}
+                columns={canEdit ? [...columns, actionsColumn] : columns}
                 getRowId={(row) => row.id}
                 sorting={{ defaultValue: [{ id: 'name', desc: false }] }}
                 emptyState={

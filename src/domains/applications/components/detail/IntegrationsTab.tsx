@@ -11,6 +11,7 @@ import { editColumn } from '@/components/data-display/editColumn';
 import { usePermission } from '@/domains/auth/api/queries';
 import { SmallCreateAction } from '@/domains/auth/components/RecordActions';
 import { MasterLabel } from '@/domains/master-data/components/MasterLabel';
+import { IntegrationDeleteAction } from '@/domains/connections/components/IntegrationDeleteAction';
 
 function Counterpart({
   integration,
@@ -65,6 +66,7 @@ function columns(direction: IntegrationDirection, canEdit: boolean): TableColumn
           editColumn<Integration>(
             (integration) => paths.integrations.edit(integration.id),
             (integration) => integration.name,
+            (integration) => <IntegrationDeleteAction record={integration} compact />,
           ),
         ]
       : []),

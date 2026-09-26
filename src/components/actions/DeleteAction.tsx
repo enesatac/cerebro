@@ -15,7 +15,9 @@ interface DeleteActionProps {
   loadImpact: () => Promise<DeletionImpact>;
   onDelete: () => Promise<void>;
   /** Called after a successful delete (usually navigation back to the list). */
-  onDeleted: () => void;
+  onDeleted?: () => void;
+  /** Small icon-only button (named "Sil: <name>" for assistive tech) for table rows. */
+  compact?: boolean;
 }
 
 /** "Delete" with a confirmation that states exactly what else is affected. */
@@ -26,8 +28,11 @@ export function DeleteAction({
   loadImpact,
   onDelete,
   onDeleted,
+  compact = false,
 }: DeleteActionProps) {
   const [open, setOpen] = useState(false);
+  // Long registers render one action per row: mount the dialog only once it has been opened.
+  const [everOpened, setEverOpened] = useState(false);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const impact = useQuery({
@@ -43,7 +48,7 @@ export function DeleteAction({
     try {
       await onDelete();
       setOpen(false);
-      onDeleted();
+      onDeleted?.();
     } catch (caught) {
       setError(getErrorMessage(caught));
     } finally {
@@ -56,67 +61,76 @@ export function DeleteAction({
     <>
       <Button
         type="button"
+        size={compact ? 'small' : undefined}
         variant="danger"
         appearance="text"
         startContent={<DeleteIconOutlinedRounded aria-hidden="true" />}
-        onClick={() => setOpen(true)}
+        aria-label={compact ? `Sil: ${entityName}` : undefined}
+        onClick={() => {
+          setEverOpened(true);
+          setOpen(true);
+        }}
       >
-        {entityLabel.charAt(0).toLocaleUpperCase('tr-TR') + entityLabel.slice(1)} sil
+        {compact
+          ? null
+          : `${entityLabel.charAt(0).toLocaleUpperCase('tr-TR') + entityLabel.slice(1)} sil`}
       </Button>
-      <ConfirmDialog
-        open={open}
-        onOpenChange={setOpen}
-        title={`${entityName} silinsin mi?`}
-        confirmLabel="Kalıcı olarak sil"
-        tone="danger"
-        pending={pending}
-        confirmDisabled={impact.isPending || Boolean(impact.data?.blockedReason)}
-        onConfirm={() => void confirm()}
-      >
-        <div className="c-stack c-stack--s">
-          {impact.isPending ? (
-            <p className="c-muted">Bu kayda bağlı diğer kayıtlar kontrol ediliyor…</p>
-          ) : impact.data?.blockedReason ? (
-            <>
-              <p>
-                <strong>Bu kayıt silinemez.</strong> {impact.data.blockedReason}
-              </p>
-              {references.length > 0 && (
-                <ul className="c-form-error-list">
-                  {references.map((ref) => (
-                    <li key={ref.label}>
-                      {ref.count} {ref.label}
-                    </li>
+      {everOpened && (
+        <ConfirmDialog
+          open={open}
+          onOpenChange={setOpen}
+          title={`${entityName} silinsin mi?`}
+          confirmLabel="Kalıcı olarak sil"
+          tone="danger"
+          pending={pending}
+          confirmDisabled={impact.isPending || Boolean(impact.data?.blockedReason)}
+          onConfirm={() => void confirm()}
+        >
+          <div className="c-stack c-stack--s">
+            {impact.isPending ? (
+              <p className="c-muted">Bu kayda bağlı diğer kayıtlar kontrol ediliyor…</p>
+            ) : impact.data?.blockedReason ? (
+              <>
+                <p>
+                  <strong>Bu kayıt silinemez.</strong> {impact.data.blockedReason}
+                </p>
+                {references.length > 0 && (
+                  <ul className="c-form-error-list">
+                    {references.map((ref) => (
+                      <li key={ref.label}>
+                        {ref.count} {ref.label}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </>
+            ) : references.length > 0 ? (
+              <>
+                <p>
+                  {entityName} şu kayıtlarla ilişkili:{' '}
+                  {references.map((ref, index) => (
+                    <span key={ref.label}>
+                      {index > 0 && (index === references.length - 1 ? ' ve ' : ', ')}
+                      <strong>
+                        {ref.count} {ref.label}
+                      </strong>
+                    </span>
                   ))}
-                </ul>
-              )}
-            </>
-          ) : references.length > 0 ? (
-            <>
-              <p>
-                {entityName} şu kayıtlarla ilişkili:{' '}
-                {references.map((ref, index) => (
-                  <span key={ref.label}>
-                    {index > 0 && (index === references.length - 1 ? ' ve ' : ', ')}
-                    <strong>
-                      {ref.count} {ref.label}
-                    </strong>
-                  </span>
-                ))}
-                .
+                  .
+                </p>
+                <p>Bu ilişkiler kaldırılacak. Bu işlem geri alınamaz.</p>
+              </>
+            ) : (
+              <p>Bu kayda bağlı başka bir kayıt yok. Bu işlem geri alınamaz.</p>
+            )}
+            {error && (
+              <p className="c-form-error" role="alert">
+                {error}
               </p>
-              <p>Bu ilişkiler kaldırılacak. Bu işlem geri alınamaz.</p>
-            </>
-          ) : (
-            <p>Bu kayda bağlı başka bir kayıt yok. Bu işlem geri alınamaz.</p>
-          )}
-          {error && (
-            <p className="c-form-error" role="alert">
-              {error}
-            </p>
-          )}
-        </div>
-      </ConfirmDialog>
+            )}
+          </div>
+        </ConfirmDialog>
+      )}
     </>
   );
 }

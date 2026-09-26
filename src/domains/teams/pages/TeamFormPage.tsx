@@ -2,16 +2,13 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router';
 import { paths } from '@/app/router/paths';
-import { DeleteAction } from '@/components/actions/DeleteAction';
 import { ChipsField, MultiSelectField, SelectField, TextField } from '@/components/forms/fields';
 import { FormPage } from '@/components/forms/FormPage';
 import { QueryView } from '@/components/feedback/QueryView';
 import { SectionCard } from '@/components/layout/SectionCard';
-import { Can } from '@/domains/auth/components/Can';
 import { usePersonOptions } from '@/domains/people/api/queries';
-import { useRepositories } from '@/services/RepositoryContext';
 import { useTeam } from '../api/queries';
-import { useDeleteTeam, useSaveTeam } from '../api/mutations';
+import { useSaveTeam } from '../api/mutations';
 import {
   teamFormSchema,
   toTeamFormValues,
@@ -19,12 +16,11 @@ import {
   type TeamFormValues,
 } from '../schemas/teamForm';
 import type { Team } from '../types';
+import { TeamDeleteAction } from '../components/TeamDeleteAction';
 
 function TeamForm({ team }: { team?: Team }) {
   const navigate = useNavigate();
-  const { teams } = useRepositories();
   const save = useSaveTeam(team?.id);
-  const remove = useDeleteTeam();
   const people = usePersonOptions();
   const form = useForm<TeamFormValues>({
     resolver: zodResolver(teamFormSchema),
@@ -49,16 +45,7 @@ function TeamForm({ team }: { team?: Team }) {
       }
       deleteAction={
         team && (
-          <Can permission="portfolio:delete">
-            <DeleteAction
-              entityLabel="ekip"
-              entityName={team.name}
-              impactKey={['team', team.id]}
-              loadImpact={() => teams.getDeletionImpact(team.id)}
-              onDelete={() => remove.mutateAsync(team.id)}
-              onDeleted={() => void navigate(paths.teams.list())}
-            />
-          </Can>
+          <TeamDeleteAction record={team} onDeleted={() => void navigate(paths.teams.list())} />
         )
       }
     >

@@ -9,6 +9,7 @@ import { paths } from '@/app/router/paths';
 import { editColumn } from '@/components/data-display/editColumn';
 import { usePermission } from '@/domains/auth/api/queries';
 import { MasterBadge } from '@/domains/master-data/components/MasterBadge';
+import { EscalationDeleteAction } from './EscalationDeleteAction';
 
 interface EscalationTableProps {
   escalations: Escalation[];
@@ -94,6 +95,7 @@ export function EscalationTable({
           editColumn<Escalation>(
             (escalation) => paths.escalationForms.edit(escalation.id),
             (escalation) => escalation.title,
+            (escalation) => <EscalationDeleteAction record={escalation} compact />,
           ),
         ]
       : []),

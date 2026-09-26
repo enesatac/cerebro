@@ -975,6 +975,9 @@ code {
 }
 
 .c-decision-list__edit {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xl);
   margin: var(--spacing-m-base) 0 0;
 }
 
@@ -1126,7 +1129,8 @@ code {
 
 .c-row-actions {
   display: inline-flex;
-  gap: var(--spacing-xs);
+  align-items: center;
+  gap: var(--spacing-s);
   justify-content: flex-end;
 }
 
@@ -1169,4 +1173,14 @@ code {
   .c-value-row__wide {
     grid-column: auto;
   }
+}
+
+/*
+ * Turkish column headers are long ("Yaşam döngüsü", "Planlanan bitiş"); Takeoff keeps headers on one
+ * line, which pushes tables wider than their card. Let them wrap instead.
+ */
+.tk-table-header-cell,
+.tk-table-sort-trigger {
+  white-space: normal;
+  text-align: start;
 }

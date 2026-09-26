@@ -9,6 +9,9 @@ import { PROJECT_PAGE_SIZES } from '../utils/projectListParams';
 import { PercentMeter } from '@/components/data-display/PercentMeter';
 import { MasterBadge } from '@/domains/master-data/components/MasterBadge';
 import { MasterLabel } from '@/domains/master-data/components/MasterLabel';
+import { editColumn } from '@/components/data-display/editColumn';
+import { usePermission } from '@/domains/auth/api/queries';
+import { ProjectDeleteAction } from './ProjectDeleteAction';
 
 const isSortField = (id: string): id is ProjectSortField =>
   (PROJECT_SORT_FIELDS as readonly string[]).includes(id);
@@ -19,7 +22,7 @@ const columns: TableColumnDef<ProjectListItem>[] = [
     header: 'Proje',
     accessor: 'name',
     sortable: true,
-    width: 250,
+    width: 160,
     cell: ({ row }) => (
       <div className="c-cell-stack">
         <EntityLink to={paths.projects.detail(row.original.id)}>{row.original.name}</EntityLink>
@@ -54,7 +57,7 @@ const columns: TableColumnDef<ProjectListItem>[] = [
   {
     id: 'progress',
     header: 'İlerleme',
-    width: 150,
+    width: 125,
     cell: ({ row }) => (
       <span className="c-cell-stack">
         <PercentMeter
@@ -70,14 +73,14 @@ const columns: TableColumnDef<ProjectListItem>[] = [
   {
     id: 'businessUnit',
     header: 'İş birimi',
-    width: 150,
+    width: 125,
     cell: ({ row }) =>
       row.original.businessUnit?.name ?? <span className="c-muted">Belirlenmemiş</span>,
   },
   {
     id: 'projectManager',
     header: 'Proje yöneticisi',
-    width: 150,
+    width: 125,
     cell: ({ row }) =>
       row.original.projectManager?.name ?? <span className="c-text-warning">Atanmamış</span>,
   },
@@ -101,6 +104,12 @@ interface ProjectsTableProps {
   emptyState: ReactNode;
 }
 
+const actionsColumn = editColumn<ProjectListItem>(
+  (project) => paths.projects.edit(project.id),
+  (project) => project.name,
+  (project) => <ProjectDeleteAction record={project} compact />,
+);
+
 export function ProjectsTable({
   result,
   sort,
@@ -109,10 +118,11 @@ export function ProjectsTable({
   loading,
   emptyState,
 }: ProjectsTableProps) {
+  const canEdit = usePermission('portfolio:edit');
   return (
     <Table
       data={result?.items ?? []}
-      columns={columns}
+      columns={canEdit ? [...columns, actionsColumn] : columns}
       getRowId={(row) => row.id}
       manual
       loading={loading}

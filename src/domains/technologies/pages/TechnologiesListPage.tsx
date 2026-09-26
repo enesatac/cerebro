@@ -22,6 +22,9 @@ import { CreateAction } from '@/domains/auth/components/RecordActions';
 import { MasterBadge } from '@/domains/master-data/components/MasterBadge';
 import { MasterLabel } from '@/domains/master-data/components/MasterLabel';
 import { useMasterData } from '@/domains/master-data/context';
+import { editColumn } from '@/components/data-display/editColumn';
+import { usePermission } from '@/domains/auth/api/queries';
+import { TechnologyDeleteAction } from '../components/TechnologyDeleteAction';
 
 const columns: TableColumnDef<TechnologyListItem>[] = [
   {
@@ -62,7 +65,14 @@ const columns: TableColumnDef<TechnologyListItem>[] = [
   },
 ];
 
+const actionsColumn = editColumn<TechnologyListItem>(
+  (technology) => paths.technologies.edit(technology.id),
+  (technology) => technology.name,
+  (technology) => <TechnologyDeleteAction record={technology} compact />,
+);
+
 export default function TechnologiesListPage() {
+  const canEdit = usePermission('portfolio:edit');
   const masterData = useMasterData();
   const [searchParams, setSearchParams] = useSearchParams();
   const filters = parseTechnologyFilters(searchParams);
@@ -121,7 +131,7 @@ export default function TechnologiesListPage() {
               </Toolbar>
               <Table
                 data={visible}
-                columns={columns}
+                columns={canEdit ? [...columns, actionsColumn] : columns}
                 getRowId={(row) => row.id}
                 sorting={{ defaultValue: [{ id: 'name', desc: false }] }}
                 pagination={{ pageSize: 25, pageSizeOptions: [25, 50, 100] }}

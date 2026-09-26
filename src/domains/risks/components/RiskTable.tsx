@@ -9,6 +9,7 @@ import { editColumn } from '@/components/data-display/editColumn';
 import { usePermission } from '@/domains/auth/api/queries';
 import { MasterBadge } from '@/domains/master-data/components/MasterBadge';
 import { MasterLabel } from '@/domains/master-data/components/MasterLabel';
+import { RiskDeleteAction } from './RiskDeleteAction';
 
 interface RiskTableProps {
   risks: Risk[];
@@ -81,6 +82,7 @@ export function RiskTable({ risks, showRelated = false, emptyState, pagination }
           editColumn<Risk>(
             (risk) => paths.riskForms.edit(risk.id),
             (risk) => risk.title,
+            (risk) => <RiskDeleteAction record={risk} compact />,
           ),
         ]
       : []),

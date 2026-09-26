@@ -1,5 +1,5 @@
 import { Alert, Table, type TableColumnDef } from '@takeoff-ui/react-spar';
-import { useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import { paths } from '@/app/router/paths';
 import { EntityLink } from '@/components/data-display/EntityLink';
 import { EmptyState } from '@/components/feedback/EmptyState';
@@ -17,6 +17,7 @@ import type { Technology } from '../types';
 import { EditAction } from '@/domains/auth/components/RecordActions';
 import { MasterBadge } from '@/domains/master-data/components/MasterBadge';
 import { MasterLabel } from '@/domains/master-data/components/MasterLabel';
+import { TechnologyDeleteAction } from '../components/TechnologyDeleteAction';
 
 const USAGE_PAGE_SIZE = 100;
 
@@ -84,6 +85,7 @@ function UsedBy({ technology }: { technology: Technology }) {
 }
 
 export default function TechnologyDetailPage() {
+  const navigate = useNavigate();
   const { technologyId = '' } = useParams();
   const query = useTechnology(technologyId);
 
@@ -111,7 +113,15 @@ export default function TechnologyDetailPage() {
           { label: technology.name },
         ]}
         title={technology.name}
-        actions={<EditAction to={paths.technologies.edit(technology.id)} />}
+        actions={
+          <>
+            <EditAction to={paths.technologies.edit(technology.id)} />
+            <TechnologyDeleteAction
+              record={technology}
+              onDeleted={() => void navigate(paths.technologies.list())}
+            />
+          </>
+        }
         subtitle={technology.description}
         meta={
           <>

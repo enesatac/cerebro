@@ -2,16 +2,13 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useParams, useSearchParams } from 'react-router';
 import { paths } from '@/app/router/paths';
-import { DeleteAction } from '@/components/actions/DeleteAction';
 import { DateField } from '@/components/forms/DateField';
 import { SelectField, TextField } from '@/components/forms/fields';
 import { FormPage } from '@/components/forms/FormPage';
 import { QueryView } from '@/components/feedback/QueryView';
 import { SectionCard } from '@/components/layout/SectionCard';
-import { Can } from '@/domains/auth/components/Can';
 import { usePersonOptions } from '@/domains/people/api/queries';
-import { useRepositories } from '@/services/RepositoryContext';
-import { useDeleteRisk, useSaveRisk } from '../api/mutations';
+import { useSaveRisk } from '../api/mutations';
 import { useRisk } from '../api/queries';
 import { RelatedEntitiesFields } from '../components/RelatedEntitiesFields';
 import {
@@ -23,13 +20,12 @@ import {
 import { RISK_LIKELIHOODS, type Risk } from '../types';
 import { readRelatedPrefill, relatedReturnPath } from '../utils/relatedPrefill';
 import { MasterSelectField } from '@/domains/master-data/components/MasterSelectField';
+import { RiskDeleteAction } from '../components/RiskDeleteAction';
 
 function RiskForm({ risk }: { risk?: Risk }) {
   const navigate = useNavigate();
   const [params] = useSearchParams();
-  const { risks } = useRepositories();
   const save = useSaveRisk(risk?.id);
-  const remove = useDeleteRisk();
   const people = usePersonOptions();
   const form = useForm<RiskFormValues>({
     resolver: zodResolver(riskFormSchema),
@@ -63,16 +59,7 @@ function RiskForm({ risk }: { risk?: Risk }) {
       }}
       deleteAction={
         risk && (
-          <Can permission="portfolio:delete">
-            <DeleteAction
-              entityLabel="risk"
-              entityName={risk.title}
-              impactKey={['risk', risk.id]}
-              loadImpact={() => risks.getDeletionImpact(risk.id)}
-              onDelete={() => remove.mutateAsync(risk.id)}
-              onDeleted={() => void navigate(paths.risks('risks'))}
-            />
-          </Can>
+          <RiskDeleteAction record={risk} onDeleted={() => void navigate(paths.risks('risks'))} />
         )
       }
     >

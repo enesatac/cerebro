@@ -71,7 +71,10 @@ A task is not complete until `npm run validate` passes.
 - Roles: `admin` (everything) and `user` (read-only). Enforce in the repository (`WriteKit.begin`)
   and mirror in the UI with `Can`, `CreateAction`/`EditAction`, `RequirePermission`.
 - Forms: `FormPage` + fields from `components/forms`; schema and mappers in
-  `domains/<d>/schemas/*Form.ts`; mutations via `useRepositoryMutation`; deletion via `DeleteAction`.
+  `domains/<d>/schemas/*Form.ts`; mutations via `useRepositoryMutation`.
+- Deletion: every editable record has a `domains/<d>/components/<Entity>DeleteAction` (permission
+  guard + impact confirmation). Offer it on the edit form, the detail page header and list rows
+  (`editColumn(to, describe, renderDelete)`, `compact`). Users cannot delete themselves or the last admin.
 
 ## Conventions
 

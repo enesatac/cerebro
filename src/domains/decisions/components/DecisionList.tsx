@@ -8,6 +8,7 @@ import { Link } from 'react-router';
 import { paths } from '@/app/router/paths';
 import { usePermission } from '@/domains/auth/api/queries';
 import { MasterBadge } from '@/domains/master-data/components/MasterBadge';
+import { DecisionDeleteAction } from './DecisionDeleteAction';
 
 interface DecisionListProps {
   decisions: Decision[];
@@ -74,6 +75,7 @@ export function DecisionList({ decisions, emptyTitle }: DecisionListProps) {
                 >
                   Kararı düzenle
                 </Link>
+                <DecisionDeleteAction record={decision} compact />
               </p>
             )}
           </Accordion.Content>
