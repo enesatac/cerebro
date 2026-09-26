@@ -1,7 +1,7 @@
-import { Field, Input } from '@takeoff-ui/react-spar';
+import { Field, Input, Select } from '@takeoff-ui/react-spar';
 import { SearchIconOutlinedRounded } from '@takeoff-icons/react/search';
 import { useState } from 'react';
-import { Link, useSearchParams } from 'react-router';
+import { Link, useNavigate, useSearchParams } from 'react-router';
 import { paths } from '@/app/router/paths';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { BusinessUnitsEditor } from '@/domains/business-units/components/BusinessUnitsEditor';
@@ -57,6 +57,44 @@ function SectionLink({
   );
 }
 
+/** Narrow screens: a grouped select replaces the long list navigation. */
+function SectionPicker({ section }: { section: Section }) {
+  const navigate = useNavigate();
+  return (
+    <Field className="c-md-picker">
+      <Field.Label>Düzenlenecek liste</Field.Label>
+      <Select
+        value={section}
+        onChange={(next) => void navigate(paths.admin.masterData(next), { replace: true })}
+      >
+        <Select.Trigger />
+        <Select.Content>
+          <Select.Viewport>
+            <Select.Group>
+              <Select.Label>Organizasyon</Select.Label>
+              {RECORD_SECTIONS.map((record) => (
+                <Select.Item key={record.id} value={record.id} label={record.label}>
+                  {record.label}
+                </Select.Item>
+              ))}
+            </Select.Group>
+            {MASTER_DATA_GROUPS.map((group) => (
+              <Select.Group key={group.id}>
+                <Select.Label>{group.label}</Select.Label>
+                {MASTER_DATA_LISTS.filter((list) => list.group === group.id).map((list) => (
+                  <Select.Item key={list.key} value={list.key} label={list.label}>
+                    {list.label}
+                  </Select.Item>
+                ))}
+              </Select.Group>
+            ))}
+          </Select.Viewport>
+        </Select.Content>
+      </Select>
+    </Field>
+  );
+}
+
 /**
  * One place for administrators to maintain every value offered in forms and shown across the site:
  * business units, people and all value lists (statuses, types, categories, scales…).
@@ -85,6 +123,7 @@ export default function MasterDataPage() {
         title="Ana veriler"
         subtitle="Formlarda seçilen ve sitede gösterilen tüm değerler. Burada yapılan değişiklikler tüm ekranlara anında yansır."
       />
+      <SectionPicker section={section} />
       <div className="c-md-layout">
         <nav className="c-md-nav" aria-label="Ana veri listeleri">
           <Field className="c-md-nav__search">

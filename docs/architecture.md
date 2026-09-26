@@ -103,6 +103,16 @@ they are unit-tested against the seed data. Connection impact analysis
 `StakeholderList` (people), `RelatedRisksAndEscalations`/`RiskTable` (risks), `EscalationTable`,
 `DecisionList`, `DocumentationTable` (shared), `AuditHistory` and `AttentionNotices` (governance).
 
+## Responsive layout
+
+- Content (forms included) uses the full width up to `--c-content-max` (1920px).
+- ≤ 900px: the sidebar is replaced by a menu button that opens the navigation in a Takeoff `Drawer`
+  (`app/layout/MobileNavigation`); the top bar compacts.
+- ≤ 600px: form grids and detail lists collapse, stat tiles and key facts use two columns, filters
+  go two per row, the brand text and user name hide. Tables scroll horizontally inside their card;
+  the page itself never scrolls sideways. The master data page swaps its list navigation for a
+  grouped select.
+
 ## Routing
 
 `app/router/routes.tsx` defines the route tree (pages are `React.lazy`), `paths.ts` builds URLs.

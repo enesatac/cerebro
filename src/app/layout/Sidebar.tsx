@@ -1,58 +1,14 @@
-import { DataObjectIconOutlinedRounded } from '@takeoff-icons/react/data-object';
-import { UserSettingsIconOutlinedRounded } from '@takeoff-icons/react/user-settings';
-import { NavLink } from 'react-router';
-import { usePermission } from '@/domains/auth/api/queries';
-import { paths } from '../router/paths';
-import { PRIMARY_NAVIGATION, type NavigationItem } from './navigation';
-
-const MASTER_DATA_NAVIGATION: NavigationItem = {
-  label: 'Ana veriler',
-  to: paths.admin.masterData(),
-  icon: DataObjectIconOutlinedRounded,
-};
-const USERS_NAVIGATION: NavigationItem = {
-  label: 'Kullanıcılar ve roller',
-  to: paths.admin.users(),
-  icon: UserSettingsIconOutlinedRounded,
-};
-
-function NavList({ items }: { items: NavigationItem[] }) {
-  return (
-    <ul className="c-sidebar__list">
-      {items.map(({ label, to, icon: Icon, end }) => (
-        <li key={to}>
-          <NavLink to={to} end={end} className="c-sidebar__link">
-            <Icon className="c-sidebar__icon" aria-hidden="true" />
-            <span>{label}</span>
-          </NavLink>
-        </li>
-      ))}
-    </ul>
-  );
-}
+import { NavigationLinks } from './NavigationLinks';
 
 /**
- * Primary navigation. Takeoff UI has no navigation/sidebar component, so this is a thin
- * semantic `<nav>` styled with Takeoff tokens. `NavLink` sets `aria-current="page"`.
+ * Primary navigation on wide screens. Takeoff UI has no navigation/sidebar component, so this is a
+ * thin semantic `<nav>` styled with Takeoff tokens. `NavLink` sets `aria-current="page"`.
+ * Narrow screens use `MobileNavigation` instead (the sidebar is hidden by CSS).
  */
 export function Sidebar() {
-  const canManageUsers = usePermission('users:manage');
-  const canManageMasterData = usePermission('masterData:manage');
-  const adminItems = [
-    ...(canManageMasterData ? [MASTER_DATA_NAVIGATION] : []),
-    ...(canManageUsers ? [USERS_NAVIGATION] : []),
-  ];
   return (
     <nav className="c-sidebar" aria-label="Ana menü">
-      <NavList items={PRIMARY_NAVIGATION} />
-      {adminItems.length > 0 && (
-        <div className="c-sidebar__section">
-          <p className="c-sidebar__heading" id="nav-admin-heading">
-            Yönetim
-          </p>
-          <NavList items={adminItems} />
-        </div>
-      )}
+      <NavigationLinks />
     </nav>
   );
 }

@@ -6,6 +6,7 @@ import { UserMenu } from '@/domains/auth/components/UserMenu';
 import { MasterDataProvider } from '@/domains/master-data/components/MasterDataProvider';
 import { paths } from '../router/paths';
 import { GlobalSearch } from './GlobalSearch';
+import { MobileNavigation } from './MobileNavigation';
 import { Sidebar } from './Sidebar';
 
 export function AppShell() {
@@ -15,9 +16,10 @@ export function AppShell() {
         Ana içeriğe geç
       </a>
       <header className="c-topbar">
-        <Link to={paths.dashboard()} className="c-topbar__brand">
+        <MobileNavigation />
+        <Link to={paths.dashboard()} className="c-topbar__brand" aria-label="Cerebro ana sayfa">
           <span className="c-topbar__logo" aria-hidden="true" />
-          Cerebro
+          <span className="c-topbar__brand-text">Cerebro</span>
         </Link>
         <GlobalSearch />
         <div className="c-topbar__end">

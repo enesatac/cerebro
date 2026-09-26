@@ -8,7 +8,7 @@
   --c-sidebar-width: 232px;
   --c-topbar-height: 56px;
   --c-page-gutter: 24px;
-  --c-content-max: 1440px;
+  --c-content-max: 1920px;
 }
 
 *,
@@ -175,37 +175,48 @@ code {
   padding: var(--c-page-gutter);
 }
 
-/* Narrow viewports: sidebar becomes a horizontal, scrollable strip under the top bar. */
+/* The menu button only exists on narrow screens, where it replaces the sidebar. */
+.c-topbar__menu {
+  display: none;
+}
+
+.c-mobile-nav {
+  width: min(300px, 85vw);
+}
+
+/* Narrow viewports: the sidebar moves into a drawer opened from the top bar. */
 @media (max-width: 900px) {
+  :root {
+    --c-page-gutter: 16px;
+  }
+
   .c-shell {
     grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: var(--c-topbar-height) auto minmax(0, 1fr);
-    grid-template-areas: 'topbar' 'sidebar' 'main';
+    grid-template-rows: var(--c-topbar-height) minmax(0, 1fr);
+    grid-template-areas: 'topbar' 'main';
+  }
+
+  .c-sidebar {
+    display: none;
+  }
+
+  .c-topbar {
+    gap: var(--spacing-m-base);
+  }
+
+  .c-topbar__menu {
+    display: flex;
+    margin-left: calc(var(--spacing-s) * -1);
   }
 
   .c-topbar__brand {
     width: auto;
   }
 
-  .c-sidebar {
-    position: static;
-    height: auto;
-    padding: var(--spacing-m-base) var(--spacing-4xl);
-    border-right: 0;
-    border-bottom: 1px solid var(--border-light);
-  }
-
-  .c-sidebar__list {
-    flex-direction: row;
-    overflow-x: auto;
-  }
-
-  .c-sidebar__link {
-    white-space: nowrap;
-  }
-
-  .c-main {
-    padding: var(--spacing-4xl);
+  .c-global-search {
+    flex: 1;
+    width: auto;
+    min-width: 0;
   }
 }
 
@@ -756,7 +767,6 @@ code {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-4xl);
-  max-width: 1120px;
 }
 
 .c-form-grid {
@@ -1064,6 +1074,10 @@ code {
   min-width: 0;
 }
 
+.c-md-picker {
+  display: none;
+}
+
 .c-value-list {
   display: flex;
   flex-direction: column;
@@ -1154,10 +1168,13 @@ code {
     grid-template-columns: minmax(0, 1fr);
   }
 
-  /* Keep the editor reachable on narrow screens: the list navigation scrolls in its own box. */
+  /* Narrow screens pick the list from a select (`.c-md-picker`) instead of the side navigation. */
   .c-md-nav {
-    position: static;
-    max-height: 320px;
+    display: none;
+  }
+
+  .c-md-picker {
+    display: flex;
   }
 
   .c-value-row {
@@ -1183,4 +1200,100 @@ code {
 .tk-table-sort-trigger {
   white-space: normal;
   text-align: start;
+}
+
+/* ---------- Small screens (phones) ---------- */
+
+/* Long record names must not push the breadcrumb off screen. */
+.c-page-header__breadcrumb .tk-breadcrumb-list {
+  flex-wrap: wrap;
+  row-gap: var(--spacing-xxs);
+}
+
+.c-confirm-dialog {
+  width: min(520px, calc(100vw - 32px));
+}
+
+@media (max-width: 600px) {
+  .c-topbar__brand-text,
+  .c-user-menu__name {
+    display: none;
+  }
+
+  .c-page-header__title {
+    font-size: var(--size-xl);
+  }
+
+  .c-section-card__header {
+    flex-wrap: wrap;
+    gap: var(--spacing-m-base);
+  }
+
+  .c-toolbar__controls {
+    width: 100%;
+  }
+
+  .c-toolbar__search {
+    width: 100%;
+  }
+
+  .c-filter-select {
+    flex: 1 1 calc(50% - var(--spacing-xl));
+    width: auto;
+    min-width: 0;
+  }
+
+  .c-stat-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--spacing-m-base);
+  }
+
+  .c-stat-tile,
+  .c-key-facts {
+    padding: var(--spacing-xl);
+  }
+
+  .c-stat-tile__value {
+    font-size: var(--size-2xl);
+  }
+
+  .c-detail-list--grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--spacing-xl);
+  }
+
+  .c-detail-list--stacked .c-detail-list__item {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--spacing-xxs);
+  }
+
+  .c-bar-list__row {
+    grid-template-columns: 96px minmax(0, 1fr) 32px;
+    gap: var(--spacing-m-base);
+  }
+
+  .c-form-actions {
+    flex-wrap: wrap;
+    gap: var(--spacing-m-base);
+    padding: var(--spacing-m-base) var(--spacing-xl);
+  }
+
+  .c-form-actions__main {
+    flex: 1 1 100%;
+    justify-content: flex-end;
+  }
+
+  .c-value-row {
+    grid-template-columns: minmax(0, 1fr);
+    padding: var(--spacing-xl);
+  }
+
+  .c-value-row__order {
+    flex-direction: row;
+  }
+
+  .c-value-row__side {
+    grid-column: auto;
+    flex-wrap: wrap;
+  }
 }
