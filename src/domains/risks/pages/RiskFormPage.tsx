@@ -1,0 +1,194 @@
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { useNavigate, useParams, useSearchParams } from 'react-router';
+import { paths } from '@/app/router/paths';
+import { DeleteAction } from '@/components/actions/DeleteAction';
+import { DateField } from '@/components/forms/DateField';
+import { SelectField, TextField } from '@/components/forms/fields';
+import { FormPage } from '@/components/forms/FormPage';
+import { QueryView } from '@/components/feedback/QueryView';
+import { SectionCard } from '@/components/layout/SectionCard';
+import { Can } from '@/domains/auth/components/Can';
+import { usePersonOptions } from '@/domains/people/api/queries';
+import { CRITICALITIES } from '@/domains/shared/types';
+import { CRITICALITY_PRESENTATION } from '@/domains/shared/utils/presentation';
+import { useRepositories } from '@/services/RepositoryContext';
+import { useDeleteRisk, useSaveRisk } from '../api/mutations';
+import { useRisk } from '../api/queries';
+import { RelatedEntitiesFields } from '../components/RelatedEntitiesFields';
+import {
+  riskFormSchema,
+  toRiskFormValues,
+  toRiskInput,
+  type RiskFormValues,
+} from '../schemas/riskForm';
+import { RISK_CATEGORIES, RISK_LIKELIHOODS, RISK_STATUSES, type Risk } from '../types';
+import { readRelatedPrefill, relatedReturnPath } from '../utils/relatedPrefill';
+import { RISK_CATEGORY_LABELS, RISK_STATUS_PRESENTATION } from '../utils/riskPresentation';
+
+const LIKELIHOOD_OPTIONS = RISK_LIKELIHOODS.map((value) => ({
+  value,
+  label: value[0]?.toUpperCase() + value.slice(1),
+}));
+const SEVERITY_OPTIONS = CRITICALITIES.map((value) => ({
+  value,
+  label: CRITICALITY_PRESENTATION[value].label,
+}));
+
+function RiskForm({ risk }: { risk?: Risk }) {
+  const navigate = useNavigate();
+  const [params] = useSearchParams();
+  const { risks } = useRepositories();
+  const save = useSaveRisk(risk?.id);
+  const remove = useDeleteRisk();
+  const people = usePersonOptions();
+  const form = useForm<RiskFormValues>({
+    resolver: zodResolver(riskFormSchema),
+    defaultValues: toRiskFormValues(risk, readRelatedPrefill(params)),
+    mode: 'onTouched',
+  });
+  const { control } = form;
+  const returnTo = relatedReturnPath(
+    params,
+    {
+      application: (id) => `${paths.applications.detail(id)}?tab=risks`,
+      project: (id) => `${paths.projects.detail(id)}?tab=risks`,
+    },
+    paths.risks('risks'),
+  );
+
+  return (
+    <FormPage
+      form={form}
+      title={risk ? 'Edit risk' : 'Record a risk'}
+      subtitle={risk?.title}
+      breadcrumbs={[
+        { label: 'Risks & Escalations', to: paths.risks('risks') },
+        { label: risk ? 'Edit risk' : 'New risk' },
+      ]}
+      cancelTo={returnTo}
+      submitLabel={risk ? 'Save changes' : 'Record risk'}
+      onSubmit={async (values) => {
+        await save.mutateAsync(toRiskInput(values));
+        return returnTo;
+      }}
+      deleteAction={
+        risk && (
+          <Can permission="portfolio:delete">
+            <DeleteAction
+              entityLabel="risk"
+              entityName={risk.title}
+              impactKey={['risk', risk.id]}
+              loadImpact={() => risks.getDeletionImpact(risk.id)}
+              onDelete={() => remove.mutateAsync(risk.id)}
+              onDeleted={() => void navigate(paths.risks('risks'))}
+            />
+          </Can>
+        )
+      }
+    >
+      <SectionCard title="Risk">
+        <div className="c-form-grid">
+          <TextField
+            control={control}
+            name="title"
+            label="Title"
+            required
+            className="c-form-grid__wide"
+          />
+          <TextField
+            control={control}
+            name="description"
+            label="Description"
+            rows={3}
+            className="c-form-grid__wide"
+          />
+          <SelectField
+            control={control}
+            name="category"
+            label="Category"
+            required
+            options={RISK_CATEGORIES.map((value) => ({
+              value,
+              label: RISK_CATEGORY_LABELS[value],
+            }))}
+          />
+          <SelectField
+            control={control}
+            name="status"
+            label="Status"
+            required
+            options={RISK_STATUSES.map((value) => ({
+              value,
+              label: RISK_STATUS_PRESENTATION[value].label,
+            }))}
+          />
+        </div>
+      </SectionCard>
+      <SectionCard title="Assessment">
+        <div className="c-form-grid c-form-grid--three">
+          <SelectField
+            control={control}
+            name="probability"
+            label="Probability"
+            required
+            options={LIKELIHOOD_OPTIONS}
+          />
+          <SelectField
+            control={control}
+            name="impact"
+            label="Impact"
+            required
+            options={LIKELIHOOD_OPTIONS}
+          />
+          <SelectField
+            control={control}
+            name="severity"
+            label="Severity"
+            required
+            options={SEVERITY_OPTIONS}
+            description="Overall rating used for prioritisation."
+          />
+        </div>
+      </SectionCard>
+      <SectionCard title="Ownership & mitigation">
+        <div className="c-form-grid">
+          <SelectField
+            control={control}
+            name="ownerId"
+            label="Owner"
+            options={people}
+            emptyLabel="Unassigned"
+          />
+          <DateField control={control} name="dueDate" label="Due date" />
+          <TextField
+            control={control}
+            name="mitigationPlan"
+            label="Mitigation plan"
+            rows={3}
+            className="c-form-grid__wide"
+          />
+        </div>
+      </SectionCard>
+      <RelatedEntitiesFields
+        control={control}
+        applicationsName="relatedApplicationIds"
+        projectsName="relatedProjectIds"
+      />
+    </FormPage>
+  );
+}
+
+export default function RiskFormPage() {
+  const { riskId } = useParams();
+  return riskId ? <EditRisk id={riskId} /> : <RiskForm />;
+}
+
+function EditRisk({ id }: { id: string }) {
+  const query = useRisk(id);
+  return (
+    <QueryView query={query} loadingLabel="Loading risk" errorTitle="This risk could not be loaded">
+      {(risk) => <RiskForm risk={risk} />}
+    </QueryView>
+  );
+}

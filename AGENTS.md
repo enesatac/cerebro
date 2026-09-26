@@ -1,0 +1,100 @@
+# AGENTS.md
+
+> Generated from `node_modules/@takeoff-ui/react-spar/agents/AGENTS.template.md` (v0.6.0) and validated
+> against the installed package exports. Cerebro-specific rules follow the generated sections.
+> Regenerate the Takeoff sections when upgrading `@takeoff-ui/react-spar`.
+
+This project uses `@takeoff-ui/react-spar`, a React 19 component library built
+on headless Spar primitives and styled with Takeoff design tokens.
+
+## Rules
+
+- Import every component from `@takeoff-ui/react-spar`. Do not hand-roll an
+  element that already exists in the table below — reach for the component.
+- React 19 only. React 18 throws at runtime.
+- Mount `TakeoffSparProvider` once at the app root and import the token CSS
+  (`@takeoff-design/tokens/css/default/theme.css`) once at the entry point.
+- Style through the documented layers only: `className` (root slot),
+  `classNames={{ slot }}`, `slotProps={{ slot }}`, or provider defaults.
+  Internal DOM is not a styling contract — only rely on documented `data-*`
+  attributes.
+- Icons ship separately in `@takeoff-icons/react`.
+
+## Components
+
+| Component    | Use it for                                                                                                                                                               |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `Accordion`  | Grouped collapsible sections (FAQs, settings panels, itinerary details) where open/closed state is owned by Spar.                                                        |
+| `Alert`      | Inline, page-level feedback (gate changes, billing warnings, status notices).                                                                                            |
+| `Badge`      | Inline status pills, category tags, count bubbles, notification dots, and overlay indicators on icons/avatars.                                                           |
+| `Breadcrumb` | Render a hierarchical "where am I" trail of ancestor links ending in the current page.                                                                                   |
+| `Button`     | Any clickable action — submit, CTA, toolbar action, icon-only action, or a two-state toggle (via `pressed`/`onPressedChange`).                                           |
+| `Calendar`   | Inline date selection — booking grids, availability views, filters with a permanently visible month.                                                                     |
+| `Card`       | You need a bordered surface that bundles a heading, body content, and an optional action footer.                                                                         |
+| `Checkbox`   | Boolean opt-in/opt-out controls, accept-terms gates, multi-select lists, and tri-state "select all" parents.                                                             |
+| `Chip`       | Filter tags, entered/selected values, and short status metadata.                                                                                                         |
+| `Datepicker` | **There is no `DatePicker` component.** A date picker is `Popover` + `Calendar`, composed in the consumer's own component.                                               |
+| `Dialog`     | A modal layer that interrupts the flow for content, forms, or confirmations.                                                                                             |
+| `Divider`    | Separating sections of a page, groups in a list or menu, or items in a horizontal toolbar — optionally with a label ("OR") in the middle.                                |
+| `Drawer`     | Content that slides in from an edge and overlays the page.                                                                                                               |
+| `Dropdown`   | A trigger that opens a menu of _commands_ — row actions, overflow ("⋯") menus, toolbar menus, account menus.                                                             |
+| `Field`      | Wrap one form control to attach a visible label, helper text, and a validation error message that are correctly associated for screen readers.                           |
+| `Input`      | Any single-line (or `as="textarea"`) text entry — search boxes, email/password fields, numeric steppers/counters, tag/chips fields.                                      |
+| `Label`      | You only need the label primitive — a section title, a caption, or a manual `htmlFor` association to a native control.                                                   |
+| `Popover`    | Anchored, dismissible panels tied to a trigger (settings, quick forms, contextual info).                                                                                 |
+| `Progress`   | Work with a known percentage — file uploads, imports, quota and storage meters, multi-item batch jobs — or a bar-shaped indeterminate treatment for a long-running task. |
+| `Radio`      | Any single-choice form control: cabin/seat/plan/payment pickers, exclusive option lists.                                                                                 |
+| `Select`     | Single-choice dropdown pickers where you want a styled, portalled listbox instead of a native `<select>`.                                                                |
+| `Skeleton`   | First-load placeholders for content whose layout you already know — cards, list rows, avatars, text lines, table cells.                                                  |
+| `Slider`     | Any bounded numeric selection where dragging beats typing — volume, brightness, temperature, zoom, a price/date range filter, gradient stops.                            |
+| `Spinner`    | Show ongoing, indeterminate activity (fetching, saving, processing) where progress is unknown.                                                                           |
+| `Stepper`    | Multi-step flows where the sequence itself is meaningful and the user should see where they are and what remains — checkout, booking, onboarding, multi-page forms.      |
+| `Switch`     | Any boolean toggle that applies immediately.                                                                                                                             |
+| `Table`      | Rendering tabular data with any of sorting, filtering, pagination, row selection, expandable/tree rows, sticky columns, loading/empty states, or server-side paging.     |
+| `Tabs`       | A UI needs a tablist that swaps panels — settings sections, detail views, segmented controls.                                                                            |
+| `Toast`      | Any ephemeral, auto-dismissing notification fired imperatively (success/error/info/warning/loading, promise results, undo actions).                                      |
+| `Tooltip`    | Brief, non-interactive hints attached to a trigger element (button, icon).                                                                                               |
+| `Upload`     | Attaching files to a form, a review-then-send batch, an avatar/image picker.                                                                                             |
+
+## Getting the full API
+
+This file is an index. For a component's complete props, slots, data attributes,
+and runnable examples, fetch its Markdown page:
+
+    https://takeoff-v2.app.turkishtechlab.com/docs/components/<component>.md
+
+The entire library in one file (for pasting into a model's context) is at:
+
+    https://takeoff-v2.app.turkishtechlab.com/llms-full.txt
+
+## Migrating from Takeoff UI v1
+
+For React applications moving from `@takeoff-ui/react` and `Tk*` components, the
+migration skill ships with this package:
+
+    node_modules/@takeoff-ui/react-spar/agents/migrate-takeoff-v1/SKILL.md
+
+Point your assistant at that file. It covers the inventory commands, setup
+order, v1-to-v2 component map, event/prop guidance, and the known coverage gaps,
+with the supporting detail in the `references/` directory beside it.
+
+## Verified against installed version (0.6.0)
+
+- All components in the table above are exported by `@takeoff-ui/react-spar@0.6.0`, including
+  `Calendar` (the package README list omits it; the exports and this template include it).
+- Additional exports used by Cerebro: `Toaster` / `createToaster` (toasts), `getExportRows` (Table),
+  `useDatePicker`, `TakeoffSparProvider`.
+- `Table` has two modes: client (default) and `manual` (server) — Cerebro list pages use `manual`
+  with controlled `sorting` / `pagination` so the repository owns filtering, sorting and paging.
+- Parts are polymorphic via `as` — use `as={Link}` (React Router) for navigation instead of
+  wrapping components in anchors.
+
+## Cerebro project rules
+
+- Read `CLAUDE.md` first; procedures live in `.claude/skills/*/SKILL.md`.
+- Takeoff UI MCP (`takeoff-ui-mcp`: `get-components-list`, `get-components-info`,
+  `get-framework-integration`) is the first lookup for component APIs. When MCP is unavailable,
+  `node_modules/@takeoff-ui/react-spar/dist/index.d.ts` is authoritative; the docs URL above is the
+  secondary reference. If sources disagree, the installed version wins — note the discrepancy.
+- Never import from `src/services/mock` in UI code; go through repository hooks.
+- Status → label/variant mappings are centralised in `domains/*/utils/*Presentation.ts`.
