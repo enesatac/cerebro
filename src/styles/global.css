@@ -977,12 +977,3 @@ code {
 .c-decision-list__edit {
   margin: var(--spacing-m-base) 0 0;
 }
-
-/*
- * Takeoff 0.6.0 hard-codes English pagination info ("Page 1 of 2", "Items 1-10 of 17") with no
- * label props. The UI is Turkish and every list already shows its Turkish result count in the
- * toolbar, so the info block is hidden. Remove once Takeoff exposes pagination labels.
- */
-.tk-table-pagination-info {
-  display: none;
-}
