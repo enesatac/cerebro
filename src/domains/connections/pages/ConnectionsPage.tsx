@@ -5,9 +5,9 @@ import { DependencyRegister, IntegrationRegister } from '../components/Connectio
 import { ImpactAnalysis } from '../components/ImpactAnalysis';
 
 const TABS = [
-  { id: 'impact', label: 'Impact analysis' },
-  { id: 'dependencies', label: 'Dependencies' },
-  { id: 'integrations', label: 'Integrations' },
+  { id: 'impact', label: 'Etki analizi' },
+  { id: 'dependencies', label: 'Bağımlılıklar' },
+  { id: 'integrations', label: 'Entegrasyonlar' },
 ] as const;
 const TAB_IDS = TABS.map((tab) => tab.id);
 
@@ -16,11 +16,11 @@ export default function ConnectionsPage() {
   return (
     <div className="c-stack">
       <PageHeader
-        title="Connections"
-        subtitle="How applications depend on and talk to each other across the portfolio."
+        title="Bağlantılar"
+        subtitle="Portföydeki uygulamaların birbirine nasıl bağımlı olduğu ve nasıl konuştuğu."
       />
       <DetailTabs
-        label="Connection views"
+        label="Bağlantı görünümleri"
         tabs={TABS}
         active={activeTab}
         onSelect={selectTab}

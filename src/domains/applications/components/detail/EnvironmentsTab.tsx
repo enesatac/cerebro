@@ -12,7 +12,7 @@ import {
 const columns: TableColumnDef<Environment>[] = [
   {
     id: 'name',
-    header: 'Environment',
+    header: 'Ortam',
     cell: ({ row }) => (
       <span className="c-cell-stack">
         <span>{row.original.name}</span>
@@ -24,7 +24,7 @@ const columns: TableColumnDef<Environment>[] = [
   },
   {
     id: 'status',
-    header: 'Status',
+    header: 'Durum',
     cell: ({ row }) => <StatusBadge {...ENVIRONMENT_STATUS_PRESENTATION[row.original.status]} />,
   },
   {
@@ -34,15 +34,15 @@ const columns: TableColumnDef<Environment>[] = [
       row.original.url ? (
         <ExternalLink href={row.original.url}>{row.original.url}</ExternalLink>
       ) : (
-        <span className="c-muted">None</span>
+        <span className="c-muted">Yok</span>
       ),
   },
   {
     id: 'region',
-    header: 'Region',
+    header: 'Bölge',
     cell: ({ row }) => row.original.region ?? <span className="c-muted">—</span>,
   },
-  { id: 'notes', header: 'Notes', cell: ({ row }) => row.original.notes ?? '' },
+  { id: 'notes', header: 'Notlar', cell: ({ row }) => row.original.notes ?? '' },
 ];
 
 export function EnvironmentsTab({ application }: { application: Application }) {
@@ -52,8 +52,8 @@ export function EnvironmentsTab({ application }: { application: Application }) {
   );
   return (
     <SectionCard
-      title="Environments"
-      description="Where the application is deployed. Cerebro never stores credentials — use the team's secrets manager."
+      title="Ortamlar"
+      description="Uygulamanın nereye kurulduğu. Cerebro asla kimlik bilgisi saklamaz — ekibin secrets manager'ını kullanın."
     >
       <Table
         data={environments}
@@ -62,11 +62,11 @@ export function EnvironmentsTab({ application }: { application: Application }) {
         emptyState={
           <EmptyState
             compact
-            title="No environments have been added to this application yet"
+            title="Bu uygulamaya henüz ortam eklenmedi"
             description={
               application.lifecycle === 'planned'
-                ? 'Environments are usually recorded once development starts.'
-                : 'Record at least the production environment so support teams know where it runs.'
+                ? 'Ortamlar genellikle geliştirme başladığında kaydedilir.'
+                : 'Destek ekiplerinin nerede çalıştığını bilmesi için en azından canlı ortamı kaydedin.'
             }
           />
         }

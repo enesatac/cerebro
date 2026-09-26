@@ -5,16 +5,16 @@ import { renderRoute } from '@/test/renderWithProviders';
 /** Every navigation target renders a real page (no placeholders) with a single h1. */
 describe('routes', () => {
   it.each([
-    ['/', 'Dashboard'],
-    ['/projects', 'Projects'],
-    ['/projects/prj-payment-modernisation', 'Payment Platform Modernisation'],
-    ['/architecture', 'Connections'],
-    ['/teams', 'Teams'],
-    ['/teams/team-payments', 'Payments Engineering'],
-    ['/technologies', 'Technologies'],
+    ['/', 'Gösterge paneli'],
+    ['/projects', 'Projeler'],
+    ['/projects/prj-payment-modernisation', 'Ödeme Platformu Modernizasyonu'],
+    ['/architecture', 'Bağlantılar'],
+    ['/teams', 'Ekipler'],
+    ['/teams/team-payments', 'Ödeme Mühendisliği'],
+    ['/technologies', 'Teknolojiler'],
     ['/technologies/tech-kafka', 'Apache Kafka'],
-    ['/risks', 'Risks & Escalations'],
-    ['/reports', 'Reports'],
+    ['/risks', 'Riskler ve Eskalasyonlar'],
+    ['/reports', 'Raporlar'],
   ])('%s renders "%s"', async (path, heading) => {
     renderRoute(path);
     expect(await screen.findByRole('heading', { level: 1, name: heading })).toBeInTheDocument();
@@ -23,26 +23,26 @@ describe('routes', () => {
 
   it('shows the dashboard figures and attention list', async () => {
     renderRoute('/');
-    expect(await screen.findByRole('region', { name: 'Portfolio overview' })).toBeInTheDocument();
+    expect(await screen.findByRole('region', { name: 'Portföy özeti' })).toBeInTheDocument();
     expect(
-      await screen.findByRole('link', { name: 'Roster changes not reaching Flight Ops Portal' }),
+      await screen.findByRole('link', {
+        name: "Çizelge değişiklikleri Uçuş Operasyon Portalı'na ulaşmıyor",
+      }),
     ).toBeInTheDocument();
   });
 
   it('runs impact analysis for the application in the URL', async () => {
     renderRoute('/architecture?app=app-payment-gateway');
-    expect(
-      await screen.findByText(/Affected if Payment Gateway is unavailable/),
-    ).toBeInTheDocument();
+    expect(await screen.findByText(/Ödeme Geçidi erişilemezse etkilenenler/)).toBeInTheDocument();
     await waitFor(() =>
-      expect(screen.getByRole('link', { name: 'Order Management System' })).toBeInTheDocument(),
+      expect(screen.getByRole('link', { name: 'Sipariş Yönetim Sistemi' })).toBeInTheDocument(),
     );
   });
 
   it('shows a not-found state for unknown projects', async () => {
     renderRoute('/projects/prj-missing');
     expect(
-      await screen.findByRole('heading', { level: 1, name: 'Project not found' }),
+      await screen.findByRole('heading', { level: 1, name: 'Proje bulunamadı' }),
     ).toBeInTheDocument();
   });
 });

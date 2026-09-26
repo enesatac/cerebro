@@ -22,13 +22,13 @@ function subtitle(item: AttentionItem): string {
 const columns: TableColumnDef<AttentionItem>[] = [
   {
     id: 'severity',
-    header: 'Severity',
+    header: 'Önem derecesi',
     width: 105,
     cell: ({ row }) => <StatusBadge {...CRITICALITY_PRESENTATION[row.original.severity]} />,
   },
   {
     id: 'subject',
-    header: 'Item',
+    header: 'Kayıt',
     width: 300,
     cell: ({ row }) => (
       <span className="c-cell-stack">
@@ -37,10 +37,10 @@ const columns: TableColumnDef<AttentionItem>[] = [
       </span>
     ),
   },
-  { id: 'reason', header: 'Why', accessor: 'reason' },
+  { id: 'reason', header: 'Neden', accessor: 'reason' },
   {
     id: 'date',
-    header: 'Date',
+    header: 'Tarih',
     align: 'end',
     width: 120,
     cell: ({ row }) => formatDate(row.original.date, ''),
@@ -57,8 +57,8 @@ export function AttentionTable({ items }: { items: AttentionItem[] }) {
       emptyState={
         <EmptyState
           compact
-          title="Nothing needs attention right now"
-          description="Owners are assigned, reviews are current and no severe issue is open."
+          title="Şu anda ilgilenilmesi gereken bir şey yok"
+          description="Sahipler atanmış, gözden geçirmeler güncel ve açık ciddi bir sorun yok."
         />
       }
     />

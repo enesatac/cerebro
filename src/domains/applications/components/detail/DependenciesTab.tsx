@@ -26,7 +26,7 @@ function columns(
   return [
     {
       id: 'application',
-      header: 'Application',
+      header: 'Uygulama',
       cell: ({ row }) => (
         <ApplicationRefLink
           applicationId={
@@ -37,13 +37,13 @@ function columns(
         />
       ),
     },
-    { id: 'type', header: 'Type', cell: ({ row }) => DEPENDENCY_TYPE_LABELS[row.original.type] },
+    { id: 'type', header: 'Tür', cell: ({ row }) => DEPENDENCY_TYPE_LABELS[row.original.type] },
     {
       id: 'criticality',
-      header: 'Impact if unavailable',
+      header: 'Erişilemezse etkisi',
       cell: ({ row }) => <StatusBadge {...CRITICALITY_PRESENTATION[row.original.criticality]} />,
     },
-    { id: 'description', header: 'Description', accessor: 'description' },
+    { id: 'description', header: 'Açıklama', accessor: 'description' },
     ...(canEdit
       ? [
           editColumn<ApplicationDependency>(
@@ -62,18 +62,18 @@ export function DependenciesTab({ application }: { application: Application }) {
   return (
     <QueryView
       query={query}
-      loadingLabel="Loading dependencies"
-      errorTitle="Dependencies could not be loaded"
+      loadingLabel="Bağımlılıklar yükleniyor"
+      errorTitle="Bağımlılıklar yüklenemedi"
     >
       {({ outgoing, incoming }) => (
         <div className="c-stack">
           <SectionCard
-            title={`Depends on (${outgoing.length})`}
-            description={`Applications ${application.name} needs in order to work.`}
+            title={`Bağımlı olduğu (${outgoing.length})`}
+            description={`${application.name} uygulamasının çalışmak için ihtiyaç duyduğu uygulamalar.`}
             actions={
               <SmallCreateAction
                 to={paths.dependencies.create(application.id)}
-                label="Add dependency"
+                label="Bağımlılık ekle"
               />
             }
           >
@@ -84,14 +84,14 @@ export function DependenciesTab({ application }: { application: Application }) {
               emptyState={
                 <EmptyState
                   compact
-                  title={`${application.name} has no recorded dependencies on other applications`}
+                  title={`${application.name} için diğer uygulamalara kayıtlı bağımlılık yok`}
                 />
               }
             />
           </SectionCard>
           <SectionCard
-            title={`Used by (${incoming.length})`}
-            description={`Applications affected when ${application.name} is unavailable.`}
+            title={`Kullananlar (${incoming.length})`}
+            description={`${application.name} erişilemez olduğunda etkilenen uygulamalar.`}
           >
             <Table
               data={[...incoming].sort(byCriticalityDesc)}
@@ -100,7 +100,7 @@ export function DependenciesTab({ application }: { application: Application }) {
               emptyState={
                 <EmptyState
                   compact
-                  title={`No applications are recorded as depending on ${application.name}`}
+                  title={`${application.name} uygulamasına bağımlı olarak kayıtlı uygulama yok`}
                 />
               }
             />

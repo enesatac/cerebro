@@ -9,7 +9,7 @@ export interface ActionMenuItem {
 
 /** Secondary page actions ("Add risk", "Record decision"…) kept out of the primary header row. */
 export function ActionMenu({
-  label = 'More actions',
+  label = 'Diğer işlemler',
   items,
 }: {
   label?: string;

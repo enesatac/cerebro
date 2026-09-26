@@ -8,12 +8,16 @@ export function editColumn<T>(
 ): TableColumnDef<T> {
   return {
     id: 'actions',
-    header: <span className="c-visually-hidden">Actions</span>,
+    header: <span className="c-visually-hidden">İşlemler</span>,
     align: 'end',
     width: 80,
     cell: ({ row }) => (
-      <Link to={to(row.original)} className="c-link" aria-label={`Edit ${describe(row.original)}`}>
-        Edit
+      <Link
+        to={to(row.original)}
+        className="c-link"
+        aria-label={`Düzenle: ${describe(row.original)}`}
+      >
+        Düzenle
       </Link>
     ),
   };

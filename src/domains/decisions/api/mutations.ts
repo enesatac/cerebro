@@ -6,13 +6,13 @@ export function useSaveDecision(id?: string) {
   const { decisions } = useRepositories();
   return useRepositoryMutation(
     (input: DecisionInput) => (id ? decisions.update(id, input) : decisions.create(input)),
-    { successTitle: () => (id ? 'Decision updated' : 'Decision recorded') },
+    { successTitle: () => (id ? 'Karar güncellendi' : 'Karar kaydedildi') },
   );
 }
 
 export function useDeleteDecision() {
   const { decisions } = useRepositories();
   return useRepositoryMutation((id: string) => decisions.remove(id), {
-    successTitle: () => 'Decision deleted',
+    successTitle: () => 'Karar silindi',
   });
 }

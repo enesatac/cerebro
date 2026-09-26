@@ -18,12 +18,17 @@ export interface NavigationItem {
 }
 
 export const PRIMARY_NAVIGATION: NavigationItem[] = [
-  { label: 'Dashboard', to: paths.dashboard(), icon: DashboardIconOutlinedRounded, end: true },
-  { label: 'Projects', to: paths.projects.list(), icon: FolderCopyIconOutlinedRounded },
-  { label: 'Applications', to: paths.applications.list(), icon: CategoryIconOutlinedRounded },
-  { label: 'Connections', to: paths.architecture(), icon: StructureTreeIconOutlinedRounded },
-  { label: 'Teams', to: paths.teams.list(), icon: GroupIconOutlinedRounded },
-  { label: 'Technologies', to: paths.technologies.list(), icon: DataObjectIconOutlinedRounded },
-  { label: 'Risks & Escalations', to: paths.risks(), icon: WarningIconOutlinedRounded },
-  { label: 'Reports', to: paths.reports(), icon: ChartBarIconOutlinedRounded },
+  {
+    label: 'Gösterge paneli',
+    to: paths.dashboard(),
+    icon: DashboardIconOutlinedRounded,
+    end: true,
+  },
+  { label: 'Projeler', to: paths.projects.list(), icon: FolderCopyIconOutlinedRounded },
+  { label: 'Uygulamalar', to: paths.applications.list(), icon: CategoryIconOutlinedRounded },
+  { label: 'Bağlantılar', to: paths.architecture(), icon: StructureTreeIconOutlinedRounded },
+  { label: 'Ekipler', to: paths.teams.list(), icon: GroupIconOutlinedRounded },
+  { label: 'Teknolojiler', to: paths.technologies.list(), icon: DataObjectIconOutlinedRounded },
+  { label: 'Riskler ve Eskalasyonlar', to: paths.risks(), icon: WarningIconOutlinedRounded },
+  { label: 'Raporlar', to: paths.reports(), icon: ChartBarIconOutlinedRounded },
 ];

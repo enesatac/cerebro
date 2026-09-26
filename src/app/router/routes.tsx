@@ -47,14 +47,14 @@ const NotFoundPage = page(() => import('./NotFoundPage'));
 function guarded(
   element: ReactNode,
   permission: Permission = 'portfolio:edit',
-  action = 'create or edit records',
+  action = 'kayıt oluşturma veya düzenleme',
 ) {
   return (
     <RequirePermission
       permission={permission}
       action={action}
       backTo={paths.dashboard()}
-      backLabel="Go to dashboard"
+      backLabel="Gösterge paneline git"
     >
       {element}
     </RequirePermission>
@@ -103,14 +103,17 @@ export const routes: RouteObject[] = [
       { path: 'decisions/new', element: guarded(<DecisionFormPage />) },
       { path: 'decisions/:decisionId/edit', element: guarded(<DecisionFormPage />) },
       { path: 'reports', element: <ReportsPage /> },
-      { path: 'admin/users', element: guarded(<UsersListPage />, 'users:manage', 'manage users') },
+      {
+        path: 'admin/users',
+        element: guarded(<UsersListPage />, 'users:manage', 'kullanıcı yönetimi'),
+      },
       {
         path: 'admin/users/new',
-        element: guarded(<UserFormPage />, 'users:manage', 'manage users'),
+        element: guarded(<UserFormPage />, 'users:manage', 'kullanıcı yönetimi'),
       },
       {
         path: 'admin/users/:userId/edit',
-        element: guarded(<UserFormPage />, 'users:manage', 'manage users'),
+        element: guarded(<UserFormPage />, 'users:manage', 'kullanıcı yönetimi'),
       },
       { path: 'search', element: <SearchPage /> },
       { path: '*', element: <NotFoundPage /> },

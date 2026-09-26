@@ -71,8 +71,8 @@ export function FormPage<T extends FieldValues>({
             <Alert.Content>
               <Alert.Title level={2}>
                 {messages.length === 1
-                  ? 'Fix 1 problem before saving'
-                  : `Fix ${messages.length} problems before saving`}
+                  ? 'Kaydetmeden önce 1 sorunu düzeltin'
+                  : `Kaydetmeden önce ${messages.length} sorunu düzeltin`}
               </Alert.Title>
               <ul className="c-form-error-list">
                 {messages.map((message) => (
@@ -83,7 +83,7 @@ export function FormPage<T extends FieldValues>({
           </Alert>
         )}
         {children}
-        <div className="c-form-actions" role="group" aria-label="Form actions">
+        <div className="c-form-actions" role="group" aria-label="Form işlemleri">
           <div>{deleteAction}</div>
           <div className="c-form-actions__main">
             <Button
@@ -92,7 +92,7 @@ export function FormPage<T extends FieldValues>({
               appearance="outlined"
               onClick={() => void navigate(cancelTo)}
             >
-              Cancel
+              Vazgeç
             </Button>
             <Button
               type="submit"
@@ -107,13 +107,13 @@ export function FormPage<T extends FieldValues>({
       <ConfirmDialog
         open={blocker.state === 'blocked'}
         onOpenChange={(open) => !open && blocker.reset?.()}
-        title="Discard unsaved changes?"
-        confirmLabel="Discard changes"
-        cancelLabel="Keep editing"
+        title="Kaydedilmemiş değişiklikler silinsin mi?"
+        confirmLabel="Değişiklikleri at"
+        cancelLabel="Düzenlemeye devam et"
         tone="danger"
         onConfirm={() => blocker.proceed?.()}
       >
-        <p>You have changes that have not been saved. Leaving this page will discard them.</p>
+        <p>Kaydedilmemiş değişiklikleriniz var. Bu sayfadan ayrılırsanız kaybolacaklar.</p>
       </ConfirmDialog>
     </div>
   );

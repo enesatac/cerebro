@@ -31,7 +31,7 @@ export function EscalationTable({
   const columns: TableColumnDef<Escalation>[] = [
     {
       id: 'title',
-      header: 'Escalation',
+      header: 'Eskalasyon',
       width: 320,
       cell: ({ row }) => (
         <span className="c-cell-stack">
@@ -44,22 +44,22 @@ export function EscalationTable({
     },
     {
       id: 'severity',
-      header: 'Severity',
+      header: 'Önem derecesi',
       cell: ({ row }) => <StatusBadge {...CRITICALITY_PRESENTATION[row.original.severity]} />,
     },
     {
       id: 'status',
-      header: 'Status',
+      header: 'Durum',
       cell: ({ row }) => <StatusBadge {...ESCALATION_STATUS_PRESENTATION[row.original.status]} />,
     },
     {
       id: 'owner',
-      header: 'Owner / team',
+      header: 'Sahip / ekip',
       cell: ({ row }) => (
         <span className="c-cell-stack">
           <span>
             {(row.original.ownerId && people.data?.get(row.original.ownerId)?.fullName) || (
-              <span className="c-text-warning">Unassigned</span>
+              <span className="c-text-warning">Atanmamış</span>
             )}
           </span>
           <span className="c-muted c-cell-stack__secondary">
@@ -74,7 +74,7 @@ export function EscalationTable({
       ? [
           {
             id: 'related',
-            header: 'Affects',
+            header: 'Etkilenen',
             cell: ({ row }) => (
               <RelatedEntityLinks
                 applicationIds={row.original.relatedApplicationIds}
@@ -84,10 +84,10 @@ export function EscalationTable({
           } satisfies TableColumnDef<Escalation>,
         ]
       : []),
-    { id: 'raised', header: 'Raised', cell: ({ row }) => formatDate(row.original.raisedAt) },
+    { id: 'raised', header: 'Açılış', cell: ({ row }) => formatDate(row.original.raisedAt) },
     {
       id: 'target',
-      header: 'Target resolution',
+      header: 'Hedef çözüm',
       align: 'end',
       cell: ({ row }) => formatDate(row.original.targetResolutionDate),
     },

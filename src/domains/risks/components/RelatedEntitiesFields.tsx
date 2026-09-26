@@ -20,23 +20,23 @@ export function RelatedEntitiesFields<T extends FieldValues>({
   const projects = useProjectOptions();
   return (
     <SectionCard
-      title="Affects"
-      description="Link at least one application or project so the record appears where people look."
+      title="Etkilenen"
+      description="Kaydın ilgili yerlerde görünmesi için en az bir uygulama veya proje bağlayın."
     >
       <div className="c-form-grid">
         <MultiSelectField
           control={control}
           name={applicationsName}
-          label="Applications"
+          label="Uygulamalar"
           options={applications}
-          addLabel="Add an application"
+          addLabel="Uygulama ekle"
         />
         <MultiSelectField
           control={control}
           name={projectsName}
-          label="Projects"
+          label="Projeler"
           options={projects}
-          addLabel="Add a project"
+          addLabel="Proje ekle"
         />
       </div>
     </SectionCard>

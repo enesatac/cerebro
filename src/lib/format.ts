@@ -1,8 +1,8 @@
-const compactNumber = new Intl.NumberFormat('en-US', {
+const compactNumber = new Intl.NumberFormat('tr-TR', {
   notation: 'compact',
   maximumFractionDigits: 1,
 });
-const integer = new Intl.NumberFormat('en-GB');
+const integer = new Intl.NumberFormat('tr-TR');
 
 /** `4.8M`, `28K` — for approximate magnitudes such as user counts. */
 export function formatCompactNumber(value: number | null | undefined, fallback = '—'): string {
@@ -13,8 +13,8 @@ export function formatInteger(value: number | null | undefined, fallback = '—'
   return value == null ? fallback : integer.format(value);
 }
 
-/** `"application"`, 3 → `"3 applications"`. */
-export function pluralize(count: number, singular: string, plural = `${singular}s`): string {
+/** Turkish nouns stay singular after a number: `3 uygulama`. `plural` is kept for rare exceptions. */
+export function pluralize(count: number, singular: string, plural = singular): string {
   return `${count} ${count === 1 ? singular : plural}`;
 }
 
@@ -25,7 +25,7 @@ export function formatCurrency(
   fallback = '—',
 ): string {
   if (value == null) return fallback;
-  return new Intl.NumberFormat('en-US', {
+  return new Intl.NumberFormat('tr-TR', {
     style: 'currency',
     currency,
     notation: 'compact',

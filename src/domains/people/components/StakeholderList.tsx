@@ -43,7 +43,7 @@ export function StakeholderList({ roles, teams }: StakeholderListProps) {
         ...teams.map((assignment) => {
           const team = teamsById.data?.get(assignment.teamId);
           return {
-            label: `${TEAM_RESPONSIBILITY_LABELS[assignment.responsibility]} team`,
+            label: `${TEAM_RESPONSIBILITY_LABELS[assignment.responsibility]} ekibi`,
             value: (
               <span className="c-cell-stack">
                 <EntityLink to={paths.teams.detail(assignment.teamId)}>

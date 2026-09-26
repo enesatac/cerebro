@@ -14,16 +14,16 @@ import { ESCALATION_STATUSES, type Escalation, type EscalationInput } from '../t
 
 export const escalationFormSchema = z
   .object({
-    title: requiredText('Title', 160),
-    description: optionalText('Description', 2000),
-    severity: enumChoice(CRITICALITIES, 'a severity'),
-    status: enumChoice(ESCALATION_STATUSES, 'a status'),
+    title: requiredText('Başlık', 160),
+    description: optionalText('Açıklama', 2000),
+    severity: enumChoice(CRITICALITIES, 'bir önem derecesi'),
+    status: enumChoice(ESCALATION_STATUSES, 'bir durum'),
     ownerId: z.string(),
     responsibleTeamId: z.string(),
-    raisedById: requiredChoice('who raised it'),
-    raisedAt: requiredDate('Raised on'),
+    raisedById: requiredChoice('kaydı açan kişiyi'),
+    raisedAt: requiredDate('Açılış tarihi'),
     targetResolutionDate: optionalDate,
-    resolution: optionalText('Resolution', 2000),
+    resolution: optionalText('Çözüm', 2000),
   })
   .and(relatedEntitiesSchema)
   .superRefine(requireRelated)
@@ -34,7 +34,7 @@ export const escalationFormSchema = z
     ) {
       ctx.addIssue({
         code: 'custom',
-        message: 'Describe the resolution before resolving or closing.',
+        message: 'Çözmeden veya kapatmadan önce çözümü açıklayın.',
         path: ['resolution'],
       });
     }

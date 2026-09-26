@@ -6,13 +6,13 @@ export function useSaveEscalation(id?: string) {
   const { escalations } = useRepositories();
   return useRepositoryMutation(
     (input: EscalationInput) => (id ? escalations.update(id, input) : escalations.create(input)),
-    { successTitle: () => (id ? 'Escalation updated' : 'Escalation raised') },
+    { successTitle: () => (id ? 'Eskalasyon güncellendi' : 'Eskalasyon açıldı') },
   );
 }
 
 export function useDeleteEscalation() {
   const { escalations } = useRepositories();
   return useRepositoryMutation((id: string) => escalations.remove(id), {
-    successTitle: () => 'Escalation deleted',
+    successTitle: () => 'Eskalasyon silindi',
   });
 }

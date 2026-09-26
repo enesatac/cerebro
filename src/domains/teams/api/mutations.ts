@@ -7,7 +7,7 @@ export function useSaveTeam(id?: string) {
   return useRepositoryMutation(
     (input: TeamInput) => (id ? teams.update(id, input) : teams.create(input)),
     {
-      successTitle: (team) => (id ? `${team.name} updated` : `${team.name} created`),
+      successTitle: (team) => (id ? `${team.name} güncellendi` : `${team.name} oluşturuldu`),
     },
   );
 }
@@ -15,6 +15,6 @@ export function useSaveTeam(id?: string) {
 export function useDeleteTeam() {
   const { teams } = useRepositories();
   return useRepositoryMutation((id: string) => teams.remove(id), {
-    successTitle: () => 'Team deleted',
+    successTitle: () => 'Ekip silindi',
   });
 }

@@ -44,14 +44,14 @@ function DependencyForm({ dependency }: { dependency?: ApplicationDependency }) 
   return (
     <FormPage
       form={form}
-      title={dependency ? 'Edit dependency' : 'Record a dependency'}
-      subtitle="The first application depends on the second: if the second is unavailable, the first is affected."
+      title={dependency ? 'Bağımlılığı düzenle' : 'Bağımlılık kaydet'}
+      subtitle="İlk uygulama ikincisine bağımlıdır: ikincisi erişilemezse ilki etkilenir."
       breadcrumbs={[
-        { label: 'Connections', to: `${paths.architecture()}?tab=dependencies` },
-        { label: dependency ? 'Edit dependency' : 'New dependency' },
+        { label: 'Bağlantılar', to: `${paths.architecture()}?tab=dependencies` },
+        { label: dependency ? 'Bağımlılığı düzenle' : 'Yeni bağımlılık' },
       ]}
       cancelTo={returnTo}
-      submitLabel={dependency ? 'Save changes' : 'Record dependency'}
+      submitLabel={dependency ? 'Değişiklikleri kaydet' : 'Bağımlılık kaydet'}
       onSubmit={async (values) => {
         await save.mutateAsync(toDependencyInput(values));
         return returnTo;
@@ -60,8 +60,8 @@ function DependencyForm({ dependency }: { dependency?: ApplicationDependency }) 
         dependency && (
           <Can permission="portfolio:delete">
             <DeleteAction
-              entityLabel="dependency"
-              entityName="this dependency"
+              entityLabel="bağımlılık"
+              entityName="bu bağımlılık"
               impactKey={['dependency', dependency.id]}
               loadImpact={() => connections.dependencies.getDeletionImpact(dependency.id)}
               onDelete={() => remove.mutateAsync(dependency.id)}
@@ -71,26 +71,26 @@ function DependencyForm({ dependency }: { dependency?: ApplicationDependency }) 
         )
       }
     >
-      <SectionCard title="Dependency">
+      <SectionCard title="Bağımlılık">
         <div className="c-form-grid">
           <SelectField
             control={control}
             name="sourceApplicationId"
-            label="Application"
+            label="Uygulama"
             required
             options={applications}
           />
           <SelectField
             control={control}
             name="targetApplicationId"
-            label="Depends on"
+            label="Bağımlı olduğu"
             required
             options={applications}
           />
           <SelectField
             control={control}
             name="type"
-            label="Type"
+            label="Tür"
             required
             options={DEPENDENCY_TYPES.map((value) => ({
               value,
@@ -100,7 +100,7 @@ function DependencyForm({ dependency }: { dependency?: ApplicationDependency }) 
           <SelectField
             control={control}
             name="criticality"
-            label="Impact if unavailable"
+            label="Erişilemezse etkisi"
             required
             options={CRITICALITIES.map((value) => ({
               value,
@@ -110,7 +110,7 @@ function DependencyForm({ dependency }: { dependency?: ApplicationDependency }) 
           <TextField
             control={control}
             name="description"
-            label="Description"
+            label="Açıklama"
             rows={2}
             className="c-form-grid__wide"
           />
@@ -130,8 +130,8 @@ function EditDependency({ id }: { id: string }) {
   return (
     <QueryView
       query={query}
-      loadingLabel="Loading dependency"
-      errorTitle="This dependency could not be loaded"
+      loadingLabel="Bağımlılık yükleniyor"
+      errorTitle="Bu bağımlılık yüklenemedi"
     >
       {(dependency) => <DependencyForm dependency={dependency} />}
     </QueryView>

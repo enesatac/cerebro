@@ -27,8 +27,8 @@ function Counterpart({
   if (applicationId) return <ApplicationRefLink applicationId={applicationId} />;
   return (
     <span className="c-cell-stack">
-      <span>{integration.externalPartyName ?? 'Unknown party'}</span>
-      <span className="c-muted c-cell-stack__secondary">External</span>
+      <span>{integration.externalPartyName ?? 'Bilinmeyen taraf'}</span>
+      <span className="c-muted c-cell-stack__secondary">Harici</span>
     </span>
   );
 }
@@ -37,7 +37,7 @@ function columns(direction: IntegrationDirection, canEdit: boolean): TableColumn
   return [
     {
       id: 'name',
-      header: 'Integration',
+      header: 'Entegrasyon',
       cell: ({ row }) => (
         <span className="c-cell-stack">
           <span>{row.original.name}</span>
@@ -47,16 +47,16 @@ function columns(direction: IntegrationDirection, canEdit: boolean): TableColumn
     },
     {
       id: 'counterpart',
-      header: direction === 'outbound' ? 'Target' : 'Source',
+      header: direction === 'outbound' ? 'Hedef' : 'Kaynak',
       cell: ({ row }) => <Counterpart integration={row.original} direction={direction} />,
     },
-    { id: 'type', header: 'Type', cell: ({ row }) => INTEGRATION_TYPE_LABELS[row.original.type] },
+    { id: 'type', header: 'Tür', cell: ({ row }) => INTEGRATION_TYPE_LABELS[row.original.type] },
     {
       id: 'frequency',
-      header: 'Frequency',
+      header: 'Sıklık',
       cell: ({ row }) => INTEGRATION_FREQUENCY_LABELS[row.original.frequency],
     },
-    { id: 'data', header: 'Data exchanged', accessor: 'dataExchanged' },
+    { id: 'data', header: 'Aktarılan veri', accessor: 'dataExchanged' },
     ...(canEdit
       ? [
           editColumn<Integration>(
@@ -75,18 +75,18 @@ export function IntegrationsTab({ application }: { application: Application }) {
   return (
     <QueryView
       query={query}
-      loadingLabel="Loading integrations"
-      errorTitle="Integrations could not be loaded"
+      loadingLabel="Entegrasyonlar yükleniyor"
+      errorTitle="Entegrasyonlar yüklenemedi"
     >
       {({ outbound, inbound }) => (
         <div className="c-stack">
           <SectionCard
-            title={`Outbound (${outbound.length})`}
-            description={`Interfaces ${application.name} calls or publishes to.`}
+            title={`Giden (${outbound.length})`}
+            description={`${application.name} uygulamasının çağırdığı veya yayın yaptığı arayüzler.`}
             actions={
               <SmallCreateAction
                 to={paths.integrations.create(application.id)}
-                label="Add integration"
+                label="Entegrasyon ekle"
               />
             }
           >
@@ -94,20 +94,18 @@ export function IntegrationsTab({ application }: { application: Application }) {
               data={outbound}
               columns={columns('outbound', canEdit)}
               getRowId={(row) => row.id}
-              emptyState={
-                <EmptyState compact title="No outbound integrations have been recorded" />
-              }
+              emptyState={<EmptyState compact title="Kayıtlı giden entegrasyon yok" />}
             />
           </SectionCard>
           <SectionCard
-            title={`Inbound (${inbound.length})`}
-            description={`Interfaces through which other systems call or send data to ${application.name}.`}
+            title={`Gelen (${inbound.length})`}
+            description={`Diğer sistemlerin ${application.name} uygulamasını çağırdığı veya veri gönderdiği arayüzler.`}
           >
             <Table
               data={inbound}
               columns={columns('inbound', canEdit)}
               getRowId={(row) => row.id}
-              emptyState={<EmptyState compact title="No inbound integrations have been recorded" />}
+              emptyState={<EmptyState compact title="Kayıtlı gelen entegrasyon yok" />}
             />
           </SectionCard>
         </div>

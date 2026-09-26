@@ -28,7 +28,7 @@ import { RISK_CATEGORY_LABELS, RISK_STATUS_PRESENTATION } from '../utils/riskPre
 
 const LIKELIHOOD_OPTIONS = RISK_LIKELIHOODS.map((value) => ({
   value,
-  label: value[0]?.toUpperCase() + value.slice(1),
+  label: CRITICALITY_PRESENTATION[value].label,
 }));
 const SEVERITY_OPTIONS = CRITICALITIES.map((value) => ({
   value,
@@ -60,14 +60,14 @@ function RiskForm({ risk }: { risk?: Risk }) {
   return (
     <FormPage
       form={form}
-      title={risk ? 'Edit risk' : 'Record a risk'}
+      title={risk ? 'Riski düzenle' : 'Risk kaydet'}
       subtitle={risk?.title}
       breadcrumbs={[
-        { label: 'Risks & Escalations', to: paths.risks('risks') },
-        { label: risk ? 'Edit risk' : 'New risk' },
+        { label: 'Riskler ve Eskalasyonlar', to: paths.risks('risks') },
+        { label: risk ? 'Riski düzenle' : 'Yeni risk' },
       ]}
       cancelTo={returnTo}
-      submitLabel={risk ? 'Save changes' : 'Record risk'}
+      submitLabel={risk ? 'Değişiklikleri kaydet' : 'Risk kaydet'}
       onSubmit={async (values) => {
         await save.mutateAsync(toRiskInput(values));
         return returnTo;
@@ -92,21 +92,21 @@ function RiskForm({ risk }: { risk?: Risk }) {
           <TextField
             control={control}
             name="title"
-            label="Title"
+            label="Başlık"
             required
             className="c-form-grid__wide"
           />
           <TextField
             control={control}
             name="description"
-            label="Description"
+            label="Açıklama"
             rows={3}
             className="c-form-grid__wide"
           />
           <SelectField
             control={control}
             name="category"
-            label="Category"
+            label="Kategori"
             required
             options={RISK_CATEGORIES.map((value) => ({
               value,
@@ -116,7 +116,7 @@ function RiskForm({ risk }: { risk?: Risk }) {
           <SelectField
             control={control}
             name="status"
-            label="Status"
+            label="Durum"
             required
             options={RISK_STATUSES.map((value) => ({
               value,
@@ -125,46 +125,46 @@ function RiskForm({ risk }: { risk?: Risk }) {
           />
         </div>
       </SectionCard>
-      <SectionCard title="Assessment">
+      <SectionCard title="Değerlendirme">
         <div className="c-form-grid c-form-grid--three">
           <SelectField
             control={control}
             name="probability"
-            label="Probability"
+            label="Olasılık"
             required
             options={LIKELIHOOD_OPTIONS}
           />
           <SelectField
             control={control}
             name="impact"
-            label="Impact"
+            label="Etki"
             required
             options={LIKELIHOOD_OPTIONS}
           />
           <SelectField
             control={control}
             name="severity"
-            label="Severity"
+            label="Önem derecesi"
             required
             options={SEVERITY_OPTIONS}
-            description="Overall rating used for prioritisation."
+            description="Önceliklendirmede kullanılan genel derece."
           />
         </div>
       </SectionCard>
-      <SectionCard title="Ownership & mitigation">
+      <SectionCard title="Sahiplik ve azaltma">
         <div className="c-form-grid">
           <SelectField
             control={control}
             name="ownerId"
-            label="Owner"
+            label="Sahip"
             options={people}
-            emptyLabel="Unassigned"
+            emptyLabel="Atanmamış"
           />
-          <DateField control={control} name="dueDate" label="Due date" />
+          <DateField control={control} name="dueDate" label="Termin tarihi" />
           <TextField
             control={control}
             name="mitigationPlan"
-            label="Mitigation plan"
+            label="Azaltma planı"
             rows={3}
             className="c-form-grid__wide"
           />
@@ -187,7 +187,7 @@ export default function RiskFormPage() {
 function EditRisk({ id }: { id: string }) {
   const query = useRisk(id);
   return (
-    <QueryView query={query} loadingLabel="Loading risk" errorTitle="This risk could not be loaded">
+    <QueryView query={query} loadingLabel="Risk yükleniyor" errorTitle="Bu risk yüklenemedi">
       {(risk) => <RiskForm risk={risk} />}
     </QueryView>
   );

@@ -16,27 +16,27 @@ export function ProjectOverviewTab({ project }: { project: Project }) {
     <div className="c-two-column">
       <div className="c-stack">
         <SectionCard
-          title="Latest status"
-          description={`Current phase: ${PROJECT_PHASE_LABELS[project.currentPhase]}`}
+          title="Son durum"
+          description={`Mevcut aşama: ${PROJECT_PHASE_LABELS[project.currentPhase]}`}
         >
           <DetailList
             items={[
-              { label: 'Summary', value: project.latestStatusSummary },
-              { label: 'Next steps', value: project.nextSteps },
+              { label: 'Özet', value: project.latestStatusSummary },
+              { label: 'Sonraki adımlar', value: project.nextSteps },
             ]}
           />
         </SectionCard>
-        <SectionCard title="About">
+        <SectionCard title="Hakkında">
           <p className="c-prose">{project.description}</p>
           <DetailList
             items={[
-              { label: 'Objective', value: project.objective },
-              { label: 'Scope', value: project.scope },
-              { label: 'Out of scope', value: project.outOfScope },
-              { label: 'Project type', value: PROJECT_TYPE_LABELS[project.type] },
-              { label: 'Confidentiality', value: CONFIDENTIALITY_LABELS[project.confidentiality] },
+              { label: 'Hedef', value: project.objective },
+              { label: 'Kapsam', value: project.scope },
+              { label: 'Kapsam dışı', value: project.outOfScope },
+              { label: 'Proje türü', value: PROJECT_TYPE_LABELS[project.type] },
+              { label: 'Gizlilik', value: CONFIDENTIALITY_LABELS[project.confidentiality] },
               {
-                label: 'Tags',
+                label: 'Etiketler',
                 value: project.tags.length > 0 ? <TagList tags={project.tags} /> : null,
               },
             ]}
@@ -44,41 +44,41 @@ export function ProjectOverviewTab({ project }: { project: Project }) {
         </SectionCard>
       </div>
       <div className="c-stack">
-        <SectionCard title="Timeline">
+        <SectionCard title="Zaman çizelgesi">
           <DetailList
             items={[
-              { label: 'Planned start', value: formatDate(timeline.plannedStartDate, '') },
+              { label: 'Planlanan başlangıç', value: formatDate(timeline.plannedStartDate, '') },
               {
-                label: 'Actual start',
+                label: 'Gerçekleşen başlangıç',
                 value: formatDate(timeline.actualStartDate, ''),
-                emptyText: 'Not started',
+                emptyText: 'Başlamadı',
               },
-              { label: 'Planned end', value: formatDate(timeline.plannedEndDate, '') },
+              { label: 'Planlanan bitiş', value: formatDate(timeline.plannedEndDate, '') },
               {
-                label: 'Actual end',
+                label: 'Gerçekleşen bitiş',
                 value: formatDate(timeline.actualEndDate, ''),
-                emptyText: 'Not finished',
+                emptyText: 'Bitmedi',
               },
             ]}
           />
         </SectionCard>
         <SectionCard
-          title="Financials"
-          description="Budget figures may be restricted to authorised roles in future."
+          title="Finansal bilgiler"
+          description="Bütçe rakamları ileride yetkili rollerle sınırlandırılabilir."
         >
           {financials ? (
             <DetailList
               items={[
                 {
-                  label: 'Budget',
+                  label: 'Bütçe',
                   value: formatCurrency(financials.budget, financials.currency, ''),
                 },
                 {
-                  label: 'Actual cost',
+                  label: 'Gerçekleşen maliyet',
                   value: formatCurrency(financials.actualCost, financials.currency, ''),
                 },
                 {
-                  label: 'Forecast cost',
+                  label: 'Tahmini maliyet',
                   value: (
                     <span
                       className={
@@ -96,7 +96,7 @@ export function ProjectOverviewTab({ project }: { project: Project }) {
               ]}
             />
           ) : (
-            <p className="c-muted">No financial information has been recorded for this project.</p>
+            <p className="c-muted">Bu proje için finansal bilgi kaydedilmedi.</p>
           )}
         </SectionCard>
       </div>

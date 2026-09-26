@@ -4,17 +4,17 @@ import type { TechnologyCategory, TechnologyStatus } from '../types';
 export const TECHNOLOGY_CATEGORY_LABELS: Record<TechnologyCategory, string> = {
   frontend: 'Frontend',
   backend: 'Backend',
-  database: 'Database',
-  messaging: 'Messaging',
-  infrastructure: 'Infrastructure',
+  database: 'Veritabanı',
+  messaging: 'Mesajlaşma',
+  infrastructure: 'Altyapı',
   devops: 'DevOps',
-  monitoring: 'Monitoring',
-  testing: 'Testing',
+  monitoring: 'İzleme',
+  testing: 'Test',
 };
 
 export const TECHNOLOGY_STATUS_PRESENTATION: Record<TechnologyStatus, StatusPresentation> = {
-  preferred: { label: 'Preferred', variant: 'success' },
-  supported: { label: 'Supported', variant: 'info' },
-  deprecated: { label: 'Deprecated', variant: 'warning' },
-  retired: { label: 'Retired', variant: 'danger' },
+  preferred: { label: 'Tercih edilen', variant: 'success' },
+  supported: { label: 'Destekleniyor', variant: 'info' },
+  deprecated: { label: 'Kullanımdan kalkıyor', variant: 'warning' },
+  retired: { label: 'Emekli', variant: 'danger' },
 };

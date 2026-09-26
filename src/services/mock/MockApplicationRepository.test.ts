@@ -68,7 +68,7 @@ describe('MockApplicationRepository', () => {
   it('resolves list-item references to names', async () => {
     const result = await applications.list({ ...baseQuery, search: 'CIP' });
     const cip = result.items.find((item) => item.code === 'CIP');
-    expect(cip?.businessUnit?.name).toBe('Technology Platforms');
+    expect(cip?.businessUnit?.name).toBe('Teknoloji Platformları');
     expect(cip?.technicalOwner?.name).toBe('Jonas Berg');
   });
 
@@ -80,7 +80,7 @@ describe('MockApplicationRepository', () => {
     const first = await applications.getById('app-payment-gateway');
     first.name = 'Mutated';
     const second = await applications.getById('app-payment-gateway');
-    expect(second.name).toBe('Payment Gateway');
+    expect(second.name).toBe('Ödeme Geçidi');
   });
 });
 

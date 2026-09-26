@@ -44,6 +44,9 @@ The installed types are authoritative. `npm run typecheck` is the final proof th
   which restores the link role.
 - `Select` has no clearable empty value; `components/forms/FilterSelect` adds an explicit
   "All …" option.
+- `Table` pagination text ("Page 1 of 2", "Items 1-10 of 17") and its pagination aria-labels
+  are hard-coded in English. The info block is hidden in `global.css`; result counts are shown in
+  Turkish in each toolbar instead.
 - `Table` sets widths per column but uses `table-layout: auto`; keep the sum of column widths
   within the container width.
 

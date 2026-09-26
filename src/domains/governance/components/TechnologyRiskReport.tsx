@@ -13,7 +13,7 @@ import type { ApplicationHealthRow } from '../types';
 const columns: TableColumnDef<ApplicationHealthRow>[] = [
   {
     id: 'name',
-    header: 'Application',
+    header: 'Uygulama',
     width: 240,
     cell: ({ row }) => (
       <span className="c-cell-stack">
@@ -24,19 +24,19 @@ const columns: TableColumnDef<ApplicationHealthRow>[] = [
   },
   {
     id: 'lifecycle',
-    header: 'Lifecycle',
+    header: 'Yaşam döngüsü',
     width: 120,
     cell: ({ row }) => <StatusBadge {...LIFECYCLE_PRESENTATION[row.original.lifecycle]} />,
   },
   {
     id: 'criticality',
-    header: 'Criticality',
+    header: 'Kritiklik',
     width: 110,
     cell: ({ row }) => <StatusBadge {...CRITICALITY_PRESENTATION[row.original.criticality]} />,
   },
   {
     id: 'technologies',
-    header: 'Outdated technologies',
+    header: 'Güncelliğini yitirmiş teknolojiler',
     cell: ({ row }) => (
       <ul className="c-inline-list">
         {row.original.outdatedTechnologies.map((tech) => (
@@ -44,7 +44,7 @@ const columns: TableColumnDef<ApplicationHealthRow>[] = [
             <EntityLink to={paths.technologies.detail(tech.id)}>{tech.name}</EntityLink>
             <StatusBadge
               {...TECHNOLOGY_STATUS_PRESENTATION[tech.status]}
-              context="Technology status:"
+              context="Teknoloji durumu:"
             />
           </li>
         ))}
@@ -53,10 +53,10 @@ const columns: TableColumnDef<ApplicationHealthRow>[] = [
   },
   {
     id: 'owner',
-    header: 'Technical owner',
+    header: 'Teknik sahip',
     width: 150,
     cell: ({ row }) =>
-      row.original.technicalOwner?.name ?? <span className="c-text-warning">Unassigned</span>,
+      row.original.technicalOwner?.name ?? <span className="c-text-warning">Atanmamış</span>,
   },
 ];
 
@@ -72,15 +72,18 @@ export function TechnologyRiskReport({ rows }: { rows: ApplicationHealthRow[] })
     );
   return (
     <SectionCard
-      title={`Applications on outdated technology (${affected.length})`}
-      description="Retired technologies are unsupported and listed first; deprecated ones should not be used for new work."
+      title={`Güncelliğini yitirmiş teknoloji kullanan uygulamalar (${affected.length})`}
+      description="Emekli teknolojiler artık desteklenmez ve önce listelenir; kullanımdan kalkanlar yeni işlerde kullanılmamalıdır."
     >
       <Table
         data={affected}
         columns={columns}
         getRowId={(row) => row.id}
         emptyState={
-          <EmptyState compact title="No live application uses deprecated or retired technology" />
+          <EmptyState
+            compact
+            title="Hiçbir canlı uygulama kullanımdan kalkan veya emekli teknoloji kullanmıyor"
+          />
         }
       />
     </SectionCard>

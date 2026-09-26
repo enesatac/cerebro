@@ -7,7 +7,8 @@ export function useSaveProject(id?: string) {
   return useRepositoryMutation(
     (input: ProjectInput) => (id ? projects.update(id, input) : projects.create(input)),
     {
-      successTitle: (project) => (id ? `${project.name} updated` : `${project.name} created`),
+      successTitle: (project) =>
+        id ? `${project.name} güncellendi` : `${project.name} oluşturuldu`,
     },
   );
 }
@@ -15,6 +16,6 @@ export function useSaveProject(id?: string) {
 export function useDeleteProject() {
   const { projects } = useRepositories();
   return useRepositoryMutation((id: string) => projects.remove(id), {
-    successTitle: () => 'Project deleted',
+    successTitle: () => 'Proje silindi',
   });
 }

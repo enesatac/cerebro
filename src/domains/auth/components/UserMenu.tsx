@@ -20,7 +20,7 @@ export function UserMenu() {
         appearance="text"
         size="small"
         endContent={<ChevronBottomIconOutlinedRounded aria-hidden="true" />}
-        aria-label={`Account menu for ${user.displayName}, ${ROLE_PRESENTATION[user.role].label}`}
+        aria-label={`Hesap menüsü: ${user.displayName}, ${ROLE_PRESENTATION[user.role].label}`}
       >
         <span className="c-user-menu__name">{user.displayName}</span>
         <Badge variant={ROLE_PRESENTATION[user.role].variant} appearance="filledLight" size="small">
@@ -32,7 +32,7 @@ export function UserMenu() {
         <Dropdown.Separator />
         {hasPermission(user, 'users:manage') && (
           <Dropdown.Item onSelect={() => void navigate(paths.admin.users())}>
-            Manage users
+            Kullanıcıları yönet
           </Dropdown.Item>
         )}
         <Dropdown.Item
@@ -42,7 +42,7 @@ export function UserMenu() {
             })
           }
         >
-          Sign out
+          Çıkış yap
         </Dropdown.Item>
       </Dropdown.Content>
     </Dropdown>

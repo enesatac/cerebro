@@ -25,8 +25,8 @@ import {
 } from '../utils/connectionPresentation';
 
 const TARGET_OPTIONS = [
-  { value: 'application', label: 'Another Cerebro application' },
-  { value: 'external', label: 'An external party' },
+  { value: 'application', label: 'Başka bir Cerebro uygulaması' },
+  { value: 'external', label: 'Harici bir taraf' },
 ];
 
 function IntegrationForm({ integration }: { integration?: Integration }) {
@@ -51,14 +51,14 @@ function IntegrationForm({ integration }: { integration?: Integration }) {
   return (
     <FormPage
       form={form}
-      title={integration ? `Edit ${integration.name}` : 'Record an integration'}
-      subtitle="A concrete technical interface: who initiates it, who receives it and what flows through it."
+      title={integration ? `Düzenle: ${integration.name}` : 'Entegrasyon kaydet'}
+      subtitle="Somut bir teknik arayüz: kim başlatır, kim alır ve içinden ne akar."
       breadcrumbs={[
-        { label: 'Connections', to: `${paths.architecture()}?tab=integrations` },
-        { label: integration ? 'Edit integration' : 'New integration' },
+        { label: 'Bağlantılar', to: `${paths.architecture()}?tab=integrations` },
+        { label: integration ? 'Entegrasyonu düzenle' : 'Yeni entegrasyon' },
       ]}
       cancelTo={returnTo}
-      submitLabel={integration ? 'Save changes' : 'Record integration'}
+      submitLabel={integration ? 'Değişiklikleri kaydet' : 'Entegrasyon kaydet'}
       onSubmit={async (values) => {
         await save.mutateAsync(toIntegrationInput(values));
         return returnTo;
@@ -67,7 +67,7 @@ function IntegrationForm({ integration }: { integration?: Integration }) {
         integration && (
           <Can permission="portfolio:delete">
             <DeleteAction
-              entityLabel="integration"
+              entityLabel="entegrasyon"
               entityName={integration.name}
               impactKey={['integration', integration.id]}
               loadImpact={() => connections.integrations.getDeletionImpact(integration.id)}
@@ -78,13 +78,13 @@ function IntegrationForm({ integration }: { integration?: Integration }) {
         )
       }
     >
-      <SectionCard title="Integration">
+      <SectionCard title="Entegrasyon">
         <div className="c-form-grid">
-          <TextField control={control} name="name" label="Name" required />
+          <TextField control={control} name="name" label="Ad" required />
           <SelectField
             control={control}
             name="type"
-            label="Type"
+            label="Tür"
             required
             options={INTEGRATION_TYPES.map((value) => ({
               value,
@@ -94,7 +94,7 @@ function IntegrationForm({ integration }: { integration?: Integration }) {
           <SelectField
             control={control}
             name="frequency"
-            label="Frequency"
+            label="Sıklık"
             required
             options={INTEGRATION_FREQUENCIES.map((value) => ({
               value,
@@ -103,19 +103,19 @@ function IntegrationForm({ integration }: { integration?: Integration }) {
           />
         </div>
       </SectionCard>
-      <SectionCard title="Endpoints">
+      <SectionCard title="Uç noktalar">
         <div className="c-form-grid">
           <SelectField
             control={control}
             name="fromApplicationId"
-            label="From (initiates or produces)"
+            label="Kaynak (başlatan veya üreten)"
             required
             options={applications}
           />
           <SelectField
             control={control}
             name="targetKind"
-            label="Receiver is"
+            label="Alıcı"
             required
             options={TARGET_OPTIONS}
           />
@@ -123,7 +123,7 @@ function IntegrationForm({ integration }: { integration?: Integration }) {
             <SelectField
               control={control}
               name="toApplicationId"
-              label="To application"
+              label="Hedef uygulama"
               required
               options={applications}
             />
@@ -131,28 +131,28 @@ function IntegrationForm({ integration }: { integration?: Integration }) {
             <TextField
               control={control}
               name="externalPartyName"
-              label="External party"
+              label="Harici taraf"
               required
-              placeholder="e.g. Card acquiring bank"
+              placeholder="ör. Kart üye işyeri bankası"
             />
           )}
         </div>
       </SectionCard>
       <SectionCard
-        title="Details"
-        description="Never include credentials, tokens or connection strings."
+        title="Ayrıntılar"
+        description="Asla kimlik bilgisi, token veya bağlantı dizesi eklemeyin."
       >
         <div className="c-form-grid">
           <TextField
             control={control}
             name="dataExchanged"
-            label="Data exchanged"
+            label="Aktarılan veri"
             className="c-form-grid__wide"
           />
           <TextField
             control={control}
             name="description"
-            label="Description"
+            label="Açıklama"
             rows={3}
             className="c-form-grid__wide"
           />
@@ -172,8 +172,8 @@ function EditIntegration({ id }: { id: string }) {
   return (
     <QueryView
       query={query}
-      loadingLabel="Loading integration"
-      errorTitle="This integration could not be loaded"
+      loadingLabel="Entegrasyon yükleniyor"
+      errorTitle="Bu entegrasyon yüklenemedi"
     >
       {(integration) => <IntegrationForm integration={integration} />}
     </QueryView>

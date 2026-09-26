@@ -37,18 +37,18 @@ export default function ApplicationsListPage() {
   return (
     <>
       <PageHeader
-        title="Applications"
-        subtitle="Every application in the portfolio: what it does, who owns it and how critical it is."
-        actions={<CreateAction to={paths.applications.create()} label="Register application" />}
+        title="Uygulamalar"
+        subtitle="Portföydeki tüm uygulamalar: ne yaptıkları, sahiplerinin kim olduğu ve ne kadar kritik oldukları."
+        actions={<CreateAction to={paths.applications.create()} label="Uygulama kaydet" />}
       />
       <ApplicationFilters
         state={state}
         onChange={updateFilters}
         onReset={resetFilters}
-        resultSummary={total === undefined ? '' : pluralize(total, 'application')}
+        resultSummary={total === undefined ? '' : pluralize(total, 'uygulama')}
       />
       {query.isError ? (
-        <ErrorState title="Applications could not be loaded" onRetry={() => void query.refetch()} />
+        <ErrorState title="Uygulamalar yüklenemedi" onRetry={() => void query.refetch()} />
       ) : (
         <ApplicationsTable
           result={query.data}
@@ -64,8 +64,8 @@ export default function ApplicationsListPage() {
             query.isPending ? null : hasFilters ? (
               <EmptyState
                 compact
-                title="No applications match these filters"
-                description="Try a broader search or remove a filter."
+                title="Bu filtrelere uyan uygulama yok"
+                description="Daha geniş bir arama yapın veya bir filtreyi kaldırın."
                 action={
                   <Button
                     size="small"
@@ -73,15 +73,15 @@ export default function ApplicationsListPage() {
                     variant="neutral"
                     onClick={resetFilters}
                   >
-                    Clear filters
+                    Filtreleri temizle
                   </Button>
                 }
               />
             ) : (
               <EmptyState
                 compact
-                title="No applications have been registered yet"
-                description="Applications appear here once they are added to Cerebro."
+                title="Henüz kayıtlı uygulama yok"
+                description="Uygulamalar Cerebro'ya eklendikçe burada görünür."
               />
             )
           }

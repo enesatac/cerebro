@@ -34,7 +34,7 @@ function buildColumns(now: Date): TableColumnDef<ApplicationListItem>[] {
   return [
     {
       id: 'name',
-      header: 'Application',
+      header: 'Uygulama',
       width: 250,
       accessor: 'name',
       sortable: true,
@@ -50,7 +50,7 @@ function buildColumns(now: Date): TableColumnDef<ApplicationListItem>[] {
     {
       id: 'lifecycle',
       width: 110,
-      header: 'Lifecycle',
+      header: 'Yaşam döngüsü',
       accessor: 'lifecycle',
       sortable: true,
       cell: ({ row }) => <StatusBadge {...LIFECYCLE_PRESENTATION[row.original.lifecycle]} />,
@@ -58,7 +58,7 @@ function buildColumns(now: Date): TableColumnDef<ApplicationListItem>[] {
     {
       id: 'criticality',
       width: 100,
-      header: 'Criticality',
+      header: 'Kritiklik',
       accessor: 'criticality',
       sortable: true,
       cell: ({ row }) => <StatusBadge {...CRITICALITY_PRESENTATION[row.original.criticality]} />,
@@ -66,7 +66,7 @@ function buildColumns(now: Date): TableColumnDef<ApplicationListItem>[] {
     {
       id: 'operationalStatus',
       width: 115,
-      header: 'Status',
+      header: 'Durum',
       cell: ({ row }) => (
         <StatusBadge {...OPERATIONAL_STATUS_PRESENTATION[row.original.operationalStatus]} />
       ),
@@ -74,38 +74,38 @@ function buildColumns(now: Date): TableColumnDef<ApplicationListItem>[] {
     {
       id: 'businessUnit',
       width: 150,
-      header: 'Business unit',
+      header: 'İş birimi',
       accessor: (row) => row.businessUnit?.name ?? '',
       sortable: true,
       cell: ({ row }) =>
-        row.original.businessUnit?.name ?? <span className="c-muted">Not set</span>,
+        row.original.businessUnit?.name ?? <span className="c-muted">Belirlenmemiş</span>,
     },
     {
       id: 'technicalOwner',
       width: 150,
-      header: 'Technical owner',
+      header: 'Teknik sahip',
       accessor: (row) => row.technicalOwner?.name ?? '',
       sortable: true,
       cell: ({ row }) =>
-        row.original.technicalOwner?.name ?? <span className="c-text-warning">Unassigned</span>,
+        row.original.technicalOwner?.name ?? <span className="c-text-warning">Atanmamış</span>,
     },
     {
       id: 'team',
-      header: 'Team',
+      header: 'Ekip',
       width: 165,
       cell: ({ row }) => {
         const teams = getPrimaryTeams(row.original.teams);
         return teams.length > 0 ? (
           teams.map((team) => team.name).join(', ')
         ) : (
-          <span className="c-muted">None</span>
+          <span className="c-muted">Yok</span>
         );
       },
     },
     {
       id: 'updatedAt',
       width: 105,
-      header: 'Updated',
+      header: 'Güncellendi',
       accessor: 'updatedAt',
       sortable: true,
       align: 'end',

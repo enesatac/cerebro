@@ -13,7 +13,7 @@ export function NotFoundState({ title, description, backTo, backLabel }: NotFoun
     <div className="c-not-found">
       <h1 className="c-page-header__title">{title}</h1>
       <EmptyState
-        title="Nothing to show here"
+        title="Gösterilecek bir şey yok"
         description={description}
         action={
           <ButtonLink to={backTo} variant="neutral" appearance="outlined">

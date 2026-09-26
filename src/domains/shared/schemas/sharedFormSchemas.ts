@@ -17,21 +17,21 @@ import {
 } from '../types';
 
 export const roleAssignmentSchema = z.object({
-  personId: requiredChoice('a person'),
-  role: enumChoice(STAKEHOLDER_ROLES, 'a role'),
+  personId: requiredChoice('bir kişi'),
+  role: enumChoice(STAKEHOLDER_ROLES, 'bir rol'),
 });
 
 export const teamAssignmentSchema = z.object({
-  teamId: requiredChoice('a team'),
-  responsibility: enumChoice(TEAM_RESPONSIBILITIES, 'a responsibility'),
+  teamId: requiredChoice('bir ekip'),
+  responsibility: enumChoice(TEAM_RESPONSIBILITIES, 'bir sorumluluk'),
 });
 
 export const documentationLinkSchema = z.object({
   id: z.string(),
-  type: enumChoice(DOCUMENTATION_LINK_TYPES, 'a type'),
-  title: requiredText('Link title', 160),
-  url: requiredUrl('Address'),
-  description: secretFreeText('Description', 300),
+  type: enumChoice(DOCUMENTATION_LINK_TYPES, 'bir tür'),
+  title: requiredText('Bağlantı başlığı', 160),
+  url: requiredUrl('Adres'),
+  description: secretFreeText('Açıklama', 300),
 });
 
 /** The same person in the same role twice is almost always a data-entry slip. */
@@ -46,7 +46,7 @@ export function uniqueRoleAssignments(
     if (row.personId && seen.has(key)) {
       ctx.addIssue({
         code: 'custom',
-        message: 'This person already has this role.',
+        message: 'Bu kişi zaten bu role sahip.',
         path: [path, index, 'personId'],
       });
     }

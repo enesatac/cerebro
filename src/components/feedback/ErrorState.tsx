@@ -9,10 +9,10 @@ interface ErrorStateProps {
 
 /** Persistent, inline error for failed loads. Transient operation feedback uses toasts instead. */
 export function ErrorState({
-  title = 'We could not load this information',
-  description = 'Check your connection and try again. If the problem continues, contact Application Support.',
+  title = 'Bu bilgi yüklenemedi',
+  description = 'Bağlantınızı kontrol edip tekrar deneyin. Sorun devam ederse Uygulama Destek ekibine başvurun.',
   onRetry,
-  retryLabel = 'Try again',
+  retryLabel = 'Tekrar dene',
 }: ErrorStateProps) {
   return (
     <Alert variant="danger" appearance="outlined" role="alert" className="c-error-state">

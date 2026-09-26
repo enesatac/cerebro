@@ -24,9 +24,9 @@ export const COMPLETENESS_TARGET = 90;
 const GAP_FILTERS = ['incomplete', 'no-owner', 'review-overdue'] as const;
 type GapFilter = (typeof GAP_FILTERS)[number];
 const GAP_LABELS: Record<GapFilter, string> = {
-  incomplete: `Below ${COMPLETENESS_TARGET}% complete`,
-  'no-owner': 'No technical owner',
-  'review-overdue': 'Review overdue',
+  incomplete: `Tamamlanma %${COMPLETENESS_TARGET} altında`,
+  'no-owner': 'Teknik sahip yok',
+  'review-overdue': 'Gözden geçirme gecikmiş',
 };
 
 const matchesGap = (row: ApplicationHealthRow, gap: GapFilter | null) =>
@@ -38,7 +38,7 @@ const matchesGap = (row: ApplicationHealthRow, gap: GapFilter | null) =>
 const columns: TableColumnDef<ApplicationHealthRow>[] = [
   {
     id: 'name',
-    header: 'Application',
+    header: 'Uygulama',
     accessor: 'name',
     sortable: true,
     width: 230,
@@ -51,26 +51,26 @@ const columns: TableColumnDef<ApplicationHealthRow>[] = [
   },
   {
     id: 'criticality',
-    header: 'Criticality',
+    header: 'Kritiklik',
     width: 110,
     cell: ({ row }) => <StatusBadge {...CRITICALITY_PRESENTATION[row.original.criticality]} />,
   },
   {
     id: 'completeness',
-    header: 'Completeness',
+    header: 'Tamamlanma',
     accessor: 'completenessScore',
     sortable: true,
     width: 150,
     cell: ({ row }) => (
       <PercentMeter
         value={row.original.completenessScore}
-        label={`${row.original.name} completeness`}
+        label={`${row.original.name} tamamlanma oranı`}
       />
     ),
   },
   {
     id: 'missing',
-    header: 'Missing',
+    header: 'Eksik',
     cell: ({ row }) => (
       <span className="c-cell-stack">
         {row.original.missingRequired.length > 0 && (
@@ -82,21 +82,21 @@ const columns: TableColumnDef<ApplicationHealthRow>[] = [
           </span>
         )}
         {row.original.missingRequired.length + row.original.missingRecommended.length === 0 && (
-          <span className="c-muted">Nothing</span>
+          <span className="c-muted">Eksik yok</span>
         )}
       </span>
     ),
   },
   {
     id: 'owner',
-    header: 'Technical owner',
+    header: 'Teknik sahip',
     width: 150,
     cell: ({ row }) =>
-      row.original.technicalOwner?.name ?? <span className="c-text-warning">Unassigned</span>,
+      row.original.technicalOwner?.name ?? <span className="c-text-warning">Atanmamış</span>,
   },
   {
     id: 'review',
-    header: 'Review',
+    header: 'Gözden geçirme',
     width: 150,
     cell: ({ row }) => <StatusBadge {...reviewStatePresentation(row.original.reviewState)} />,
   },
@@ -104,18 +104,18 @@ const columns: TableColumnDef<ApplicationHealthRow>[] = [
 
 function exportCsv(rows: readonly ApplicationHealthRow[]) {
   const csv = toCsv(rows, [
-    { header: 'Code', value: (r) => r.code },
-    { header: 'Application', value: (r) => r.name },
-    { header: 'Lifecycle', value: (r) => r.lifecycle },
-    { header: 'Criticality', value: (r) => r.criticality },
-    { header: 'Business unit', value: (r) => r.businessUnit?.name },
-    { header: 'Technical owner', value: (r) => r.technicalOwner?.name },
-    { header: 'Completeness %', value: (r) => r.completenessScore },
-    { header: 'Missing (required)', value: (r) => r.missingRequired.join('; ') },
-    { header: 'Missing (recommended)', value: (r) => r.missingRecommended.join('; ') },
-    { header: 'Review', value: (r) => reviewStateLabel(r.reviewState) },
+    { header: 'Kod', value: (r) => r.code },
+    { header: 'Uygulama', value: (r) => r.name },
+    { header: 'Yaşam döngüsü', value: (r) => r.lifecycle },
+    { header: 'Kritiklik', value: (r) => r.criticality },
+    { header: 'İş birimi', value: (r) => r.businessUnit?.name },
+    { header: 'Teknik sahip', value: (r) => r.technicalOwner?.name },
+    { header: 'Tamamlanma %', value: (r) => r.completenessScore },
+    { header: 'Eksik (zorunlu)', value: (r) => r.missingRequired.join('; ') },
+    { header: 'Eksik (önerilen)', value: (r) => r.missingRecommended.join('; ') },
+    { header: 'Gözden geçirme', value: (r) => reviewStateLabel(r.reviewState) },
     {
-      header: 'Outdated technologies',
+      header: 'Güncelliğini yitirmiş teknolojiler',
       value: (r) => r.outdatedTechnologies.map((t) => t.name).join('; '),
     },
   ]);
@@ -142,33 +142,33 @@ export function DataQualityReport({ rows }: { rows: ApplicationHealthRow[] }) {
     <div className="c-stack">
       <div className="c-stat-grid">
         <StatTile
-          label="Average completeness"
+          label="Ortalama tamamlanma"
           value={`${average}%`}
-          detail={`across ${pluralize(live.length, 'live application')}`}
+          detail={`${pluralize(live.length, 'canlı uygulama')} genelinde`}
         />
         <StatTile
-          label={`Below ${COMPLETENESS_TARGET}%`}
+          label={`%${COMPLETENESS_TARGET} altında`}
           value={live.filter((r) => r.completenessScore < COMPLETENESS_TARGET).length}
           tone="warning"
-          detail="applications to complete"
+          detail="tamamlanacak uygulama"
         />
         <StatTile
-          label="No technical owner"
+          label="Teknik sahip yok"
           value={live.filter((r) => r.technicalOwner === null).length}
           tone="warning"
         />
         <StatTile
-          label="Review overdue"
+          label="Gözden geçirme gecikmiş"
           value={live.filter((r) => r.reviewState.kind !== 'current').length}
           tone="warning"
         />
       </div>
       <Toolbar
-        label="Filter report"
+        label="Raporu filtrele"
         end={
           <>
             <FilterSummary
-              summary={pluralize(visible.length, 'application')}
+              summary={pluralize(visible.length, 'uygulama')}
               activeFilterCount={gap ? 1 : 0}
               onReset={() => setGap(null)}
             />
@@ -179,14 +179,14 @@ export function DataQualityReport({ rows }: { rows: ApplicationHealthRow[] }) {
               startContent={<ArrowDownloadIconOutlinedRounded aria-hidden="true" />}
               onClick={() => exportCsv(visible)}
             >
-              Export CSV
+              CSV olarak dışa aktar
             </Button>
           </>
         }
       >
         <FilterSelect
-          label="Show"
-          allLabel="All applications"
+          label="Göster"
+          allLabel="Tüm uygulamalar"
           value={gap}
           options={GAP_FILTERS.map((value) => ({ value, label: GAP_LABELS[value] }))}
           onChange={setGap}
@@ -201,8 +201,8 @@ export function DataQualityReport({ rows }: { rows: ApplicationHealthRow[] }) {
         emptyState={
           <EmptyState
             compact
-            title="No applications have this gap"
-            description="Nothing to fix here."
+            title="Bu eksiği olan uygulama yok"
+            description="Düzeltilecek bir şey yok."
           />
         }
       />

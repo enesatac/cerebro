@@ -58,14 +58,14 @@ function EscalationForm({ escalation }: { escalation?: Escalation }) {
   return (
     <FormPage
       form={form}
-      title={escalation ? 'Edit escalation' : 'Raise an escalation'}
+      title={escalation ? 'Eskalasyonu düzenle' : 'Eskalasyon aç'}
       subtitle={escalation?.title}
       breadcrumbs={[
-        { label: 'Risks & Escalations', to: paths.risks('escalations') },
-        { label: escalation ? 'Edit escalation' : 'New escalation' },
+        { label: 'Riskler ve Eskalasyonlar', to: paths.risks('escalations') },
+        { label: escalation ? 'Eskalasyonu düzenle' : 'Yeni eskalasyon' },
       ]}
       cancelTo={returnTo}
-      submitLabel={escalation ? 'Save changes' : 'Raise escalation'}
+      submitLabel={escalation ? 'Değişiklikleri kaydet' : 'Eskalasyon aç'}
       onSubmit={async (values) => {
         await save.mutateAsync(toEscalationInput(values));
         return returnTo;
@@ -74,7 +74,7 @@ function EscalationForm({ escalation }: { escalation?: Escalation }) {
         escalation && (
           <Can permission="portfolio:delete">
             <DeleteAction
-              entityLabel="escalation"
+              entityLabel="eskalasyon"
               entityName={escalation.title}
               impactKey={['escalation', escalation.id]}
               loadImpact={() => escalations.getDeletionImpact(escalation.id)}
@@ -85,26 +85,26 @@ function EscalationForm({ escalation }: { escalation?: Escalation }) {
         )
       }
     >
-      <SectionCard title="Escalation">
+      <SectionCard title="Eskalasyon">
         <div className="c-form-grid">
           <TextField
             control={control}
             name="title"
-            label="Title"
+            label="Başlık"
             required
             className="c-form-grid__wide"
           />
           <TextField
             control={control}
             name="description"
-            label="Description"
+            label="Açıklama"
             rows={3}
             className="c-form-grid__wide"
           />
           <SelectField
             control={control}
             name="severity"
-            label="Severity"
+            label="Önem derecesi"
             required
             options={CRITICALITIES.map((value) => ({
               value,
@@ -114,7 +114,7 @@ function EscalationForm({ escalation }: { escalation?: Escalation }) {
           <SelectField
             control={control}
             name="status"
-            label="Status"
+            label="Durum"
             required
             options={ESCALATION_STATUSES.map((value) => ({
               value,
@@ -123,40 +123,34 @@ function EscalationForm({ escalation }: { escalation?: Escalation }) {
           />
         </div>
       </SectionCard>
-      <SectionCard title="Responsibility">
+      <SectionCard title="Sorumluluk">
         <div className="c-form-grid">
-          <SelectField
-            control={control}
-            name="raisedById"
-            label="Raised by"
-            required
-            options={people}
-          />
-          <DateField control={control} name="raisedAt" label="Raised on" required />
+          <SelectField control={control} name="raisedById" label="Açan" required options={people} />
+          <DateField control={control} name="raisedAt" label="Açılış tarihi" required />
           <SelectField
             control={control}
             name="ownerId"
-            label="Owner"
+            label="Sahip"
             options={people}
-            emptyLabel="Unassigned"
+            emptyLabel="Atanmamış"
           />
           <SelectField
             control={control}
             name="responsibleTeamId"
-            label="Responsible team"
+            label="Sorumlu ekip"
             options={teams}
-            emptyLabel="No team"
+            emptyLabel="Ekip yok"
           />
-          <DateField control={control} name="targetResolutionDate" label="Target resolution" />
+          <DateField control={control} name="targetResolutionDate" label="Hedef çözüm" />
         </div>
       </SectionCard>
-      <SectionCard title="Resolution">
+      <SectionCard title="Çözüm">
         <TextField
           control={control}
           name="resolution"
-          label="Resolution"
+          label="Çözüm"
           rows={3}
-          description="Required when the escalation is resolved or closed."
+          description="Eskalasyon çözüldüğünde veya kapatıldığında zorunludur."
         />
       </SectionCard>
       <RelatedEntitiesFields
@@ -178,8 +172,8 @@ function EditEscalation({ id }: { id: string }) {
   return (
     <QueryView
       query={query}
-      loadingLabel="Loading escalation"
-      errorTitle="This escalation could not be loaded"
+      loadingLabel="Eskalasyon yükleniyor"
+      errorTitle="Bu eskalasyon yüklenemedi"
     >
       {(escalation) => <EscalationForm escalation={escalation} />}
     </QueryView>

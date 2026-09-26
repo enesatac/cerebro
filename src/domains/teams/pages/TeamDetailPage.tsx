@@ -41,7 +41,7 @@ function OwnedApplications({ team }: { team: Team }) {
   const columns: TableColumnDef<ApplicationListItem>[] = [
     {
       id: 'name',
-      header: 'Application',
+      header: 'Uygulama',
       width: 260,
       cell: ({ row }) => (
         <span className="c-cell-stack">
@@ -54,7 +54,7 @@ function OwnedApplications({ team }: { team: Team }) {
     },
     {
       id: 'responsibility',
-      header: 'Responsibility',
+      header: 'Sorumluluk',
       cell: ({ row }) =>
         row.original.teams
           .filter((ref) => ref.id === team.id)
@@ -63,33 +63,31 @@ function OwnedApplications({ team }: { team: Team }) {
     },
     {
       id: 'lifecycle',
-      header: 'Lifecycle',
+      header: 'Yaşam döngüsü',
       cell: ({ row }) => <StatusBadge {...LIFECYCLE_PRESENTATION[row.original.lifecycle]} />,
     },
     {
       id: 'criticality',
-      header: 'Criticality',
+      header: 'Kritiklik',
       cell: ({ row }) => <StatusBadge {...CRITICALITY_PRESENTATION[row.original.criticality]} />,
     },
   ];
   return (
     <QueryView
       query={query}
-      loadingLabel="Loading applications"
-      errorTitle="Applications could not be loaded"
+      loadingLabel="Uygulamalar yükleniyor"
+      errorTitle="Uygulamalar yüklenemedi"
     >
       {(result) => (
         <SectionCard
-          title={`Applications (${result.total})`}
-          description="Applications this team develops or supports."
+          title={`Uygulamalar (${result.total})`}
+          description="Bu ekibin geliştirdiği veya desteklediği uygulamalar."
         >
           <Table
             data={result.items}
             columns={columns}
             getRowId={(row) => row.id}
-            emptyState={
-              <EmptyState compact title={`${team.name} is not assigned to any application`} />
-            }
+            emptyState={<EmptyState compact title={`${team.name} hiçbir uygulamaya atanmamış`} />}
           />
         </SectionCard>
       )}
@@ -102,7 +100,7 @@ function DeliveredProjects({ team }: { team: Team }) {
   const columns: TableColumnDef<ProjectListItem>[] = [
     {
       id: 'name',
-      header: 'Project',
+      header: 'Proje',
       width: 260,
       cell: ({ row }) => (
         <span className="c-cell-stack">
@@ -113,36 +111,34 @@ function DeliveredProjects({ team }: { team: Team }) {
     },
     {
       id: 'status',
-      header: 'Status',
+      header: 'Durum',
       cell: ({ row }) => <StatusBadge {...PROJECT_STATUS_PRESENTATION[row.original.status]} />,
     },
     {
       id: 'health',
-      header: 'Health',
+      header: 'Sağlık',
       cell: ({ row }) => <StatusBadge {...PROJECT_HEALTH_PRESENTATION[row.original.health]} />,
     },
     {
       id: 'manager',
-      header: 'Project manager',
+      header: 'Proje yöneticisi',
       cell: ({ row }) => row.original.projectManager?.name ?? '—',
     },
   ];
   return (
-    <QueryView
-      query={query}
-      loadingLabel="Loading projects"
-      errorTitle="Projects could not be loaded"
-    >
+    <QueryView query={query} loadingLabel="Projeler yükleniyor" errorTitle="Projeler yüklenemedi">
       {(result) => (
         <SectionCard
-          title={`Projects (${result.total})`}
-          description="Projects this team delivers."
+          title={`Projeler (${result.total})`}
+          description="Bu ekibin yürüttüğü projeler."
         >
           <Table
             data={result.items}
             columns={columns}
             getRowId={(row) => row.id}
-            emptyState={<EmptyState compact title={`${team.name} is not delivering any project`} />}
+            emptyState={
+              <EmptyState compact title={`${team.name} şu anda hiçbir proje yürütmüyor`} />
+            }
           />
         </SectionCard>
       )}
@@ -156,9 +152,9 @@ function Members({ team }: { team: Team }) {
     .map((id) => people.data?.get(id))
     .filter((person): person is Person => person !== undefined);
   return (
-    <SectionCard title={`Members (${team.memberIds.length})`}>
+    <SectionCard title={`Üyeler (${team.memberIds.length})`}>
       {team.memberIds.length === 0 ? (
-        <EmptyState compact title="No members have been added to this team yet" />
+        <EmptyState compact title="Bu ekibe henüz üye eklenmedi" />
       ) : (
         <ul className="c-rule-list">
           {members.map((person) => (
@@ -177,17 +173,17 @@ export default function TeamDetailPage() {
   const query = useTeam(teamId);
   const people = usePeopleById();
 
-  if (query.isPending) return <LoadingState label="Loading team" rows={6} />;
+  if (query.isPending) return <LoadingState label="Ekip yükleniyor" rows={6} />;
   if (query.isError) {
     return isNotFoundError(query.error) ? (
       <NotFoundState
-        title="Team not found"
-        description={`No team with the id "${teamId}" exists.`}
+        title="Ekip bulunamadı"
+        description={`"${teamId}" kimliğine sahip bir ekip yok.`}
         backTo={paths.teams.list()}
-        backLabel="Back to teams"
+        backLabel="Ekiplere dön"
       />
     ) : (
-      <ErrorState title="This team could not be loaded" onRetry={() => void query.refetch()} />
+      <ErrorState title="Bu ekip yüklenemedi" onRetry={() => void query.refetch()} />
     );
   }
 
@@ -195,7 +191,7 @@ export default function TeamDetailPage() {
   return (
     <div className="c-stack">
       <PageHeader
-        breadcrumbs={[{ label: 'Teams', to: paths.teams.list() }, { label: team.name }]}
+        breadcrumbs={[{ label: 'Ekipler', to: paths.teams.list() }, { label: team.name }]}
         title={team.name}
         subtitle={team.description}
         actions={
@@ -205,30 +201,30 @@ export default function TeamDetailPage() {
           </>
         }
       />
-      <section aria-label="Key facts" className="c-key-facts">
+      <section aria-label="Temel bilgiler" className="c-key-facts">
         <DetailList
           layout="grid"
           items={[
             {
-              label: 'Manager',
+              label: 'Yönetici',
               value: team.managerId ? (
                 <PersonSummary
                   person={people.data?.get(team.managerId)}
                   fallbackId={team.managerId}
                 />
               ) : null,
-              emptyText: 'Unassigned',
+              emptyText: 'Atanmamış',
             },
             {
-              label: 'Team mailbox',
+              label: 'Ekip e-posta kutusu',
               value: team.contactEmail ? (
                 <a className="c-link" href={`mailto:${team.contactEmail}`}>
                   {team.contactEmail}
                 </a>
               ) : null,
             },
-            { label: 'Chat channel', value: team.chatChannel },
-            { label: 'Responsibilities', value: team.responsibilities.join(' · ') },
+            { label: 'Sohbet kanalı', value: team.chatChannel },
+            { label: 'Sorumluluklar', value: team.responsibilities.join(' · ') },
           ]}
         />
       </section>

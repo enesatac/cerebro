@@ -10,7 +10,7 @@ interface PersonSummaryProps {
 /** Name, job title and optional contact for a person. People pages arrive in Phase 2. */
 export function PersonSummary({ person, fallbackId, showEmail = false }: PersonSummaryProps) {
   if (!person) {
-    return <span className="c-muted">Unknown person{fallbackId ? ` (${fallbackId})` : ''}</span>;
+    return <span className="c-muted">Bilinmeyen kişi{fallbackId ? ` (${fallbackId})` : ''}</span>;
   }
   return (
     <span className="c-cell-stack">

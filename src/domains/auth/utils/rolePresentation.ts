@@ -3,18 +3,18 @@ import type { UserRole } from '../types';
 
 export const ROLE_PRESENTATION: Record<UserRole, StatusPresentation & { description: string }> = {
   admin: {
-    label: 'Admin',
+    label: 'Yönetici',
     variant: 'primary',
-    description: 'Can create, edit and delete everything and manage users.',
+    description: 'Her şeyi oluşturabilir, düzenleyebilir, silebilir ve kullanıcıları yönetebilir.',
   },
   user: {
-    label: 'User',
+    label: 'Kullanıcı',
     variant: 'neutral',
-    description: 'Can view everything. Cannot make changes.',
+    description: 'Her şeyi görüntüleyebilir. Değişiklik yapamaz.',
   },
 };
 
 export const ACCOUNT_STATUS_PRESENTATION: Record<'active' | 'inactive', StatusPresentation> = {
-  active: { label: 'Active', variant: 'success' },
-  inactive: { label: 'Deactivated', variant: 'neutral' },
+  active: { label: 'Aktif', variant: 'success' },
+  inactive: { label: 'Devre dışı', variant: 'neutral' },
 };

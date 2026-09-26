@@ -30,7 +30,7 @@ export function DetailList({ items, layout = 'stacked' }: DetailListProps) {
           <dt className="c-detail-list__label">{item.label}</dt>
           <dd className="c-detail-list__value">
             {isEmpty(item.value) ? (
-              <span className="c-muted">{item.emptyText ?? 'Not specified'}</span>
+              <span className="c-muted">{item.emptyText ?? 'Belirtilmemiş'}</span>
             ) : (
               item.value
             )}

@@ -7,7 +7,7 @@ import type { DeletionImpact } from '@/domains/shared/types';
 import { getErrorMessage } from '@/lib/errors';
 
 interface DeleteActionProps {
-  /** e.g. "application". */
+  /** Lower-case noun, e.g. "uygulama". */
   entityLabel: string;
   entityName: string;
   /** Unique cache key for the impact query. */
@@ -61,13 +61,13 @@ export function DeleteAction({
         startContent={<DeleteIconOutlinedRounded aria-hidden="true" />}
         onClick={() => setOpen(true)}
       >
-        Delete {entityLabel}
+        {entityLabel.charAt(0).toLocaleUpperCase('tr-TR') + entityLabel.slice(1)} sil
       </Button>
       <ConfirmDialog
         open={open}
         onOpenChange={setOpen}
-        title={`Delete ${entityName}?`}
-        confirmLabel={`Delete ${entityLabel}`}
+        title={`${entityName} silinsin mi?`}
+        confirmLabel="Kalıcı olarak sil"
         tone="danger"
         pending={pending}
         confirmDisabled={impact.isPending || Boolean(impact.data?.blockedReason)}
@@ -75,32 +75,29 @@ export function DeleteAction({
       >
         <div className="c-stack c-stack--s">
           {impact.isPending ? (
-            <p className="c-muted">Checking what else refers to this {entityLabel}…</p>
+            <p className="c-muted">Bu kayda bağlı diğer kayıtlar kontrol ediliyor…</p>
           ) : impact.data?.blockedReason ? (
             <p>
-              <strong>This {entityLabel} cannot be deleted.</strong> {impact.data.blockedReason}
+              <strong>Bu kayıt silinemez.</strong> {impact.data.blockedReason}
             </p>
           ) : references.length > 0 ? (
             <>
               <p>
-                {entityName} is referenced by{' '}
+                {entityName} şu kayıtlarla ilişkili:{' '}
                 {references.map((ref, index) => (
                   <span key={ref.label}>
-                    {index > 0 && (index === references.length - 1 ? ' and ' : ', ')}
+                    {index > 0 && (index === references.length - 1 ? ' ve ' : ', ')}
                     <strong>
-                      {ref.count}{' '}
-                      {ref.count === 1
-                        ? ref.label.replace(/ies$/, 'y').replace(/s$/, '')
-                        : ref.label}
+                      {ref.count} {ref.label}
                     </strong>
                   </span>
                 ))}
                 .
               </p>
-              <p>Those links will be removed. This cannot be undone.</p>
+              <p>Bu ilişkiler kaldırılacak. Bu işlem geri alınamaz.</p>
             </>
           ) : (
-            <p>Nothing else refers to this {entityLabel}. This cannot be undone.</p>
+            <p>Bu kayda bağlı başka bir kayıt yok. Bu işlem geri alınamaz.</p>
           )}
           {error && (
             <p className="c-form-error" role="alert">

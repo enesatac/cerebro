@@ -3,12 +3,12 @@ import { emptyToNull, optionalEmail, optionalText, requiredText } from '@/lib/va
 import type { Team, TeamInput } from '../types';
 
 export const teamFormSchema = z.object({
-  name: requiredText('Team name', 80),
-  description: optionalText('Description', 500),
+  name: requiredText('Ekip adı', 80),
+  description: optionalText('Açıklama', 500),
   managerId: z.string(),
   memberIds: z.array(z.string()),
   contactEmail: optionalEmail,
-  chatChannel: optionalText('Chat channel', 80),
+  chatChannel: optionalText('Sohbet kanalı', 80),
   responsibilities: z.array(z.string().trim().min(1).max(120)),
 });
 

@@ -50,7 +50,7 @@ export class MockSearchRepository implements SearchRepository {
             kind: 'team',
             id: t.id,
             title: t.name,
-            subtitle: 'Team',
+            subtitle: 'Ekip',
             description: t.description,
           });
         }

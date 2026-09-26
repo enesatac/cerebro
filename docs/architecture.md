@@ -140,8 +140,8 @@ teams and technologies.
 ## Development persistence
 
 The mock database and session are persisted in `localStorage` in the browser
-(`cerebro.demo-db.v1`, `cerebro.demo-session`) so records survive a reload. Tests use in-memory
-stores. To reset the demo data, clear the site's storage (or remove `cerebro.demo-db.v1`).
+(`cerebro.demo-db.v2`, `cerebro.demo-session`) so records survive a reload. Tests use in-memory
+stores. To reset the demo data, clear the site's storage (or remove `cerebro.demo-db.v2`).
 
 ## Security posture (frontend)
 

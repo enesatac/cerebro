@@ -13,7 +13,7 @@ export function RelatedEntityLinks({ applicationIds, projectIds }: RelatedEntity
   const applications = useApplicationRefs();
   const projects = useProjectRefs();
   if (applicationIds.length === 0 && projectIds.length === 0) {
-    return <span className="c-muted">None</span>;
+    return <span className="c-muted">Yok</span>;
   }
   return (
     <ul className="c-plain-list">

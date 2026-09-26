@@ -59,7 +59,7 @@ picker only):
 ### Demo data
 
 Seed data lives in `src/services/mock/data/` and is entirely fictional. In development, changes
-are persisted to `localStorage` (`cerebro.demo-db.v1`, session in `cerebro.demo-session`). Clear
+are persisted to `localStorage` (`cerebro.demo-db.v2`, session in `cerebro.demo-session`). Clear
 those keys (or the site data) to reset to the seed.
 
 ## Scripts

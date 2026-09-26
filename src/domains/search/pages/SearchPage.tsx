@@ -17,23 +17,25 @@ export default function SearchPage() {
   return (
     <div className="c-stack">
       <PageHeader
-        title="Search"
+        title="Arama"
         subtitle={
-          term ? `Results for “${term}”` : 'Use the search box above to find anything in Cerebro.'
+          term
+            ? `“${term}” için sonuçlar`
+            : "Cerebro'da herhangi bir şeyi bulmak için yukarıdaki arama kutusunu kullanın."
         }
       />
       {term && (
-        <QueryView query={query} loadingLabel="Searching" errorTitle="Search failed">
+        <QueryView query={query} loadingLabel="Aranıyor" errorTitle="Arama başarısız oldu">
           {(results) =>
             results.length === 0 ? (
               <EmptyState
-                title={`Nothing matches “${term}”`}
-                description="Search covers application and project names, codes, descriptions and tags, plus teams, people and technologies."
+                title={`“${term}” ile eşleşen bir şey yok`}
+                description="Arama; uygulama ve proje adlarını, kodlarını, açıklamalarını ve etiketlerini, ayrıca ekipleri, kişileri ve teknolojileri kapsar."
               />
             ) : (
               <>
                 <p className="c-muted" aria-live="polite">
-                  {pluralize(results.length, 'result')}
+                  {pluralize(results.length, 'sonuç')}
                 </p>
                 {SEARCHABLE_KINDS.map((kind) => {
                   const group = results.filter((result) => result.kind === kind);

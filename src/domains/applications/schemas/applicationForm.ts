@@ -35,64 +35,64 @@ import {
 } from '../types';
 
 const technologyUsageSchema = z.object({
-  technologyId: requiredChoice('a technology'),
-  layer: enumChoice(TECHNOLOGY_CATEGORIES, 'a layer'),
-  version: optionalText('Version', 30),
+  technologyId: requiredChoice('bir teknoloji'),
+  layer: enumChoice(TECHNOLOGY_CATEGORIES, 'bir katman'),
+  version: optionalText('Sürüm', 30),
 });
 
 const dataStoreSchema = z.object({
   id: z.string(),
-  name: requiredText('Data store name', 80),
-  technologyId: requiredChoice('a technology'),
-  purpose: optionalText('Purpose', 300),
+  name: requiredText('Veri deposu adı', 80),
+  technologyId: requiredChoice('bir teknoloji'),
+  purpose: optionalText('Amaç', 300),
   containsPersonalData: z.boolean(),
 });
 
 const environmentSchema = z.object({
   id: z.string(),
-  type: enumChoice(ENVIRONMENT_TYPES, 'an environment type'),
-  name: requiredText('Environment name', 60),
+  type: enumChoice(ENVIRONMENT_TYPES, 'bir ortam türü'),
+  name: requiredText('Ortam adı', 60),
   url: optionalUrl,
-  status: enumChoice(ENVIRONMENT_STATUSES, 'a status'),
-  region: optionalText('Region', 40),
-  notes: secretFreeText('Notes', 500),
+  status: enumChoice(ENVIRONMENT_STATUSES, 'bir durum'),
+  region: optionalText('Bölge', 40),
+  notes: secretFreeText('Notlar', 500),
 });
 
 const repositorySchema = z.object({
   id: z.string(),
-  name: requiredText('Repository name', 120),
-  type: enumChoice(SOURCE_REPOSITORY_TYPES, 'a type'),
-  url: requiredUrl('Repository address'),
-  defaultBranch: requiredText('Default branch', 60),
-  description: optionalText('Description', 300),
+  name: requiredText('Kod deposu adı', 120),
+  type: enumChoice(SOURCE_REPOSITORY_TYPES, 'bir tür'),
+  url: requiredUrl('Kod deposu adresi'),
+  defaultBranch: requiredText('Varsayılan dal', 60),
+  description: optionalText('Açıklama', 300),
 });
 
 export const applicationFormSchema = z
   .object({
-    name: requiredText('Application name', 120),
-    code: requiredText('Code', 12).regex(
+    name: requiredText('Uygulama adı', 120),
+    code: requiredText('Kod', 12).regex(
       /^[A-Z0-9-]+$/,
-      'Use capital letters, digits and hyphens only.',
+      'Yalnızca büyük harf, rakam ve kısa çizgi kullanın.',
     ),
-    type: enumChoice(APPLICATION_TYPES, 'an application type'),
-    lifecycle: enumChoice(APPLICATION_LIFECYCLES, 'a lifecycle stage'),
-    criticality: enumChoice(CRITICALITIES, 'a criticality'),
-    operationalStatus: enumChoice(OPERATIONAL_STATUSES, 'an operational status'),
+    type: enumChoice(APPLICATION_TYPES, 'bir uygulama türü'),
+    lifecycle: enumChoice(APPLICATION_LIFECYCLES, 'bir yaşam döngüsü aşaması'),
+    criticality: enumChoice(CRITICALITIES, 'bir kritiklik'),
+    operationalStatus: enumChoice(OPERATIONAL_STATUSES, 'bir çalışma durumu'),
     tags: z.array(z.string().trim().toLowerCase().min(1).max(40)),
-    shortDescription: requiredText('Short description', 240),
-    detailedDescription: optionalText('Detailed description', 4000),
-    businessPurpose: requiredText('Business purpose', 1000),
+    shortDescription: requiredText('Kısa açıklama', 240),
+    detailedDescription: optionalText('Ayrıntılı açıklama', 4000),
+    businessPurpose: requiredText('İş amacı', 1000),
     businessUnitId: z.string(),
     businessProcesses: z.array(z.string().trim().min(1).max(80)),
     userGroups: z.array(z.string().trim().min(1).max(80)),
-    estimatedUserCount: optionalWholeNumber('Estimated users'),
+    estimatedUserCount: optionalWholeNumber('Tahmini kullanıcı'),
     roles: z.array(roleAssignmentSchema),
     teams: z.array(teamAssignmentSchema),
     technologies: z.array(technologyUsageSchema),
     dataStores: z.array(dataStoreSchema),
-    hostingModel: enumChoice(HOSTING_MODELS, 'a hosting model'),
-    cloudProvider: optionalText('Cloud provider', 60),
-    hostingNotes: secretFreeText('Hosting notes', 500),
+    hostingModel: enumChoice(HOSTING_MODELS, 'bir barındırma modeli'),
+    cloudProvider: optionalText('Bulut sağlayıcı', 60),
+    hostingNotes: secretFreeText('Barındırma notları', 500),
     environments: z.array(environmentSchema),
     repositories: z.array(repositorySchema),
     documentation: z.array(documentationLinkSchema),
@@ -105,7 +105,7 @@ export const applicationFormSchema = z
       if (usage.technologyId && seen.has(key)) {
         ctx.addIssue({
           code: 'custom',
-          message: 'This technology is already listed for this layer.',
+          message: 'Bu teknoloji bu katman için zaten listede.',
           path: ['technologies', index, 'technologyId'],
         });
       }
@@ -117,7 +117,7 @@ export const applicationFormSchema = z
     ) {
       ctx.addIssue({
         code: 'custom',
-        message: 'Name the cloud provider for cloud or hybrid hosting.',
+        message: 'Bulut veya hibrit barındırma için bulut sağlayıcıyı belirtin.',
         path: ['cloudProvider'],
       });
     }
@@ -140,7 +140,7 @@ export const emptyDataStore = () => ({
 export const emptyEnvironment = () => ({
   id: newRowId('env'),
   type: 'production' as const,
-  name: 'Production',
+  name: 'Canlı',
   url: '',
   status: 'available' as const,
   region: '',

@@ -10,13 +10,10 @@ export function RequireAuth({ children }: { children: ReactNode }) {
   const session = useSession();
   const location = useLocation();
 
-  if (session.isPending) return <LoadingState label="Checking your session" />;
+  if (session.isPending) return <LoadingState label="Oturumunuz kontrol ediliyor" />;
   if (session.isError)
     return (
-      <ErrorState
-        title="Your session could not be checked"
-        onRetry={() => void session.refetch()}
-      />
+      <ErrorState title="Oturumunuz kontrol edilemedi" onRetry={() => void session.refetch()} />
     );
   if (!session.data) {
     return <Navigate to={paths.signIn(`${location.pathname}${location.search}`)} replace />;

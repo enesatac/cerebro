@@ -22,7 +22,7 @@ export default function UsersListPage() {
   const columns: TableColumnDef<UserAccount>[] = [
     {
       id: 'name',
-      header: 'User',
+      header: 'Kullanıcı',
       accessor: 'displayName',
       sortable: true,
       width: 260,
@@ -30,7 +30,7 @@ export default function UsersListPage() {
         <span className="c-cell-stack">
           <EntityLink to={paths.admin.editUser(row.original.id)}>
             {row.original.displayName}
-            {row.original.id === me?.id && ' (you)'}
+            {row.original.id === me?.id && ' (siz)'}
           </EntityLink>
           <span className="c-muted c-cell-stack__secondary">{row.original.email}</span>
         </span>
@@ -38,7 +38,7 @@ export default function UsersListPage() {
     },
     {
       id: 'role',
-      header: 'Role',
+      header: 'Rol',
       accessor: 'role',
       sortable: true,
       width: 110,
@@ -46,7 +46,7 @@ export default function UsersListPage() {
     },
     {
       id: 'status',
-      header: 'Status',
+      header: 'Durum',
       width: 120,
       cell: ({ row }) => (
         <StatusBadge
@@ -56,39 +56,39 @@ export default function UsersListPage() {
     },
     {
       id: 'person',
-      header: 'Linked person',
+      header: 'Bağlı kişi',
       cell: ({ row }) =>
         row.original.personId ? (
           (people.data?.get(row.original.personId)?.jobTitle ?? row.original.personId)
         ) : (
-          <span className="c-muted">Not linked</span>
+          <span className="c-muted">Bağlı değil</span>
         ),
     },
     {
       id: 'lastSignIn',
-      header: 'Last sign-in',
+      header: 'Son giriş',
       align: 'end',
       width: 140,
-      cell: ({ row }) => formatRelative(row.original.lastSignInAt, new Date(), 'Never'),
+      cell: ({ row }) => formatRelative(row.original.lastSignInAt, new Date(), 'Hiç'),
     },
   ];
 
   return (
     <div className="c-stack">
       <PageHeader
-        breadcrumbs={[{ label: 'Administration' }, { label: 'Users & roles' }]}
-        title="Users & roles"
-        subtitle="Who can sign in to Cerebro and what they may do."
+        breadcrumbs={[{ label: 'Yönetim' }, { label: 'Kullanıcılar ve roller' }]}
+        title="Kullanıcılar ve roller"
+        subtitle="Cerebro'ya kimlerin giriş yapabileceği ve neler yapabileceği."
         actions={
           <ButtonLink
             to={paths.admin.createUser()}
             startContent={<AddIconOutlinedRounded aria-hidden="true" />}
           >
-            Add user
+            Kullanıcı ekle
           </ButtonLink>
         }
       />
-      <SectionCard title="Roles">
+      <SectionCard title="Roller">
         <dl className="c-role-legend">
           {USER_ROLES.map((role) => (
             <div key={role} className="c-role-legend__item">
@@ -100,14 +100,18 @@ export default function UsersListPage() {
           ))}
         </dl>
       </SectionCard>
-      <QueryView query={query} loadingLabel="Loading users" errorTitle="Users could not be loaded">
+      <QueryView
+        query={query}
+        loadingLabel="Kullanıcılar yükleniyor"
+        errorTitle="Kullanıcılar yüklenemedi"
+      >
         {(users) => (
           <Table
             data={users}
             columns={columns}
             getRowId={(row) => row.id}
             sorting={{ defaultValue: [{ id: 'name', desc: false }] }}
-            emptyState={<EmptyState compact title="No user accounts exist yet" />}
+            emptyState={<EmptyState compact title="Henüz kullanıcı hesabı yok" />}
           />
         )}
       </QueryView>

@@ -16,7 +16,7 @@ export function useSaveUser(id?: string) {
     },
     {
       successTitle: (user) =>
-        id ? `${user.displayName} updated` : `${user.displayName} can now sign in`,
+        id ? `${user.displayName} güncellendi` : `${user.displayName} artık giriş yapabilir`,
     },
   );
 }

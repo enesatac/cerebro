@@ -8,27 +8,27 @@ import { SOURCE_REPOSITORY_TYPE_LABELS } from '../../utils/applicationPresentati
 const columns: TableColumnDef<SourceRepository>[] = [
   {
     id: 'name',
-    header: 'Repository',
+    header: 'Kod deposu',
     cell: ({ row }) => <ExternalLink href={row.original.url}>{row.original.name}</ExternalLink>,
   },
   {
     id: 'type',
-    header: 'Type',
+    header: 'Tür',
     cell: ({ row }) => SOURCE_REPOSITORY_TYPE_LABELS[row.original.type],
   },
   {
     id: 'branch',
-    header: 'Default branch',
+    header: 'Varsayılan dal',
     cell: ({ row }) => <code>{row.original.defaultBranch}</code>,
   },
-  { id: 'description', header: 'Description', cell: ({ row }) => row.original.description ?? '' },
+  { id: 'description', header: 'Açıklama', cell: ({ row }) => row.original.description ?? '' },
 ];
 
 export function RepositoriesTab({ application }: { application: Application }) {
   return (
     <SectionCard
-      title="Source repositories"
-      description="Where the code, infrastructure and configuration live."
+      title="Kaynak kod depoları"
+      description="Kodun, altyapının ve yapılandırmanın bulunduğu yerler."
     >
       <Table
         data={application.repositories}
@@ -37,11 +37,11 @@ export function RepositoriesTab({ application }: { application: Application }) {
         emptyState={
           <EmptyState
             compact
-            title="No repositories have been added to this application yet"
+            title="Bu uygulamaya henüz kod deposu eklenmedi"
             description={
               application.hosting.model === 'saas'
-                ? 'Vendor-hosted products often have no source code; link configuration or integration repositories if they exist.'
-                : 'Link the frontend, backend and infrastructure repositories so engineers can find the code.'
+                ? 'Tedarikçi tarafından barındırılan ürünlerin çoğu zaman kaynak kodu olmaz; varsa yapılandırma veya entegrasyon depolarını bağlayın.'
+                : 'Mühendislerin kodu bulabilmesi için frontend, backend ve altyapı depolarını bağlayın.'
             }
           />
         }

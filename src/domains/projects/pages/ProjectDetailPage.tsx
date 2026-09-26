@@ -36,14 +36,14 @@ import { ActionMenu } from '@/components/actions/ActionMenu';
 import { SmallCreateAction } from '@/domains/auth/components/RecordActions';
 
 const TABS = [
-  { id: 'overview', label: 'Overview' },
-  { id: 'team', label: 'Team & Stakeholders' },
-  { id: 'applications', label: 'Applications' },
-  { id: 'milestones', label: 'Milestones' },
-  { id: 'risks', label: 'Risks & Escalations' },
-  { id: 'decisions', label: 'Decisions' },
-  { id: 'documentation', label: 'Documentation' },
-  { id: 'history', label: 'History' },
+  { id: 'overview', label: 'Genel bakış' },
+  { id: 'team', label: 'Ekip ve Paydaşlar' },
+  { id: 'applications', label: 'Uygulamalar' },
+  { id: 'milestones', label: 'Kilometre taşları' },
+  { id: 'risks', label: 'Riskler ve Eskalasyonlar' },
+  { id: 'decisions', label: 'Kararlar' },
+  { id: 'documentation', label: 'Dokümantasyon' },
+  { id: 'history', label: 'Geçmiş' },
 ] as const;
 type ProjectTab = (typeof TABS)[number]['id'];
 const TAB_IDS = TABS.map((tab) => tab.id);
@@ -51,25 +51,21 @@ const TAB_IDS = TABS.map((tab) => tab.id);
 function ProjectDecisions({ project }: { project: Project }) {
   const query = useDecisions({ projectId: project.id });
   return (
-    <QueryView
-      query={query}
-      loadingLabel="Loading decisions"
-      errorTitle="Decisions could not be loaded"
-    >
+    <QueryView query={query} loadingLabel="Kararlar yükleniyor" errorTitle="Kararlar yüklenemedi">
       {(decisions) => (
         <SectionCard
-          title="Decisions"
-          description="Architecture and business decisions recorded for this project."
+          title="Kararlar"
+          description="Bu proje için kaydedilmiş mimari ve iş kararları."
           actions={
             <SmallCreateAction
               to={paths.decisionForms.create({ project: project.id })}
-              label="Record decision"
+              label="Karar kaydet"
             />
           }
         >
           <DecisionList
             decisions={decisions}
-            emptyTitle={`No decisions have been recorded for ${project.name}`}
+            emptyTitle={`${project.name} için kaydedilmiş karar yok`}
           />
         </SectionCard>
       )}
@@ -80,7 +76,7 @@ function ProjectDecisions({ project }: { project: Project }) {
 const TAB_CONTENT: Record<ProjectTab, (project: Project) => ReactNode> = {
   overview: (p) => <ProjectOverviewTab project={p} />,
   team: (p) => (
-    <SectionCard title="Team & stakeholders" description="People and teams involved, by role.">
+    <SectionCard title="Ekip ve paydaşlar" description="Role göre dahil olan kişiler ve ekipler.">
       <StakeholderList roles={p.roles} teams={p.teams} />
     </SectionCard>
   ),
@@ -89,11 +85,11 @@ const TAB_CONTENT: Record<ProjectTab, (project: Project) => ReactNode> = {
   risks: (p) => <RelatedRisksAndEscalations filter={{ projectId: p.id }} subjectName={p.name} />,
   decisions: (p) => <ProjectDecisions project={p} />,
   documentation: (p) => (
-    <SectionCard title="Documentation">
+    <SectionCard title="Dokümantasyon">
       <DocumentationTable
         links={p.documentation}
-        emptyTitle="No documentation has been linked to this project yet"
-        emptyDescription="Link the charter, analysis and delivery board."
+        emptyTitle="Bu projeye henüz dokümantasyon bağlanmadı"
+        emptyDescription="Proje beratını, analizi ve teslimat panosunu bağlayın."
       />
     </SectionCard>
   ),
@@ -112,17 +108,17 @@ export default function ProjectDetailPage() {
   const [activeTab, selectTab] = useTabParam(TAB_IDS);
   const query = useProject(projectId);
 
-  if (query.isPending) return <LoadingState label="Loading project" rows={6} />;
+  if (query.isPending) return <LoadingState label="Proje yükleniyor" rows={6} />;
   if (query.isError) {
     return isNotFoundError(query.error) ? (
       <NotFoundState
-        title="Project not found"
-        description={`No project with the id "${projectId}" exists. It may have been removed or the link may be wrong.`}
+        title="Proje bulunamadı"
+        description={`"${projectId}" kimliğine sahip bir proje yok. Kaldırılmış ya da bağlantı hatalı olabilir.`}
         backTo={paths.projects.list()}
-        backLabel="Back to projects"
+        backLabel="Projelere dön"
       />
     ) : (
-      <ErrorState title="This project could not be loaded" onRetry={() => void query.refetch()} />
+      <ErrorState title="Bu proje yüklenemedi" onRetry={() => void query.refetch()} />
     );
   }
 
@@ -130,17 +126,17 @@ export default function ProjectDetailPage() {
   return (
     <div className="c-stack">
       <PageHeader
-        breadcrumbs={[{ label: 'Projects', to: paths.projects.list() }, { label: project.name }]}
+        breadcrumbs={[{ label: 'Projeler', to: paths.projects.list() }, { label: project.name }]}
         title={project.name}
         subtitle={project.description}
         meta={
           <>
             <span className="c-code-chip">{project.code}</span>
-            <StatusBadge context="Status:" {...PROJECT_STATUS_PRESENTATION[project.status]} />
-            <StatusBadge context="Health:" {...PROJECT_HEALTH_PRESENTATION[project.health]} />
+            <StatusBadge context="Durum:" {...PROJECT_STATUS_PRESENTATION[project.status]} />
+            <StatusBadge context="Sağlık:" {...PROJECT_HEALTH_PRESENTATION[project.health]} />
             <StatusBadge
               {...CRITICALITY_PRESENTATION[project.priority]}
-              label={`${CRITICALITY_PRESENTATION[project.priority].label} priority`}
+              label={`${CRITICALITY_PRESENTATION[project.priority].label} öncelik`}
             />
           </>
         }
@@ -150,13 +146,13 @@ export default function ProjectDetailPage() {
             <Can permission="portfolio:edit">
               <ActionMenu
                 items={[
-                  { label: 'Record risk', to: paths.riskForms.create({ project: project.id }) },
+                  { label: 'Risk kaydet', to: paths.riskForms.create({ project: project.id }) },
                   {
-                    label: 'Raise escalation',
+                    label: 'Eskalasyon aç',
                     to: paths.escalationForms.create({ project: project.id }),
                   },
                   {
-                    label: 'Record decision',
+                    label: 'Karar kaydet',
                     to: paths.decisionForms.create({ project: project.id }),
                   },
                 ]}
@@ -170,11 +166,11 @@ export default function ProjectDetailPage() {
       <AttentionNotices
         filter={{ projectId: project.id }}
         audit={project.audit}
-        entityLabel="project"
+        entityLabel="proje"
         onOpenRisks={() => selectTab('risks')}
       />
       <DetailTabs
-        label="Project sections"
+        label="Proje bölümleri"
         tabs={TABS.map((tab) => ({ ...tab, count: tabCount(tab.id, project) }))}
         active={activeTab}
         onSelect={selectTab}

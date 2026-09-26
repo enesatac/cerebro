@@ -5,13 +5,13 @@ import type { Application } from '../../types';
 export function DocumentationTab({ application }: { application: Application }) {
   return (
     <SectionCard
-      title="Documentation"
-      description="Confluence spaces, Jira boards, runbooks, designs and dashboards."
+      title="Dokümantasyon"
+      description="Confluence alanları, Jira panoları, runbook'lar, tasarımlar ve gösterge panelleri."
     >
       <DocumentationTable
         links={application.documentation}
-        emptyTitle="No documentation has been linked to this application yet"
-        emptyDescription="Link at least the architecture overview and the support runbook."
+        emptyTitle="Bu uygulamaya henüz dokümantasyon bağlanmadı"
+        emptyDescription="En azından mimari genel bakışı ve destek runbook'unu bağlayın."
       />
     </SectionCard>
   );

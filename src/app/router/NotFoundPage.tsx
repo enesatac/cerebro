@@ -4,10 +4,10 @@ import { paths } from './paths';
 export default function NotFoundPage() {
   return (
     <NotFoundState
-      title="Page not found"
-      description="The address may be mistyped, or the page may have moved."
+      title="Sayfa bulunamadı"
+      description="Adres yanlış yazılmış ya da sayfa taşınmış olabilir."
       backTo={paths.dashboard()}
-      backLabel="Go to dashboard"
+      backLabel="Gösterge paneline git"
     />
   );
 }

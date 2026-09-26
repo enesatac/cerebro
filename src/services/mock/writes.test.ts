@@ -93,8 +93,8 @@ describe('application writes', () => {
     const impact = await repos.applications.getDeletionImpact('app-payment-gateway');
     expect(impact.references).toEqual(
       expect.arrayContaining([
-        { label: 'projects', count: 1 },
-        { label: 'dependencies', count: 4 },
+        { label: 'proje', count: 1 },
+        { label: 'bağımlılık', count: 4 },
       ]),
     );
     await repos.applications.remove('app-payment-gateway');
@@ -118,7 +118,7 @@ describe('business rules', () => {
   it('blocks deleting a technology that is in use, allows an unused one', async () => {
     const repos = createMockRepositories({ signedInAs: ADMIN });
     expect((await repos.technologies.getDeletionImpact('tech-oracle')).blockedReason).toMatch(
-      /used by 4 applications/,
+      /4 uygulama tarafından kullanılıyor/,
     );
     await expect(repos.technologies.remove('tech-oracle')).rejects.toBeInstanceOf(ValidationError);
     await repos.technologies.remove('tech-playwright').catch(() => undefined);
@@ -171,17 +171,17 @@ describe('business rules', () => {
       active: u.active,
     });
     await expect(repos.users.update(ADMIN, { ...asInput(me), active: false })).rejects.toThrow(
-      /deactivate your own/,
+      /devre dışı bırakamazsınız/,
     );
     await expect(repos.users.update(ADMIN, { ...asInput(me), role: 'user' })).rejects.toThrow(
-      /own admin role/,
+      /yönetici rolünüzü/,
     );
     const other = await repos.users.getById('user-selin-aydin');
     await repos.users.update(other.id, { ...asInput(other), role: 'user' });
     // Can is now the only admin; nobody else can remove that role from them either.
     await expect(
       repos.users.create({ ...asInput(me), email: 'can.ozturk@corp.example' }),
-    ).rejects.toThrow(/already exists/);
+    ).rejects.toThrow(/zaten var/);
   });
 });
 

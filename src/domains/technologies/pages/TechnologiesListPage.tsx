@@ -37,7 +37,7 @@ const STATUS_OPTIONS = TECHNOLOGY_STATUSES.map((value) => ({
 const columns: TableColumnDef<TechnologyListItem>[] = [
   {
     id: 'name',
-    header: 'Technology',
+    header: 'Teknoloji',
     accessor: 'name',
     sortable: true,
     width: 220,
@@ -47,7 +47,7 @@ const columns: TableColumnDef<TechnologyListItem>[] = [
   },
   {
     id: 'category',
-    header: 'Category',
+    header: 'Kategori',
     accessor: 'category',
     sortable: true,
     width: 140,
@@ -55,21 +55,21 @@ const columns: TableColumnDef<TechnologyListItem>[] = [
   },
   {
     id: 'status',
-    header: 'Status',
+    header: 'Durum',
     accessor: (row) => TECHNOLOGY_STATUSES.indexOf(row.status),
     sortable: true,
     width: 120,
     cell: ({ row }) => <StatusBadge {...TECHNOLOGY_STATUS_PRESENTATION[row.original.status]} />,
   },
-  { id: 'description', header: 'Description', accessor: 'description' },
+  { id: 'description', header: 'Açıklama', accessor: 'description' },
   {
     id: 'usage',
-    header: 'Used by',
+    header: 'Kullananlar',
     accessor: 'applicationCount',
     sortable: true,
     align: 'end',
     width: 130,
-    cell: ({ row }) => pluralize(row.original.applicationCount, 'application'),
+    cell: ({ row }) => pluralize(row.original.applicationCount, 'uygulama'),
   },
 ];
 
@@ -84,37 +84,37 @@ export default function TechnologiesListPage() {
   return (
     <>
       <PageHeader
-        title="Technologies"
-        subtitle="The technology catalogue, its organisational status and where each technology is used."
-        actions={<CreateAction to={paths.technologies.create()} label="Add technology" />}
+        title="Teknolojiler"
+        subtitle="Teknoloji kataloğu, kurum içi durumları ve her teknolojinin nerede kullanıldığı."
+        actions={<CreateAction to={paths.technologies.create()} label="Teknoloji ekle" />}
       />
       <QueryView
         query={query}
-        loadingLabel="Loading technologies"
-        errorTitle="Technologies could not be loaded"
+        loadingLabel="Teknolojiler yükleniyor"
+        errorTitle="Teknolojiler yüklenemedi"
       >
         {(technologies) => {
           const visible = filterTechnologies(technologies, filters);
           return (
             <>
               <Toolbar
-                label="Filter technologies"
+                label="Teknolojileri filtrele"
                 end={
                   <FilterSummary
-                    summary={pluralize(visible.length, 'technology', 'technologies')}
+                    summary={pluralize(visible.length, 'teknoloji')}
                     activeFilterCount={activeFilters}
                     onReset={() => update({ search: '', category: null, status: null })}
                   />
                 }
               >
                 <SearchField
-                  placeholder="Name or description"
+                  placeholder="Ad veya açıklama"
                   value={filters.search}
                   onCommit={(search) => update({ search })}
                 />
                 <FilterSelect
-                  label="Category"
-                  allLabel="All categories"
+                  label="Kategori"
+                  allLabel="Tüm kategoriler"
                   value={filters.category}
                   options={CATEGORY_OPTIONS}
                   onChange={(value) =>
@@ -122,8 +122,8 @@ export default function TechnologiesListPage() {
                   }
                 />
                 <FilterSelect
-                  label="Status"
-                  allLabel="All statuses"
+                  label="Durum"
+                  allLabel="Tüm durumlar"
                   value={filters.status}
                   options={STATUS_OPTIONS}
                   onChange={(value) => update({ status: value as TechnologyFilterState['status'] })}
@@ -135,7 +135,7 @@ export default function TechnologiesListPage() {
                 getRowId={(row) => row.id}
                 sorting={{ defaultValue: [{ id: 'name', desc: false }] }}
                 pagination={{ pageSize: 25, pageSizeOptions: [25, 50, 100] }}
-                emptyState={<EmptyState compact title="No technologies match these filters" />}
+                emptyState={<EmptyState compact title="Bu filtrelere uyan teknoloji yok" />}
               />
             </>
           );

@@ -12,33 +12,33 @@ export function AuditHistory({ audit }: { audit: AuditMetadata }) {
 
   return (
     <div className="c-stack">
-      <SectionCard title="Record history">
+      <SectionCard title="Kayıt geçmişi">
         <DetailList
           layout="grid"
           items={[
             {
-              label: 'Created',
-              value: `${formatDateTime(audit.createdAt)} by ${name(audit.createdBy)}`,
+              label: 'Oluşturuldu',
+              value: `${formatDateTime(audit.createdAt)} · ${name(audit.createdBy)}`,
             },
             {
-              label: 'Last updated',
-              value: `${formatDateTime(audit.updatedAt)} by ${name(audit.updatedBy)}`,
+              label: 'Son güncelleme',
+              value: `${formatDateTime(audit.updatedAt)} · ${name(audit.updatedBy)}`,
             },
             {
-              label: 'Last reviewed',
+              label: 'Son gözden geçirme',
               value: audit.lastReviewedAt
-                ? `${formatDateTime(audit.lastReviewedAt)} by ${name(audit.lastReviewedBy)}`
+                ? `${formatDateTime(audit.lastReviewedAt)} · ${name(audit.lastReviewedBy)}`
                 : null,
-              emptyText: 'Never reviewed',
+              emptyText: 'Hiç gözden geçirilmedi',
             },
           ]}
         />
       </SectionCard>
-      <SectionCard title="Change log">
+      <SectionCard title="Değişiklik günlüğü">
         <EmptyState
           compact
-          title="Field-level change history is not recorded yet"
-          description="Audit logging (who changed what, with old and new values) requires a backend audit log."
+          title="Alan düzeyinde değişiklik geçmişi henüz tutulmuyor"
+          description="Denetim kaydı (kim neyi, eski ve yeni değerleriyle değiştirdi) bir backend denetim günlüğü gerektirir."
         />
       </SectionCard>
     </div>

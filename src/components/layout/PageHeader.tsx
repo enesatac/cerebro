@@ -23,7 +23,7 @@ export function PageHeader({ title, subtitle, breadcrumbs, meta, actions }: Page
   return (
     <header className="c-page-header">
       {breadcrumbs && breadcrumbs.length > 0 && (
-        <Breadcrumb aria-label="Breadcrumb" className="c-page-header__breadcrumb">
+        <Breadcrumb aria-label="Sayfa yolu" className="c-page-header__breadcrumb">
           <Breadcrumb.List>
             {breadcrumbs.map((crumb, index) => (
               <Fragment key={`${crumb.label}-${index}`}>

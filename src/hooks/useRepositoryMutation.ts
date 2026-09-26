@@ -29,7 +29,7 @@ export function useRepositoryMutation<TVariables, TResult>(
     },
     onError: (error) => {
       if (!isValidationError(error)) {
-        toaster.error({ title: 'The change was not saved', description: getErrorMessage(error) });
+        toaster.error({ title: 'Değişiklik kaydedilmedi', description: getErrorMessage(error) });
       }
     },
   });

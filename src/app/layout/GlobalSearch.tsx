@@ -22,8 +22,8 @@ export function GlobalSearch() {
         </Input.LeadingIcon>
         <Input.Field
           type="search"
-          aria-label="Search applications, projects, teams and people"
-          placeholder="Search Cerebro…"
+          aria-label="Uygulama, proje, ekip ve kişi ara"
+          placeholder="Cerebro'da ara…"
           value={term}
           onChange={(event) => setTerm(event.target.value)}
         />

@@ -13,7 +13,7 @@ describe('dates', () => {
 
   it('formats relative times against an explicit clock', () => {
     expect(formatRelative('2026-09-23T00:00:00Z', new Date('2026-09-26T00:00:00Z'))).toBe(
-      '3 days ago',
+      '3 gün önce',
     );
   });
 

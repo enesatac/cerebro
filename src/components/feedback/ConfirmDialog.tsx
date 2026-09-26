@@ -23,7 +23,7 @@ export function ConfirmDialog({
   title,
   children,
   confirmLabel,
-  cancelLabel = 'Cancel',
+  cancelLabel = 'Vazgeç',
   tone = 'primary',
   pending = false,
   confirmDisabled = false,
@@ -42,7 +42,7 @@ export function ConfirmDialog({
       >
         <Dialog.Header headerType="divided">
           <Dialog.Title level={2}>{title}</Dialog.Title>
-          <Dialog.Close aria-label="Close" />
+          <Dialog.Close aria-label="Kapat" />
         </Dialog.Header>
         <Dialog.Body>{children}</Dialog.Body>
         <Dialog.Footer footerType="divided" className="c-confirm-dialog__footer">

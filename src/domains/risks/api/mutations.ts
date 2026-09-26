@@ -7,7 +7,7 @@ export function useSaveRisk(id?: string) {
   return useRepositoryMutation(
     (input: RiskInput) => (id ? risks.update(id, input) : risks.create(input)),
     {
-      successTitle: () => (id ? 'Risk updated' : 'Risk recorded'),
+      successTitle: () => (id ? 'Risk güncellendi' : 'Risk kaydedildi'),
     },
   );
 }
@@ -15,6 +15,6 @@ export function useSaveRisk(id?: string) {
 export function useDeleteRisk() {
   const { risks } = useRepositories();
   return useRepositoryMutation((id: string) => risks.remove(id), {
-    successTitle: () => 'Risk deleted',
+    successTitle: () => 'Risk silindi',
   });
 }

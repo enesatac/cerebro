@@ -8,24 +8,24 @@ import { APPLICATION_IMPACT_LABELS } from '../../utils/projectPresentation';
 const columns: TableColumnDef<ProjectApplicationImpact>[] = [
   {
     id: 'application',
-    header: 'Application',
+    header: 'Uygulama',
     width: 260,
     cell: ({ row }) => <ApplicationRefLink applicationId={row.original.applicationId} />,
   },
   {
     id: 'impact',
-    header: 'Impact',
+    header: 'Etki',
     width: 150,
     cell: ({ row }) => APPLICATION_IMPACT_LABELS[row.original.impactType],
   },
-  { id: 'description', header: 'What changes', accessor: 'description' },
+  { id: 'description', header: 'Ne değişiyor', accessor: 'description' },
 ];
 
 export function ProjectApplicationsTab({ project }: { project: Project }) {
   return (
     <SectionCard
-      title="Affected applications"
-      description="Applications this project creates, modifies, integrates with or decommissions."
+      title="Etkilenen uygulamalar"
+      description="Bu projenin oluşturduğu, değiştirdiği, entegre olduğu veya devreden çıkardığı uygulamalar."
     >
       <Table
         data={project.applicationImpacts}
@@ -34,8 +34,8 @@ export function ProjectApplicationsTab({ project }: { project: Project }) {
         emptyState={
           <EmptyState
             compact
-            title="No applications are linked to this project yet"
-            description="Link every application the project changes so owners can see incoming change."
+            title="Bu projeye henüz uygulama bağlanmadı"
+            description="Sahiplerin gelen değişiklikleri görebilmesi için projenin değiştirdiği her uygulamayı bağlayın."
           />
         }
       />

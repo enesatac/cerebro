@@ -36,32 +36,32 @@ export function RiskTable({ risks, showRelated = false, emptyState, pagination }
     },
     {
       id: 'category',
-      header: 'Category',
+      header: 'Kategori',
       cell: ({ row }) => RISK_CATEGORY_LABELS[row.original.category],
     },
     {
       id: 'severity',
-      header: 'Severity',
+      header: 'Önem derecesi',
       cell: ({ row }) => <StatusBadge {...CRITICALITY_PRESENTATION[row.original.severity]} />,
     },
     {
       id: 'status',
-      header: 'Status',
+      header: 'Durum',
       cell: ({ row }) => <StatusBadge {...RISK_STATUS_PRESENTATION[row.original.status]} />,
     },
     {
       id: 'owner',
-      header: 'Owner',
+      header: 'Sahip',
       cell: ({ row }) =>
         (row.original.ownerId && people.data?.get(row.original.ownerId)?.fullName) || (
-          <span className="c-text-warning">Unassigned</span>
+          <span className="c-text-warning">Atanmamış</span>
         ),
     },
     ...(showRelated
       ? [
           {
             id: 'related',
-            header: 'Affects',
+            header: 'Etkilenen',
             cell: ({ row }) => (
               <RelatedEntityLinks
                 applicationIds={row.original.relatedApplicationIds}
@@ -71,7 +71,12 @@ export function RiskTable({ risks, showRelated = false, emptyState, pagination }
           } satisfies TableColumnDef<Risk>,
         ]
       : []),
-    { id: 'due', header: 'Due', align: 'end', cell: ({ row }) => formatDate(row.original.dueDate) },
+    {
+      id: 'due',
+      header: 'Termin',
+      align: 'end',
+      cell: ({ row }) => formatDate(row.original.dueDate),
+    },
     ...(canEdit
       ? [
           editColumn<Risk>(

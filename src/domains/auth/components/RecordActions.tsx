@@ -15,7 +15,7 @@ export function CreateAction({ to, label }: { to: string; label: string }) {
 }
 
 /** "Edit" button on detail pages; rendered only for roles that may edit. */
-export function EditAction({ to, label = 'Edit' }: { to: string; label?: string }) {
+export function EditAction({ to, label = 'Düzenle' }: { to: string; label?: string }) {
   return (
     <Can permission="portfolio:edit">
       <ButtonLink

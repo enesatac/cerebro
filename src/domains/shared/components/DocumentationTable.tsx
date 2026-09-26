@@ -7,19 +7,19 @@ import { DOCUMENTATION_LINK_TYPE_LABELS } from '../utils/presentation';
 const columns: TableColumnDef<DocumentationLink>[] = [
   {
     id: 'title',
-    header: 'Document',
+    header: 'Doküman',
     cell: ({ row }) => <ExternalLink href={row.original.url}>{row.original.title}</ExternalLink>,
   },
   {
     id: 'type',
-    header: 'Type',
+    header: 'Tür',
     cell: ({ row }) => (
       <Badge variant="neutral" appearance="outlined" size="small">
         {DOCUMENTATION_LINK_TYPE_LABELS[row.original.type]}
       </Badge>
     ),
   },
-  { id: 'description', header: 'Description', cell: ({ row }) => row.original.description ?? '' },
+  { id: 'description', header: 'Açıklama', cell: ({ row }) => row.original.description ?? '' },
 ];
 
 interface DocumentationTableProps {

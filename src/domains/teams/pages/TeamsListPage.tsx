@@ -17,7 +17,7 @@ import { CreateAction } from '@/domains/auth/components/RecordActions';
 const columns: TableColumnDef<TeamListItem>[] = [
   {
     id: 'name',
-    header: 'Team',
+    header: 'Ekip',
     accessor: 'name',
     sortable: true,
     width: 300,
@@ -30,24 +30,24 @@ const columns: TableColumnDef<TeamListItem>[] = [
   },
   {
     id: 'manager',
-    header: 'Manager',
+    header: 'Yönetici',
     accessor: (row) => row.manager?.name ?? '',
     sortable: true,
     cell: ({ row }) =>
-      row.original.manager?.name ?? <span className="c-text-warning">Unassigned</span>,
+      row.original.manager?.name ?? <span className="c-text-warning">Atanmamış</span>,
   },
-  { id: 'members', header: 'Members', accessor: 'memberCount', sortable: true, align: 'end' },
+  { id: 'members', header: 'Üyeler', accessor: 'memberCount', sortable: true, align: 'end' },
   {
     id: 'applications',
-    header: 'Applications',
+    header: 'Uygulamalar',
     accessor: 'applicationCount',
     sortable: true,
     align: 'end',
   },
-  { id: 'projects', header: 'Projects', accessor: 'projectCount', sortable: true, align: 'end' },
+  { id: 'projects', header: 'Projeler', accessor: 'projectCount', sortable: true, align: 'end' },
   {
     id: 'contact',
-    header: 'Contact',
+    header: 'İletişim',
     cell: ({ row }) => (
       <span className="c-cell-stack">
         {row.original.contactEmail && (
@@ -71,27 +71,27 @@ export default function TeamsListPage() {
   return (
     <>
       <PageHeader
-        title="Teams"
-        subtitle="Who builds and supports what — and how to reach them."
-        actions={<CreateAction to={paths.teams.create()} label="Create team" />}
+        title="Ekipler"
+        subtitle="Kim neyi geliştiriyor ve destekliyor — ve onlara nasıl ulaşılır."
+        actions={<CreateAction to={paths.teams.create()} label="Ekip oluştur" />}
       />
-      <QueryView query={query} loadingLabel="Loading teams" errorTitle="Teams could not be loaded">
+      <QueryView query={query} loadingLabel="Ekipler yükleniyor" errorTitle="Ekipler yüklenemedi">
         {(teams) => {
           const visible = filterTeams(teams, search);
           return (
             <>
               <Toolbar
-                label="Filter teams"
+                label="Ekipleri filtrele"
                 end={
                   <FilterSummary
-                    summary={pluralize(visible.length, 'team')}
+                    summary={pluralize(visible.length, 'ekip')}
                     activeFilterCount={search ? 1 : 0}
                     onReset={() => setSearch('')}
                   />
                 }
               >
                 <SearchField
-                  placeholder="Team name or description"
+                  placeholder="Ekip adı veya açıklama"
                   value={search}
                   onCommit={setSearch}
                 />
@@ -104,9 +104,7 @@ export default function TeamsListPage() {
                 emptyState={
                   <EmptyState
                     compact
-                    title={
-                      search ? 'No teams match this search' : 'No teams have been registered yet'
-                    }
+                    title={search ? 'Bu aramaya uyan ekip yok' : 'Henüz kayıtlı ekip yok'}
                   />
                 }
               />

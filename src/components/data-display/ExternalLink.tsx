@@ -12,7 +12,7 @@ export function ExternalLink({ href, children }: ExternalLinkProps) {
     <a href={href} target="_blank" rel="noopener noreferrer" className="c-link c-external-link">
       {children}
       <OpenIconOutlinedRounded className="c-external-link__icon" aria-hidden="true" />
-      <span className="c-visually-hidden"> (opens in a new tab)</span>
+      <span className="c-visually-hidden"> (yeni sekmede açılır)</span>
     </a>
   );
 }

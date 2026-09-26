@@ -31,39 +31,34 @@ export function RelatedRisksAndEscalations({
     <div className="c-stack">
       <QueryView
         query={escalations}
-        loadingLabel="Loading escalations"
-        errorTitle="Escalations could not be loaded"
+        loadingLabel="Eskalasyonlar yükleniyor"
+        errorTitle="Eskalasyonlar yüklenemedi"
       >
         {(list) => (
           <SectionCard
-            title={`Escalations (${list.filter((e) => isActiveEscalation(e.status)).length} active)`}
+            title={`Eskalasyonlar (${list.filter((e) => isActiveEscalation(e.status)).length} aktif)`}
             actions={
-              <SmallCreateAction
-                to={paths.escalationForms.create(prefill)}
-                label="Raise escalation"
-              />
+              <SmallCreateAction to={paths.escalationForms.create(prefill)} label="Eskalasyon aç" />
             }
           >
             <EscalationTable
               escalations={prioritise(list, (e) => isActiveEscalation(e.status))}
               emptyState={
-                <EmptyState compact title={`No escalations have been raised for ${subjectName}`} />
+                <EmptyState compact title={`${subjectName} için açılmış eskalasyon yok`} />
               }
             />
           </SectionCard>
         )}
       </QueryView>
-      <QueryView query={risks} loadingLabel="Loading risks" errorTitle="Risks could not be loaded">
+      <QueryView query={risks} loadingLabel="Riskler yükleniyor" errorTitle="Riskler yüklenemedi">
         {(list) => (
           <SectionCard
-            title={`Risks (${list.filter((r) => isActiveRisk(r.status)).length} active)`}
-            actions={<SmallCreateAction to={paths.riskForms.create(prefill)} label="Record risk" />}
+            title={`Riskler (${list.filter((r) => isActiveRisk(r.status)).length} aktif)`}
+            actions={<SmallCreateAction to={paths.riskForms.create(prefill)} label="Risk kaydet" />}
           >
             <RiskTable
               risks={prioritise(list, (r) => isActiveRisk(r.status))}
-              emptyState={
-                <EmptyState compact title={`No risks have been recorded for ${subjectName}`} />
-              }
+              emptyState={<EmptyState compact title={`${subjectName} için kaydedilmiş risk yok`} />}
             />
           </SectionCard>
         )}

@@ -19,43 +19,43 @@ import { UPCOMING_MILESTONE_DAYS } from '../utils/portfolio';
 function KeyFigures({ overview }: { overview: PortfolioOverview }) {
   const { applications, projects, risks, escalations } = overview;
   return (
-    <section aria-label="Portfolio overview" className="c-stat-grid">
+    <section aria-label="Portföy özeti" className="c-stat-grid">
       <StatTile
-        label="Applications"
+        label="Uygulamalar"
         value={applications.total}
-        detail={`${applications.active} active`}
+        detail={`${applications.active} aktif`}
         to={paths.applications.list()}
       />
       <StatTile
-        label="Critical applications"
+        label="Kritik uygulamalar"
         value={applications.critical}
-        detail="business-critical, not retired"
+        detail="iş açısından kritik, emekli olmayan"
         to={`${paths.applications.list()}?criticality=critical`}
       />
       <StatTile
-        label="Projects in progress"
+        label="Devam eden projeler"
         value={projects.inProgress}
-        detail={`${projects.atRiskOrCritical} at risk or critical`}
+        detail={`${projects.atRiskOrCritical} riskli veya kritik`}
         to={`${paths.projects.list()}?status=in-progress`}
       />
       <StatTile
-        label="Active risks"
+        label="Aktif riskler"
         value={risks.active}
-        detail={`${risks.activeCritical} critical`}
+        detail={`${risks.activeCritical} kritik`}
         tone={risks.activeCritical > 0 ? 'warning' : 'default'}
         to={paths.risks('risks')}
       />
       <StatTile
-        label="Active escalations"
+        label="Aktif eskalasyonlar"
         value={escalations.active}
-        detail={`${escalations.activeCritical} critical`}
+        detail={`${escalations.activeCritical} kritik`}
         tone={escalations.activeCritical > 0 ? 'warning' : 'default'}
         to={paths.risks('escalations')}
       />
       <StatTile
-        label="Data gaps"
+        label="Veri eksikleri"
         value={applications.withoutTechnicalOwner + applications.reviewOverdue}
-        detail={`${applications.withoutTechnicalOwner} without owner · ${applications.reviewOverdue} review overdue`}
+        detail={`${applications.withoutTechnicalOwner} sahipsiz · ${applications.reviewOverdue} gözden geçirmesi gecikmiş`}
         tone={applications.withoutTechnicalOwner > 0 ? 'warning' : 'default'}
         to={paths.reports()}
       />
@@ -66,9 +66,9 @@ function KeyFigures({ overview }: { overview: PortfolioOverview }) {
 function RecentlyUpdated({ overview }: { overview: PortfolioOverview }) {
   const now = new Date();
   return (
-    <SectionCard title="Recently updated">
+    <SectionCard title="Son güncellenenler">
       {overview.recentlyUpdated.length === 0 ? (
-        <EmptyState compact title="No recent changes" />
+        <EmptyState compact title="Son zamanlarda değişiklik yok" />
       ) : (
         <ul className="c-rule-list">
           {overview.recentlyUpdated.map((entry) => (
@@ -87,8 +87,8 @@ function RecentlyUpdated({ overview }: { overview: PortfolioOverview }) {
                   {entry.name}
                 </EntityLink>
                 <span className="c-muted c-cell-stack__secondary">
-                  {entry.kind === 'application' ? 'Application' : 'Project'} · {entry.code}
-                  {entry.updatedBy && ` · by ${entry.updatedBy.name}`}
+                  {entry.kind === 'application' ? 'Uygulama' : 'Proje'} · {entry.code}
+                  {entry.updatedBy && ` · ${entry.updatedBy.name}`}
                 </span>
               </span>
               <span className="c-muted">{formatRelative(entry.updatedAt, now)}</span>
@@ -103,11 +103,11 @@ function RecentlyUpdated({ overview }: { overview: PortfolioOverview }) {
 function LifecycleDistribution({ overview }: { overview: PortfolioOverview }) {
   return (
     <SectionCard
-      title="Applications by lifecycle"
-      description="Select a stage to see its applications."
+      title="Yaşam döngüsüne göre uygulamalar"
+      description="Uygulamalarını görmek için bir aşama seçin."
     >
       <BarList
-        label="Applications by lifecycle"
+        label="Yaşam döngüsüne göre uygulamalar"
         items={overview.lifecycleDistribution.map(({ lifecycle, count }) => ({
           id: lifecycle,
           label: LIFECYCLE_PRESENTATION[lifecycle].label,
@@ -122,13 +122,13 @@ function LifecycleDistribution({ overview }: { overview: PortfolioOverview }) {
 function UpcomingMilestones({ overview }: { overview: PortfolioOverview }) {
   return (
     <SectionCard
-      title="Upcoming milestones"
-      description={`Due in the next ${UPCOMING_MILESTONE_DAYS} days.`}
+      title="Yaklaşan kilometre taşları"
+      description={`Önümüzdeki ${UPCOMING_MILESTONE_DAYS} gün içinde.`}
     >
       {overview.upcomingMilestones.length === 0 ? (
         <EmptyState
           compact
-          title={`No milestones are due in the next ${UPCOMING_MILESTONE_DAYS} days`}
+          title={`Önümüzdeki ${UPCOMING_MILESTONE_DAYS} gün içinde kilometre taşı yok`}
         />
       ) : (
         <ul className="c-rule-list">
@@ -157,20 +157,20 @@ export default function DashboardPage() {
   return (
     <div className="c-stack">
       <PageHeader
-        title="Dashboard"
-        subtitle="What the portfolio contains, what needs attention and what changed."
+        title="Gösterge paneli"
+        subtitle="Portföyde neler var, neler ilgi bekliyor ve neler değişti."
       />
       <QueryView
         query={query}
-        loadingLabel="Loading dashboard"
-        errorTitle="The dashboard could not be loaded"
+        loadingLabel="Gösterge paneli yükleniyor"
+        errorTitle="Gösterge paneli yüklenemedi"
       >
         {(overview) => (
           <>
             <KeyFigures overview={overview} />
             <SectionCard
-              title={`Needs attention (${overview.attention.length})`}
-              description={`Most severe first · ${pluralize(overview.attention.filter((i) => i.severity === 'critical').length, 'critical item')}`}
+              title={`İlgi bekleyenler (${overview.attention.length})`}
+              description={`En ciddi olanlar önce · ${pluralize(overview.attention.filter((i) => i.severity === 'critical').length, 'kritik kayıt')}`}
             >
               <AttentionTable items={overview.attention} />
             </SectionCard>

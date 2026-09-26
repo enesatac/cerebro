@@ -10,59 +10,59 @@ import type {
 } from '../types';
 
 export const PROJECT_STATUS_PRESENTATION: Record<ProjectStatus, StatusPresentation> = {
-  proposed: { label: 'Proposed', variant: 'neutral' },
-  approved: { label: 'Approved', variant: 'info' },
-  'in-progress': { label: 'In progress', variant: 'primary' },
-  'on-hold': { label: 'On hold', variant: 'warning' },
-  completed: { label: 'Completed', variant: 'success' },
-  cancelled: { label: 'Cancelled', variant: 'dark' },
+  proposed: { label: 'Önerildi', variant: 'neutral' },
+  approved: { label: 'Onaylandı', variant: 'info' },
+  'in-progress': { label: 'Devam ediyor', variant: 'primary' },
+  'on-hold': { label: 'Beklemede', variant: 'warning' },
+  completed: { label: 'Tamamlandı', variant: 'success' },
+  cancelled: { label: 'İptal edildi', variant: 'dark' },
 };
 
 export const PROJECT_HEALTH_PRESENTATION: Record<ProjectHealth, StatusPresentation> = {
-  'on-track': { label: 'On track', variant: 'success' },
-  'at-risk': { label: 'At risk', variant: 'warning' },
-  critical: { label: 'Critical', variant: 'danger' },
-  completed: { label: 'Completed', variant: 'neutral' },
+  'on-track': { label: 'Yolunda', variant: 'success' },
+  'at-risk': { label: 'Riskli', variant: 'warning' },
+  critical: { label: 'Kritik', variant: 'danger' },
+  completed: { label: 'Tamamlandı', variant: 'neutral' },
 };
 
 export const APPLICATION_IMPACT_LABELS: Record<ApplicationImpactType, string> = {
-  creates: 'Creates',
-  modifies: 'Modifies',
-  'integrates-with': 'Integrates with',
-  decommissions: 'Decommissions',
+  creates: 'Oluşturur',
+  modifies: 'Değiştirir',
+  'integrates-with': 'Entegre olur',
+  decommissions: 'Devreden çıkarır',
 };
 
 export const PROJECT_PHASE_LABELS: Record<ProjectPhase, string> = {
-  initiation: 'Initiation',
-  analysis: 'Analysis',
-  design: 'Design',
-  build: 'Build',
+  initiation: 'Başlatma',
+  analysis: 'Analiz',
+  design: 'Tasarım',
+  build: 'Geliştirme',
   test: 'Test',
-  deployment: 'Deployment',
-  hypercare: 'Hypercare',
-  closure: 'Closure',
+  deployment: 'Dağıtım',
+  hypercare: 'Yoğun destek',
+  closure: 'Kapanış',
 };
 
 export const PROJECT_TYPE_LABELS: Record<ProjectType, string> = {
-  'new-product': 'New product',
-  modernisation: 'Modernisation',
-  integration: 'Integration',
-  regulatory: 'Regulatory',
-  infrastructure: 'Infrastructure',
-  decommissioning: 'Decommissioning',
+  'new-product': 'Yeni ürün',
+  modernisation: 'Modernizasyon',
+  integration: 'Entegrasyon',
+  regulatory: 'Mevzuat',
+  infrastructure: 'Altyapı',
+  decommissioning: 'Devreden çıkarma',
 };
 
 export const CONFIDENTIALITY_LABELS: Record<ConfidentialityLevel, string> = {
-  public: 'Public',
-  internal: 'Internal',
-  confidential: 'Confidential',
-  restricted: 'Restricted',
+  public: 'Herkese açık',
+  internal: 'Kurum içi',
+  confidential: 'Gizli',
+  restricted: 'Kısıtlı',
 };
 
 export const MILESTONE_STATUS_PRESENTATION: Record<MilestoneStatus, StatusPresentation> = {
-  planned: { label: 'Planned', variant: 'neutral' },
-  'in-progress': { label: 'In progress', variant: 'info' },
-  completed: { label: 'Completed', variant: 'success' },
-  'at-risk': { label: 'At risk', variant: 'warning' },
-  missed: { label: 'Missed', variant: 'danger' },
+  planned: { label: 'Planlandı', variant: 'neutral' },
+  'in-progress': { label: 'Devam ediyor', variant: 'info' },
+  completed: { label: 'Tamamlandı', variant: 'success' },
+  'at-risk': { label: 'Riskli', variant: 'warning' },
+  missed: { label: 'Kaçırıldı', variant: 'danger' },
 };

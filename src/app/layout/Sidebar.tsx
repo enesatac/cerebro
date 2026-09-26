@@ -5,7 +5,11 @@ import { paths } from '../router/paths';
 import { PRIMARY_NAVIGATION, type NavigationItem } from './navigation';
 
 const ADMIN_NAVIGATION: NavigationItem[] = [
-  { label: 'Users & roles', to: paths.admin.users(), icon: UserSettingsIconOutlinedRounded },
+  {
+    label: 'Kullanıcılar ve roller',
+    to: paths.admin.users(),
+    icon: UserSettingsIconOutlinedRounded,
+  },
 ];
 
 function NavList({ items }: { items: NavigationItem[] }) {
@@ -30,12 +34,12 @@ function NavList({ items }: { items: NavigationItem[] }) {
 export function Sidebar() {
   const canManageUsers = usePermission('users:manage');
   return (
-    <nav className="c-sidebar" aria-label="Main">
+    <nav className="c-sidebar" aria-label="Ana menü">
       <NavList items={PRIMARY_NAVIGATION} />
       {canManageUsers && (
         <div className="c-sidebar__section">
           <p className="c-sidebar__heading" id="nav-admin-heading">
-            Administration
+            Yönetim
           </p>
           <NavList items={ADMIN_NAVIGATION} />
         </div>

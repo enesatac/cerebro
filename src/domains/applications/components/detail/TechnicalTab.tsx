@@ -21,17 +21,17 @@ export function TechnicalTab({ application }: { application: Application }) {
   return (
     <div className="c-stack">
       <SectionCard
-        title="Technology stack"
-        description="Catalogued technologies grouped by the layer they are used in."
+        title="Teknoloji yığını"
+        description="Katalogdaki teknolojiler, kullanıldıkları katmana göre gruplanmış."
       >
         {application.technologies.length === 0 ? (
           <EmptyState
             compact
-            title="No technologies have been recorded for this application"
+            title="Bu uygulama için kayıtlı teknoloji yok"
             description={
               application.hosting.model === 'saas'
-                ? 'This is a vendor-hosted product; record technologies only if your teams build on it.'
-                : 'Add the frontend, backend, database and infrastructure technologies it runs on.'
+                ? 'Bu, tedarikçi tarafından barındırılan bir ürün; teknolojileri yalnızca ekipleriniz üzerine geliştirme yapıyorsa kaydedin.'
+                : 'Üzerinde çalıştığı frontend, backend, veritabanı ve altyapı teknolojilerini ekleyin.'
             }
           />
         ) : (
@@ -60,7 +60,7 @@ export function TechnicalTab({ application }: { application: Application }) {
                           {technology &&
                             technology.status !== 'preferred' &&
                             technology.status !== 'supported' &&
-                            status && <StatusBadge {...status} context="Technology status:" />}
+                            status && <StatusBadge {...status} context="Teknoloji durumu:" />}
                         </li>
                       );
                     })}
@@ -72,29 +72,27 @@ export function TechnicalTab({ application }: { application: Application }) {
       </SectionCard>
 
       <SectionCard
-        title="Data stores"
-        description="Databases and caches owned by this application."
+        title="Veri depoları"
+        description="Bu uygulamaya ait veritabanları ve önbellekler."
       >
         <Table
           data={application.dataStores}
           columns={dataStoreColumns(catalogue)}
           getRowId={(row) => row.id}
-          emptyState={
-            <EmptyState compact title="No data stores have been recorded for this application" />
-          }
+          emptyState={<EmptyState compact title="Bu uygulama için kayıtlı veri deposu yok" />}
         />
       </SectionCard>
 
-      <SectionCard title="Hosting">
+      <SectionCard title="Barındırma">
         <DetailList
           items={[
-            { label: 'Hosting model', value: HOSTING_MODEL_LABELS[application.hosting.model] },
+            { label: 'Barındırma modeli', value: HOSTING_MODEL_LABELS[application.hosting.model] },
             {
-              label: 'Cloud provider',
+              label: 'Bulut sağlayıcı',
               value: application.hosting.cloudProvider,
-              emptyText: 'Not applicable',
+              emptyText: 'Uygulanamaz',
             },
-            { label: 'Notes', value: application.hosting.notes },
+            { label: 'Notlar', value: application.hosting.notes },
           ]}
         />
       </SectionCard>
@@ -106,21 +104,21 @@ function dataStoreColumns(catalogue: Map<string, Technology>): TableColumnDef<Da
   return [
     {
       id: 'name',
-      header: 'Name',
+      header: 'Ad',
       accessor: 'name',
       cell: ({ row }) => <code>{row.original.name}</code>,
     },
     {
       id: 'technology',
-      header: 'Technology',
+      header: 'Teknoloji',
       cell: ({ row }) =>
         catalogue.get(row.original.technologyId)?.name ?? row.original.technologyId,
     },
-    { id: 'purpose', header: 'Purpose', accessor: 'purpose' },
+    { id: 'purpose', header: 'Amaç', accessor: 'purpose' },
     {
       id: 'personalData',
-      header: 'Personal data',
-      cell: ({ row }) => (row.original.containsPersonalData ? 'Yes' : 'No'),
+      header: 'Kişisel veri',
+      cell: ({ row }) => (row.original.containsPersonalData ? 'Evet' : 'Hayır'),
     },
   ];
 }

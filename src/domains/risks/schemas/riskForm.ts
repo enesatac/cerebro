@@ -28,7 +28,7 @@ export const requireRelated = (
   if (values.relatedApplicationIds.length + values.relatedProjectIds.length === 0) {
     ctx.addIssue({
       code: 'custom',
-      message: 'Link at least one application or project.',
+      message: 'En az bir uygulama veya proje bağlayın.',
       path: ['relatedApplicationIds'],
     });
   }
@@ -36,15 +36,15 @@ export const requireRelated = (
 
 export const riskFormSchema = z
   .object({
-    title: requiredText('Title', 160),
-    description: optionalText('Description', 2000),
-    category: enumChoice(RISK_CATEGORIES, 'a category'),
-    probability: enumChoice(RISK_LIKELIHOODS, 'a probability'),
-    impact: enumChoice(RISK_LIKELIHOODS, 'an impact'),
-    severity: enumChoice(CRITICALITIES, 'a severity'),
-    status: enumChoice(RISK_STATUSES, 'a status'),
+    title: requiredText('Başlık', 160),
+    description: optionalText('Açıklama', 2000),
+    category: enumChoice(RISK_CATEGORIES, 'bir kategori'),
+    probability: enumChoice(RISK_LIKELIHOODS, 'bir olasılık'),
+    impact: enumChoice(RISK_LIKELIHOODS, 'bir etki'),
+    severity: enumChoice(CRITICALITIES, 'bir önem derecesi'),
+    status: enumChoice(RISK_STATUSES, 'bir durum'),
     ownerId: z.string(),
-    mitigationPlan: optionalText('Mitigation plan', 2000),
+    mitigationPlan: optionalText('Azaltma planı', 2000),
     dueDate: optionalDate,
   })
   .and(relatedEntitiesSchema)

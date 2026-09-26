@@ -41,7 +41,7 @@ export function ApplicationFilters({
 
   return (
     <Toolbar
-      label="Filter applications"
+      label="Uygulamaları filtrele"
       end={
         <FilterSummary
           summary={resultSummary}
@@ -51,20 +51,20 @@ export function ApplicationFilters({
       }
     >
       <SearchField
-        placeholder="Name, code, description or tag"
+        placeholder="Ad, kod, açıklama veya etiket"
         value={state.search}
         onCommit={(search) => onChange({ search })}
       />
       <FilterSelect
-        label="Lifecycle"
-        allLabel="All lifecycles"
+        label="Yaşam döngüsü"
+        allLabel="Tüm yaşam döngüleri"
         value={state.lifecycle}
         options={LIFECYCLE_OPTIONS}
         onChange={(value) => onChange({ lifecycle: value as ApplicationListState['lifecycle'] })}
       />
       <FilterSelect
-        label="Criticality"
-        allLabel="All criticalities"
+        label="Kritiklik"
+        allLabel="Tüm kritiklik düzeyleri"
         value={state.criticality}
         options={CRITICALITY_OPTIONS}
         onChange={(value) =>
@@ -72,24 +72,24 @@ export function ApplicationFilters({
         }
       />
       <FilterSelect
-        label="Team"
-        allLabel="All teams"
+        label="Ekip"
+        allLabel="Tüm ekipler"
         value={state.teamId}
         options={(teams.data ?? []).map((team) => ({ value: team.id, label: team.name }))}
         onChange={(value) => onChange({ teamId: value })}
         disabled={!teams.data}
       />
       <FilterSelect
-        label="Technology"
-        allLabel="All technologies"
+        label="Teknoloji"
+        allLabel="Tüm teknolojiler"
         value={state.technologyId}
         options={(technologies.data ?? []).map((tech) => ({ value: tech.id, label: tech.name }))}
         onChange={(value) => onChange({ technologyId: value })}
         disabled={!technologies.data}
       />
       <FilterSelect
-        label="Business unit"
-        allLabel="All business units"
+        label="İş birimi"
+        allLabel="Tüm iş birimleri"
         value={state.businessUnitId}
         options={(businessUnits.data ?? []).map((unit) => ({ value: unit.id, label: unit.name }))}
         onChange={(value) => onChange({ businessUnitId: value })}

@@ -7,6 +7,8 @@ import { MockAuthority } from './session';
 function slugify(value: string): string {
   return (
     value
+      .replace(/ı/g, 'i')
+      .replace(/İ/g, 'I')
       .normalize('NFD')
       .replace(/[̀-ͯ]/g, '')
       .toLowerCase()
@@ -73,7 +75,7 @@ export class WriteKit {
     const known = new Set(rows.map((row) => row.id));
     const unknown = ids.filter((id): id is string => Boolean(id) && !known.has(id as string));
     if (unknown.length > 0) {
-      throw new ValidationError(`Unknown ${label}: ${unknown.join(', ')}.`, field);
+      throw new ValidationError(`Bilinmeyen ${label}: ${unknown.join(', ')}.`, field);
     }
   }
 

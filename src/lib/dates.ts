@@ -6,6 +6,7 @@ import {
   isValid,
   parseISO,
 } from 'date-fns';
+import { tr } from 'date-fns/locale';
 
 /** All user-facing date formatting goes through these helpers — never format inline. */
 
@@ -21,13 +22,13 @@ function parse(value: string | null | undefined): Date | null {
 /** `14 Mar 2026`, or `fallback` for missing/invalid input. */
 export function formatDate(value: string | null | undefined, fallback = '—'): string {
   const date = parse(value);
-  return date ? format(date, DATE_FORMAT) : fallback;
+  return date ? format(date, DATE_FORMAT, { locale: tr }) : fallback;
 }
 
 /** `14 Mar 2026, 09:30` in the viewer's local time zone. */
 export function formatDateTime(value: string | null | undefined, fallback = '—'): string {
   const date = parse(value);
-  return date ? format(date, DATE_TIME_FORMAT) : fallback;
+  return date ? format(date, DATE_TIME_FORMAT, { locale: tr }) : fallback;
 }
 
 /** `3 days ago` / `in 2 months`, relative to `now`. */
@@ -37,7 +38,7 @@ export function formatRelative(
   fallback = '—',
 ): string {
   const date = parse(value);
-  return date ? formatDistanceStrict(date, now, { addSuffix: true }) : fallback;
+  return date ? formatDistanceStrict(date, now, { addSuffix: true, locale: tr }) : fallback;
 }
 
 /** Whole calendar days from `value` until `now` (positive = in the past). `null` when missing. */

@@ -19,12 +19,12 @@ describe('validation helpers', () => {
   });
 
   it('rejects secrets in schema-validated notes', () => {
-    expect(secretFreeText('Notes').safeParse('token=abc').success).toBe(false);
-    expect(secretFreeText('Notes').safeParse('Nightly batch at 02:00').success).toBe(true);
+    expect(secretFreeText('Notlar').safeParse('token=abc').success).toBe(false);
+    expect(secretFreeText('Notlar').safeParse('Nightly batch at 02:00').success).toBe(true);
   });
 
   it('validates optional whole numbers with bounds', () => {
-    const schema = optionalWholeNumber('Progress', { min: 0, max: 100 });
+    const schema = optionalWholeNumber('İlerleme', { min: 0, max: 100 });
     expect(schema.safeParse('').success).toBe(true);
     expect(schema.safeParse('55').success).toBe(true);
     expect(schema.safeParse('101').success).toBe(false);

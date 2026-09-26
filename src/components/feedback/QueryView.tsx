@@ -21,8 +21,8 @@ export function QueryView<T>({ query, loadingLabel, errorTitle, children }: Quer
   if (query.isError) {
     return isNotFoundError(query.error) ? (
       <EmptyState
-        title="This record does not exist"
-        description="It may have been deleted, or the link may be wrong."
+        title="Bu kayıt bulunamadı"
+        description="Silinmiş olabilir ya da bağlantı hatalı olabilir."
       />
     ) : (
       <ErrorState title={errorTitle} onRetry={() => void query.refetch()} />

@@ -4,11 +4,11 @@ import type { ReviewState } from './staleness';
 export function reviewStatePresentation(state: ReviewState): StatusPresentation {
   switch (state.kind) {
     case 'never-reviewed':
-      return { label: 'Never reviewed', variant: 'danger' };
+      return { label: 'Hiç gözden geçirilmedi', variant: 'danger' };
     case 'stale':
-      return { label: `Overdue · ${state.daysSinceReview} days`, variant: 'warning' };
+      return { label: `Gecikmiş · ${state.daysSinceReview} gün`, variant: 'warning' };
     case 'current':
-      return { label: `Current · ${state.daysSinceReview} days`, variant: 'success' };
+      return { label: `Güncel · ${state.daysSinceReview} gün`, variant: 'success' };
   }
 }
 

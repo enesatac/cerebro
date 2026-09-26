@@ -13,39 +13,37 @@ function isOverdue(milestone: Milestone, today: string): boolean {
 export function ProjectMilestonesTab({ project }: { project: Project }) {
   const today = toIsoDate(new Date());
   const columns: TableColumnDef<Milestone>[] = [
-    { id: 'title', header: 'Milestone', accessor: 'title', width: 280 },
+    { id: 'title', header: 'Kilometre taşı', accessor: 'title', width: 280 },
     {
       id: 'status',
-      header: 'Status',
+      header: 'Durum',
       cell: ({ row }) => <StatusBadge {...MILESTONE_STATUS_PRESENTATION[row.original.status]} />,
     },
     {
       id: 'due',
-      header: 'Due',
+      header: 'Termin',
       cell: ({ row }) =>
         isOverdue(row.original, today) ? (
-          <span className="c-text-warning">{formatDate(row.original.dueDate)} · overdue</span>
+          <span className="c-text-warning">{formatDate(row.original.dueDate)} · gecikmiş</span>
         ) : (
           formatDate(row.original.dueDate)
         ),
     },
     {
       id: 'completed',
-      header: 'Completed',
+      header: 'Tamamlandı',
       align: 'end',
       cell: ({ row }) => formatDate(row.original.completedDate),
     },
   ];
 
   return (
-    <SectionCard title="Milestones">
+    <SectionCard title="Kilometre taşları">
       <Table
         data={[...project.milestones].sort((a, b) => a.dueDate.localeCompare(b.dueDate))}
         columns={columns}
         getRowId={(row) => row.id}
-        emptyState={
-          <EmptyState compact title="No milestones have been defined for this project yet" />
-        }
+        emptyState={<EmptyState compact title="Bu proje için henüz kilometre taşı tanımlanmadı" />}
       />
     </SectionCard>
   );

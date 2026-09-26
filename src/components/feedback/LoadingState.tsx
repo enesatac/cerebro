@@ -6,7 +6,7 @@ interface LoadingStateProps {
   rows?: number;
 }
 
-export function LoadingState({ label = 'Loading', rows = 4 }: LoadingStateProps) {
+export function LoadingState({ label = 'Yükleniyor', rows = 4 }: LoadingStateProps) {
   return (
     <div className="c-loading-state" role="status" aria-live="polite">
       <span className="c-visually-hidden">{label}…</span>

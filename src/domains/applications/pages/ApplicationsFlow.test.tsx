@@ -9,54 +9,54 @@ describe('Applications list → detail', () => {
     const { router } = renderRoute('/applications');
 
     expect(
-      await screen.findByRole('heading', { level: 1, name: 'Applications' }),
+      await screen.findByRole('heading', { level: 1, name: 'Uygulamalar' }),
     ).toBeInTheDocument();
-    const link = await screen.findByRole('link', { name: 'Payment Gateway' });
+    const link = await screen.findByRole('link', { name: 'Ödeme Geçidi' });
     await user.click(link);
 
     expect(
-      await screen.findByRole('heading', { level: 1, name: 'Payment Gateway' }),
+      await screen.findByRole('heading', { level: 1, name: 'Ödeme Geçidi' }),
     ).toBeInTheDocument();
     expect(router.state.location.pathname).toBe('/applications/app-payment-gateway');
-    const breadcrumb = screen.getByRole('navigation', { name: 'Breadcrumb' });
-    expect(within(breadcrumb).getByRole('link', { name: 'Applications' })).toBeInTheDocument();
+    const breadcrumb = screen.getByRole('navigation', { name: 'Sayfa yolu' });
+    expect(within(breadcrumb).getByRole('link', { name: 'Uygulamalar' })).toBeInTheDocument();
   });
 
   it('applies filters from the URL so filtered views are shareable', async () => {
     renderRoute('/applications?technology=tech-oracle');
-    expect(await screen.findByText('4 applications')).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'Crew Scheduling Engine' })).toBeInTheDocument();
-    expect(screen.queryByRole('link', { name: 'Customer Portal' })).not.toBeInTheDocument();
+    expect(await screen.findByText('4 uygulama')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Ekip Planlama Motoru' })).toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: 'Müşteri Portalı' })).not.toBeInTheDocument();
   });
 
   it('shows a specific empty state with a way out when nothing matches', async () => {
     const user = userEvent.setup();
     renderRoute('/applications?q=zzz-no-match');
-    expect(await screen.findByText('No applications match these filters')).toBeInTheDocument();
+    expect(await screen.findByText('Bu filtrelere uyan uygulama yok')).toBeInTheDocument();
     // The empty state's action (the toolbar button is labelled with the filter count).
-    await user.click(screen.getByRole('button', { name: 'Clear filters' }));
+    await user.click(screen.getByRole('button', { name: 'Filtreleri temizle' }));
     await waitFor(() =>
-      expect(screen.getByRole('link', { name: 'Payment Gateway' })).toBeInTheDocument(),
+      expect(screen.getByRole('link', { name: 'Ödeme Geçidi' })).toBeInTheDocument(),
     );
   });
 
   it('shows ownership, lifecycle and criticality on the detail page', async () => {
     renderRoute('/applications/app-customer-identity');
     expect(
-      await screen.findByRole('heading', { level: 1, name: 'Customer Identity Platform' }),
+      await screen.findByRole('heading', { level: 1, name: 'Müşteri Kimlik Platformu' }),
     ).toBeInTheDocument();
-    const facts = screen.getByRole('region', { name: 'Key facts' });
+    const facts = screen.getByRole('region', { name: 'Temel bilgiler' });
     await waitFor(() => expect(within(facts).getByText('Jonas Berg')).toBeInTheDocument());
-    expect(screen.getByText('Critical criticality')).toBeInTheDocument();
-    expect(screen.getByText('Active')).toBeInTheDocument();
+    expect(screen.getByText('Kritiklik: Kritik')).toBeInTheDocument();
+    expect(screen.getByText('Aktif')).toBeInTheDocument();
   });
 
   it('deep-links to a tab and resolves related applications', async () => {
     renderRoute('/applications/app-customer-identity?tab=dependencies');
     expect(
-      await screen.findByRole('tab', { name: 'Dependencies', selected: true }),
+      await screen.findByRole('tab', { name: 'Bağımlılıklar', selected: true }),
     ).toBeInTheDocument();
-    expect(await screen.findByRole('link', { name: 'Customer Portal' })).toHaveAttribute(
+    expect(await screen.findByRole('link', { name: 'Müşteri Portalı' })).toHaveAttribute(
       'href',
       '/applications/app-customer-portal',
     );
@@ -65,9 +65,9 @@ describe('Applications list → detail', () => {
   it('shows a not-found state for unknown applications', async () => {
     renderRoute('/applications/app-missing');
     expect(
-      await screen.findByRole('heading', { level: 1, name: 'Application not found' }),
+      await screen.findByRole('heading', { level: 1, name: 'Uygulama bulunamadı' }),
     ).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'Back to applications' })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: 'Uygulamalara dön' })).toHaveAttribute(
       'href',
       '/applications',
     );
@@ -75,11 +75,11 @@ describe('Applications list → detail', () => {
 
   it('gives every primary navigation link an accessible name', async () => {
     renderRoute('/applications');
-    const nav = await screen.findByRole('navigation', { name: 'Main' });
-    for (const name of ['Dashboard', 'Projects', 'Applications', 'Connections', 'Teams']) {
+    const nav = await screen.findByRole('navigation', { name: 'Ana menü' });
+    for (const name of ['Gösterge paneli', 'Projeler', 'Uygulamalar', 'Bağlantılar', 'Ekipler']) {
       expect(within(nav).getByRole('link', { name })).toBeInTheDocument();
     }
-    expect(within(nav).getByRole('link', { name: 'Applications' })).toHaveAttribute(
+    expect(within(nav).getByRole('link', { name: 'Uygulamalar' })).toHaveAttribute(
       'aria-current',
       'page',
     );

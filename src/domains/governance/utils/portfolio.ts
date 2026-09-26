@@ -88,7 +88,7 @@ export function buildAttentionItems(snapshot: PortfolioSnapshot, now: Date): Att
         kind: 'missing-technical-owner',
         severity: important ? 'high' : 'medium',
         subject,
-        reason: 'No technical owner assigned',
+        reason: 'Teknik sahip atanmamış',
         date: null,
       });
     }
@@ -102,8 +102,8 @@ export function buildAttentionItems(snapshot: PortfolioSnapshot, now: Date): Att
         subject,
         reason:
           review.kind === 'never-reviewed'
-            ? 'Information has never been reviewed'
-            : `Last reviewed ${review.daysSinceReview} days ago`,
+            ? 'Bilgiler hiç gözden geçirilmemiş'
+            : `Son gözden geçirme ${review.daysSinceReview} gün önce`,
         date: app.audit.lastReviewedAt,
       });
     }
@@ -117,7 +117,7 @@ export function buildAttentionItems(snapshot: PortfolioSnapshot, now: Date): Att
         kind: 'retired-technology',
         severity: 'high',
         subject,
-        reason: `Runs on retired technology: ${[...new Set(retired.map((t) => t.name))].join(', ')}`,
+        reason: `Emekli teknoloji kullanıyor: ${[...new Set(retired.map((t) => t.name))].join(', ')}`,
         date: null,
       });
     }
@@ -130,7 +130,7 @@ export function buildAttentionItems(snapshot: PortfolioSnapshot, now: Date): Att
       kind: 'critical-risk',
       severity: risk.severity,
       subject: { kind: 'risk', id: risk.id, name: risk.title },
-      reason: `Affects ${describe(risk.relatedApplicationIds, risk.relatedProjectIds)}`,
+      reason: `Etkilenen: ${describe(risk.relatedApplicationIds, risk.relatedProjectIds)}`,
       date: risk.dueDate,
     });
   }
@@ -142,7 +142,7 @@ export function buildAttentionItems(snapshot: PortfolioSnapshot, now: Date): Att
       kind: 'active-escalation',
       severity: escalation.severity,
       subject: { kind: 'escalation', id: escalation.id, name: escalation.title },
-      reason: `Affects ${describe(escalation.relatedApplicationIds, escalation.relatedProjectIds)}`,
+      reason: `Etkilenen: ${describe(escalation.relatedApplicationIds, escalation.relatedProjectIds)}`,
       date: escalation.targetResolutionDate,
     });
   }
@@ -160,7 +160,7 @@ export function buildAttentionItems(snapshot: PortfolioSnapshot, now: Date): Att
         severity:
           project.priority === 'critical' || project.priority === 'high' ? 'high' : 'medium',
         subject,
-        reason: `Milestone “${milestone.title}” is overdue`,
+        reason: `“${milestone.title}” kilometre taşı gecikmiş`,
         date: milestone.dueDate,
       });
     }
@@ -170,7 +170,7 @@ export function buildAttentionItems(snapshot: PortfolioSnapshot, now: Date): Att
         kind: 'project-health',
         severity: 'high',
         subject,
-        reason: 'Project health is critical',
+        reason: 'Proje sağlığı kritik',
         date: null,
       });
     }

@@ -2,11 +2,11 @@ import { paths } from '@/app/router/paths';
 import type { SearchableKind, SearchResult } from '../types';
 
 export const SEARCHABLE_KIND_LABELS: Record<SearchableKind, string> = {
-  application: 'Applications',
-  project: 'Projects',
-  team: 'Teams',
-  person: 'People',
-  technology: 'Technologies',
+  application: 'Uygulamalar',
+  project: 'Projeler',
+  team: 'Ekipler',
+  person: 'Kişiler',
+  technology: 'Teknolojiler',
 };
 
 /** Kinds with a detail page link; people have no page yet and display as text. */

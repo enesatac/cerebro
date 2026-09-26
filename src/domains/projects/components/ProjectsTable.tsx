@@ -21,7 +21,7 @@ const isSortField = (id: string): id is ProjectSortField =>
 const columns: TableColumnDef<ProjectListItem>[] = [
   {
     id: 'name',
-    header: 'Project',
+    header: 'Proje',
     accessor: 'name',
     sortable: true,
     width: 250,
@@ -34,7 +34,7 @@ const columns: TableColumnDef<ProjectListItem>[] = [
   },
   {
     id: 'status',
-    header: 'Status',
+    header: 'Durum',
     accessor: 'status',
     sortable: true,
     width: 115,
@@ -42,7 +42,7 @@ const columns: TableColumnDef<ProjectListItem>[] = [
   },
   {
     id: 'health',
-    header: 'Health',
+    header: 'Sağlık',
     accessor: 'health',
     sortable: true,
     width: 105,
@@ -50,7 +50,7 @@ const columns: TableColumnDef<ProjectListItem>[] = [
   },
   {
     id: 'priority',
-    header: 'Priority',
+    header: 'Öncelik',
     accessor: 'priority',
     sortable: true,
     width: 100,
@@ -58,13 +58,13 @@ const columns: TableColumnDef<ProjectListItem>[] = [
   },
   {
     id: 'progress',
-    header: 'Progress',
+    header: 'İlerleme',
     width: 150,
     cell: ({ row }) => (
       <span className="c-cell-stack">
         <PercentMeter
           value={row.original.progressPercentage}
-          label={`${row.original.name} progress`}
+          label={`${row.original.name} ilerleme`}
         />
         <span className="c-muted c-cell-stack__secondary">
           {PROJECT_PHASE_LABELS[row.original.currentPhase]}
@@ -74,20 +74,21 @@ const columns: TableColumnDef<ProjectListItem>[] = [
   },
   {
     id: 'businessUnit',
-    header: 'Business unit',
+    header: 'İş birimi',
     width: 150,
-    cell: ({ row }) => row.original.businessUnit?.name ?? <span className="c-muted">Not set</span>,
+    cell: ({ row }) =>
+      row.original.businessUnit?.name ?? <span className="c-muted">Belirlenmemiş</span>,
   },
   {
     id: 'projectManager',
-    header: 'Project manager',
+    header: 'Proje yöneticisi',
     width: 150,
     cell: ({ row }) =>
-      row.original.projectManager?.name ?? <span className="c-text-warning">Unassigned</span>,
+      row.original.projectManager?.name ?? <span className="c-text-warning">Atanmamış</span>,
   },
   {
     id: 'plannedEndDate',
-    header: 'Planned end',
+    header: 'Planlanan bitiş',
     accessor: 'plannedEndDate',
     sortable: true,
     align: 'end',

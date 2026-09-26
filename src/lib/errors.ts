@@ -17,14 +17,14 @@ export class NotFoundError extends AppError {
     readonly entity: string,
     readonly id: string,
   ) {
-    super(`${entity} "${id}" was not found.`, 'not-found');
+    super(`${entity} "${id}" bulunamadı.`, 'not-found');
     this.name = 'NotFoundError';
   }
 }
 
 /** The signed-in user lacks the permission for this operation (server-side decision). */
 export class ForbiddenError extends AppError {
-  constructor(message = 'You do not have permission to perform this action.') {
+  constructor(message = 'Bu işlemi yapma yetkiniz yok.') {
     super(message, 'forbidden');
     this.name = 'ForbiddenError';
   }
@@ -32,7 +32,7 @@ export class ForbiddenError extends AppError {
 
 export class UnauthenticatedError extends AppError {
   constructor() {
-    super('Your session has ended. Sign in again to continue.', 'unauthenticated');
+    super('Oturumunuz sona erdi. Devam etmek için tekrar giriş yapın.', 'unauthenticated');
     this.name = 'UnauthenticatedError';
   }
 }
@@ -63,5 +63,5 @@ export function isValidationError(error: unknown): error is ValidationError {
 /** A user-presentable message for any thrown value. */
 export function getErrorMessage(error: unknown): string {
   if (error instanceof Error && error.message) return error.message;
-  return 'An unexpected error occurred.';
+  return 'Beklenmeyen bir hata oluştu.';
 }

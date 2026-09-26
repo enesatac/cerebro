@@ -37,24 +37,24 @@ export function applicationDeletionImpact(db: MockDatabase, id: string): Deletio
     blockedReason: null,
     references: nonZero([
       {
-        label: 'projects',
+        label: 'proje',
         count: db.projects.filter((p) => p.applicationImpacts.some((i) => i.applicationId === id))
           .length,
       },
       {
-        label: 'dependencies',
+        label: 'bağımlılık',
         count: db.dependencies.filter(
           (d) => d.sourceApplicationId === id || d.targetApplicationId === id,
         ).length,
       },
       {
-        label: 'integrations',
+        label: 'entegrasyon',
         count: db.integrations.filter((i) => i.fromApplicationId === id || i.toApplicationId === id)
           .length,
       },
-      { label: 'risks', count: related.risks },
-      { label: 'escalations', count: related.escalations },
-      { label: 'decisions', count: related.decisions },
+      { label: 'risk', count: related.risks },
+      { label: 'eskalasyon', count: related.escalations },
+      { label: 'karar', count: related.decisions },
     ]),
   };
 }
@@ -79,9 +79,9 @@ export function projectDeletionImpact(db: MockDatabase, id: string): DeletionImp
   return {
     blockedReason: null,
     references: nonZero([
-      { label: 'risks', count: related.risks },
-      { label: 'escalations', count: related.escalations },
-      { label: 'decisions', count: related.decisions },
+      { label: 'risk', count: related.risks },
+      { label: 'eskalasyon', count: related.escalations },
+      { label: 'karar', count: related.decisions },
     ]),
   };
 }
@@ -95,15 +95,15 @@ export function teamDeletionImpact(db: MockDatabase, id: string): DeletionImpact
     blockedReason: null,
     references: nonZero([
       {
-        label: 'applications',
+        label: 'uygulama',
         count: db.applications.filter((a) => a.teams.some((t) => t.teamId === id)).length,
       },
       {
-        label: 'projects',
+        label: 'proje',
         count: db.projects.filter((p) => p.teams.some((t) => t.teamId === id)).length,
       },
       {
-        label: 'escalations',
+        label: 'eskalasyon',
         count: db.escalations.filter((e) => e.responsibleTeamId === id).length,
       },
     ]),
@@ -127,10 +127,10 @@ export function technologyDeletionImpact(db: MockDatabase, id: string): Deletion
       a.dataStores.some((d) => d.technologyId === id),
   ).length;
   return {
-    references: nonZero([{ label: 'applications', count: applications }]),
+    references: nonZero([{ label: 'uygulama', count: applications }]),
     blockedReason:
       applications > 0
-        ? `It is used by ${applications} application${applications === 1 ? '' : 's'}. Set its status to Retired instead, or remove it from those applications first.`
+        ? `${applications} uygulama tarafından kullanılıyor. Bunun yerine durumunu Emekli yapın ya da önce bu uygulamalardan kaldırın.`
         : null,
   };
 }

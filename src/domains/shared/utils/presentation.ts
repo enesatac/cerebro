@@ -13,45 +13,45 @@ export interface StatusPresentation {
 }
 
 export const CRITICALITY_PRESENTATION: Record<Criticality, StatusPresentation> = {
-  low: { label: 'Low', variant: 'neutral' },
-  medium: { label: 'Medium', variant: 'info' },
-  high: { label: 'High', variant: 'warning' },
-  critical: { label: 'Critical', variant: 'danger' },
+  low: { label: 'Düşük', variant: 'neutral' },
+  medium: { label: 'Orta', variant: 'info' },
+  high: { label: 'Yüksek', variant: 'warning' },
+  critical: { label: 'Kritik', variant: 'danger' },
 };
 
 export const STAKEHOLDER_ROLE_LABELS: Record<StakeholderRole, string> = {
-  'business-owner': 'Business owner',
-  'technical-owner': 'Technical owner',
-  'product-owner': 'Product owner',
+  'business-owner': 'İş sahibi',
+  'technical-owner': 'Teknik sahip',
+  'product-owner': 'Ürün sahibi',
   sponsor: 'Sponsor',
-  'project-manager': 'Project manager',
-  'technical-lead': 'Technical lead',
-  'analyst-lead': 'Analyst lead',
-  analyst: 'Analyst',
-  architect: 'Architect',
-  developer: 'Developer',
-  support: 'Support',
-  stakeholder: 'Stakeholder',
+  'project-manager': 'Proje yöneticisi',
+  'technical-lead': 'Teknik lider',
+  'analyst-lead': 'Analist lideri',
+  analyst: 'Analist',
+  architect: 'Mimar',
+  developer: 'Geliştirici',
+  support: 'Destek',
+  stakeholder: 'Paydaş',
 };
 
 export const TEAM_RESPONSIBILITY_LABELS: Record<TeamResponsibility, string> = {
-  development: 'Development',
-  support: 'Support',
-  operations: 'Operations',
-  delivery: 'Delivery',
+  development: 'Geliştirme',
+  support: 'Destek',
+  operations: 'Operasyon',
+  delivery: 'Teslimat',
 };
 
 export const DOCUMENTATION_LINK_TYPE_LABELS: Record<DocumentationLinkType, string> = {
   confluence: 'Confluence',
   jira: 'Jira',
-  repository: 'Repository',
-  architecture: 'Architecture',
-  analysis: 'Analysis',
-  design: 'Design',
-  testing: 'Testing',
-  deployment: 'Deployment',
+  repository: 'Kod deposu',
+  architecture: 'Mimari',
+  analysis: 'Analiz',
+  design: 'Tasarım',
+  testing: 'Test',
+  deployment: 'Dağıtım',
   runbook: 'Runbook',
-  monitoring: 'Monitoring',
-  dashboard: 'Dashboard',
-  other: 'Other',
+  monitoring: 'İzleme',
+  dashboard: 'Gösterge paneli',
+  other: 'Diğer',
 };

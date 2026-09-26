@@ -55,14 +55,14 @@ function DecisionForm({ decision }: { decision?: Decision }) {
   return (
     <FormPage
       form={form}
-      title={decision ? 'Edit decision' : 'Record a decision'}
-      subtitle="A lightweight architecture decision record: context, decision, rationale and consequences."
+      title={decision ? 'Kararı düzenle' : 'Karar kaydet'}
+      subtitle="Hafif bir mimari karar kaydı (ADR): bağlam, karar, gerekçe ve sonuçlar."
       breadcrumbs={[
-        { label: 'Projects', to: paths.projects.list() },
-        { label: decision ? 'Edit decision' : 'New decision' },
+        { label: 'Projeler', to: paths.projects.list() },
+        { label: decision ? 'Kararı düzenle' : 'Yeni karar' },
       ]}
       cancelTo={returnTo}
-      submitLabel={decision ? 'Save changes' : 'Record decision'}
+      submitLabel={decision ? 'Değişiklikleri kaydet' : 'Karar kaydet'}
       onSubmit={async (values) => {
         await save.mutateAsync(toDecisionInput(values));
         return returnTo;
@@ -71,7 +71,7 @@ function DecisionForm({ decision }: { decision?: Decision }) {
         decision && (
           <Can permission="portfolio:delete">
             <DeleteAction
-              entityLabel="decision"
+              entityLabel="karar"
               entityName={decision.title}
               impactKey={['decision', decision.id]}
               loadImpact={() => decisions.getDeletionImpact(decision.id)}
@@ -82,51 +82,51 @@ function DecisionForm({ decision }: { decision?: Decision }) {
         )
       }
     >
-      <SectionCard title="Decision">
+      <SectionCard title="Karar">
         <div className="c-form-grid">
           <TextField
             control={control}
             name="title"
-            label="Title"
+            label="Başlık"
             required
             className="c-form-grid__wide"
           />
           <SelectField
             control={control}
             name="status"
-            label="Status"
+            label="Durum"
             required
             options={DECISION_STATUSES.map((value) => ({
               value,
               label: DECISION_STATUS_PRESENTATION[value].label,
             }))}
           />
-          <DateField control={control} name="decisionDate" label="Decision date" required />
+          <DateField control={control} name="decisionDate" label="Karar tarihi" required />
           <MultiSelectField
             control={control}
             name="decidedByIds"
-            label="Decided by"
+            label="Karar verenler"
             options={people}
-            addLabel="Add a decision maker"
+            addLabel="Karar verici ekle"
             required
             className="c-form-grid__wide"
           />
         </div>
       </SectionCard>
-      <SectionCard title="Record">
+      <SectionCard title="Kayıt">
         <div className="c-stack">
           <TextField
             control={control}
             name="context"
-            label="Context"
+            label="Bağlam"
             rows={3}
             required
-            description="The situation and forces that required a decision."
+            description="Karar verilmesini gerektiren durum ve etkenler."
           />
-          <TextField control={control} name="decision" label="Decision" rows={3} required />
-          <TextField control={control} name="rationale" label="Rationale" rows={3} />
-          <ChipsField control={control} name="alternatives" label="Alternatives considered" />
-          <TextField control={control} name="consequences" label="Consequences" rows={3} />
+          <TextField control={control} name="decision" label="Karar" rows={3} required />
+          <TextField control={control} name="rationale" label="Gerekçe" rows={3} />
+          <ChipsField control={control} name="alternatives" label="Değerlendirilen alternatifler" />
+          <TextField control={control} name="consequences" label="Sonuçlar" rows={3} />
         </div>
       </SectionCard>
       <RelatedEntitiesFields
@@ -146,11 +146,7 @@ export default function DecisionFormPage() {
 function EditDecision({ id }: { id: string }) {
   const query = useDecision(id);
   return (
-    <QueryView
-      query={query}
-      loadingLabel="Loading decision"
-      errorTitle="This decision could not be loaded"
-    >
+    <QueryView query={query} loadingLabel="Karar yükleniyor" errorTitle="Bu karar yüklenemedi">
       {(decision) => <DecisionForm decision={decision} />}
     </QueryView>
   );

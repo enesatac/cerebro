@@ -4,9 +4,9 @@ import { useEffect, useState } from 'react';
 type CopyState = 'idle' | 'copied' | 'failed';
 
 const LABELS: Record<CopyState, string> = {
-  idle: 'Copy link',
-  copied: 'Link copied',
-  failed: 'Copy failed',
+  idle: 'Bağlantıyı kopyala',
+  copied: 'Bağlantı kopyalandı',
+  failed: 'Kopyalanamadı',
 };
 
 /** Copies the current page URL so users can share a deep link. */

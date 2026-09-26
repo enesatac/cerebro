@@ -35,18 +35,18 @@ export default function ProjectsListPage() {
   return (
     <>
       <PageHeader
-        title="Projects"
-        subtitle="Change in flight: status, health, timeline and which applications each project affects."
-        actions={<CreateAction to={paths.projects.create()} label="Create project" />}
+        title="Projeler"
+        subtitle="Süren değişiklikler: durum, sağlık, zaman çizelgesi ve her projenin etkilediği uygulamalar."
+        actions={<CreateAction to={paths.projects.create()} label="Proje oluştur" />}
       />
       <ProjectFilters
         state={state}
         onChange={updateFilters}
         onReset={resetFilters}
-        resultSummary={total === undefined ? '' : pluralize(total, 'project')}
+        resultSummary={total === undefined ? '' : pluralize(total, 'proje')}
       />
       {query.isError ? (
-        <ErrorState title="Projects could not be loaded" onRetry={() => void query.refetch()} />
+        <ErrorState title="Projeler yüklenemedi" onRetry={() => void query.refetch()} />
       ) : (
         <ProjectsTable
           result={query.data}
@@ -62,8 +62,8 @@ export default function ProjectsListPage() {
             query.isPending ? null : countActiveProjectFilters(state) > 0 ? (
               <EmptyState
                 compact
-                title="No projects match these filters"
-                description="Try a broader search or remove a filter."
+                title="Bu filtrelere uyan proje yok"
+                description="Daha geniş bir arama yapın veya bir filtreyi kaldırın."
                 action={
                   <Button
                     size="small"
@@ -71,15 +71,15 @@ export default function ProjectsListPage() {
                     variant="neutral"
                     onClick={resetFilters}
                   >
-                    Clear filters
+                    Filtreleri temizle
                   </Button>
                 }
               />
             ) : (
               <EmptyState
                 compact
-                title="No projects have been registered yet"
-                description="Projects appear here once they are added to Cerebro."
+                title="Henüz kayıtlı proje yok"
+                description="Projeler Cerebro'ya eklendikçe burada görünür."
               />
             )
           }

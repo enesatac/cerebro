@@ -97,7 +97,7 @@ describe('buildApplicationHealthReport', () => {
   const row = (id: string) => rows.find((r) => r.id === id);
 
   it('reports missing required information by label', () => {
-    expect(row('app-legacy-booking-console')?.missingRequired).toEqual(['Technical owner']);
+    expect(row('app-legacy-booking-console')?.missingRequired).toEqual(['Teknik sahip']);
   });
 
   it('lists deprecated and retired technologies once each', () => {

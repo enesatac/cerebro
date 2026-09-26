@@ -24,17 +24,17 @@ export function OverviewTab({ application }: { application: Application }) {
 
 function AboutSection({ application }: { application: Application }) {
   return (
-    <SectionCard title="About">
+    <SectionCard title="Hakkında">
       <p className="c-prose">{application.detailedDescription}</p>
       <DetailList
         items={[
-          { label: 'Business purpose', value: application.businessPurpose },
-          { label: 'Application type', value: APPLICATION_TYPE_LABELS[application.type] },
-          { label: 'Business processes', value: application.businessProcesses.join(', ') },
-          { label: 'User groups', value: application.userGroups.join(', ') },
-          { label: 'Estimated users', value: formatInteger(application.estimatedUserCount, '') },
+          { label: 'İş amacı', value: application.businessPurpose },
+          { label: 'Uygulama türü', value: APPLICATION_TYPE_LABELS[application.type] },
+          { label: 'İş süreçleri', value: application.businessProcesses.join(', ') },
+          { label: 'Kullanıcı grupları', value: application.userGroups.join(', ') },
+          { label: 'Tahmini kullanıcı', value: formatInteger(application.estimatedUserCount, '') },
           {
-            label: 'Tags',
+            label: 'Etiketler',
             value: application.tags.length > 0 ? <TagList tags={application.tags} /> : null,
           },
         ]}
@@ -45,7 +45,10 @@ function AboutSection({ application }: { application: Application }) {
 
 function OwnershipSection({ application }: { application: Application }) {
   return (
-    <SectionCard title="Ownership & contacts" description="Who to contact about this application.">
+    <SectionCard
+      title="Sahiplik ve iletişim"
+      description="Bu uygulama hakkında kiminle iletişime geçilmeli."
+    >
       <StakeholderList roles={application.roles} teams={application.teams} />
     </SectionCard>
   );
@@ -57,27 +60,27 @@ function CompletenessSection({ application }: { application: Application }) {
 
   return (
     <SectionCard
-      title="Information completeness"
-      description="Weighted share of the data-quality rules this record meets."
+      title="Bilgi tamlığı"
+      description="Bu kaydın karşıladığı veri kalitesi kurallarının ağırlıklı oranı."
     >
       <div className="c-completeness">
         <span className="c-completeness__score">{report.score}%</span>
         <Progress
           value={report.score}
           variant={variant}
-          aria-label={`Information completeness ${report.score}%`}
+          aria-label={`Bilgi tamlığı %${report.score}`}
         />
       </div>
       {report.missing.length === 0 ? (
-        <p className="c-muted">All completeness rules are met.</p>
+        <p className="c-muted">Tüm tamlık kuralları karşılanıyor.</p>
       ) : (
-        <ul className="c-rule-list" aria-label="Missing information">
+        <ul className="c-rule-list" aria-label="Eksik bilgiler">
           {report.missing.map((rule) => (
             <li key={rule.id} className="c-rule-list__item">
               <span className="c-rule-list__label">
                 {rule.label}
                 {rule.importance === 'required' && (
-                  <span className="c-text-warning"> · required</span>
+                  <span className="c-text-warning"> · zorunlu</span>
                 )}
               </span>
               <span className="c-muted">{rule.description}</span>

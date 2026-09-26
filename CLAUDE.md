@@ -73,6 +73,9 @@ A task is not complete until `npm run validate` passes.
 
 ## Conventions
 
+- **UI language is Turkish** (labels, messages, validation, toasts, mock data); code, comments and
+  docs are English. Format dates/numbers only via `lib/dates.ts` / `lib/format.ts` (Turkish locale).
+
 - Files: `PascalCase.tsx` for components, `camelCase.ts` for modules; one component per file.
 - Routes: always build URLs via `src/app/router/paths.ts` helpers — no string literals.
 - IDs: stable, meaningful string ids (`app-payment-gateway`), never array indices.

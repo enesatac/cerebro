@@ -29,7 +29,7 @@ export function createMockReferenceRepositories(
 
   const people: PersonRepository = {
     list: async () => (await wait(), copy(db.people)),
-    getById: async (id) => (await wait(), copy(findOrThrow(db.people, id, 'Person'))),
+    getById: async (id) => (await wait(), copy(findOrThrow(db.people, id, 'Kişi'))),
   };
 
   const businessUnits: BusinessUnitRepository = {
@@ -38,7 +38,7 @@ export function createMockReferenceRepositories(
 
   const teams: TeamRepository = {
     list: async () => (await wait(), copy(db.teams)),
-    getById: async (id) => (await wait(), copy(findOrThrow(db.teams, id, 'Team'))),
+    getById: async (id) => (await wait(), copy(findOrThrow(db.teams, id, 'Ekip'))),
     async listSummaries() {
       await wait();
       return db.teams
@@ -63,7 +63,7 @@ export function createMockReferenceRepositories(
       kit,
       latencyMs,
       rows: () => db.teams,
-      entityLabel: 'Team',
+      entityLabel: 'Ekip',
       idPrefix: 'team',
       nameOf: (input) => input.name,
       build: (input, id, audit) => ({ ...input, id, audit }),
@@ -73,10 +73,10 @@ export function createMockReferenceRepositories(
           input.name,
           (t) => t.name,
           excludeId,
-          `A team named "${input.name}" already exists.`,
+          `"${input.name}" adında bir ekip zaten var.`,
           'name',
         );
-        kit.assertRefs([input.managerId, ...input.memberIds], db.people, 'person', 'memberIds');
+        kit.assertRefs([input.managerId, ...input.memberIds], db.people, 'kişi', 'memberIds');
       },
       impact: (id) => teamDeletionImpact(db, id),
       cascade: (id) => deleteTeamCascade(db, id),
@@ -85,7 +85,7 @@ export function createMockReferenceRepositories(
 
   const technologies: TechnologyRepository = {
     list: async () => (await wait(), copy(db.technologies)),
-    getById: async (id) => (await wait(), copy(findOrThrow(db.technologies, id, 'Technology'))),
+    getById: async (id) => (await wait(), copy(findOrThrow(db.technologies, id, 'Teknoloji'))),
     async listSummaries() {
       await wait();
       return db.technologies
@@ -109,7 +109,7 @@ export function createMockReferenceRepositories(
         input.name,
         (t) => t.name,
         null,
-        `"${input.name}" is already in the catalogue.`,
+        `"${input.name}" zaten katalogda.`,
         'name',
       );
       const technology = { ...copy(input), id: kit.uniqueId('tech', input.name, db.technologies) };
@@ -118,27 +118,27 @@ export function createMockReferenceRepositories(
     },
     async update(id, input) {
       await kit.begin();
-      findOrThrow(db.technologies, id, 'Technology');
+      findOrThrow(db.technologies, id, 'Teknoloji');
       kit.assertUnique(
         db.technologies,
         input.name,
         (t) => t.name,
         id,
-        `"${input.name}" is already in the catalogue.`,
+        `"${input.name}" zaten katalogda.`,
         'name',
       );
       return copy(replaceRow(db.technologies, { ...copy(input), id }));
     },
     async remove(id) {
       await kit.begin('portfolio:delete');
-      findOrThrow(db.technologies, id, 'Technology');
+      findOrThrow(db.technologies, id, 'Teknoloji');
       const impact = technologyDeletionImpact(db, id);
       if (impact.blockedReason) throw new ValidationError(impact.blockedReason);
       removeRow(db.technologies, id);
     },
     async getDeletionImpact(id) {
       await wait();
-      findOrThrow(db.technologies, id, 'Technology');
+      findOrThrow(db.technologies, id, 'Teknoloji');
       return technologyDeletionImpact(db, id);
     },
   };

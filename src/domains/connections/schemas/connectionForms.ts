@@ -19,14 +19,14 @@ import {
 
 export const dependencyFormSchema = z
   .object({
-    sourceApplicationId: requiredChoice('the dependent application'),
-    targetApplicationId: requiredChoice('the application it depends on'),
-    type: enumChoice(DEPENDENCY_TYPES, 'a type'),
-    criticality: enumChoice(CRITICALITIES, 'an impact level'),
-    description: optionalText('Description', 500),
+    sourceApplicationId: requiredChoice('bağımlı uygulamayı'),
+    targetApplicationId: requiredChoice('bağımlı olunan uygulamayı'),
+    type: enumChoice(DEPENDENCY_TYPES, 'bir tür'),
+    criticality: enumChoice(CRITICALITIES, 'bir etki düzeyi'),
+    description: optionalText('Açıklama', 500),
   })
   .refine((values) => values.sourceApplicationId !== values.targetApplicationId, {
-    message: 'An application cannot depend on itself.',
+    message: 'Bir uygulama kendisine bağımlı olamaz.',
     path: ['targetApplicationId'],
   });
 
@@ -54,21 +54,21 @@ export const INTEGRATION_TARGET_KINDS = ['application', 'external'] as const;
 
 export const integrationFormSchema = z
   .object({
-    name: requiredText('Name', 120),
-    type: enumChoice(INTEGRATION_TYPES, 'a type'),
-    frequency: enumChoice(INTEGRATION_FREQUENCIES, 'a frequency'),
-    fromApplicationId: requiredChoice('the initiating application'),
+    name: requiredText('Ad', 120),
+    type: enumChoice(INTEGRATION_TYPES, 'bir tür'),
+    frequency: enumChoice(INTEGRATION_FREQUENCIES, 'bir sıklık'),
+    fromApplicationId: requiredChoice('başlatan uygulamayı'),
     targetKind: z.enum(INTEGRATION_TARGET_KINDS),
     toApplicationId: z.string(),
-    externalPartyName: optionalText('External party', 120),
-    dataExchanged: secretFreeText('Data exchanged', 300),
-    description: secretFreeText('Description', 1000),
+    externalPartyName: optionalText('Harici taraf', 120),
+    dataExchanged: secretFreeText('Aktarılan veri', 300),
+    description: secretFreeText('Açıklama', 1000),
   })
   .superRefine((values, ctx) => {
     if (values.targetKind === 'application' && !values.toApplicationId) {
       ctx.addIssue({
         code: 'custom',
-        message: 'Select the receiving application.',
+        message: 'Alıcı uygulamayı seçin.',
         path: ['toApplicationId'],
       });
     }
@@ -78,14 +78,14 @@ export const integrationFormSchema = z
     ) {
       ctx.addIssue({
         code: 'custom',
-        message: 'An integration needs two different applications.',
+        message: 'Bir entegrasyon iki farklı uygulama gerektirir.',
         path: ['toApplicationId'],
       });
     }
     if (values.targetKind === 'external' && !values.externalPartyName.trim()) {
       ctx.addIssue({
         code: 'custom',
-        message: 'Name the external party.',
+        message: 'Harici tarafın adını girin.',
         path: ['externalPartyName'],
       });
     }

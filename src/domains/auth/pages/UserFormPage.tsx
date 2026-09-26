@@ -41,70 +41,64 @@ function UserForm({ user }: { user?: UserAccount }) {
   return (
     <FormPage
       form={form}
-      title={user ? `Edit ${user.displayName}` : 'Add user'}
+      title={user ? `Düzenle: ${user.displayName}` : 'Kullanıcı ekle'}
       breadcrumbs={[
-        { label: 'Users & roles', to: paths.admin.users() },
-        { label: user ? user.displayName : 'New user' },
+        { label: 'Kullanıcılar ve roller', to: paths.admin.users() },
+        { label: user ? user.displayName : 'Yeni kullanıcı' },
       ]}
       cancelTo={paths.admin.users()}
-      submitLabel={user ? 'Save changes' : 'Add user'}
+      submitLabel={user ? 'Değişiklikleri kaydet' : 'Kullanıcı ekle'}
       onSubmit={async (values) => {
         await save.mutateAsync(toUserInput(values));
         return paths.admin.users();
       }}
     >
-      <SectionCard title="Account">
+      <SectionCard title="Hesap">
         <div className="c-form-grid">
-          <TextField
-            control={control}
-            name="displayName"
-            label="Name"
-            required
-            autoComplete="name"
-          />
+          <TextField control={control} name="displayName" label="Ad" required autoComplete="name" />
           <TextField
             control={control}
             name="email"
-            label="Email"
+            label="E-posta"
             type="email"
             required
             autoComplete="email"
-            description="Used to match the corporate identity at sign-in."
+            description="Girişte kurumsal kimlikle eşleştirmek için kullanılır."
           />
           <SelectField
             control={control}
             name="personId"
-            label="Linked person"
+            label="Bağlı kişi"
             options={personOptions}
-            emptyLabel="Not linked"
-            description="Changes made by this user are attributed to this person in history."
+            emptyLabel="Bağlı değil"
+            description="Bu kullanıcının yaptığı değişiklikler geçmişte bu kişiye atfedilir."
           />
         </div>
       </SectionCard>
-      <SectionCard title="Access">
+      <SectionCard title="Erişim">
         <div className="c-form-grid">
           <SelectField
             control={control}
             name="role"
-            label="Role"
+            label="Rol"
             options={ROLE_OPTIONS}
             required
             disabled={isSelf}
             description={
               isSelf
-                ? 'You cannot change your own role.'
-                : 'Admins can change everything; users can only view.'
+                ? 'Kendi rolünüzü değiştiremezsiniz.'
+                : 'Yöneticiler her şeyi değiştirebilir; kullanıcılar yalnızca görüntüleyebilir.'
             }
           />
           <SwitchField
             control={control}
             name="active"
-            label="Can sign in"
+            label="Giriş yapabilir"
             disabled={isSelf}
             description={
               isSelf
-                ? 'You cannot deactivate your own account.'
-                : 'Deactivated accounts keep their history but cannot sign in.'
+                ? 'Kendi hesabınızı devre dışı bırakamazsınız.'
+                : 'Devre dışı hesapların geçmişi korunur ama giriş yapamazlar.'
             }
           />
         </div>
@@ -121,7 +115,11 @@ export default function UserFormPage() {
 function EditUser({ id }: { id: string }) {
   const query = useUserAccount(id);
   return (
-    <QueryView query={query} loadingLabel="Loading user" errorTitle="This user could not be loaded">
+    <QueryView
+      query={query}
+      loadingLabel="Kullanıcı yükleniyor"
+      errorTitle="Bu kullanıcı yüklenemedi"
+    >
       {(user) => <UserForm user={user} />}
     </QueryView>
   );

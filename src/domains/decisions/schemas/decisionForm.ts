@@ -5,15 +5,15 @@ import { DECISION_STATUSES, type Decision, type DecisionInput } from '../types';
 
 export const decisionFormSchema = z
   .object({
-    title: requiredText('Title', 160),
-    status: enumChoice(DECISION_STATUSES, 'a status'),
-    decisionDate: requiredDate('Decision date'),
-    context: requiredText('Context', 4000),
-    decision: requiredText('Decision', 4000),
-    rationale: optionalText('Rationale', 4000),
+    title: requiredText('Başlık', 160),
+    status: enumChoice(DECISION_STATUSES, 'bir durum'),
+    decisionDate: requiredDate('Karar tarihi'),
+    context: requiredText('Bağlam', 4000),
+    decision: requiredText('Karar', 4000),
+    rationale: optionalText('Gerekçe', 4000),
     alternatives: z.array(z.string().trim().min(1).max(300)),
-    consequences: optionalText('Consequences', 4000),
-    decidedByIds: z.array(z.string()).min(1, 'Add at least one decision maker.'),
+    consequences: optionalText('Sonuçlar', 4000),
+    decidedByIds: z.array(z.string()).min(1, 'En az bir karar verici ekleyin.'),
   })
   .and(relatedEntitiesSchema)
   .superRefine(requireRelated);

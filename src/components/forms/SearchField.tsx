@@ -18,7 +18,7 @@ interface SearchFieldProps {
  * the URL) updates after a pause. External changes (back button, "clear filters") are adopted.
  */
 export function SearchField({
-  label = 'Search',
+  label = 'Ara',
   placeholder,
   value,
   onCommit,

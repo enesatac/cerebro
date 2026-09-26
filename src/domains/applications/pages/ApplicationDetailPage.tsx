@@ -71,20 +71,17 @@ export default function ApplicationDetailPage() {
   const [activeTab, selectTab] = useTabParam(APPLICATION_DETAIL_TAB_IDS);
   const query = useApplication(applicationId);
 
-  if (query.isPending) return <LoadingState label="Loading application" rows={6} />;
+  if (query.isPending) return <LoadingState label="Uygulama yükleniyor" rows={6} />;
   if (query.isError) {
     return isNotFoundError(query.error) ? (
       <NotFoundState
-        title="Application not found"
-        description={`No application with the id "${applicationId}" exists. It may have been removed or the link may be wrong.`}
+        title="Uygulama bulunamadı"
+        description={`"${applicationId}" kimliğine sahip bir uygulama yok. Kaldırılmış ya da bağlantı hatalı olabilir.`}
         backTo={paths.applications.list()}
-        backLabel="Back to applications"
+        backLabel="Uygulamalara dön"
       />
     ) : (
-      <ErrorState
-        title="This application could not be loaded"
-        onRetry={() => void query.refetch()}
-      />
+      <ErrorState title="Bu uygulama yüklenemedi" onRetry={() => void query.refetch()} />
     );
   }
 
@@ -94,7 +91,7 @@ export default function ApplicationDetailPage() {
     <div className="c-stack">
       <PageHeader
         breadcrumbs={[
-          { label: 'Applications', to: paths.applications.list() },
+          { label: 'Uygulamalar', to: paths.applications.list() },
           { label: application.name },
         ]}
         title={application.name}
@@ -103,14 +100,17 @@ export default function ApplicationDetailPage() {
           <>
             <span className="c-code-chip">{application.code}</span>
             <span className="c-muted">{APPLICATION_TYPE_LABELS[application.type]}</span>
-            <StatusBadge context="Lifecycle:" {...LIFECYCLE_PRESENTATION[application.lifecycle]} />
             <StatusBadge
-              context="Criticality:"
-              {...CRITICALITY_PRESENTATION[application.criticality]}
-              label={`${CRITICALITY_PRESENTATION[application.criticality].label} criticality`}
+              context="Yaşam döngüsü:"
+              {...LIFECYCLE_PRESENTATION[application.lifecycle]}
             />
             <StatusBadge
-              context="Status:"
+              context="Kritiklik:"
+              {...CRITICALITY_PRESENTATION[application.criticality]}
+              label={`Kritiklik: ${CRITICALITY_PRESENTATION[application.criticality].label}`}
+            />
+            <StatusBadge
+              context="Durum:"
               {...OPERATIONAL_STATUS_PRESENTATION[application.operationalStatus]}
             />
           </>
@@ -121,18 +121,18 @@ export default function ApplicationDetailPage() {
             <Can permission="portfolio:edit">
               <ActionMenu
                 items={[
-                  { label: 'Add dependency', to: paths.dependencies.create(application.id) },
-                  { label: 'Add integration', to: paths.integrations.create(application.id) },
+                  { label: 'Bağımlılık ekle', to: paths.dependencies.create(application.id) },
+                  { label: 'Entegrasyon ekle', to: paths.integrations.create(application.id) },
                   {
-                    label: 'Record risk',
+                    label: 'Risk kaydet',
                     to: paths.riskForms.create({ application: application.id }),
                   },
                   {
-                    label: 'Raise escalation',
+                    label: 'Eskalasyon aç',
                     to: paths.escalationForms.create({ application: application.id }),
                   },
                   {
-                    label: 'Record decision',
+                    label: 'Karar kaydet',
                     to: paths.decisionForms.create({ application: application.id }),
                   },
                 ]}
@@ -146,11 +146,11 @@ export default function ApplicationDetailPage() {
       <AttentionNotices
         filter={{ applicationId: application.id }}
         audit={application.audit}
-        entityLabel="application"
+        entityLabel="uygulama"
         onOpenRisks={() => selectTab('risks')}
       />
       <DetailTabs
-        label="Application sections"
+        label="Uygulama bölümleri"
         tabs={APPLICATION_DETAIL_TABS.map((tab) => ({
           ...tab,
           count: tabCount(tab.id, application),

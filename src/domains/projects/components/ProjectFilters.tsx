@@ -35,7 +35,7 @@ export function ProjectFilters({ state, onChange, onReset, resultSummary }: Proj
 
   return (
     <Toolbar
-      label="Filter projects"
+      label="Projeleri filtrele"
       end={
         <FilterSummary
           summary={resultSummary}
@@ -45,35 +45,35 @@ export function ProjectFilters({ state, onChange, onReset, resultSummary }: Proj
       }
     >
       <SearchField
-        placeholder="Name, code, description or tag"
+        placeholder="Ad, kod, açıklama veya etiket"
         value={state.search}
         onCommit={(search) => onChange({ search })}
       />
       <FilterSelect
-        label="Status"
-        allLabel="All statuses"
+        label="Durum"
+        allLabel="Tüm durumlar"
         value={state.status}
         options={STATUS_OPTIONS}
         onChange={(value) => onChange({ status: value as ProjectListState['status'] })}
       />
       <FilterSelect
-        label="Health"
-        allLabel="All health states"
+        label="Sağlık"
+        allLabel="Tüm sağlık durumları"
         value={state.health}
         options={HEALTH_OPTIONS}
         onChange={(value) => onChange({ health: value as ProjectListState['health'] })}
       />
       <FilterSelect
-        label="Business unit"
-        allLabel="All business units"
+        label="İş birimi"
+        allLabel="Tüm iş birimleri"
         value={state.businessUnitId}
         options={(businessUnits.data ?? []).map((unit) => ({ value: unit.id, label: unit.name }))}
         onChange={(value) => onChange({ businessUnitId: value })}
         disabled={!businessUnits.data}
       />
       <FilterSelect
-        label="Delivery team"
-        allLabel="All teams"
+        label="Teslimat ekibi"
+        allLabel="Tüm ekipler"
         value={state.teamId}
         options={(teams.data ?? []).map((team) => ({ value: team.id, label: team.name }))}
         onChange={(value) => onChange({ teamId: value })}

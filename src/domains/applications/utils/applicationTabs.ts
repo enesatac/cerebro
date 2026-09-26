@@ -1,14 +1,14 @@
 export const APPLICATION_DETAIL_TABS = [
-  { id: 'overview', label: 'Overview' },
-  { id: 'technical', label: 'Technical' },
-  { id: 'dependencies', label: 'Dependencies' },
-  { id: 'integrations', label: 'Integrations' },
-  { id: 'environments', label: 'Environments' },
-  { id: 'repositories', label: 'Repositories' },
-  { id: 'documentation', label: 'Documentation' },
-  { id: 'projects', label: 'Projects' },
-  { id: 'risks', label: 'Risks & Escalations' },
-  { id: 'history', label: 'History' },
+  { id: 'overview', label: 'Genel bakış' },
+  { id: 'technical', label: 'Teknik' },
+  { id: 'dependencies', label: 'Bağımlılıklar' },
+  { id: 'integrations', label: 'Entegrasyonlar' },
+  { id: 'environments', label: 'Ortamlar' },
+  { id: 'repositories', label: 'Kod depoları' },
+  { id: 'documentation', label: 'Dokümantasyon' },
+  { id: 'projects', label: 'Projeler' },
+  { id: 'risks', label: 'Riskler ve Eskalasyonlar' },
+  { id: 'history', label: 'Geçmiş' },
 ] as const;
 
 export type ApplicationDetailTab = (typeof APPLICATION_DETAIL_TABS)[number]['id'];

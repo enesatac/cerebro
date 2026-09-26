@@ -36,27 +36,27 @@ export function StakeholderFields<T extends FieldValues>({
 
   return (
     <>
-      <SectionCard title="People" description={description}>
+      <SectionCard title="Kişiler" description={description}>
         <RepeatableList
           items={roles.fields}
           onAdd={() => roles.append(emptyRoleAssignment() as never)}
           onRemove={roles.remove}
-          addLabel="Add person"
-          removeLabel={(index) => `Remove person ${index + 1}`}
-          emptyText="Nobody is assigned yet."
+          addLabel="Kişi ekle"
+          removeLabel={(index) => `${index + 1}. kişiyi kaldır`}
+          emptyText="Henüz kimse atanmadı."
           renderItem={(index) => (
             <div className="c-form-grid">
               <SelectField
                 control={control}
                 name={fieldPath<T>(`roles.${index}.personId`)}
-                label="Person"
+                label="Kişi"
                 required
                 options={people}
               />
               <SelectField
                 control={control}
                 name={fieldPath<T>(`roles.${index}.role`)}
-                label="Role"
+                label="Rol"
                 required
                 options={roleOptions}
               />
@@ -64,27 +64,27 @@ export function StakeholderFields<T extends FieldValues>({
           )}
         />
       </SectionCard>
-      <SectionCard title="Teams">
+      <SectionCard title="Ekipler">
         <RepeatableList
           items={teamRows.fields}
           onAdd={() => teamRows.append(emptyTeamAssignment() as never)}
           onRemove={teamRows.remove}
-          addLabel="Add team"
-          removeLabel={(index) => `Remove team ${index + 1}`}
-          emptyText="No team is assigned yet."
+          addLabel="Ekip ekle"
+          removeLabel={(index) => `${index + 1}. ekibi kaldır`}
+          emptyText="Henüz ekip atanmadı."
           renderItem={(index) => (
             <div className="c-form-grid">
               <SelectField
                 control={control}
                 name={fieldPath<T>(`teams.${index}.teamId`)}
-                label="Team"
+                label="Ekip"
                 required
                 options={teams}
               />
               <SelectField
                 control={control}
                 name={fieldPath<T>(`teams.${index}.responsibility`)}
-                label="Responsibility"
+                label="Sorumluluk"
                 required
                 options={TEAM_RESPONSIBILITIES.map((value) => ({
                   value,

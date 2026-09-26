@@ -29,22 +29,22 @@ export function ApplicationKeyFacts({ application }: { application: Application 
   ));
 
   return (
-    <section aria-label="Key facts" className="c-key-facts">
+    <section aria-label="Temel bilgiler" className="c-key-facts">
       <DetailList
         layout="grid"
         items={[
-          { label: 'Technical owner', value: person('technical-owner'), emptyText: 'Unassigned' },
-          { label: 'Business owner', value: person('business-owner'), emptyText: 'Unassigned' },
+          { label: 'Teknik sahip', value: person('technical-owner'), emptyText: 'Atanmamış' },
+          { label: 'İş sahibi', value: person('business-owner'), emptyText: 'Atanmamış' },
           {
-            label: 'Business unit',
+            label: 'İş birimi',
             value: application.businessUnitId
               ? businessUnits.data?.get(application.businessUnitId)?.name
               : null,
           },
-          { label: 'Teams', value: teamLinks },
-          { label: 'Hosting', value: HOSTING_MODEL_LABELS[application.hosting.model] },
+          { label: 'Ekipler', value: teamLinks },
+          { label: 'Barındırma', value: HOSTING_MODEL_LABELS[application.hosting.model] },
           {
-            label: 'Estimated users',
+            label: 'Tahmini kullanıcı',
             value: formatCompactNumber(application.estimatedUserCount, ''),
           },
         ]}

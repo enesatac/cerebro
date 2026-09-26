@@ -16,7 +16,7 @@ export function FilterSummary({ summary, activeFilterCount, onReset }: FilterSum
       </span>
       {activeFilterCount > 0 && (
         <Button size="small" appearance="text" variant="neutral" onClick={onReset}>
-          Clear filters ({activeFilterCount})
+          Filtreleri temizle ({activeFilterCount})
         </Button>
       )}
     </>

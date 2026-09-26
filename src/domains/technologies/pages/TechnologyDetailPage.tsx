@@ -28,7 +28,7 @@ const USAGE_PAGE_SIZE = 100;
 const columns: TableColumnDef<ApplicationListItem>[] = [
   {
     id: 'name',
-    header: 'Application',
+    header: 'Uygulama',
     width: 260,
     cell: ({ row }) => (
       <span className="c-cell-stack">
@@ -39,21 +39,21 @@ const columns: TableColumnDef<ApplicationListItem>[] = [
   },
   {
     id: 'lifecycle',
-    header: 'Lifecycle',
+    header: 'Yaşam döngüsü',
     cell: ({ row }) => <StatusBadge {...LIFECYCLE_PRESENTATION[row.original.lifecycle]} />,
   },
   {
     id: 'criticality',
-    header: 'Criticality',
+    header: 'Kritiklik',
     cell: ({ row }) => <StatusBadge {...CRITICALITY_PRESENTATION[row.original.criticality]} />,
   },
   {
     id: 'owner',
-    header: 'Technical owner',
+    header: 'Teknik sahip',
     cell: ({ row }) =>
-      row.original.technicalOwner?.name ?? <span className="c-text-warning">Unassigned</span>,
+      row.original.technicalOwner?.name ?? <span className="c-text-warning">Atanmamış</span>,
   },
-  { id: 'bu', header: 'Business unit', cell: ({ row }) => row.original.businessUnit?.name ?? '—' },
+  { id: 'bu', header: 'İş birimi', cell: ({ row }) => row.original.businessUnit?.name ?? '—' },
 ];
 
 function UsedBy({ technology }: { technology: Technology }) {
@@ -66,20 +66,20 @@ function UsedBy({ technology }: { technology: Technology }) {
   return (
     <QueryView
       query={query}
-      loadingLabel="Loading applications"
-      errorTitle="Usage could not be loaded"
+      loadingLabel="Uygulamalar yükleniyor"
+      errorTitle="Kullanım bilgisi yüklenemedi"
     >
       {(result) => (
         <SectionCard
-          title={`Used by (${result.total})`}
-          description="Applications that record this technology in their stack, most critical first."
+          title={`Kullananlar (${result.total})`}
+          description="Bu teknolojiyi yığınında kaydeden uygulamalar, en kritik olanlar önce."
         >
           <Table
             data={result.items}
             columns={columns}
             getRowId={(row) => row.id}
             emptyState={
-              <EmptyState compact title={`No application records using ${technology.name}`} />
+              <EmptyState compact title={`${technology.name} kullandığını kaydeden uygulama yok`} />
             }
           />
         </SectionCard>
@@ -92,20 +92,17 @@ export default function TechnologyDetailPage() {
   const { technologyId = '' } = useParams();
   const query = useTechnology(technologyId);
 
-  if (query.isPending) return <LoadingState label="Loading technology" />;
+  if (query.isPending) return <LoadingState label="Teknoloji yükleniyor" />;
   if (query.isError) {
     return isNotFoundError(query.error) ? (
       <NotFoundState
-        title="Technology not found"
-        description={`No technology with the id "${technologyId}" exists in the catalogue.`}
+        title="Teknoloji bulunamadı"
+        description={`Katalogda "${technologyId}" kimliğine sahip bir teknoloji yok.`}
         backTo={paths.technologies.list()}
-        backLabel="Back to technologies"
+        backLabel="Teknolojilere dön"
       />
     ) : (
-      <ErrorState
-        title="This technology could not be loaded"
-        onRetry={() => void query.refetch()}
-      />
+      <ErrorState title="Bu teknoloji yüklenemedi" onRetry={() => void query.refetch()} />
     );
   }
 
@@ -115,7 +112,7 @@ export default function TechnologyDetailPage() {
     <div className="c-stack">
       <PageHeader
         breadcrumbs={[
-          { label: 'Technologies', to: paths.technologies.list() },
+          { label: 'Teknolojiler', to: paths.technologies.list() },
           { label: technology.name },
         ]}
         title={technology.name}
@@ -124,7 +121,7 @@ export default function TechnologyDetailPage() {
         meta={
           <>
             <span className="c-muted">{TECHNOLOGY_CATEGORY_LABELS[technology.category]}</span>
-            <StatusBadge context="Status:" {...TECHNOLOGY_STATUS_PRESENTATION[technology.status]} />
+            <StatusBadge context="Durum:" {...TECHNOLOGY_STATUS_PRESENTATION[technology.status]} />
           </>
         }
       />
@@ -135,12 +132,12 @@ export default function TechnologyDetailPage() {
         >
           <Alert.Content>
             <Alert.Title level={2}>
-              {technology.name} is {technology.status}
+              {technology.name}: {TECHNOLOGY_STATUS_PRESENTATION[technology.status].label}
             </Alert.Title>
             <Alert.Description>
               {technology.status === 'retired'
-                ? 'It is no longer supported. Applications below should be migrated or retired.'
-                : 'New work should not use it. Applications below should plan a migration.'}
+                ? 'Artık desteklenmiyor. Aşağıdaki uygulamalar taşınmalı veya emekliye ayrılmalı.'
+                : 'Yeni işlerde kullanılmamalı. Aşağıdaki uygulamalar geçiş planlamalı.'}
             </Alert.Description>
           </Alert.Content>
         </Alert>

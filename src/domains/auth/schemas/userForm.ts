@@ -3,9 +3,9 @@ import { email, enumChoice, requiredText } from '@/lib/validation';
 import { USER_ROLES, type UserAccount, type UserAccountInput } from '../types';
 
 export const userFormSchema = z.object({
-  displayName: requiredText('Name', 120),
-  email: email('Email'),
-  role: enumChoice(USER_ROLES, 'a role'),
+  displayName: requiredText('Ad', 120),
+  email: email('E-posta'),
+  role: enumChoice(USER_ROLES, 'bir rol'),
   personId: z.string(),
   active: z.boolean(),
 });

@@ -37,36 +37,36 @@ export const CURRENCIES = ['EUR', 'USD', 'GBP', 'TRY'] as const;
 
 const milestoneSchema = z.object({
   id: z.string(),
-  title: requiredText('Milestone', 160),
-  dueDate: requiredDate('Due date'),
-  status: enumChoice(MILESTONE_STATUSES, 'a status'),
+  title: requiredText('Kilometre taşı', 160),
+  dueDate: requiredDate('Termin tarihi'),
+  status: enumChoice(MILESTONE_STATUSES, 'bir durum'),
   completedDate: optionalDate,
 });
 
 const impactSchema = z.object({
-  applicationId: requiredChoice('an application'),
-  impactType: enumChoice(APPLICATION_IMPACT_TYPES, 'an impact'),
-  description: optionalText('What changes', 300),
+  applicationId: requiredChoice('bir uygulama'),
+  impactType: enumChoice(APPLICATION_IMPACT_TYPES, 'bir etki'),
+  description: optionalText('Ne değişiyor', 300),
 });
 
 export const projectFormSchema = z
   .object({
-    name: requiredText('Project name', 160),
-    code: requiredText('Code', 12).regex(
+    name: requiredText('Proje adı', 160),
+    code: requiredText('Kod', 12).regex(
       /^[A-Z0-9-]+$/,
-      'Use capital letters, digits and hyphens only.',
+      'Yalnızca büyük harf, rakam ve kısa çizgi kullanın.',
     ),
-    shortName: optionalText('Short name', 60),
-    type: enumChoice(PROJECT_TYPES, 'a project type'),
-    priority: enumChoice(PROJECT_PRIORITIES, 'a priority'),
-    status: enumChoice(PROJECT_STATUSES, 'a status'),
-    health: enumChoice(PROJECT_HEALTHS, 'a health'),
-    confidentiality: enumChoice(CONFIDENTIALITY_LEVELS, 'a confidentiality level'),
+    shortName: optionalText('Kısa ad', 60),
+    type: enumChoice(PROJECT_TYPES, 'bir proje türü'),
+    priority: enumChoice(PROJECT_PRIORITIES, 'bir öncelik'),
+    status: enumChoice(PROJECT_STATUSES, 'bir durum'),
+    health: enumChoice(PROJECT_HEALTHS, 'bir sağlık durumu'),
+    confidentiality: enumChoice(CONFIDENTIALITY_LEVELS, 'bir gizlilik düzeyi'),
     tags: z.array(z.string().trim().toLowerCase().min(1).max(40)),
-    description: requiredText('Description', 1000),
-    objective: optionalText('Objective', 1000),
-    scope: optionalText('Scope', 2000),
-    outOfScope: optionalText('Out of scope', 2000),
+    description: requiredText('Açıklama', 1000),
+    objective: optionalText('Hedef', 1000),
+    scope: optionalText('Kapsam', 2000),
+    outOfScope: optionalText('Kapsam dışı', 2000),
     businessUnitId: z.string(),
     roles: z.array(roleAssignmentSchema),
     teams: z.array(teamAssignmentSchema),
@@ -74,18 +74,18 @@ export const projectFormSchema = z
     actualStartDate: optionalDate,
     plannedEndDate: optionalDate,
     actualEndDate: optionalDate,
-    progressPercentage: optionalWholeNumber('Progress', { min: 0, max: 100 }).refine(
+    progressPercentage: optionalWholeNumber('İlerleme', { min: 0, max: 100 }).refine(
       (v) => v !== '',
-      'Progress is required.',
+      'İlerleme zorunludur.',
     ),
-    currentPhase: enumChoice(PROJECT_PHASES, 'a phase'),
-    latestStatusSummary: optionalText('Status summary', 1000),
-    nextSteps: optionalText('Next steps', 1000),
+    currentPhase: enumChoice(PROJECT_PHASES, 'bir aşama'),
+    latestStatusSummary: optionalText('Durum özeti', 1000),
+    nextSteps: optionalText('Sonraki adımlar', 1000),
     hasFinancials: z.boolean(),
     currency: z.enum(CURRENCIES),
-    budget: optionalWholeNumber('Budget'),
-    actualCost: optionalWholeNumber('Actual cost'),
-    forecastCost: optionalWholeNumber('Forecast cost'),
+    budget: optionalWholeNumber('Bütçe'),
+    actualCost: optionalWholeNumber('Gerçekleşen maliyet'),
+    forecastCost: optionalWholeNumber('Tahmini maliyet'),
     applicationImpacts: z.array(impactSchema),
     milestones: z.array(milestoneSchema),
     documentation: z.array(documentationLinkSchema),
@@ -99,7 +99,7 @@ export const projectFormSchema = z
     ) {
       ctx.addIssue({
         code: 'custom',
-        message: 'Planned end must be after planned start.',
+        message: 'Planlanan bitiş, planlanan başlangıçtan sonra olmalıdır.',
         path: ['plannedEndDate'],
       });
     }
@@ -110,14 +110,14 @@ export const projectFormSchema = z
     ) {
       ctx.addIssue({
         code: 'custom',
-        message: 'Actual end must be after actual start.',
+        message: 'Gerçekleşen bitiş, gerçekleşen başlangıçtan sonra olmalıdır.',
         path: ['actualEndDate'],
       });
     }
     if (values.status === 'completed' && values.progressPercentage !== '100') {
       ctx.addIssue({
         code: 'custom',
-        message: 'A completed project should be 100% complete.',
+        message: 'Tamamlanan bir projenin ilerlemesi %100 olmalıdır.',
         path: ['progressPercentage'],
       });
     }
@@ -126,7 +126,7 @@ export const projectFormSchema = z
       if (impact.applicationId && seen.has(impact.applicationId)) {
         ctx.addIssue({
           code: 'custom',
-          message: 'This application is already listed.',
+          message: 'Bu uygulama zaten listede.',
           path: ['applicationImpacts', index, 'applicationId'],
         });
       }
@@ -136,7 +136,7 @@ export const projectFormSchema = z
       if (milestone.status === 'completed' && !milestone.completedDate) {
         ctx.addIssue({
           code: 'custom',
-          message: 'Enter the completion date.',
+          message: 'Tamamlanma tarihini girin.',
           path: ['milestones', index, 'completedDate'],
         });
       }

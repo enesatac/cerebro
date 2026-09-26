@@ -52,21 +52,21 @@ function ApplicationForm({ application }: { application?: Application }) {
   return (
     <FormPage
       form={form}
-      title={application ? `Edit ${application.name}` : 'Register application'}
+      title={application ? `Düzenle: ${application.name}` : 'Uygulama kaydet'}
       subtitle={
         application
           ? undefined
-          : 'Capture what it is, who owns it and where it runs. You can add more detail later.'
+          : 'Ne olduğunu, sahibinin kim olduğunu ve nerede çalıştığını kaydedin. Daha fazla ayrıntıyı sonra ekleyebilirsiniz.'
       }
       breadcrumbs={[
-        { label: 'Applications', to: paths.applications.list() },
+        { label: 'Uygulamalar', to: paths.applications.list() },
         ...(application
           ? [{ label: application.name, to: paths.applications.detail(application.id) }]
           : []),
-        { label: application ? 'Edit' : 'New' },
+        { label: application ? 'Düzenle' : 'Yeni' },
       ]}
       cancelTo={application ? paths.applications.detail(application.id) : paths.applications.list()}
-      submitLabel={application ? 'Save changes' : 'Register application'}
+      submitLabel={application ? 'Değişiklikleri kaydet' : 'Uygulama kaydet'}
       onSubmit={async (values) =>
         paths.applications.detail((await save.mutateAsync(toApplicationInput(values))).id)
       }
@@ -74,7 +74,7 @@ function ApplicationForm({ application }: { application?: Application }) {
         application && (
           <Can permission="portfolio:delete">
             <DeleteAction
-              entityLabel="application"
+              entityLabel="uygulama"
               entityName={application.name}
               impactKey={['application', application.id]}
               loadImpact={() => applications.getDeletionImpact(application.id)}
@@ -90,7 +90,7 @@ function ApplicationForm({ application }: { application?: Application }) {
       <StakeholderFields
         control={control}
         roleOrder={APPLICATION_ROLE_ORDER}
-        description="At least a technical owner and a business owner."
+        description="En az bir teknik sahip ve bir iş sahibi."
       />
       <ApplicationTechnologySection control={control} />
       <ApplicationEnvironmentsSection control={control} />
@@ -110,8 +110,8 @@ function EditApplication({ id }: { id: string }) {
   return (
     <QueryView
       query={query}
-      loadingLabel="Loading application"
-      errorTitle="This application could not be loaded"
+      loadingLabel="Uygulama yükleniyor"
+      errorTitle="Bu uygulama yüklenemedi"
     >
       {(application) => <ApplicationForm application={application} />}
     </QueryView>

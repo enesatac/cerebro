@@ -18,7 +18,7 @@ import { EntityLink } from '@/components/data-display/EntityLink';
 const columns: TableColumnDef<ApplicationProjectLink>[] = [
   {
     id: 'project',
-    header: 'Project',
+    header: 'Proje',
     cell: ({ row }) => (
       <span className="c-cell-stack">
         <EntityLink to={paths.projects.detail(row.original.project.id)}>
@@ -30,7 +30,7 @@ const columns: TableColumnDef<ApplicationProjectLink>[] = [
   },
   {
     id: 'impact',
-    header: 'Impact',
+    header: 'Etki',
     cell: ({ row }) => (
       <span className="c-cell-stack">
         <span>{APPLICATION_IMPACT_LABELS[row.original.impact.impactType]}</span>
@@ -40,26 +40,26 @@ const columns: TableColumnDef<ApplicationProjectLink>[] = [
   },
   {
     id: 'status',
-    header: 'Status',
+    header: 'Durum',
     cell: ({ row }) => (
       <StatusBadge {...PROJECT_STATUS_PRESENTATION[row.original.project.status]} />
     ),
   },
   {
     id: 'health',
-    header: 'Health',
+    header: 'Sağlık',
     cell: ({ row }) => (
       <StatusBadge {...PROJECT_HEALTH_PRESENTATION[row.original.project.health]} />
     ),
   },
   {
     id: 'manager',
-    header: 'Project manager',
+    header: 'Proje yöneticisi',
     cell: ({ row }) => row.original.project.projectManager?.name ?? '—',
   },
   {
     id: 'end',
-    header: 'Planned end',
+    header: 'Planlanan bitiş',
     align: 'end',
     cell: ({ row }) => formatDate(row.original.project.plannedEndDate),
   },
@@ -70,13 +70,13 @@ export function ProjectsTab({ application }: { application: Application }) {
   return (
     <QueryView
       query={query}
-      loadingLabel="Loading projects"
-      errorTitle="Related projects could not be loaded"
+      loadingLabel="Projeler yükleniyor"
+      errorTitle="İlgili projeler yüklenemedi"
     >
       {(links) => (
         <SectionCard
-          title="Projects affecting this application"
-          description="Planned and in-flight change, and what it does to this application."
+          title="Bu uygulamayı etkileyen projeler"
+          description="Planlanan ve süren değişiklikler ile bunların bu uygulamaya etkisi."
         >
           <Table
             data={links}
@@ -85,7 +85,7 @@ export function ProjectsTab({ application }: { application: Application }) {
             emptyState={
               <EmptyState
                 compact
-                title={`No projects are recorded as affecting ${application.name}`}
+                title={`${application.name} uygulamasını etkileyen kayıtlı proje yok`}
               />
             }
           />

@@ -45,29 +45,29 @@ function useParamFilter<T extends string>(key: string, allowed: readonly T[]) {
 const dependencyColumns: TableColumnDef<ApplicationDependency>[] = [
   {
     id: 'source',
-    header: 'Application',
+    header: 'Uygulama',
     width: 220,
     cell: ({ row }) => <ApplicationRefLink applicationId={row.original.sourceApplicationId} />,
   },
   {
     id: 'target',
-    header: 'Depends on',
+    header: 'Bağımlı olduğu',
     width: 220,
     cell: ({ row }) => <ApplicationRefLink applicationId={row.original.targetApplicationId} />,
   },
   {
     id: 'type',
-    header: 'Type',
+    header: 'Tür',
     width: 130,
     cell: ({ row }) => DEPENDENCY_TYPE_LABELS[row.original.type],
   },
   {
     id: 'criticality',
-    header: 'Impact if unavailable',
+    header: 'Erişilemezse etkisi',
     width: 150,
     cell: ({ row }) => <StatusBadge {...CRITICALITY_PRESENTATION[row.original.criticality]} />,
   },
-  { id: 'description', header: 'Description', accessor: 'description' },
+  { id: 'description', header: 'Açıklama', accessor: 'description' },
 ];
 
 export function DependencyRegister() {
@@ -78,8 +78,8 @@ export function DependencyRegister() {
   return (
     <QueryView
       query={query}
-      loadingLabel="Loading dependencies"
-      errorTitle="Dependencies could not be loaded"
+      loadingLabel="Bağımlılıklar yükleniyor"
+      errorTitle="Bağımlılıklar yüklenemedi"
     >
       {(all) => {
         const visible = all
@@ -92,11 +92,11 @@ export function DependencyRegister() {
         return (
           <>
             <Toolbar
-              label="Filter dependencies"
-              add={<SmallCreateAction to={paths.dependencies.create()} label="Record dependency" />}
+              label="Bağımlılıkları filtrele"
+              add={<SmallCreateAction to={paths.dependencies.create()} label="Bağımlılık kaydet" />}
               end={
                 <FilterSummary
-                  summary={pluralize(visible.length, 'dependency', 'dependencies')}
+                  summary={pluralize(visible.length, 'bağımlılık')}
                   activeFilterCount={[type, criticality].filter(Boolean).length}
                   onReset={() => {
                     setType(null);
@@ -106,8 +106,8 @@ export function DependencyRegister() {
               }
             >
               <FilterSelect
-                label="Type"
-                allLabel="All types"
+                label="Tür"
+                allLabel="Tüm türler"
                 value={type}
                 options={DEPENDENCY_TYPES.map((value) => ({
                   value,
@@ -116,8 +116,8 @@ export function DependencyRegister() {
                 onChange={setType}
               />
               <FilterSelect
-                label="Impact"
-                allLabel="All impact levels"
+                label="Etki"
+                allLabel="Tüm etki düzeyleri"
                 value={criticality}
                 options={CRITICALITIES.map((value) => ({
                   value,
@@ -141,7 +141,7 @@ export function DependencyRegister() {
               }
               getRowId={(row) => row.id}
               pagination={PAGINATION}
-              emptyState={<EmptyState compact title="No dependencies match these filters" />}
+              emptyState={<EmptyState compact title="Bu filtrelere uyan bağımlılık yok" />}
             />
           </>
         );
@@ -153,7 +153,7 @@ export function DependencyRegister() {
 const integrationColumns: TableColumnDef<Integration>[] = [
   {
     id: 'name',
-    header: 'Integration',
+    header: 'Entegrasyon',
     width: 240,
     cell: ({ row }) => (
       <span className="c-cell-stack">
@@ -164,13 +164,13 @@ const integrationColumns: TableColumnDef<Integration>[] = [
   },
   {
     id: 'from',
-    header: 'From',
+    header: 'Kaynak',
     width: 200,
     cell: ({ row }) => <ApplicationRefLink applicationId={row.original.fromApplicationId} />,
   },
   {
     id: 'to',
-    header: 'To',
+    header: 'Hedef',
     width: 200,
     cell: ({ row }) =>
       row.original.toApplicationId ? (
@@ -178,19 +178,19 @@ const integrationColumns: TableColumnDef<Integration>[] = [
       ) : (
         <span className="c-cell-stack">
           <span>{row.original.externalPartyName}</span>
-          <span className="c-muted c-cell-stack__secondary">External</span>
+          <span className="c-muted c-cell-stack__secondary">Harici</span>
         </span>
       ),
   },
   {
     id: 'type',
-    header: 'Type',
+    header: 'Tür',
     width: 120,
     cell: ({ row }) => INTEGRATION_TYPE_LABELS[row.original.type],
   },
   {
     id: 'frequency',
-    header: 'Frequency',
+    header: 'Sıklık',
     width: 130,
     cell: ({ row }) => INTEGRATION_FREQUENCY_LABELS[row.original.frequency],
   },
@@ -203,29 +203,29 @@ export function IntegrationRegister() {
   return (
     <QueryView
       query={query}
-      loadingLabel="Loading integrations"
-      errorTitle="Integrations could not be loaded"
+      loadingLabel="Entegrasyonlar yükleniyor"
+      errorTitle="Entegrasyonlar yüklenemedi"
     >
       {(all) => {
         const visible = all.filter((i) => !type || i.type === type);
         return (
           <>
             <Toolbar
-              label="Filter integrations"
+              label="Entegrasyonları filtrele"
               add={
-                <SmallCreateAction to={paths.integrations.create()} label="Record integration" />
+                <SmallCreateAction to={paths.integrations.create()} label="Entegrasyon kaydet" />
               }
               end={
                 <FilterSummary
-                  summary={pluralize(visible.length, 'integration')}
+                  summary={pluralize(visible.length, 'entegrasyon')}
                   activeFilterCount={type ? 1 : 0}
                   onReset={() => setType(null)}
                 />
               }
             >
               <FilterSelect
-                label="Type"
-                allLabel="All types"
+                label="Tür"
+                allLabel="Tüm türler"
                 value={type}
                 options={INTEGRATION_TYPES.map((value) => ({
                   value,
@@ -249,7 +249,7 @@ export function IntegrationRegister() {
               }
               getRowId={(row) => row.id}
               pagination={PAGINATION}
-              emptyState={<EmptyState compact title="No integrations match this filter" />}
+              emptyState={<EmptyState compact title="Bu filtreye uyan entegrasyon yok" />}
             />
           </>
         );

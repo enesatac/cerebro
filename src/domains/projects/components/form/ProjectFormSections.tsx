@@ -40,73 +40,73 @@ const options = <T extends string>(values: readonly T[], label: (value: T) => st
 export function ProjectGeneralSection({ control }: Props) {
   const businessUnits = useBusinessUnitOptions();
   return (
-    <SectionCard title="General">
+    <SectionCard title="Genel">
       <div className="c-form-grid c-form-grid--three">
         <TextField
           control={control}
           name="name"
-          label="Project name"
+          label="Proje adı"
           required
           className="c-form-grid__wide"
         />
         <TextField
           control={control}
           name="code"
-          label="Code"
+          label="Kod"
           required
-          description="Short unique code, e.g. PPM."
+          description="Kısa ve benzersiz kod, ör. PPM."
         />
-        <TextField control={control} name="shortName" label="Short name" />
+        <TextField control={control} name="shortName" label="Kısa ad" />
         <SelectField
           control={control}
           name="businessUnitId"
-          label="Business unit"
+          label="İş birimi"
           options={businessUnits}
-          emptyLabel="Not set"
+          emptyLabel="Belirlenmemiş"
         />
         <SelectField
           control={control}
           name="type"
-          label="Type"
+          label="Tür"
           required
           options={options(PROJECT_TYPES, (v) => PROJECT_TYPE_LABELS[v])}
         />
         <SelectField
           control={control}
           name="status"
-          label="Status"
+          label="Durum"
           required
           options={options(PROJECT_STATUSES, (v) => PROJECT_STATUS_PRESENTATION[v].label)}
         />
         <SelectField
           control={control}
           name="health"
-          label="Health"
+          label="Sağlık"
           required
           options={options(PROJECT_HEALTHS, (v) => PROJECT_HEALTH_PRESENTATION[v].label)}
         />
         <SelectField
           control={control}
           name="priority"
-          label="Priority"
+          label="Öncelik"
           required
           options={options(PROJECT_PRIORITIES, (v) => CRITICALITY_PRESENTATION[v].label)}
         />
         <SelectField
           control={control}
           name="confidentiality"
-          label="Confidentiality"
+          label="Gizlilik"
           required
           options={options(CONFIDENTIALITY_LEVELS, (v) => CONFIDENTIALITY_LABELS[v])}
         />
-        <ChipsField control={control} name="tags" label="Tags" className="c-form-grid__wide" />
+        <ChipsField control={control} name="tags" label="Etiketler" className="c-form-grid__wide" />
       </div>
       <div className="c-stack c-form-stack">
-        <TextField control={control} name="description" label="Description" rows={2} required />
-        <TextField control={control} name="objective" label="Objective" rows={2} />
+        <TextField control={control} name="description" label="Açıklama" rows={2} required />
+        <TextField control={control} name="objective" label="Hedef" rows={2} />
         <div className="c-form-grid">
-          <TextField control={control} name="scope" label="Scope" rows={3} />
-          <TextField control={control} name="outOfScope" label="Out of scope" rows={3} />
+          <TextField control={control} name="scope" label="Kapsam" rows={3} />
+          <TextField control={control} name="outOfScope" label="Kapsam dışı" rows={3} />
         </div>
       </div>
     </SectionCard>
@@ -115,35 +115,30 @@ export function ProjectGeneralSection({ control }: Props) {
 
 export function ProjectProgressSection({ control }: Props) {
   return (
-    <SectionCard title="Timeline & progress">
+    <SectionCard title="Zaman çizelgesi ve ilerleme">
       <div className="c-form-grid c-form-grid--four">
-        <DateField control={control} name="plannedStartDate" label="Planned start" />
-        <DateField control={control} name="plannedEndDate" label="Planned end" />
-        <DateField control={control} name="actualStartDate" label="Actual start" />
-        <DateField control={control} name="actualEndDate" label="Actual end" />
+        <DateField control={control} name="plannedStartDate" label="Planlanan başlangıç" />
+        <DateField control={control} name="plannedEndDate" label="Planlanan bitiş" />
+        <DateField control={control} name="actualStartDate" label="Gerçekleşen başlangıç" />
+        <DateField control={control} name="actualEndDate" label="Gerçekleşen bitiş" />
         <SelectField
           control={control}
           name="currentPhase"
-          label="Current phase"
+          label="Mevcut aşama"
           required
           options={options(PROJECT_PHASES, (v) => PROJECT_PHASE_LABELS[v])}
         />
         <TextField
           control={control}
           name="progressPercentage"
-          label="Progress (%)"
+          label="İlerleme (%)"
           type="number"
           required
         />
       </div>
       <div className="c-form-grid c-form-stack">
-        <TextField
-          control={control}
-          name="latestStatusSummary"
-          label="Latest status summary"
-          rows={3}
-        />
-        <TextField control={control} name="nextSteps" label="Next steps" rows={3} />
+        <TextField control={control} name="latestStatusSummary" label="Son durum özeti" rows={3} />
+        <TextField control={control} name="nextSteps" label="Sonraki adımlar" rows={3} />
       </div>
     </SectionCard>
   );
@@ -153,26 +148,31 @@ export function ProjectFinancialsSection({ control }: Props) {
   const enabled = useWatch({ control, name: 'hasFinancials' });
   return (
     <SectionCard
-      title="Financials"
-      description="Optional. Budget figures may become restricted to authorised roles."
+      title="Finansal bilgiler"
+      description="İsteğe bağlı. Bütçe rakamları yetkili rollerle sınırlandırılabilir."
     >
       <SwitchField
         control={control}
         name="hasFinancials"
-        label="Track financials for this project"
+        label="Bu projenin finansal bilgilerini takip et"
       />
       {enabled && (
         <div className="c-form-grid c-form-grid--four c-form-stack">
           <SelectField
             control={control}
             name="currency"
-            label="Currency"
+            label="Para birimi"
             required
             options={CURRENCIES.map((value) => ({ value, label: value }))}
           />
-          <TextField control={control} name="budget" label="Budget" type="number" />
-          <TextField control={control} name="actualCost" label="Actual cost" type="number" />
-          <TextField control={control} name="forecastCost" label="Forecast cost" type="number" />
+          <TextField control={control} name="budget" label="Bütçe" type="number" />
+          <TextField
+            control={control}
+            name="actualCost"
+            label="Gerçekleşen maliyet"
+            type="number"
+          />
+          <TextField control={control} name="forecastCost" label="Tahmini maliyet" type="number" />
         </div>
       )}
     </SectionCard>
@@ -184,36 +184,36 @@ export function ProjectApplicationsSection({ control }: Props) {
   const { fields, append, remove } = useFieldArray({ control, name: 'applicationImpacts' });
   return (
     <SectionCard
-      title="Affected applications"
-      description="Applications this project creates, modifies, integrates with or decommissions."
+      title="Etkilenen uygulamalar"
+      description="Bu projenin oluşturduğu, değiştirdiği, entegre olduğu veya devreden çıkardığı uygulamalar."
     >
       <RepeatableList
         items={fields}
         onAdd={() => append(emptyImpact())}
         onRemove={remove}
-        addLabel="Add application"
-        removeLabel={(index) => `Remove affected application ${index + 1}`}
-        emptyText="No applications linked yet."
+        addLabel="Uygulama ekle"
+        removeLabel={(index) => `${index + 1}. etkilenen uygulamayı kaldır`}
+        emptyText="Henüz uygulama bağlanmadı."
         renderItem={(index) => (
           <div className="c-form-grid c-form-grid--three">
             <SelectField
               control={control}
               name={`applicationImpacts.${index}.applicationId`}
-              label="Application"
+              label="Uygulama"
               required
               options={applications}
             />
             <SelectField
               control={control}
               name={`applicationImpacts.${index}.impactType`}
-              label="Impact"
+              label="Etki"
               required
               options={options(APPLICATION_IMPACT_TYPES, (v) => APPLICATION_IMPACT_LABELS[v])}
             />
             <TextField
               control={control}
               name={`applicationImpacts.${index}.description`}
-              label="What changes"
+              label="Ne değişiyor"
             />
           </div>
         )}
@@ -225,39 +225,39 @@ export function ProjectApplicationsSection({ control }: Props) {
 export function ProjectMilestonesSection({ control }: Props) {
   const { fields, append, remove } = useFieldArray({ control, name: 'milestones' });
   return (
-    <SectionCard title="Milestones">
+    <SectionCard title="Kilometre taşları">
       <RepeatableList
         items={fields}
         onAdd={() => append(emptyMilestone())}
         onRemove={remove}
-        addLabel="Add milestone"
-        removeLabel={(index) => `Remove milestone ${index + 1}`}
-        emptyText="No milestones defined yet."
+        addLabel="Kilometre taşı ekle"
+        removeLabel={(index) => `${index + 1}. kilometre taşını kaldır`}
+        emptyText="Henüz kilometre taşı tanımlanmadı."
         renderItem={(index) => (
           <div className="c-form-grid c-form-grid--four">
             <TextField
               control={control}
               name={`milestones.${index}.title`}
-              label="Milestone"
+              label="Kilometre taşı"
               required
             />
             <DateField
               control={control}
               name={`milestones.${index}.dueDate`}
-              label="Due"
+              label="Termin"
               required
             />
             <SelectField
               control={control}
               name={`milestones.${index}.status`}
-              label="Status"
+              label="Durum"
               required
               options={options(MILESTONE_STATUSES, (v) => MILESTONE_STATUS_PRESENTATION[v].label)}
             />
             <DateField
               control={control}
               name={`milestones.${index}.completedDate`}
-              label="Completed"
+              label="Tamamlandı"
             />
           </div>
         )}

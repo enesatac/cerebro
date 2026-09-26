@@ -8,10 +8,10 @@ export function RouteErrorPage() {
   return (
     <main className="c-route-error">
       <ErrorState
-        title="Something went wrong"
+        title="Bir şeyler ters gitti"
         description={getErrorMessage(error)}
         onRetry={() => window.location.reload()}
-        retryLabel="Reload page"
+        retryLabel="Sayfayı yenile"
       />
     </main>
   );

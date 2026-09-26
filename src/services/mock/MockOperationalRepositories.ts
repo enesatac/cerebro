@@ -35,15 +35,12 @@ export function createMockOperationalRepositories(
     kit.assertRefs(
       input.relatedApplicationIds,
       db.applications,
-      'application',
+      'uygulama',
       'relatedApplicationIds',
     );
-    kit.assertRefs(input.relatedProjectIds, db.projects, 'project', 'relatedProjectIds');
+    kit.assertRefs(input.relatedProjectIds, db.projects, 'proje', 'relatedProjectIds');
     if (input.relatedApplicationIds.length + input.relatedProjectIds.length === 0) {
-      throw new ValidationError(
-        'Link at least one application or project.',
-        'relatedApplicationIds',
-      );
+      throw new ValidationError('En az bir uygulama veya proje bağlayın.', 'relatedApplicationIds');
     }
   };
 
@@ -59,7 +56,7 @@ export function createMockOperationalRepositories(
       nameOf: (input) => input.title,
       build: (input, id, audit) => ({ ...input, id, audit }),
       validate(input) {
-        kit.assertRefs([input.ownerId], db.people, 'person', 'ownerId');
+        kit.assertRefs([input.ownerId], db.people, 'kişi', 'ownerId');
         assertRelated(input);
       },
     }),
@@ -70,18 +67,18 @@ export function createMockOperationalRepositories(
       await wait(),
       copy(db.escalations.filter((e) => matchesRelated(e, filter)))
     ),
-    getById: async (id) => (await wait(), copy(findOrThrow(db.escalations, id, 'Escalation'))),
+    getById: async (id) => (await wait(), copy(findOrThrow(db.escalations, id, 'Eskalasyon'))),
     ...createAuditedWriteRepository<Escalation, Omit<Escalation, 'id' | 'audit'>>({
       kit,
       latencyMs,
       rows: () => db.escalations,
-      entityLabel: 'Escalation',
+      entityLabel: 'Eskalasyon',
       idPrefix: 'esc',
       nameOf: (input) => input.title,
       build: (input, id, audit) => ({ ...input, id, audit }),
       validate(input) {
-        kit.assertRefs([input.ownerId, input.raisedById], db.people, 'person', 'ownerId');
-        kit.assertRefs([input.responsibleTeamId], db.teams, 'team', 'responsibleTeamId');
+        kit.assertRefs([input.ownerId, input.raisedById], db.people, 'kişi', 'ownerId');
+        kit.assertRefs([input.responsibleTeamId], db.teams, 'ekip', 'responsibleTeamId');
         assertRelated(input);
       },
     }),
@@ -92,17 +89,17 @@ export function createMockOperationalRepositories(
       await wait(),
       copy(db.decisions.filter((d) => matchesRelated(d, filter)))
     ),
-    getById: async (id) => (await wait(), copy(findOrThrow(db.decisions, id, 'Decision'))),
+    getById: async (id) => (await wait(), copy(findOrThrow(db.decisions, id, 'Karar'))),
     ...createAuditedWriteRepository<Decision, Omit<Decision, 'id' | 'audit'>>({
       kit,
       latencyMs,
       rows: () => db.decisions,
-      entityLabel: 'Decision',
+      entityLabel: 'Karar',
       idPrefix: 'dec',
       nameOf: (input) => input.title,
       build: (input, id, audit) => ({ ...input, id, audit }),
       validate(input) {
-        kit.assertRefs(input.decidedByIds, db.people, 'person', 'decidedByIds');
+        kit.assertRefs(input.decidedByIds, db.people, 'kişi', 'decidedByIds');
         assertRelated(input);
       },
     }),
@@ -126,7 +123,7 @@ export function createMockOperationalRepositories(
     listDependencies: async () => (await wait(), copy(db.dependencies)),
     listIntegrations: async () => (await wait(), copy(db.integrations)),
     dependencies: {
-      getById: async (id) => (await wait(), copy(findOrThrow(db.dependencies, id, 'Dependency'))),
+      getById: async (id) => (await wait(), copy(findOrThrow(db.dependencies, id, 'Bağımlılık'))),
       ...createAuditedWriteRepository<
         ApplicationDependency,
         Omit<ApplicationDependency, 'id' | 'audit'>
@@ -134,7 +131,7 @@ export function createMockOperationalRepositories(
         kit,
         latencyMs,
         rows: () => db.dependencies,
-        entityLabel: 'Dependency',
+        entityLabel: 'Bağımlılık',
         idPrefix: 'dep',
         nameOf: (input) =>
           `${input.sourceApplicationId}-${input.targetApplicationId}`.replace(/app-/g, ''),
@@ -143,12 +140,12 @@ export function createMockOperationalRepositories(
           kit.assertRefs(
             [input.sourceApplicationId, input.targetApplicationId],
             db.applications,
-            'application',
+            'uygulama',
             'targetApplicationId',
           );
           if (input.sourceApplicationId === input.targetApplicationId) {
             throw new ValidationError(
-              'An application cannot depend on itself.',
+              'Bir uygulama kendisine bağımlı olamaz.',
               'targetApplicationId',
             );
           }
@@ -160,20 +157,17 @@ export function createMockOperationalRepositories(
               d.type === input.type,
           );
           if (duplicate)
-            throw new ValidationError(
-              'This dependency is already recorded.',
-              'targetApplicationId',
-            );
+            throw new ValidationError('Bu bağımlılık zaten kayıtlı.', 'targetApplicationId');
         },
       }),
     },
     integrations: {
-      getById: async (id) => (await wait(), copy(findOrThrow(db.integrations, id, 'Integration'))),
+      getById: async (id) => (await wait(), copy(findOrThrow(db.integrations, id, 'Entegrasyon'))),
       ...createAuditedWriteRepository<Integration, Omit<Integration, 'id' | 'audit'>>({
         kit,
         latencyMs,
         rows: () => db.integrations,
-        entityLabel: 'Integration',
+        entityLabel: 'Entegrasyon',
         idPrefix: 'int',
         nameOf: (input) => input.name,
         build: (input, id, audit) => ({ ...input, id, audit }),
@@ -181,12 +175,12 @@ export function createMockOperationalRepositories(
           kit.assertRefs(
             [input.fromApplicationId, input.toApplicationId],
             db.applications,
-            'application',
+            'uygulama',
             'toApplicationId',
           );
           if ((input.toApplicationId === null) === (input.externalPartyName === null)) {
             throw new ValidationError(
-              'Choose either a target application or an external party.',
+              'Hedef uygulama veya harici taraftan birini seçin.',
               'toApplicationId',
             );
           }

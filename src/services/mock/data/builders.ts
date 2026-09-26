@@ -81,12 +81,12 @@ export const env = (
   notes?: string,
 ): Environment => {
   const names: Record<EnvironmentType, string> = {
-    development: 'Development',
+    development: 'Geliştirme',
     test: 'Test',
     uat: 'UAT',
-    'pre-production': 'Pre-production',
-    production: 'Production',
-    'disaster-recovery': 'Disaster recovery',
+    'pre-production': 'Canlı öncesi',
+    production: 'Canlı',
+    'disaster-recovery': 'Felaket kurtarma',
   };
   return {
     id,

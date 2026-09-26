@@ -10,60 +10,60 @@ import type {
 } from '../types';
 
 export const LIFECYCLE_PRESENTATION: Record<ApplicationLifecycle, StatusPresentation> = {
-  planned: { label: 'Planned', variant: 'neutral' },
-  development: { label: 'Development', variant: 'info' },
-  active: { label: 'Active', variant: 'success' },
-  maintenance: { label: 'Maintenance', variant: 'secondary' },
-  deprecated: { label: 'Deprecated', variant: 'warning' },
-  retired: { label: 'Retired', variant: 'dark' },
+  planned: { label: 'Planlandı', variant: 'neutral' },
+  development: { label: 'Geliştirmede', variant: 'info' },
+  active: { label: 'Aktif', variant: 'success' },
+  maintenance: { label: 'Bakımda', variant: 'secondary' },
+  deprecated: { label: 'Kullanımdan kalkıyor', variant: 'warning' },
+  retired: { label: 'Emekli', variant: 'dark' },
 };
 
 export const OPERATIONAL_STATUS_PRESENTATION: Record<OperationalStatus, StatusPresentation> = {
-  operational: { label: 'Operational', variant: 'success' },
-  degraded: { label: 'Degraded', variant: 'warning' },
-  outage: { label: 'Outage', variant: 'danger' },
-  'not-deployed': { label: 'Not deployed', variant: 'neutral' },
+  operational: { label: 'Çalışıyor', variant: 'success' },
+  degraded: { label: 'Kısmi kesinti', variant: 'warning' },
+  outage: { label: 'Kesinti', variant: 'danger' },
+  'not-deployed': { label: 'Kurulu değil', variant: 'neutral' },
 };
 
 export const ENVIRONMENT_STATUS_PRESENTATION: Record<EnvironmentStatus, StatusPresentation> = {
-  available: { label: 'Available', variant: 'success' },
-  degraded: { label: 'Degraded', variant: 'warning' },
-  unavailable: { label: 'Unavailable', variant: 'danger' },
-  decommissioned: { label: 'Decommissioned', variant: 'neutral' },
+  available: { label: 'Erişilebilir', variant: 'success' },
+  degraded: { label: 'Kısmi kesinti', variant: 'warning' },
+  unavailable: { label: 'Erişilemiyor', variant: 'danger' },
+  decommissioned: { label: 'Devreden çıkarıldı', variant: 'neutral' },
 };
 
 export const APPLICATION_TYPE_LABELS: Record<ApplicationType, string> = {
-  'web-application': 'Web application',
-  'api-service': 'API service',
-  'integration-platform': 'Integration platform',
-  'data-platform': 'Data platform',
-  'batch-processing': 'Batch processing',
-  'mobile-backend': 'Mobile backend',
-  'saas-product': 'SaaS product',
+  'web-application': 'Web uygulaması',
+  'api-service': 'API servisi',
+  'integration-platform': 'Entegrasyon platformu',
+  'data-platform': 'Veri platformu',
+  'batch-processing': 'Toplu işleme',
+  'mobile-backend': 'Mobil backend',
+  'saas-product': 'SaaS ürünü',
 };
 
 export const HOSTING_MODEL_LABELS: Record<HostingModel, string> = {
-  'on-premises': 'On-premises',
-  'private-cloud': 'Private cloud',
-  'public-cloud': 'Public cloud',
-  hybrid: 'Hybrid',
-  saas: 'SaaS (vendor-hosted)',
+  'on-premises': 'Şirket içi',
+  'private-cloud': 'Özel bulut',
+  'public-cloud': 'Genel bulut',
+  hybrid: 'Hibrit',
+  saas: 'SaaS (tedarikçi barındırmalı)',
 };
 
 export const ENVIRONMENT_TYPE_LABELS: Record<EnvironmentType, string> = {
-  development: 'Development',
+  development: 'Geliştirme',
   test: 'Test',
   uat: 'UAT',
-  'pre-production': 'Pre-production',
-  production: 'Production',
-  'disaster-recovery': 'Disaster recovery',
+  'pre-production': 'Canlı öncesi',
+  production: 'Canlı',
+  'disaster-recovery': 'Felaket kurtarma',
 };
 
 export const SOURCE_REPOSITORY_TYPE_LABELS: Record<SourceRepositoryType, string> = {
   frontend: 'Frontend',
   backend: 'Backend',
-  infrastructure: 'Infrastructure',
-  documentation: 'Documentation',
-  library: 'Library',
-  other: 'Other',
+  infrastructure: 'Altyapı',
+  documentation: 'Dokümantasyon',
+  library: 'Kütüphane',
+  other: 'Diğer',
 };

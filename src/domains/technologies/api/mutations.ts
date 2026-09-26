@@ -7,7 +7,7 @@ export function useSaveTechnology(id?: string) {
   return useRepositoryMutation(
     (input: TechnologyInput) => (id ? technologies.update(id, input) : technologies.create(input)),
     {
-      successTitle: (tech) => (id ? `${tech.name} updated` : `${tech.name} added to the catalogue`),
+      successTitle: (tech) => (id ? `${tech.name} güncellendi` : `${tech.name} kataloğa eklendi`),
     },
   );
 }
@@ -15,6 +15,6 @@ export function useSaveTechnology(id?: string) {
 export function useDeleteTechnology() {
   const { technologies } = useRepositories();
   return useRepositoryMutation((id: string) => technologies.remove(id), {
-    successTitle: () => 'Technology deleted',
+    successTitle: () => 'Teknoloji silindi',
   });
 }

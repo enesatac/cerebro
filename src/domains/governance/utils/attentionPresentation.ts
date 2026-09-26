@@ -2,20 +2,20 @@ import { paths } from '@/app/router/paths';
 import type { AttentionItem, AttentionKind, AttentionSubjectKind } from '../types';
 
 export const ATTENTION_KIND_LABELS: Record<AttentionKind, string> = {
-  'missing-technical-owner': 'Ownership gap',
-  'review-overdue': 'Review overdue',
-  'retired-technology': 'Retired technology',
+  'missing-technical-owner': 'Sahiplik eksik',
+  'review-overdue': 'Gözden geçirme gecikmiş',
+  'retired-technology': 'Emekli teknoloji',
   'critical-risk': 'Risk',
-  'active-escalation': 'Escalation',
-  'overdue-milestone': 'Overdue milestone',
-  'project-health': 'Project health',
+  'active-escalation': 'Eskalasyon',
+  'overdue-milestone': 'Gecikmiş kilometre taşı',
+  'project-health': 'Proje sağlığı',
 };
 
 export const ATTENTION_SUBJECT_LABELS: Record<AttentionSubjectKind, string> = {
-  application: 'Application',
-  project: 'Project',
+  application: 'Uygulama',
+  project: 'Proje',
   risk: 'Risk',
-  escalation: 'Escalation',
+  escalation: 'Eskalasyon',
 };
 
 export function attentionHref(item: AttentionItem): string {

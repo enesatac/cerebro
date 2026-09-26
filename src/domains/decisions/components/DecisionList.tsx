@@ -24,7 +24,7 @@ export function DecisionList({ decisions, emptyTitle }: DecisionListProps) {
       <EmptyState
         compact
         title={emptyTitle}
-        description="Record significant architectural and business decisions so the reasoning outlives the meeting."
+        description="Gerekçe toplantıdan sonra da kalsın diye önemli mimari ve iş kararlarını kaydedin."
       />
     );
   }
@@ -41,7 +41,7 @@ export function DecisionList({ decisions, emptyTitle }: DecisionListProps) {
                 <span className="c-decision-list__meta">
                   <StatusBadge
                     {...DECISION_STATUS_PRESENTATION[decision.status]}
-                    context="Decision status:"
+                    context="Karar durumu:"
                   />
                   <span className="c-muted">{formatDate(decision.decisionDate)}</span>
                 </span>
@@ -52,13 +52,13 @@ export function DecisionList({ decisions, emptyTitle }: DecisionListProps) {
           <Accordion.Content>
             <DetailList
               items={[
-                { label: 'Context', value: decision.context },
-                { label: 'Decision', value: decision.decision },
-                { label: 'Rationale', value: decision.rationale },
-                { label: 'Alternatives considered', value: decision.alternatives.join('; ') },
-                { label: 'Consequences', value: decision.consequences },
+                { label: 'Bağlam', value: decision.context },
+                { label: 'Karar', value: decision.decision },
+                { label: 'Gerekçe', value: decision.rationale },
+                { label: 'Değerlendirilen alternatifler', value: decision.alternatives.join('; ') },
+                { label: 'Sonuçlar', value: decision.consequences },
                 {
-                  label: 'Decided by',
+                  label: 'Karar verenler',
                   value: decision.decidedByIds
                     .map((id) => people.data?.get(id)?.fullName ?? id)
                     .join(', '),
@@ -70,9 +70,9 @@ export function DecisionList({ decisions, emptyTitle }: DecisionListProps) {
                 <Link
                   to={paths.decisionForms.edit(decision.id)}
                   className="c-link"
-                  aria-label={`Edit decision: ${decision.title}`}
+                  aria-label={`Kararı düzenle: ${decision.title}`}
                 >
-                  Edit decision
+                  Kararı düzenle
                 </Link>
               </p>
             )}

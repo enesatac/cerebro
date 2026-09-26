@@ -11,7 +11,7 @@ export function AppShell() {
   return (
     <div className="c-shell">
       <a className="c-skip-link" href="#main-content">
-        Skip to main content
+        Ana içeriğe geç
       </a>
       <header className="c-topbar">
         <Link to={paths.dashboard()} className="c-topbar__brand">
@@ -26,7 +26,7 @@ export function AppShell() {
       <Sidebar />
       <main id="main-content" className="c-main" tabIndex={-1}>
         <RequireAuth>
-          <Suspense fallback={<LoadingState label="Loading page" />}>
+          <Suspense fallback={<LoadingState label="Sayfa yükleniyor" />}>
             <Outlet />
           </Suspense>
         </RequireAuth>

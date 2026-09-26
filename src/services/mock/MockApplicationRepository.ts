@@ -100,20 +100,20 @@ export class MockApplicationRepository implements ApplicationRepository {
       input.code,
       (a) => a.code,
       excludeId,
-      `Another application already uses the code "${input.code}".`,
+      `"${input.code}" kodu başka bir uygulama tarafından kullanılıyor.`,
       'code',
     );
-    kit.assertRefs([input.businessUnitId], db.businessUnits, 'business unit', 'businessUnitId');
+    kit.assertRefs([input.businessUnitId], db.businessUnits, 'iş birimi', 'businessUnitId');
     kit.assertRefs(
       input.roles.map((r) => r.personId),
       db.people,
-      'person',
+      'kişi',
       'roles',
     );
     kit.assertRefs(
       input.teams.map((t) => t.teamId),
       db.teams,
-      'team',
+      'ekip',
       'teams',
     );
     kit.assertRefs(
@@ -122,7 +122,7 @@ export class MockApplicationRepository implements ApplicationRepository {
         ...input.dataStores.map((d) => d.technologyId),
       ],
       db.technologies,
-      'technology',
+      'teknoloji',
       'technologies',
     );
   }
@@ -141,7 +141,7 @@ export class MockApplicationRepository implements ApplicationRepository {
 
   async update(id: string, input: ApplicationInput) {
     const user = await this.kit.begin();
-    const current = findOrThrow(this.db.applications, id, 'Application');
+    const current = findOrThrow(this.db.applications, id, 'Uygulama');
     this.validate(input, id);
     return copy(
       replaceRow(this.db.applications, {
@@ -154,14 +154,14 @@ export class MockApplicationRepository implements ApplicationRepository {
 
   async remove(id: string) {
     await this.kit.begin('portfolio:delete');
-    findOrThrow(this.db.applications, id, 'Application');
+    findOrThrow(this.db.applications, id, 'Uygulama');
     deleteApplicationCascade(this.db, id);
     removeRow(this.db.applications, id);
   }
 
   async getDeletionImpact(id: string) {
     await delay(this.latencyMs);
-    findOrThrow(this.db.applications, id, 'Application');
+    findOrThrow(this.db.applications, id, 'Uygulama');
     return applicationDeletionImpact(this.db, id);
   }
 
@@ -181,7 +181,7 @@ export class MockApplicationRepository implements ApplicationRepository {
 
   async getById(id: string) {
     await delay(this.latencyMs);
-    return copy(findOrThrow(this.db.applications, id, 'Application'));
+    return copy(findOrThrow(this.db.applications, id, 'Uygulama'));
   }
 
   async listRefs() {

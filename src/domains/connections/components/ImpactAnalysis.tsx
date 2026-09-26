@@ -15,20 +15,20 @@ function impactColumns(nameOf: (id: string) => string): TableColumnDef<ImpactNod
   return [
     {
       id: 'application',
-      header: 'Application',
+      header: 'Uygulama',
       width: 260,
       cell: ({ row }) => <ApplicationRefLink applicationId={row.original.applicationId} />,
     },
     {
       id: 'relationship',
-      header: 'Relationship',
+      header: 'İlişki',
       width: 150,
       cell: ({ row }) =>
-        row.original.depth === 1 ? 'Direct' : `Indirect · ${row.original.depth} steps`,
+        row.original.depth === 1 ? 'Doğrudan' : `Dolaylı · ${row.original.depth} adım`,
     },
     {
       id: 'criticality',
-      header: 'Impact',
+      header: 'Etki',
       width: 120,
       cell: ({ row }) => (
         <StatusBadge {...CRITICALITY_PRESENTATION[row.original.pathCriticality]} />
@@ -36,7 +36,7 @@ function impactColumns(nameOf: (id: string) => string): TableColumnDef<ImpactNod
     },
     {
       id: 'path',
-      header: 'Path',
+      header: 'Yol',
       cell: ({ row }) => (
         <span className="c-muted">{row.original.path.map(nameOf).join(' → ')}</span>
       ),
@@ -63,9 +63,9 @@ export function ImpactAnalysis() {
   return (
     <div className="c-stack">
       <Field className="c-impact-picker" disabled={!refs.data}>
-        <Field.Label>Application</Field.Label>
+        <Field.Label>Uygulama</Field.Label>
         <Select size="small" value={selectedId ?? undefined} onChange={select}>
-          <Select.Trigger placeholder="Choose an application to analyse" />
+          <Select.Trigger placeholder="Analiz edilecek uygulamayı seçin" />
           <Select.Content>
             <Select.Viewport>
               {options.map((ref) => (
@@ -77,21 +77,21 @@ export function ImpactAnalysis() {
           </Select.Content>
         </Select>
         <Field.Description>
-          Impact is the weakest link along the path: a critical dependency reached through a low one
-          counts as low.
+          Etki, yol üzerindeki en zayıf halkadır: düşük bir bağımlılık üzerinden ulaşılan kritik bir
+          bağımlılık düşük sayılır.
         </Field.Description>
       </Field>
 
       {!selectedId ? (
         <EmptyState
-          title="Choose an application to see its blast radius"
-          description="Cerebro follows recorded dependencies in both directions: what stops working if it fails, and what it needs to run."
+          title="Etki alanını görmek için bir uygulama seçin"
+          description="Cerebro kayıtlı bağımlılıkları iki yönde izler: uygulama çökerse neyin durduğu ve çalışmak için neye ihtiyaç duyduğu."
         />
       ) : (
         <QueryView
           query={dependencies}
-          loadingLabel="Analysing dependencies"
-          errorTitle="Dependencies could not be loaded"
+          loadingLabel="Bağımlılıklar analiz ediliyor"
+          errorTitle="Bağımlılıklar yüklenemedi"
         >
           {(all) => {
             const downstream = analyseImpact(all, selectedId, 'downstream');
@@ -101,10 +101,10 @@ export function ImpactAnalysis() {
             return (
               <>
                 <SectionCard
-                  title={`Affected if ${name} is unavailable (${downstream.length})`}
+                  title={`${name} erişilemezse etkilenenler (${downstream.length})`}
                   description={
                     downstream.length > 0
-                      ? `${pluralize(direct, 'application')} directly, ${pluralize(downstream.length - direct, 'more application')} indirectly.`
+                      ? `${pluralize(direct, 'uygulama')} doğrudan, ${pluralize(downstream.length - direct, 'uygulama')} daha dolaylı olarak.`
                       : undefined
                   }
                 >
@@ -113,17 +113,20 @@ export function ImpactAnalysis() {
                     columns={impactColumns(nameOf)}
                     getRowId={(row) => row.applicationId}
                     emptyState={
-                      <EmptyState compact title={`No recorded application depends on ${name}`} />
+                      <EmptyState
+                        compact
+                        title={`Kayıtlı hiçbir uygulama şuna bağımlı değil: ${name}`}
+                      />
                     }
                   />
                 </SectionCard>
-                <SectionCard title={`${name} relies on (${upstream.length})`}>
+                <SectionCard title={`${name} şunlara bağımlı (${upstream.length})`}>
                   <Table
                     data={upstream}
                     columns={impactColumns(nameOf)}
                     getRowId={(row) => row.applicationId}
                     emptyState={
-                      <EmptyState compact title={`${name} has no recorded dependencies`} />
+                      <EmptyState compact title={`${name} için kayıtlı bağımlılık yok`} />
                     }
                   />
                 </SectionCard>

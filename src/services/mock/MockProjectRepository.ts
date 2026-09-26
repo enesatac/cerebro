@@ -64,26 +64,26 @@ export class MockProjectRepository implements ProjectRepository {
       input.code,
       (p) => p.code,
       excludeId,
-      `Another project already uses the code "${input.code}".`,
+      `"${input.code}" kodu başka bir proje tarafından kullanılıyor.`,
       'code',
     );
-    kit.assertRefs([input.businessUnitId], db.businessUnits, 'business unit', 'businessUnitId');
+    kit.assertRefs([input.businessUnitId], db.businessUnits, 'iş birimi', 'businessUnitId');
     kit.assertRefs(
       input.roles.map((r) => r.personId),
       db.people,
-      'person',
+      'kişi',
       'roles',
     );
     kit.assertRefs(
       input.teams.map((t) => t.teamId),
       db.teams,
-      'team',
+      'ekip',
       'teams',
     );
     kit.assertRefs(
       input.applicationImpacts.map((i) => i.applicationId),
       db.applications,
-      'application',
+      'uygulama',
       'applicationImpacts',
     );
   }
@@ -102,7 +102,7 @@ export class MockProjectRepository implements ProjectRepository {
 
   async update(id: string, input: ProjectInput) {
     const user = await this.kit.begin();
-    const current = findOrThrow(this.db.projects, id, 'Project');
+    const current = findOrThrow(this.db.projects, id, 'Proje');
     this.validate(input, id);
     return copy(
       replaceRow(this.db.projects, {
@@ -115,14 +115,14 @@ export class MockProjectRepository implements ProjectRepository {
 
   async remove(id: string) {
     await this.kit.begin('portfolio:delete');
-    findOrThrow(this.db.projects, id, 'Project');
+    findOrThrow(this.db.projects, id, 'Proje');
     deleteProjectCascade(this.db, id);
     removeRow(this.db.projects, id);
   }
 
   async getDeletionImpact(id: string) {
     await delay(this.latencyMs);
-    findOrThrow(this.db.projects, id, 'Project');
+    findOrThrow(this.db.projects, id, 'Proje');
     return projectDeletionImpact(this.db, id);
   }
 
@@ -147,7 +147,7 @@ export class MockProjectRepository implements ProjectRepository {
 
   async getById(id: string) {
     await delay(this.latencyMs);
-    return copy(findOrThrow(this.db.projects, id, 'Project'));
+    return copy(findOrThrow(this.db.projects, id, 'Proje'));
   }
 
   async listRefs() {

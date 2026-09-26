@@ -47,16 +47,16 @@ function TechnologyForm({ technology }: { technology?: Technology }) {
   return (
     <FormPage
       form={form}
-      title={technology ? `Edit ${technology.name}` : 'Add technology'}
+      title={technology ? `Düzenle: ${technology.name}` : 'Teknoloji ekle'}
       breadcrumbs={[
-        { label: 'Technologies', to: paths.technologies.list() },
+        { label: 'Teknolojiler', to: paths.technologies.list() },
         ...(technology
           ? [{ label: technology.name, to: paths.technologies.detail(technology.id) }]
           : []),
-        { label: technology ? 'Edit' : 'New' },
+        { label: technology ? 'Düzenle' : 'Yeni' },
       ]}
       cancelTo={technology ? paths.technologies.detail(technology.id) : paths.technologies.list()}
-      submitLabel={technology ? 'Save changes' : 'Add technology'}
+      submitLabel={technology ? 'Değişiklikleri kaydet' : 'Teknoloji ekle'}
       onSubmit={async (values) =>
         paths.technologies.detail((await save.mutateAsync(toTechnologyInput(values))).id)
       }
@@ -64,7 +64,7 @@ function TechnologyForm({ technology }: { technology?: Technology }) {
         technology && (
           <Can permission="portfolio:delete">
             <DeleteAction
-              entityLabel="technology"
+              entityLabel="teknoloji"
               entityName={technology.name}
               impactKey={['technology', technology.id]}
               loadImpact={() => technologies.getDeletionImpact(technology.id)}
@@ -75,28 +75,28 @@ function TechnologyForm({ technology }: { technology?: Technology }) {
         )
       }
     >
-      <SectionCard title="Technology">
+      <SectionCard title="Teknoloji">
         <div className="c-form-grid">
-          <TextField control={control} name="name" label="Name" required />
+          <TextField control={control} name="name" label="Ad" required />
           <SelectField
             control={control}
             name="category"
-            label="Category"
+            label="Kategori"
             options={CATEGORY_OPTIONS}
             required
           />
           <SelectField
             control={control}
             name="status"
-            label="Status"
+            label="Durum"
             options={STATUS_OPTIONS}
             required
-            description="Preferred for new work, supported, deprecated (plan migration) or retired (unsupported)."
+            description="Yeni işler için tercih edilen, desteklenen, kullanımdan kalkan (geçiş planlayın) veya emekli (desteklenmiyor)."
           />
           <TextField
             control={control}
             name="description"
-            label="Description"
+            label="Açıklama"
             rows={3}
             className="c-form-grid__wide"
           />
@@ -117,8 +117,8 @@ function EditTechnology({ id }: { id: string }) {
   return (
     <QueryView
       query={query}
-      loadingLabel="Loading technology"
-      errorTitle="This technology could not be loaded"
+      loadingLabel="Teknoloji yükleniyor"
+      errorTitle="Bu teknoloji yüklenemedi"
     >
       {(technology) => <TechnologyForm technology={technology} />}
     </QueryView>

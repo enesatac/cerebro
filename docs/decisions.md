@@ -2,6 +2,18 @@
 
 Short records of decisions that shape the codebase. Newest first.
 
+## D-013 · Turkish user interface, English code (2026-09-26)
+
+Everything a user sees — labels, messages, validation, toasts and mock data — is Turkish; code,
+identifiers, comments and docs stay English. Strings live inline (no i18n framework) because only
+one language is needed; introduce one if a second language is ever required. Dates format with the
+date-fns `tr` locale and numbers with `tr-TR` (`lib/dates.ts`, `lib/format.ts`). Turkish nouns stay
+singular after numbers, so `pluralize` defaults the plural to the singular. Choice-validation
+labels are lower-case accusative phrases (`bir rol`, `bağımlı uygulamayı`) rendered as
+`<Label> seçin.`. Record ids stay English slugs (`app-payment-gateway`); new ids are slugified
+with Turkish characters folded to ASCII. The dev mock database key moved to
+`cerebro.demo-db.v2` so browsers reload the translated seed.
+
 ## D-012 · Saving a record counts as a review (2026-09-26)
 
 Editing a record through its form sets `lastReviewedAt/By`: the editor has just seen every field.

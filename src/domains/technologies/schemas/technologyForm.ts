@@ -8,10 +8,10 @@ import {
 } from '../types';
 
 export const technologyFormSchema = z.object({
-  name: requiredText('Name', 80),
-  category: enumChoice(TECHNOLOGY_CATEGORIES, 'a category'),
-  status: enumChoice(TECHNOLOGY_STATUSES, 'a status'),
-  description: optionalText('Description', 500),
+  name: requiredText('Ad', 80),
+  category: enumChoice(TECHNOLOGY_CATEGORIES, 'bir kategori'),
+  status: enumChoice(TECHNOLOGY_STATUSES, 'bir durum'),
+  description: optionalText('Açıklama', 500),
 });
 
 export type TechnologyFormValues = z.infer<typeof technologyFormSchema>;

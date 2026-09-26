@@ -118,7 +118,7 @@ export function SelectField<T extends FieldValues>({
   disabled,
   className,
   options,
-  placeholder = 'Select…',
+  placeholder = 'Seçin…',
   emptyLabel,
 }: SelectFieldProps<T>) {
   return (
@@ -178,7 +178,7 @@ export function ChipsField<T extends FieldValues>({
   required,
   disabled,
   className,
-  placeholder = 'Type and press Enter',
+  placeholder = 'Yazıp Enter’a basın',
 }: FormFieldProps<T> & { placeholder?: string }) {
   return (
     <Controller
@@ -210,7 +210,7 @@ export function ChipsField<T extends FieldValues>({
           </Input>
           <Message
             error={fieldState.error?.message}
-            description={description ?? 'Press Enter or type a comma to add each value.'}
+            description={description ?? 'Her değeri eklemek için Enter’a basın veya virgül yazın.'}
           />
         </Field>
       )}
@@ -255,7 +255,7 @@ export function MultiSelectField<T extends FieldValues>({
               disabled={disabled || available.length === 0}
             >
               <Select.Trigger
-                placeholder={available.length === 0 ? 'All options added' : addLabel}
+                placeholder={available.length === 0 ? 'Tüm seçenekler eklendi' : addLabel}
                 aria-invalid={fieldState.invalid}
                 onBlur={field.onBlur}
               />
@@ -270,7 +270,7 @@ export function MultiSelectField<T extends FieldValues>({
               </Select.Content>
             </Select>
             {selected.length > 0 && (
-              <ul className="c-chip-list" aria-label={`Selected ${label.toLowerCase()}`}>
+              <ul className="c-chip-list" aria-label={`Seçilen: ${label}`}>
                 {selected.map((value) => (
                   <li key={value}>
                     <Chip

@@ -7,14 +7,14 @@ export function useSaveDependency(id?: string) {
   return useRepositoryMutation(
     (input: DependencyInput) =>
       id ? connections.dependencies.update(id, input) : connections.dependencies.create(input),
-    { successTitle: () => (id ? 'Dependency updated' : 'Dependency recorded') },
+    { successTitle: () => (id ? 'Bağımlılık güncellendi' : 'Bağımlılık kaydedildi') },
   );
 }
 
 export function useDeleteDependency() {
   const { connections } = useRepositories();
   return useRepositoryMutation((id: string) => connections.dependencies.remove(id), {
-    successTitle: () => 'Dependency deleted',
+    successTitle: () => 'Bağımlılık silindi',
   });
 }
 
@@ -25,7 +25,7 @@ export function useSaveIntegration(id?: string) {
       id ? connections.integrations.update(id, input) : connections.integrations.create(input),
     {
       successTitle: (integration) =>
-        id ? `${integration.name} updated` : `${integration.name} recorded`,
+        id ? `${integration.name} güncellendi` : `${integration.name} kaydedildi`,
     },
   );
 }
@@ -33,6 +33,6 @@ export function useSaveIntegration(id?: string) {
 export function useDeleteIntegration() {
   const { connections } = useRepositories();
   return useRepositoryMutation((id: string) => connections.integrations.remove(id), {
-    successTitle: () => 'Integration deleted',
+    successTitle: () => 'Entegrasyon silindi',
   });
 }

@@ -41,72 +41,72 @@ const options = <T extends string>(values: readonly T[], label: (value: T) => st
 
 export function ApplicationGeneralSection({ control }: Props) {
   return (
-    <SectionCard title="General">
+    <SectionCard title="Genel">
       <div className="c-form-grid c-form-grid--three">
         <TextField
           control={control}
           name="name"
-          label="Application name"
+          label="Uygulama adı"
           required
           className="c-form-grid__wide"
         />
         <TextField
           control={control}
           name="code"
-          label="Code"
+          label="Kod"
           required
-          description="Short unique code, e.g. PAYGW."
+          description="Kısa ve benzersiz kod, ör. PAYGW."
         />
         <SelectField
           control={control}
           name="type"
-          label="Type"
+          label="Tür"
           required
           options={options(APPLICATION_TYPES, (v) => APPLICATION_TYPE_LABELS[v])}
         />
         <SelectField
           control={control}
           name="lifecycle"
-          label="Lifecycle"
+          label="Yaşam döngüsü"
           required
           options={options(APPLICATION_LIFECYCLES, (v) => LIFECYCLE_PRESENTATION[v].label)}
         />
         <SelectField
           control={control}
           name="criticality"
-          label="Criticality"
+          label="Kritiklik"
           required
           options={options(CRITICALITIES, (v) => CRITICALITY_PRESENTATION[v].label)}
         />
         <SelectField
           control={control}
           name="operationalStatus"
-          label="Operational status"
+          label="Çalışma durumu"
           required
           options={options(OPERATIONAL_STATUSES, (v) => OPERATIONAL_STATUS_PRESENTATION[v].label)}
         />
-        <ChipsField control={control} name="tags" label="Tags" className="c-form-grid__wide" />
+        <ChipsField control={control} name="tags" label="Etiketler" className="c-form-grid__wide" />
       </div>
       <div className="c-stack c-form-stack">
         <TextField
           control={control}
           name="shortDescription"
-          label="Short description"
+          label="Kısa açıklama"
           required
-          description="One sentence shown in lists and search results."
+          description="Listelerde ve arama sonuçlarında gösterilen tek cümle."
         />
         <TextField
           control={control}
           name="businessPurpose"
-          label="Business purpose"
+          label="İş amacı"
           rows={2}
           required
-          description="Why the application exists, in business terms."
+          description="Uygulamanın neden var olduğu, iş diliyle."
         />
         <TextField
           control={control}
           name="detailedDescription"
-          label="Detailed description"
+          label="Ayrıntılı açıklama"
           rows={4}
         />
       </div>
@@ -117,23 +117,23 @@ export function ApplicationGeneralSection({ control }: Props) {
 export function ApplicationBusinessSection({ control }: Props) {
   const businessUnits = useBusinessUnitOptions();
   return (
-    <SectionCard title="Business context">
+    <SectionCard title="İş bağlamı">
       <div className="c-form-grid">
         <SelectField
           control={control}
           name="businessUnitId"
-          label="Business unit"
+          label="İş birimi"
           options={businessUnits}
-          emptyLabel="Not set"
+          emptyLabel="Belirlenmemiş"
         />
         <TextField
           control={control}
           name="estimatedUserCount"
-          label="Estimated users"
+          label="Tahmini kullanıcı"
           type="number"
         />
-        <ChipsField control={control} name="businessProcesses" label="Business processes" />
-        <ChipsField control={control} name="userGroups" label="User groups" />
+        <ChipsField control={control} name="businessProcesses" label="İş süreçleri" />
+        <ChipsField control={control} name="userGroups" label="Kullanıcı grupları" />
       </div>
     </SectionCard>
   );
@@ -149,89 +149,84 @@ export function ApplicationTechnologySection({ control }: Props) {
   return (
     <>
       <SectionCard
-        title="Technology stack"
-        description="Technologies from the catalogue and the layer they are used in."
+        title="Teknoloji yığını"
+        description="Katalogdaki teknolojiler ve kullanıldıkları katman."
       >
         <RepeatableList
           items={usages.fields}
           onAdd={() => usages.append(emptyTechnologyUsage())}
           onRemove={usages.remove}
-          addLabel="Add technology"
-          removeLabel={(index) => `Remove technology ${index + 1}`}
-          emptyText="No technologies recorded yet."
+          addLabel="Teknoloji ekle"
+          removeLabel={(index) => `${index + 1}. teknolojiyi kaldır`}
+          emptyText="Henüz teknoloji kaydedilmedi."
           renderItem={(index) => (
             <div className="c-form-grid c-form-grid--three">
               <SelectField
                 control={control}
                 name={`technologies.${index}.technologyId`}
-                label="Technology"
+                label="Teknoloji"
                 required
                 options={technologies}
               />
               <SelectField
                 control={control}
                 name={`technologies.${index}.layer`}
-                label="Layer"
+                label="Katman"
                 required
                 options={layers}
               />
-              <TextField control={control} name={`technologies.${index}.version`} label="Version" />
+              <TextField control={control} name={`technologies.${index}.version`} label="Sürüm" />
             </div>
           )}
         />
       </SectionCard>
       <SectionCard
-        title="Data stores"
-        description="Databases and caches owned by this application."
+        title="Veri depoları"
+        description="Bu uygulamaya ait veritabanları ve önbellekler."
       >
         <RepeatableList
           items={stores.fields}
           onAdd={() => stores.append(emptyDataStore())}
           onRemove={stores.remove}
-          addLabel="Add data store"
-          removeLabel={(index) => `Remove data store ${index + 1}`}
-          emptyText="No data stores recorded yet."
+          addLabel="Veri deposu ekle"
+          removeLabel={(index) => `${index + 1}. veri deposunu kaldır`}
+          emptyText="Henüz veri deposu kaydedilmedi."
           renderItem={(index) => (
             <div className="c-form-grid c-form-grid--four">
-              <TextField
-                control={control}
-                name={`dataStores.${index}.name`}
-                label="Name"
-                required
-              />
+              <TextField control={control} name={`dataStores.${index}.name`} label="Ad" required />
               <SelectField
                 control={control}
                 name={`dataStores.${index}.technologyId`}
-                label="Technology"
+                label="Teknoloji"
                 required
                 options={technologies}
               />
-              <TextField control={control} name={`dataStores.${index}.purpose`} label="Purpose" />
+              <TextField control={control} name={`dataStores.${index}.purpose`} label="Amaç" />
               <SwitchField
                 control={control}
                 name={`dataStores.${index}.containsPersonalData`}
-                label="Personal data"
+                label="Kişisel veri"
               />
             </div>
           )}
         />
       </SectionCard>
-      <SectionCard title="Hosting">
+      <SectionCard title="Barındırma">
         <div className="c-form-grid c-form-grid--three">
           <SelectField
             control={control}
             name="hostingModel"
-            label="Hosting model"
+            label="Barındırma modeli"
             required
             options={options(HOSTING_MODELS, (v) => HOSTING_MODEL_LABELS[v])}
           />
           <TextField
             control={control}
             name="cloudProvider"
-            label="Cloud provider"
+            label="Bulut sağlayıcı"
             required={hostingModel === 'public-cloud' || hostingModel === 'hybrid'}
           />
-          <TextField control={control} name="hostingNotes" label="Notes" />
+          <TextField control={control} name="hostingNotes" label="Notlar" />
         </div>
       </SectionCard>
     </>
@@ -242,35 +237,30 @@ export function ApplicationEnvironmentsSection({ control }: Props) {
   const { fields, append, remove } = useFieldArray({ control, name: 'environments' });
   return (
     <SectionCard
-      title="Environments"
-      description="URLs and notes only — never credentials. Use the team's secrets manager for those."
+      title="Ortamlar"
+      description="Yalnızca adresler ve notlar — asla kimlik bilgisi değil. Onlar için ekibin secrets manager'ını kullanın."
     >
       <RepeatableList
         items={fields}
         onAdd={() => append(emptyEnvironment())}
         onRemove={remove}
-        addLabel="Add environment"
-        removeLabel={(index) => `Remove environment ${index + 1}`}
-        emptyText="No environments recorded yet."
+        addLabel="Ortam ekle"
+        removeLabel={(index) => `${index + 1}. ortamı kaldır`}
+        emptyText="Henüz ortam kaydedilmedi."
         renderItem={(index) => (
           <div className="c-form-grid c-form-grid--three">
             <SelectField
               control={control}
               name={`environments.${index}.type`}
-              label="Type"
+              label="Tür"
               required
               options={options(ENVIRONMENT_TYPES, (v) => ENVIRONMENT_TYPE_LABELS[v])}
             />
-            <TextField
-              control={control}
-              name={`environments.${index}.name`}
-              label="Name"
-              required
-            />
+            <TextField control={control} name={`environments.${index}.name`} label="Ad" required />
             <SelectField
               control={control}
               name={`environments.${index}.status`}
-              label="Status"
+              label="Durum"
               required
               options={options(
                 ENVIRONMENT_STATUSES,
@@ -284,8 +274,8 @@ export function ApplicationEnvironmentsSection({ control }: Props) {
               type="url"
               placeholder="https://"
             />
-            <TextField control={control} name={`environments.${index}.region`} label="Region" />
-            <TextField control={control} name={`environments.${index}.notes`} label="Notes" />
+            <TextField control={control} name={`environments.${index}.region`} label="Bölge" />
+            <TextField control={control} name={`environments.${index}.notes`} label="Notlar" />
           </div>
         )}
       />
@@ -296,34 +286,34 @@ export function ApplicationEnvironmentsSection({ control }: Props) {
 export function ApplicationRepositoriesSection({ control }: Props) {
   const { fields, append, remove } = useFieldArray({ control, name: 'repositories' });
   return (
-    <SectionCard title="Source repositories">
+    <SectionCard title="Kaynak kod depoları">
       <RepeatableList
         items={fields}
         onAdd={() => append(emptyRepository())}
         onRemove={remove}
-        addLabel="Add repository"
-        removeLabel={(index) => `Remove repository ${index + 1}`}
-        emptyText="No repositories linked yet."
+        addLabel="Kod deposu ekle"
+        removeLabel={(index) => `${index + 1}. kod deposunu kaldır`}
+        emptyText="Henüz kod deposu bağlanmadı."
         renderItem={(index) => (
           <div className="c-form-grid c-form-grid--four">
             <TextField
               control={control}
               name={`repositories.${index}.name`}
-              label="Name"
+              label="Ad"
               required
               placeholder="group/repository"
             />
             <SelectField
               control={control}
               name={`repositories.${index}.type`}
-              label="Type"
+              label="Tür"
               required
               options={options(SOURCE_REPOSITORY_TYPES, (v) => SOURCE_REPOSITORY_TYPE_LABELS[v])}
             />
             <TextField
               control={control}
               name={`repositories.${index}.url`}
-              label="Address"
+              label="Adres"
               type="url"
               required
               placeholder="https://"
@@ -331,7 +321,7 @@ export function ApplicationRepositoriesSection({ control }: Props) {
             <TextField
               control={control}
               name={`repositories.${index}.defaultBranch`}
-              label="Default branch"
+              label="Varsayılan dal"
               required
             />
           </div>

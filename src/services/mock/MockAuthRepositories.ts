@@ -20,7 +20,7 @@ export function createMockAuthRepositories(
     async signIn(accountId) {
       await wait();
       const user = db.users.find((candidate) => candidate.id === accountId);
-      if (!user?.active) throw new ValidationError('This account cannot sign in.');
+      if (!user?.active) throw new ValidationError('Bu hesap giriş yapamaz.');
       user.lastSignInAt = new Date().toISOString();
       authority.store.set(user.id);
       return copy(user);
@@ -38,15 +38,15 @@ export function createMockAuthRepositories(
       input.email,
       (u) => u.email,
       current?.id ?? null,
-      `An account with ${input.email} already exists.`,
+      `${input.email} adresiyle bir hesap zaten var.`,
       'email',
     );
-    kit.assertRefs([input.personId], db.people, 'person', 'personId');
+    kit.assertRefs([input.personId], db.people, 'kişi', 'personId');
     if (current?.id === actor.id && !input.active) {
-      throw new ValidationError('You cannot deactivate your own account.', 'active');
+      throw new ValidationError('Kendi hesabınızı devre dışı bırakamazsınız.', 'active');
     }
     if (current?.id === actor.id && input.role !== 'admin') {
-      throw new ValidationError('You cannot remove your own admin role.', 'role');
+      throw new ValidationError('Kendi yönetici rolünüzü kaldıramazsınız.', 'role');
     }
     const losesAdmin =
       current?.role === 'admin' && current.active && (input.role !== 'admin' || !input.active);
@@ -54,7 +54,7 @@ export function createMockAuthRepositories(
       (u) => u.role === 'admin' && u.active && u.id !== current?.id,
     ).length;
     if (losesAdmin && otherAdmins === 0) {
-      throw new ValidationError('At least one active admin is required.', 'role');
+      throw new ValidationError('En az bir aktif yönetici gereklidir.', 'role');
     }
   }
 
@@ -65,7 +65,7 @@ export function createMockAuthRepositories(
     },
     async getById(id) {
       await kit.begin('users:manage');
-      return copy(findOrThrow(db.users, id, 'User'));
+      return copy(findOrThrow(db.users, id, 'Kullanıcı'));
     },
     async create(input) {
       const actor = await kit.begin('users:manage');
@@ -81,7 +81,7 @@ export function createMockAuthRepositories(
     },
     async update(id, input) {
       const actor = await kit.begin('users:manage');
-      const current = findOrThrow(db.users, id, 'User');
+      const current = findOrThrow(db.users, id, 'Kullanıcı');
       validate(input, current, actor);
       return copy(
         replaceRow(db.users, {

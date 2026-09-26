@@ -29,13 +29,13 @@ export default function SignInPage() {
           <span className="c-topbar__logo" aria-hidden="true" />
           Cerebro
         </div>
-        <h1 className="c-page-header__title">Sign in</h1>
+        <h1 className="c-page-header__title">Giriş yap</h1>
         <Alert variant="info" appearance="outlined">
           <Alert.Content>
-            <Alert.Title level={2}>Demo sign-in</Alert.Title>
+            <Alert.Title level={2}>Demo girişi</Alert.Title>
             <Alert.Description>
-              Choose an account to continue. Corporate single sign-on will replace this screen;
-              Cerebro never stores passwords.
+              Devam etmek için bir hesap seçin. Bu ekranın yerini kurumsal tek oturum açma (SSO)
+              alacak; Cerebro hiçbir zaman şifre saklamaz.
             </Alert.Description>
           </Alert.Content>
         </Alert>
@@ -47,11 +47,11 @@ export default function SignInPage() {
           </Alert>
         )}
         {accounts.isPending ? (
-          <LoadingState label="Loading accounts" rows={3} />
+          <LoadingState label="Hesaplar yükleniyor" rows={3} />
         ) : accounts.isError ? (
           <ErrorState onRetry={() => void accounts.refetch()} />
         ) : (
-          <ul className="c-account-list" aria-label="Accounts">
+          <ul className="c-account-list" aria-label="Hesaplar">
             {accounts.data.map((account) => (
               <li key={account.id} className="c-account-list__item">
                 <span className="c-cell-stack">
@@ -78,9 +78,9 @@ export default function SignInPage() {
                       onSuccess: () => void navigate(redirectTo, { replace: true }),
                     })
                   }
-                  aria-label={`Continue as ${account.displayName}`}
+                  aria-label={`${account.displayName} olarak devam et`}
                 >
-                  Continue
+                  Devam et
                 </Button>
               </li>
             ))}

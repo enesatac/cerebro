@@ -1,6 +1,7 @@
 import { Calendar, Field, Input, Popover, useDatePicker } from '@takeoff-ui/react-spar';
 import { CalendarIconOutlinedRounded } from '@takeoff-icons/react/calendar';
 import { format, isValid, parseISO } from 'date-fns';
+import { tr } from 'date-fns/locale';
 import {
   Controller,
   type ControllerFieldState,
@@ -54,21 +55,21 @@ function DatePickerControl<T extends FieldValues>({
             aria-invalid={fieldState.invalid}
           />
           <Popover.Trigger
-            aria-label={`Choose ${label.toLowerCase()} from a calendar`}
+            aria-label={`${label}: takvimden seç`}
             classNames={{ root: 'tk-input-action' }}
           >
             <CalendarIconOutlinedRounded width={20} height={20} aria-hidden="true" />
           </Popover.Trigger>
         </Input>
         <Popover.Content align="end" classNames={{ root: 'tk-datepicker-panel' }}>
-          <Calendar {...picker.calendarProps} />
+          <Calendar {...picker.calendarProps} locale={tr} />
         </Popover.Content>
       </Popover>
       {fieldState.error ? (
         <Field.ErrorMessage>{fieldState.error.message}</Field.ErrorMessage>
       ) : (
         <Field.Description>
-          {description ?? 'Type dd/mm/yyyy or pick from the calendar.'}
+          {description ?? 'gg/aa/yyyy biçiminde yazın veya takvimden seçin.'}
         </Field.Description>
       )}
     </Field>

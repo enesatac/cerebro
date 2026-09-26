@@ -27,8 +27,8 @@ import { paths } from '@/app/router/paths';
 import { CreateAction } from '@/domains/auth/components/RecordActions';
 
 const TABS = [
-  { id: 'escalations', label: 'Escalations' },
-  { id: 'risks', label: 'Risks' },
+  { id: 'escalations', label: 'Eskalasyonlar' },
+  { id: 'risks', label: 'Riskler' },
 ] as const;
 const TAB_IDS = TABS.map((tab) => tab.id);
 const SEVERITY_OPTIONS = CRITICALITIES.map((value) => ({
@@ -63,8 +63,8 @@ function EscalationRegister() {
   return (
     <QueryView
       query={query}
-      loadingLabel="Loading escalations"
-      errorTitle="Escalations could not be loaded"
+      loadingLabel="Eskalasyonlar yükleniyor"
+      errorTitle="Eskalasyonlar yüklenemedi"
     >
       {(all) => {
         const visible = prioritise(
@@ -78,18 +78,18 @@ function EscalationRegister() {
         return (
           <>
             <Toolbar
-              label="Filter escalations"
+              label="Eskalasyonları filtrele"
               end={
                 <FilterSummary
-                  summary={`${pluralize(visible.length, 'escalation')} · ${all.filter((e) => isActiveEscalation(e.status)).length} active`}
+                  summary={`${pluralize(visible.length, 'eskalasyon')} · ${all.filter((e) => isActiveEscalation(e.status)).length} aktif`}
                   activeFilterCount={filters.activeCount}
                   onReset={filters.reset}
                 />
               }
             >
               <FilterSelect
-                label="Status"
-                allLabel="All statuses"
+                label="Durum"
+                allLabel="Tüm durumlar"
                 value={filters.status}
                 options={ESCALATION_STATUSES.map((value) => ({
                   value,
@@ -98,8 +98,8 @@ function EscalationRegister() {
                 onChange={(value) => filters.set('status', value)}
               />
               <FilterSelect
-                label="Severity"
-                allLabel="All severities"
+                label="Önem derecesi"
+                allLabel="Tüm önem dereceleri"
                 value={filters.severity}
                 options={SEVERITY_OPTIONS}
                 onChange={(value) => filters.set('severity', value)}
@@ -109,7 +109,7 @@ function EscalationRegister() {
               escalations={visible}
               showRelated
               pagination
-              emptyState={<EmptyState compact title="No escalations match these filters" />}
+              emptyState={<EmptyState compact title="Bu filtrelere uyan eskalasyon yok" />}
             />
           </>
         );
@@ -122,7 +122,7 @@ function RiskRegister() {
   const query = useRisks(ALL_FILTER);
   const filters = useRegisterFilters(RISK_STATUSES);
   return (
-    <QueryView query={query} loadingLabel="Loading risks" errorTitle="Risks could not be loaded">
+    <QueryView query={query} loadingLabel="Riskler yükleniyor" errorTitle="Riskler yüklenemedi">
       {(all) => {
         const visible = prioritise(
           all.filter(
@@ -135,18 +135,18 @@ function RiskRegister() {
         return (
           <>
             <Toolbar
-              label="Filter risks"
+              label="Riskleri filtrele"
               end={
                 <FilterSummary
-                  summary={`${pluralize(visible.length, 'risk')} · ${all.filter((r) => isActiveRisk(r.status)).length} active`}
+                  summary={`${pluralize(visible.length, 'risk')} · ${all.filter((r) => isActiveRisk(r.status)).length} aktif`}
                   activeFilterCount={filters.activeCount}
                   onReset={filters.reset}
                 />
               }
             >
               <FilterSelect
-                label="Status"
-                allLabel="All statuses"
+                label="Durum"
+                allLabel="Tüm durumlar"
                 value={filters.status}
                 options={RISK_STATUSES.map((value) => ({
                   value,
@@ -155,8 +155,8 @@ function RiskRegister() {
                 onChange={(value) => filters.set('status', value)}
               />
               <FilterSelect
-                label="Severity"
-                allLabel="All severities"
+                label="Önem derecesi"
+                allLabel="Tüm önem dereceleri"
                 value={filters.severity}
                 options={SEVERITY_OPTIONS}
                 onChange={(value) => filters.set('severity', value)}
@@ -166,7 +166,7 @@ function RiskRegister() {
               risks={visible}
               showRelated
               pagination
-              emptyState={<EmptyState compact title="No risks match these filters" />}
+              emptyState={<EmptyState compact title="Bu filtrelere uyan risk yok" />}
             />
           </>
         );
@@ -191,18 +191,18 @@ export default function RisksAndEscalationsPage() {
   return (
     <div className="c-stack">
       <PageHeader
-        title="Risks & Escalations"
-        subtitle="Operational concerns across the portfolio. Active and most severe items are listed first."
+        title="Riskler ve Eskalasyonlar"
+        subtitle="Portföy genelindeki operasyonel sorunlar. Aktif ve en ciddi kayıtlar önce listelenir."
         actions={
           activeTab === 'risks' ? (
-            <CreateAction to={paths.riskForms.create()} label="Record risk" />
+            <CreateAction to={paths.riskForms.create()} label="Risk kaydet" />
           ) : (
-            <CreateAction to={paths.escalationForms.create()} label="Raise escalation" />
+            <CreateAction to={paths.escalationForms.create()} label="Eskalasyon aç" />
           )
         }
       />
       <DetailTabs
-        label="Registers"
+        label="Kayıt defterleri"
         tabs={TABS}
         active={activeTab}
         onSelect={switchTab}

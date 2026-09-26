@@ -20,27 +20,27 @@ export function ProjectKeyFacts({ project }: { project: Project }) {
   const { timeline } = project;
 
   return (
-    <section aria-label="Key facts" className="c-key-facts">
+    <section aria-label="Temel bilgiler" className="c-key-facts">
       <DetailList
         layout="grid"
         items={[
-          { label: 'Sponsor', value: person('sponsor'), emptyText: 'Unassigned' },
-          { label: 'Project manager', value: person('project-manager'), emptyText: 'Unassigned' },
-          { label: 'Technical lead', value: person('technical-lead'), emptyText: 'Unassigned' },
+          { label: 'Sponsor', value: person('sponsor'), emptyText: 'Atanmamış' },
+          { label: 'Proje yöneticisi', value: person('project-manager'), emptyText: 'Atanmamış' },
+          { label: 'Teknik lider', value: person('technical-lead'), emptyText: 'Atanmamış' },
           {
-            label: 'Business unit',
+            label: 'İş birimi',
             value: project.businessUnitId
               ? businessUnits.data?.get(project.businessUnitId)?.name
               : null,
           },
           {
-            label: 'Planned timeline',
+            label: 'Planlanan zaman çizelgesi',
             value: `${formatDate(timeline.plannedStartDate)} – ${formatDate(timeline.plannedEndDate)}`,
           },
           {
-            label: `Progress · ${PROJECT_PHASE_LABELS[project.currentPhase]}`,
+            label: `İlerleme · ${PROJECT_PHASE_LABELS[project.currentPhase]}`,
             value: (
-              <PercentMeter value={project.progressPercentage} label={`${project.name} progress`} />
+              <PercentMeter value={project.progressPercentage} label={`${project.name} ilerleme`} />
             ),
           },
         ]}

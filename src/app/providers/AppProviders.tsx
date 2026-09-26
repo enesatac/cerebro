@@ -16,7 +16,7 @@ export function AppProviders({ queryClient, repositories, children }: AppProvide
   return (
     <TakeoffSparProvider
       colorMode="light"
-      locale="en"
+      locale="tr"
       // App-wide density: Cerebro is an information-dense tool used daily.
       components={{ Table: { defaultProps: { size: 'small' } } }}
     >

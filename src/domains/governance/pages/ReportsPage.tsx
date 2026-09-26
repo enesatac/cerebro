@@ -7,8 +7,8 @@ import { DataQualityReport } from '../components/DataQualityReport';
 import { TechnologyRiskReport } from '../components/TechnologyRiskReport';
 
 const TABS = [
-  { id: 'data-quality', label: 'Data quality' },
-  { id: 'technology-risk', label: 'Technology risk' },
+  { id: 'data-quality', label: 'Veri kalitesi' },
+  { id: 'technology-risk', label: 'Teknoloji riski' },
 ] as const;
 const TAB_IDS = TABS.map((tab) => tab.id);
 
@@ -18,17 +18,17 @@ export default function ReportsPage() {
   return (
     <div className="c-stack">
       <PageHeader
-        title="Reports"
-        subtitle="Governance views across all applications: where information is missing, stale or at risk."
+        title="Raporlar"
+        subtitle="Tüm uygulamalar için yönetişim görünümleri: bilgilerin nerede eksik, eski veya riskli olduğu."
       />
       <QueryView
         query={query}
-        loadingLabel="Building reports"
-        errorTitle="Reports could not be built"
+        loadingLabel="Raporlar hazırlanıyor"
+        errorTitle="Raporlar hazırlanamadı"
       >
         {(rows) => (
           <DetailTabs
-            label="Reports"
+            label="Raporlar"
             tabs={TABS}
             active={activeTab}
             onSelect={selectTab}

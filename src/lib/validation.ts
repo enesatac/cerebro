@@ -9,23 +9,26 @@ export const requiredText = (label: string, max = 200) =>
   z
     .string()
     .trim()
-    .min(1, `${label} is required.`)
-    .max(max, `${label} must be at most ${max} characters.`);
+    .min(1, `${label} zorunludur.`)
+    .max(max, `${label} en fazla ${max} karakter olabilir.`);
 
 export const optionalText = (label: string, max = 2000) =>
-  z.string().trim().max(max, `${label} must be at most ${max} characters.`);
+  z.string().trim().max(max, `${label} en fazla ${max} karakter olabilir.`);
+
+/** `bir rol` → `Bir rol`; choice labels are lower-case accusative phrases ("bir rol", "bağımlı uygulamayı"). */
+const upperFirst = (value: string) => value.charAt(0).toLocaleUpperCase('tr-TR') + value.slice(1);
 
 /** A required choice from a Select (empty string = nothing chosen). */
-export const requiredChoice = (label: string) => z.string().min(1, `Select ${label}.`);
+export const requiredChoice = (label: string) => z.string().min(1, `${upperFirst(label)} seçin.`);
 
 export const enumChoice = <T extends readonly [string, ...string[]]>(values: T, label: string) =>
-  z.enum(values, { message: `Select ${label}.` });
+  z.enum(values, { message: `${upperFirst(label)} seçin.` });
 
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
 export const optionalDate = z
   .string()
-  .refine((value) => value === '' || ISO_DATE.test(value), 'Enter a valid date.');
-export const requiredDate = (label: string) => z.string().regex(ISO_DATE, `${label} is required.`);
+  .refine((value) => value === '' || ISO_DATE.test(value), 'Geçerli bir tarih girin.');
+export const requiredDate = (label: string) => z.string().regex(ISO_DATE, `${label} zorunludur.`);
 
 export const optionalWholeNumber = (
   label: string,
@@ -34,10 +37,10 @@ export const optionalWholeNumber = (
   z
     .string()
     .trim()
-    .refine((value) => value === '' || /^\d+$/.test(value), `${label} must be a whole number.`)
+    .refine((value) => value === '' || /^\d+$/.test(value), `${label} tam sayı olmalıdır.`)
     .refine(
       (value) => value === '' || (Number(value) >= min && Number(value) <= max),
-      `${label} must be between ${min} and ${max}.`,
+      `${label} ${min} ile ${max} arasında olmalıdır.`,
     );
 
 /** Only http(s) links are stored — never `javascript:`, `data:` or other schemes. */
@@ -54,7 +57,7 @@ export const requiredUrl = (label: string) =>
   z
     .string()
     .trim()
-    .min(1, `${label} is required.`)
+    .min(1, `${label} zorunludur.`)
     .refine(isHttpUrl, 'Enter a full http(s) address, e.g. https://…');
 
 export const optionalUrl = z
@@ -66,13 +69,13 @@ export const optionalUrl = z
   );
 
 export const email = (label: string) =>
-  z.string().trim().min(1, `${label} is required.`).email('Enter a valid email address.');
+  z.string().trim().min(1, `${label} zorunludur.`).email('Geçerli bir e-posta adresi girin.');
 export const optionalEmail = z
   .string()
   .trim()
   .refine(
     (value) => value === '' || z.email().safeParse(value).success,
-    'Enter a valid email address.',
+    'Geçerli bir e-posta adresi girin.',
   );
 
 /**
@@ -91,7 +94,7 @@ export function looksLikeSecret(value: string): boolean {
 }
 
 export const NO_SECRETS_MESSAGE =
-  'This looks like a credential. Cerebro must never store passwords, tokens or keys — reference the secrets manager instead.';
+  "Bu bir kimlik bilgisine benziyor. Cerebro asla şifre, token veya anahtar saklamamalı — bunun yerine secrets manager'a referans verin.";
 
 /** Free text that must not contain credentials (notes, descriptions next to URLs). */
 export const secretFreeText = (label: string, max = 2000) =>

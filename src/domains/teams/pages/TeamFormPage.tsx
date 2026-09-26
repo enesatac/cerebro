@@ -36,14 +36,14 @@ function TeamForm({ team }: { team?: Team }) {
   return (
     <FormPage
       form={form}
-      title={team ? `Edit ${team.name}` : 'Create team'}
+      title={team ? `Düzenle: ${team.name}` : 'Ekip oluştur'}
       breadcrumbs={[
-        { label: 'Teams', to: paths.teams.list() },
+        { label: 'Ekipler', to: paths.teams.list() },
         ...(team ? [{ label: team.name, to: paths.teams.detail(team.id) }] : []),
-        { label: team ? 'Edit' : 'New' },
+        { label: team ? 'Düzenle' : 'Yeni' },
       ]}
       cancelTo={team ? paths.teams.detail(team.id) : paths.teams.list()}
-      submitLabel={team ? 'Save changes' : 'Create team'}
+      submitLabel={team ? 'Değişiklikleri kaydet' : 'Ekip oluştur'}
       onSubmit={async (values) =>
         paths.teams.detail((await save.mutateAsync(toTeamInput(values))).id)
       }
@@ -51,7 +51,7 @@ function TeamForm({ team }: { team?: Team }) {
         team && (
           <Can permission="portfolio:delete">
             <DeleteAction
-              entityLabel="team"
+              entityLabel="ekip"
               entityName={team.name}
               impactKey={['team', team.id]}
               loadImpact={() => teams.getDeletionImpact(team.id)}
@@ -62,59 +62,59 @@ function TeamForm({ team }: { team?: Team }) {
         )
       }
     >
-      <SectionCard title="Team">
+      <SectionCard title="Ekip">
         <div className="c-form-grid">
-          <TextField control={control} name="name" label="Team name" required />
+          <TextField control={control} name="name" label="Ekip adı" required />
           <SelectField
             control={control}
             name="managerId"
-            label="Manager"
+            label="Yönetici"
             options={people}
-            emptyLabel="No manager"
+            emptyLabel="Yönetici yok"
           />
           <TextField
             control={control}
             name="description"
-            label="Description"
+            label="Açıklama"
             rows={3}
             className="c-form-grid__wide"
           />
           <ChipsField
             control={control}
             name="responsibilities"
-            label="Responsibilities"
+            label="Sorumluluklar"
             className="c-form-grid__wide"
           />
         </div>
       </SectionCard>
       <SectionCard
-        title="Contact"
-        description="Shared channels only — never personal phone numbers."
+        title="İletişim"
+        description="Yalnızca ortak kanallar — asla kişisel telefon numarası yazmayın."
       >
         <div className="c-form-grid">
           <TextField
             control={control}
             name="contactEmail"
-            label="Team mailbox"
+            label="Ekip e-posta kutusu"
             type="email"
             placeholder="team@corp.example"
           />
           <TextField
             control={control}
             name="chatChannel"
-            label="Chat channel"
+            label="Sohbet kanalı"
             placeholder="#team-channel"
           />
         </div>
       </SectionCard>
-      <SectionCard title="Members">
+      <SectionCard title="Üyeler">
         <MultiSelectField
           control={control}
           name="memberIds"
-          label="Members"
+          label="Üyeler"
           options={people}
-          addLabel="Add a member"
-          description="The manager is added automatically."
+          addLabel="Üye ekle"
+          description="Yönetici otomatik olarak eklenir."
         />
       </SectionCard>
     </FormPage>
@@ -129,7 +129,7 @@ export default function TeamFormPage() {
 function EditTeam({ id }: { id: string }) {
   const query = useTeam(id);
   return (
-    <QueryView query={query} loadingLabel="Loading team" errorTitle="This team could not be loaded">
+    <QueryView query={query} loadingLabel="Ekip yükleniyor" errorTitle="Bu ekip yüklenemedi">
       {(team) => <TeamForm team={team} />}
     </QueryView>
   );

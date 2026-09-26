@@ -24,35 +24,35 @@ export function DocumentationLinksFields<T extends FieldValues>({
   });
   return (
     <SectionCard
-      title="Documentation"
-      description="Typed links to Confluence, Jira, runbooks, designs and dashboards."
+      title="Dokümantasyon"
+      description="Confluence, Jira, runbook, tasarım ve gösterge panellerine türüyle birlikte bağlantılar."
     >
       <RepeatableList
         items={fields}
         onAdd={() => append(emptyDocumentationLink() as never)}
         onRemove={remove}
-        addLabel="Add link"
-        removeLabel={(index) => `Remove documentation link ${index + 1}`}
-        emptyText="No documentation linked yet."
+        addLabel="Bağlantı ekle"
+        removeLabel={(index) => `${index + 1}. dokümantasyon bağlantısını kaldır`}
+        emptyText="Henüz dokümantasyon bağlanmadı."
         renderItem={(index) => (
           <div className="c-form-grid c-form-grid--three">
             <SelectField
               control={control}
               name={fieldPath<T>(`documentation.${index}.type`)}
-              label="Type"
+              label="Tür"
               required
               options={TYPE_OPTIONS}
             />
             <TextField
               control={control}
               name={fieldPath<T>(`documentation.${index}.title`)}
-              label="Title"
+              label="Başlık"
               required
             />
             <TextField
               control={control}
               name={fieldPath<T>(`documentation.${index}.url`)}
-              label="Address"
+              label="Adres"
               type="url"
               required
               placeholder="https://"
