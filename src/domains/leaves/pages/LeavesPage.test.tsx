@@ -28,6 +28,22 @@ describe('leaves page', () => {
     expect(within(dialog).getByRole('combobox', { name: /Kişi/ })).toHaveTextContent('Burak Şahin');
   });
 
+  it('deletes a leave from its calendar card', async () => {
+    const user = userEvent.setup();
+    renderRoute('/leaves?date=2026-10-01');
+    const bar = await screen.findByRole('button', { name: /Jonas Berg: Yıllık izin/ });
+    await user.click(bar);
+    await user.click(await screen.findByRole('button', { name: 'Sil: Jonas Berg izni' }));
+    const confirm = await screen.findByRole('alertdialog', { name: /Jonas Berg izni silinsin mi/ });
+    await user.click(within(confirm).getByRole('button', { name: 'Kalıcı olarak sil' }));
+    await screen.findByText('İzin silindi');
+    expect(
+      screen.queryByRole('button', { name: /Jonas Berg: Yıllık izin/ }),
+    ).not.toBeInTheDocument();
+    // The click must not fall through to the calendar and open "add a leave".
+    expect(screen.queryByRole('dialog', { name: 'İzin ekle' })).not.toBeInTheDocument();
+  });
+
   it('filters to one type and opens the list view', async () => {
     const user = userEvent.setup();
     renderRoute('/leaves?date=2026-10-01&type=sick&away=1&tab=list');

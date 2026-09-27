@@ -1,6 +1,6 @@
 import { Button, Popover } from '@takeoff-ui/react-spar';
 import { EditIconOutlinedRounded } from '@takeoff-icons/react/edit';
-import type { CSSProperties } from 'react';
+import { useState, type CSSProperties } from 'react';
 import { MasterBadge } from '@/domains/master-data/components/MasterBadge';
 import { useMasterData } from '@/domains/master-data/context';
 import type { Person } from '@/domains/people/types';
@@ -47,6 +47,20 @@ const dayClass = (day: CalendarDay, base: string) =>
     .filter(Boolean)
     .join(' ');
 
+/**
+ * The card's delete confirmation is a dialog portalled outside the popover. Without this guard the
+ * popover treats clicks in that dialog as outside clicks and closes, unmounting the confirmation
+ * mid-click, so the leave is never deleted and the click falls through to the calendar.
+ */
+function keepOpenForDialogs(event: PointerEvent | FocusEvent) {
+  if (
+    event.target instanceof Element &&
+    event.target.closest('.tk-dialog-panel, .tk-dialog-overlay')
+  ) {
+    event.preventDefault();
+  }
+}
+
 function LeaveBar({
   segment,
   person,
@@ -61,6 +75,7 @@ function LeaveBar({
   onEdit: (leave: LeaveRecord) => void;
 }) {
   const masterData = useMasterData();
+  const [open, setOpen] = useState(false);
   const { leave } = segment;
   const { label, variant } = masterData.badge('leaveTypes', leave.type);
   const days = workingDays(leave.startDate, leave.endDate);
@@ -84,14 +99,18 @@ function LeaveBar({
     .join(' ');
 
   return (
-    <Popover>
+    <Popover open={open} onOpenChange={setOpen}>
       <Popover.Trigger
         className={classes}
         aria-label={`${person.fullName}: ${label}, ${dates}, ${days} iş günü`}
       >
         {text && <span className="c-leave__text">{text}</span>}
       </Popover.Trigger>
-      <Popover.Content align="start" className="c-leave-card">
+      <Popover.Content
+        align="start"
+        className="c-leave-card"
+        onInteractOutside={keepOpenForDialogs}
+      >
         <div className="c-leave-card__head">
           <strong>{person.fullName}</strong>
           <span className="c-muted">{person.jobTitle}</span>
@@ -111,7 +130,10 @@ function LeaveBar({
               variant="neutral"
               appearance="outlined"
               startContent={<EditIconOutlinedRounded aria-hidden="true" />}
-              onClick={() => onEdit(leave)}
+              onClick={() => {
+                setOpen(false);
+                onEdit(leave);
+              }}
             >
               Düzenle
             </Button>
