@@ -4,6 +4,11 @@
  * composition and gaps Takeoff does not provide. Use Takeoff tokens — no raw colours.
  */
 
+:root[data-theme='dark'] {
+  /* Native controls (scrollbars, date inputs) follow the theme. */
+  color-scheme: dark;
+}
+
 :root {
   --c-sidebar-width: 232px;
   --c-topbar-height: 56px;
@@ -142,7 +147,7 @@ code {
 }
 
 .c-sidebar__link[aria-current='page'] {
-  background: var(--primary-50);
+  background: var(--primary-lightest);
   color: var(--primary-base);
   font-weight: var(--weight-semibold);
 }
@@ -890,6 +895,9 @@ code {
 /* ---------- Auth & administration ---------- */
 
 .c-topbar__end {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
   margin-left: auto;
 }
 
@@ -1011,7 +1019,7 @@ code {
   padding: var(--spacing-xl);
   border: 1px solid var(--border-light);
   border-radius: var(--radius-m-base);
-  background: var(--static-white);
+  background: var(--static-light);
 }
 
 .c-md-nav__heading {
@@ -1050,7 +1058,7 @@ code {
 }
 
 .c-md-nav__link[aria-current='page'] {
-  background: var(--primary-50);
+  background: var(--primary-lightest);
   color: var(--primary-base);
   font-weight: var(--weight-semibold);
 }
@@ -1095,7 +1103,7 @@ code {
   padding: var(--spacing-xl);
   border: 1px solid var(--border-light);
   border-radius: var(--radius-m-base);
-  background: var(--static-white);
+  background: var(--static-light);
 }
 
 .c-value-row--inactive {
@@ -1296,4 +1304,17 @@ code {
     grid-column: auto;
     flex-wrap: wrap;
   }
+}
+
+/* ---------- Dark mode ---------- */
+
+/*
+ * `--primary-base` is the brand red in both modes; on dark surfaces it is too dark for text.
+ * Takeoff's `--primary-dark` is the high-contrast variant in dark mode (light pink), so text-level
+ * accents switch to it. Light mode is unchanged.
+ */
+:root[data-theme='dark'] .c-link,
+:root[data-theme='dark'] .c-sidebar__link[aria-current='page'],
+:root[data-theme='dark'] .c-md-nav__link[aria-current='page'] {
+  color: var(--primary-dark);
 }

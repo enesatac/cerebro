@@ -7,6 +7,7 @@ import { MasterDataProvider } from '@/domains/master-data/components/MasterDataP
 import { paths } from '../router/paths';
 import { GlobalSearch } from './GlobalSearch';
 import { MobileNavigation } from './MobileNavigation';
+import { ThemeToggle } from '../theme/ThemeToggle';
 import { Sidebar } from './Sidebar';
 
 export function AppShell() {
@@ -23,6 +24,7 @@ export function AppShell() {
         </Link>
         <GlobalSearch />
         <div className="c-topbar__end">
+          <ThemeToggle />
           <UserMenu />
         </div>
       </header>

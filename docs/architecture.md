@@ -113,6 +113,15 @@ they are unit-tested against the seed data. Connection impact analysis
   the page itself never scrolls sideways. The master data page swaps its list navigation for a
   grouped select.
 
+## Colour mode
+
+Light and dark mode come from Takeoff tokens (`[data-theme='dark']`). `AppProviders` holds the mode
+(stored choice in `localStorage` `cerebro.theme`, otherwise the OS preference, followed live) and
+passes it to `TakeoffSparProvider`, which sets `data-theme` on `<html>`. An inline script in
+`index.html` applies the same choice before first paint. The top bar has a `ThemeToggle`. Custom CSS
+must use tokens that are redefined for dark mode (e.g. `--static-light`, `--primary-lightest`, not
+`--static-white` / `--primary-50`); text accents on dark surfaces use `--primary-dark`.
+
 ## Routing
 
 `app/router/routes.tsx` defines the route tree (pages are `React.lazy`), `paths.ts` builds URLs.
