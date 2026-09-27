@@ -7,6 +7,17 @@
 :root[data-theme='dark'] {
   /* Native controls (scrollbars, date inputs) follow the theme. */
   color-scheme: dark;
+
+  /*
+   * Softer, layered dark palette. Takeoff's default dark surface is pure black, which is darker
+   * than the page and reads as a hole rather than a raised card. Surfaces (cards, top bar, sidebar,
+   * inputs, dialogs) sit one step above the page, and hairlines are translucent white so they stay
+   * visible on every surface. Only palette tokens are used.
+   */
+  --static-light: var(--neutral-800);
+  --background-lightest: var(--neutral-900);
+  --border-light: var(--alpha-base-white-12);
+  --border-lightest: var(--alpha-base-white-8);
 }
 
 :root {

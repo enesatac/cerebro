@@ -120,7 +120,8 @@ Light and dark mode come from Takeoff tokens (`[data-theme='dark']`). `AppProvid
 passes it to `TakeoffSparProvider`, which sets `data-theme` on `<html>`. An inline script in
 `index.html` applies the same choice before first paint. The top bar has a `ThemeToggle`. Custom CSS
 must use tokens that are redefined for dark mode (e.g. `--static-light`, `--primary-lightest`, not
-`--static-white` / `--primary-50`); text accents on dark surfaces use `--primary-dark`.
+`--static-white` / `--primary-50`); text accents on dark surfaces use `--primary-dark`. The dark palette is softened in `global.css`:
+surfaces use `--neutral-800` above a `--neutral-900` page, and hairlines are translucent white.
 
 ## Routing
 
