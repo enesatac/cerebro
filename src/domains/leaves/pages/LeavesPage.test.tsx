@@ -17,6 +17,17 @@ describe('leaves page', () => {
     expect(screen.getByRole('button', { name: 'İzin ekle' })).toBeInTheDocument();
   });
 
+  it('keeps the add dialog open while picking from its select lists', async () => {
+    const user = userEvent.setup();
+    renderRoute('/leaves?date=2026-10-01');
+    await user.click(await screen.findByRole('button', { name: 'İzin ekle' }));
+    const dialog = await screen.findByRole('dialog', { name: 'İzin ekle' });
+    await user.click(within(dialog).getByRole('combobox', { name: /Kişi/ }));
+    await user.click(await screen.findByRole('option', { name: /Burak Şahin/ }));
+    expect(screen.getByRole('dialog', { name: 'İzin ekle' })).toBeInTheDocument();
+    expect(within(dialog).getByRole('combobox', { name: /Kişi/ })).toHaveTextContent('Burak Şahin');
+  });
+
   it('filters to one type and opens the list view', async () => {
     const user = userEvent.setup();
     renderRoute('/leaves?date=2026-10-01&type=sick&away=1&tab=list');
