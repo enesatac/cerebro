@@ -1,5 +1,6 @@
 import { applications } from './data/applications';
 import { businessUnits } from './data/businessUnits';
+import { leaves } from './data/leaves';
 import { dependencies, integrations } from './data/connections';
 import { masterData } from './data/masterData';
 import { decisions, escalations, risks } from './data/operations';
@@ -24,6 +25,7 @@ export const seedTables = {
   decisions,
   users,
   masterData,
+  leaves,
 };
 
 /**
@@ -53,6 +55,7 @@ export const SEQUENCES = [
   'documentationLinks',
   'milestones',
   'applicationImpacts',
+  'leaves',
 ] as const;
 export type SequenceName = (typeof SEQUENCES)[number];
 
@@ -90,6 +93,7 @@ export function sequencesOf(tables: typeof seedTables): Sequences {
     documentationLinks: maxId(portfolio.flatMap((row) => row.documentation)),
     milestones: maxId(tables.projects.flatMap((p) => p.milestones)),
     applicationImpacts: maxId(tables.projects.flatMap((p) => p.applicationImpacts)),
+    leaves: maxId(tables.leaves),
   };
 }
 

@@ -259,6 +259,13 @@ export const masterData: MasterDataList[] = [
     ['event', 'Olay'],
     ['other', 'Diğer'],
   ]),
+  colored('leaveTypes', [
+    ['annual', 'Yıllık izin', 'teal', 'Planlı yıllık ücretli izin.'],
+    ['sick', 'Hastalık izni', 'danger', 'Sağlık nedeniyle izin. Tıbbi ayrıntı yazılmaz.'],
+    ['excuse', 'Mazeret izni', 'warning', 'Evlilik, taşınma, vefat gibi mazeret izinleri.'],
+    ['training', 'Eğitim / konferans', 'purple', 'Ofis dışında eğitim veya etkinlik.'],
+    ['unpaid', 'Ücretsiz izin', 'neutral'],
+  ]),
   plain('integrationFrequencies', [
     ['real-time', 'Gerçek zamanlı'],
     ['near-real-time', 'Gerçek zamana yakın'],

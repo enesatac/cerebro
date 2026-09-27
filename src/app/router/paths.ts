@@ -73,6 +73,7 @@ export const paths = {
     edit: (decisionId: EntityId) => `/decisions/${id(decisionId)}/edit`,
   },
   reports: () => '/reports',
+  leaves: () => '/leaves',
   admin: {
     /** `section` is a master data list key, `business-units` or `people`. */
     masterData: (section?: string) =>

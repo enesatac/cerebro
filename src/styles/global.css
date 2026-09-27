@@ -1329,3 +1329,623 @@ code {
 :root[data-theme='dark'] .c-md-nav__link[aria-current='page'] {
   color: var(--primary-dark);
 }
+
+/* ---------- Leave calendar ---------- */
+
+.c-period-nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.c-period-nav__divider {
+  width: 1px;
+  height: 24px;
+  margin-inline: var(--spacing-xxs);
+  background: var(--border-light);
+}
+
+.c-segmented {
+  display: inline-flex;
+  gap: var(--spacing-xxs);
+}
+
+.c-filter-switch {
+  align-self: end;
+  min-height: 40px;
+}
+
+/* People down the side, days across the top. The table scrolls; the corner, the header rows
+   and the person column stay put so every bar keeps its name and date in view. */
+.c-timeline {
+  --c-timeline-person: 220px;
+  --c-timeline-day: 40px;
+  --c-timeline-row: 48px;
+  --c-timeline-head: 30px;
+  position: relative;
+  max-height: min(70vh, 760px);
+  overflow: auto;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-m-base);
+  background: var(--static-light);
+  overscroll-behavior-x: contain;
+}
+
+.c-timeline:focus-visible {
+  outline: 2px solid var(--primary-500);
+  outline-offset: 2px;
+}
+
+.c-timeline--2w {
+  --c-timeline-day: 68px;
+}
+
+.c-timeline--3m {
+  --c-timeline-day: 20px;
+  --c-timeline-row: 40px;
+}
+
+.c-timeline__table {
+  border-collapse: separate;
+  border-spacing: 0;
+  table-layout: fixed;
+  width: calc(var(--c-timeline-person) + var(--c-timeline-days) * var(--c-timeline-day));
+}
+
+.c-timeline__col-person {
+  width: var(--c-timeline-person);
+}
+
+.c-timeline__col-day {
+  width: var(--c-timeline-day);
+}
+
+.c-timeline__table th,
+.c-timeline__table td {
+  padding: 0;
+  border-bottom: 1px solid var(--border-lightest);
+}
+
+.c-timeline__corner,
+.c-timeline__month,
+.c-timeline__day {
+  position: sticky;
+  z-index: 2;
+  background: var(--static-light);
+  color: var(--text-dark);
+  font-weight: 600;
+}
+
+.c-timeline__corner {
+  top: 0;
+  left: 0;
+  z-index: 4;
+  width: var(--c-timeline-person);
+  min-width: var(--c-timeline-person);
+  max-width: var(--c-timeline-person);
+  padding: 0 var(--spacing-l) !important;
+  text-align: left;
+  vertical-align: bottom;
+  padding-bottom: var(--spacing-s) !important;
+  border-right: 1px solid var(--border-light);
+  border-bottom: 1px solid var(--border-light) !important;
+  font-size: var(--size-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.c-timeline__month {
+  top: 0;
+  height: var(--c-timeline-head);
+  text-align: left;
+  border-left: 1px solid var(--border-light);
+  font-size: var(--size-xs);
+}
+
+.c-timeline__month-label {
+  position: sticky;
+  left: calc(var(--c-timeline-person) + var(--spacing-s));
+  z-index: 1;
+  display: inline-block;
+  padding: 0 var(--spacing-s);
+  color: var(--text-darkest);
+  white-space: nowrap;
+  text-transform: capitalize;
+}
+
+.c-timeline__day {
+  top: var(--c-timeline-head);
+  width: var(--c-timeline-day);
+  min-width: var(--c-timeline-day);
+  max-width: var(--c-timeline-day);
+  height: 44px;
+  text-align: center;
+  border-bottom: 1px solid var(--border-light) !important;
+  line-height: 1.15;
+}
+
+.c-timeline__weekday {
+  display: block;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-base);
+  text-transform: capitalize;
+}
+
+.c-timeline__date {
+  display: block;
+  font-size: var(--size-sm);
+  color: var(--text-darkest);
+}
+
+.c-timeline--3m .c-timeline__weekday {
+  display: none;
+}
+
+.c-timeline--3m .c-timeline__date {
+  font-size: 10px;
+}
+
+.c-timeline__day--weekend {
+  background: var(--background-lightest);
+}
+
+.c-timeline__day--weekend .c-timeline__date,
+.c-timeline__day--weekend .c-timeline__weekday {
+  color: var(--text-base);
+}
+
+.c-timeline__day--today .c-timeline__date {
+  display: inline-grid;
+  place-items: center;
+  min-width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  background: var(--primary-500);
+  color: var(--neutral-0);
+}
+
+.c-timeline--3m .c-timeline__day--today .c-timeline__date {
+  min-width: 16px;
+  height: 16px;
+}
+
+.c-timeline__day--month-start,
+.c-timeline__cell--month-start {
+  border-left: 1px solid var(--border-light);
+}
+
+.c-timeline__person {
+  position: sticky;
+  left: 0;
+  width: var(--c-timeline-person);
+  min-width: var(--c-timeline-person);
+  max-width: var(--c-timeline-person);
+  z-index: 1;
+  height: var(--c-timeline-row);
+  padding: var(--spacing-xs) var(--spacing-l) !important;
+  background: var(--static-light);
+  border-right: 1px solid var(--border-light);
+  text-align: left;
+  font-weight: 400;
+}
+
+.c-timeline__name {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  color: var(--text-darkest);
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.c-timeline__title {
+  display: block;
+  color: var(--text-base);
+  font-size: var(--size-xs);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.c-timeline--3m .c-timeline__title {
+  display: none;
+}
+
+.c-timeline__away {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--teal-500);
+  box-shadow: 0 0 0 2px var(--teal-100);
+}
+
+.c-timeline tbody tr:hover .c-timeline__person,
+.c-timeline tbody tr:hover .c-timeline__cell {
+  background-color: var(--background-lightest);
+}
+
+.c-timeline__cell {
+  height: var(--c-timeline-row);
+}
+
+.c-timeline__cell--weekend {
+  background-image: repeating-linear-gradient(
+    135deg,
+    transparent 0 5px,
+    var(--border-lightest) 5px 6px
+  );
+}
+
+.c-timeline__cell--today {
+  box-shadow: inset 2px 0 0 var(--primary-500);
+}
+
+.c-timeline__cell--leave {
+  padding: 5px 1px !important;
+}
+
+.c-timeline--3m .c-timeline__cell--leave {
+  padding: 7px 0 !important;
+}
+
+.c-timeline--editable .c-timeline__cell:not(.c-timeline__cell--leave) {
+  cursor: copy;
+}
+
+/* "Add a leave here": a neutral dashed box with a plus, not an alarming colour. */
+.c-timeline--editable .c-timeline__cell:not(.c-timeline__cell--leave):hover {
+  background: var(--neutral-100);
+  box-shadow: inset 0 0 0 1px var(--border-base);
+}
+
+.c-timeline--editable .c-timeline__cell:not(.c-timeline__cell--leave):hover::after {
+  content: '+';
+  display: grid;
+  place-items: center;
+  height: 100%;
+  color: var(--text-dark);
+  font-size: var(--size-lg);
+  font-weight: 600;
+}
+
+:root[data-theme='dark']
+  .c-timeline--editable
+  .c-timeline__cell:not(.c-timeline__cell--leave):hover {
+  background: var(--alpha-base-white-8);
+}
+
+/* A leave: a rounded bar in the type's colour with a solid accent edge. Flat edges mean it
+   continues beyond the visible period. */
+.c-leave {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  min-height: 22px;
+  padding: 0 var(--spacing-s);
+  border: 0;
+  border-left: 4px solid var(--c-leave-accent);
+  border-radius: var(--radius-m-base);
+  background: var(--c-leave-bg);
+  color: var(--c-leave-fg);
+  font: inherit;
+  font-size: var(--size-xs);
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  overflow: hidden;
+  transition:
+    filter 120ms ease,
+    box-shadow 120ms ease;
+}
+
+.c-leave:hover {
+  filter: saturate(1.25);
+  box-shadow: 0 0 0 1px var(--c-leave-accent);
+}
+
+.c-leave:focus-visible {
+  outline: 2px solid var(--c-leave-accent);
+  outline-offset: 2px;
+}
+
+.c-timeline--3m .c-leave {
+  padding: 0;
+  border-left-width: 3px;
+  border-radius: var(--radius-s);
+}
+
+.c-leave--from-before {
+  border-left-style: dashed;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.c-leave--to-after {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.c-leave__text {
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.c-leave--neutral {
+  --c-leave-bg: var(--neutral-200);
+  --c-leave-fg: var(--neutral-900);
+  --c-leave-accent: var(--neutral-600);
+}
+
+.c-leave--info {
+  --c-leave-bg: var(--blue-200);
+  --c-leave-fg: var(--blue-900);
+  --c-leave-accent: var(--blue-600);
+}
+
+.c-leave--primary {
+  --c-leave-bg: var(--primary-200);
+  --c-leave-fg: var(--primary-900);
+  --c-leave-accent: var(--primary-600);
+}
+
+.c-leave--secondary {
+  --c-leave-bg: var(--secondary-200);
+  --c-leave-fg: var(--secondary-900);
+  --c-leave-accent: var(--secondary-600);
+}
+
+.c-leave--success {
+  --c-leave-bg: var(--green-200);
+  --c-leave-fg: var(--green-900);
+  --c-leave-accent: var(--green-600);
+}
+
+.c-leave--warning {
+  --c-leave-bg: var(--yellow-200);
+  --c-leave-fg: var(--yellow-900);
+  --c-leave-accent: var(--yellow-600);
+}
+
+.c-leave--danger {
+  --c-leave-bg: var(--red-200);
+  --c-leave-fg: var(--red-900);
+  --c-leave-accent: var(--red-600);
+}
+
+.c-leave--purple {
+  --c-leave-bg: var(--purple-200);
+  --c-leave-fg: var(--purple-900);
+  --c-leave-accent: var(--purple-600);
+}
+
+.c-leave--cyan {
+  --c-leave-bg: var(--cyan-200);
+  --c-leave-fg: var(--cyan-900);
+  --c-leave-accent: var(--cyan-600);
+}
+
+.c-leave--teal {
+  --c-leave-bg: var(--teal-200);
+  --c-leave-fg: var(--teal-900);
+  --c-leave-accent: var(--teal-600);
+}
+
+.c-leave--business {
+  --c-leave-bg: var(--business-200);
+  --c-leave-fg: var(--business-900);
+  --c-leave-accent: var(--business-600);
+}
+
+.c-leave--dark {
+  --c-leave-bg: var(--neutral-700);
+  --c-leave-fg: var(--neutral-0);
+  --c-leave-accent: var(--neutral-900);
+}
+
+:root[data-theme='dark'] .c-leave--neutral {
+  --c-leave-bg: var(--neutral-700);
+  --c-leave-fg: var(--neutral-100);
+  --c-leave-accent: var(--neutral-400);
+}
+
+:root[data-theme='dark'] .c-leave--info {
+  --c-leave-bg: var(--blue-800);
+  --c-leave-fg: var(--blue-100);
+  --c-leave-accent: var(--blue-400);
+}
+
+:root[data-theme='dark'] .c-leave--primary {
+  --c-leave-bg: var(--primary-800);
+  --c-leave-fg: var(--primary-100);
+  --c-leave-accent: var(--primary-400);
+}
+
+:root[data-theme='dark'] .c-leave--secondary {
+  --c-leave-bg: var(--secondary-800);
+  --c-leave-fg: var(--secondary-100);
+  --c-leave-accent: var(--secondary-400);
+}
+
+:root[data-theme='dark'] .c-leave--success {
+  --c-leave-bg: var(--green-800);
+  --c-leave-fg: var(--green-100);
+  --c-leave-accent: var(--green-400);
+}
+
+:root[data-theme='dark'] .c-leave--warning {
+  --c-leave-bg: var(--yellow-800);
+  --c-leave-fg: var(--yellow-100);
+  --c-leave-accent: var(--yellow-400);
+}
+
+:root[data-theme='dark'] .c-leave--danger {
+  --c-leave-bg: var(--red-800);
+  --c-leave-fg: var(--red-100);
+  --c-leave-accent: var(--red-400);
+}
+
+:root[data-theme='dark'] .c-leave--purple {
+  --c-leave-bg: var(--purple-800);
+  --c-leave-fg: var(--purple-100);
+  --c-leave-accent: var(--purple-400);
+}
+
+:root[data-theme='dark'] .c-leave--cyan {
+  --c-leave-bg: var(--cyan-800);
+  --c-leave-fg: var(--cyan-100);
+  --c-leave-accent: var(--cyan-400);
+}
+
+:root[data-theme='dark'] .c-leave--teal {
+  --c-leave-bg: var(--teal-800);
+  --c-leave-fg: var(--teal-100);
+  --c-leave-accent: var(--teal-400);
+}
+
+:root[data-theme='dark'] .c-leave--business {
+  --c-leave-bg: var(--business-800);
+  --c-leave-fg: var(--business-100);
+  --c-leave-accent: var(--business-400);
+}
+
+:root[data-theme='dark'] .c-leave--dark {
+  --c-leave-bg: var(--neutral-300);
+  --c-leave-fg: var(--neutral-900);
+  --c-leave-accent: var(--neutral-50);
+}
+
+.c-leave-card {
+  display: grid;
+  gap: var(--spacing-s);
+  min-width: 260px;
+  max-width: 320px;
+}
+
+.c-leave-card__head {
+  display: grid;
+  gap: 2px;
+}
+
+.c-leave-card__head .c-muted {
+  font-size: var(--size-xs);
+}
+
+.c-leave-card__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-s);
+  color: var(--text-darkest);
+}
+
+.c-leave-card__meta {
+  margin: 0;
+  color: var(--text-dark);
+}
+
+.c-leave-card__actions {
+  display: flex;
+  gap: var(--spacing-xs);
+  padding-top: var(--spacing-s);
+  border-top: 1px solid var(--border-light);
+}
+
+.c-leave-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs) var(--spacing-l);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--text-dark);
+  font-size: var(--size-xs);
+}
+
+.c-leave-legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.c-leave-legend__swatch {
+  flex: none;
+  border-left-width: 3px !important;
+  border-radius: var(--radius-s) !important;
+  width: 22px !important;
+  height: 14px !important;
+  min-height: 0;
+  padding: 0;
+  cursor: default;
+}
+
+.c-leave-legend__swatch--weekend {
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-s);
+  background-image: repeating-linear-gradient(
+    135deg,
+    transparent 0 5px,
+    var(--border-light) 5px 6px
+  );
+}
+
+.c-leave-legend__swatch--today {
+  border-radius: 999px;
+  width: 14px !important;
+  background: var(--primary-500);
+}
+
+.c-leave-duration {
+  margin: 0;
+  color: var(--text-dark);
+  font-size: var(--size-xs);
+}
+
+@media (max-width: 900px) {
+  .c-timeline {
+    --c-timeline-person: 150px;
+    max-height: 65vh;
+  }
+
+  .c-timeline__corner,
+  .c-timeline__person {
+    padding-inline: var(--spacing-s) !important;
+  }
+
+  .c-timeline--2w {
+    --c-timeline-day: 52px;
+  }
+
+  .c-timeline--1m {
+    --c-timeline-day: 34px;
+  }
+}
+
+@media (max-width: 600px) {
+  .c-timeline {
+    --c-timeline-person: 116px;
+  }
+
+  .c-timeline__title {
+    display: none;
+  }
+
+  .c-period-nav {
+    width: 100%;
+  }
+
+  .c-period-nav__divider {
+    display: none;
+  }
+
+  .c-segmented {
+    margin-left: auto;
+  }
+}

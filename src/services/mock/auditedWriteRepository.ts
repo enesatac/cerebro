@@ -1,3 +1,4 @@
+import type { Permission } from '@/domains/auth/types';
 import type {
   AuditMetadata,
   DeletionImpact,
@@ -27,6 +28,8 @@ interface AuditedWriteOptions<T extends AuditedEntity, I> {
   validate?: (input: I, excludeId: EntityId | null) => void;
   impact?: (id: EntityId) => DeletionImpact;
   cascade?: (id: EntityId) => void;
+  /** Defaults: `portfolio:edit` to write, `portfolio:delete` to delete. */
+  permissions?: { write: Permission; remove: Permission };
 }
 
 /** create / update / remove / getDeletionImpact for an audited aggregate, with permission checks. */
@@ -34,16 +37,20 @@ export function createAuditedWriteRepository<T extends AuditedEntity, I>(
   options: AuditedWriteOptions<T, I>,
 ): WriteRepository<T, I> {
   const { kit, rows, entityLabel } = options;
+  const permissions = options.permissions ?? {
+    write: 'portfolio:edit',
+    remove: 'portfolio:delete',
+  };
   return {
     async create(input) {
-      const user = await kit.begin();
+      const user = await kit.begin(permissions.write);
       options.validate?.(input, null);
       const entity = options.build(copy(input), kit.nextId(options.sequence), kit.newAudit(user));
       rows().push(entity);
       return copy(entity);
     },
     async update(id, input) {
-      const user = await kit.begin();
+      const user = await kit.begin(permissions.write);
       const current = findOrThrow(rows(), id, entityLabel);
       options.validate?.(input, id);
       return copy(
@@ -51,7 +58,7 @@ export function createAuditedWriteRepository<T extends AuditedEntity, I>(
       );
     },
     async remove(id) {
-      await kit.begin('portfolio:delete');
+      await kit.begin(permissions.remove);
       findOrThrow(rows(), id, entityLabel);
       const impact = options.impact?.(id) ?? NO_IMPACT;
       if (impact.blockedReason) throw new ValidationError(impact.blockedReason);

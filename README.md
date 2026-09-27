@@ -27,6 +27,9 @@ catalogue — kept simple.
   unsaved-changes guard, and a deletion-impact confirmation before destructive actions.
 - **Master data** — one admin page for every value offered in forms and shown as a label or badge
   (statuses, types, categories, scales…), plus business units and people. Changes apply site-wide.
+- **Leave calendar** — `/leaves`: people down the side, days across the top, each leave a bar in
+  its type's colour (2 weeks / month / 3 months, filters, list view). Admins add, edit and delete
+  leaves; overlapping leaves for the same person are rejected.
 - **Roles** — `admin` (full access, user and master data management) and `user` (read-only). Permissions are
   enforced in the repository layer and mirrored in the UI.
 
@@ -61,7 +64,7 @@ picker only):
 ### Demo data
 
 Seed data lives in `src/services/mock/data/` and is entirely fictional. In development, changes
-are persisted to `localStorage` (`cerebro.demo-db.v4`, session in `cerebro.demo-session.v2`). Clear
+are persisted to `localStorage` (`cerebro.demo-db.v5`, session in `cerebro.demo-session.v2`). Clear
 those keys (or the site data) to reset to the seed.
 
 ## Scripts

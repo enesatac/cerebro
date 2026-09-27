@@ -182,11 +182,25 @@ teams and technologies.
   a value list editor (reorder, rename, recolour, (de)activate, add/remove custom values, usage
   counts) and table + dialog editors for business units and people.
 
+## Leave management
+
+- Entity `LeaveRecord` (`personId`, `type` from the `leaveTypes` master data list, inclusive
+  `startDate`/`endDate`, short `note`); table `leave_records` with a check on the dates and an
+  exclusion constraint so one person has at most one leave per day.
+- Repository `LeaveRepository.list({ from, to, personIds? })` returns leaves overlapping a period;
+  writes need `leaves:manage` (admin). The mock rejects overlaps with a field error on `startDate`.
+- Page `/leaves` (everyone can read): URL state in `utils/leaveParams.ts`; calendar maths (periods,
+  days, month headers, bar segments, working days) in `utils/leaveCalendar.ts` — pure and tested.
+- `LeaveTimeline` is a real `<table>` (row headers = people, column headers = days) with sticky
+  header/column; bars are popover triggers with the full description as their accessible name.
+  Admins click an empty day to open `LeaveDialog` prefilled. Colours come from the master data
+  variant via `.c-leave--<variant>` (separate light and dark steps in `global.css`).
+
 ## Development persistence
 
 The mock database and session are persisted in `localStorage` in the browser
-(`cerebro.demo-db.v4`, `cerebro.demo-session.v2`) so records survive a reload. Tests use in-memory
-stores. To reset the demo data, clear the site's storage (or remove `cerebro.demo-db.v4`).
+(`cerebro.demo-db.v5`, `cerebro.demo-session.v2`) so records survive a reload. Tests use in-memory
+stores. To reset the demo data, clear the site's storage (or remove `cerebro.demo-db.v5`).
 
 ## Security posture (frontend)
 

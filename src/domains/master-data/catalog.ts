@@ -13,6 +13,7 @@ import {
   INTEGRATION_TYPES,
 } from '@/domains/connections/types';
 import { DECISION_STATUSES } from '@/domains/decisions/types';
+import { LEAVE_TYPES } from '@/domains/leaves/types';
 import { ESCALATION_STATUSES } from '@/domains/escalations/types';
 import {
   APPLICATION_IMPACT_TYPES,
@@ -40,6 +41,7 @@ export const MASTER_DATA_GROUPS = [
   { id: 'projects', label: 'Projeler' },
   { id: 'operations', label: 'Riskler ve kararlar' },
   { id: 'connections', label: 'Bağlantılar' },
+  { id: 'people', label: 'İnsan kaynakları' },
   { id: 'shared', label: 'Ortak' },
 ] as const;
 export type MasterDataGroupId = (typeof MASTER_DATA_GROUPS)[number]['id'];
@@ -306,6 +308,16 @@ export const MASTER_DATA_LISTS: readonly MasterDataListDefinition[] = [
     extensible: true,
     colored: false,
     usedIn: 'Entegrasyon formu, entegrasyon listeleri',
+  }),
+  define({
+    key: 'leaveTypes',
+    label: 'İzin türleri',
+    description: 'İzin kayıtlarının türü. Renkler izin takviminde kullanılır.',
+    group: 'people',
+    systemCodes: LEAVE_TYPES,
+    extensible: true,
+    colored: true,
+    usedIn: 'İzin formu, izin takvimi ve renk açıklaması',
   }),
   define({
     key: 'criticalities',

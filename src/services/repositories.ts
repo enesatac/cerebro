@@ -3,6 +3,7 @@ import type { ApplicationRepository } from '@/domains/applications/api/Applicati
 import type { BusinessUnitRepository } from '@/domains/business-units/api/BusinessUnitRepository';
 import type { ConnectionRepository } from '@/domains/connections/api/ConnectionRepository';
 import type { DecisionRepository } from '@/domains/decisions/api/DecisionRepository';
+import type { LeaveRepository } from '@/domains/leaves/api/LeaveRepository';
 import type { MasterDataRepository } from '@/domains/master-data/api/MasterDataRepository';
 import type { GovernanceRepository } from '@/domains/governance/api/GovernanceRepository';
 import type { EscalationRepository } from '@/domains/escalations/api/EscalationRepository';
@@ -33,6 +34,7 @@ export interface Repositories {
   auth: AuthRepository;
   users: UserRepository;
   masterData: MasterDataRepository;
+  leaves: LeaveRepository;
 }
 
 /**

@@ -1,4 +1,5 @@
 import type { ApplicationInput } from '@/domains/applications/types';
+import type { LeaveInput } from '@/domains/leaves/types';
 import type { ProjectInput } from '@/domains/projects/types';
 import type { MasterDataRepository } from '@/domains/master-data/api/MasterDataRepository';
 import { getListDefinition } from '@/domains/master-data/catalog';
@@ -83,6 +84,8 @@ function codesInUse(db: MockDatabase, key: MasterDataListKey): string[] {
       return db.integrations.map((i) => i.type);
     case 'integrationFrequencies':
       return db.integrations.map((i) => i.frequency);
+    case 'leaveTypes':
+      return db.leaves.map((l) => l.type);
   }
 }
 
@@ -293,6 +296,9 @@ export const codeChecks = {
   dependency: (d: Omit<MockDatabase['dependencies'][number], 'id' | 'audit'>): CodeCheck[] => [
     { list: 'dependencyTypes', codes: [d.type], field: 'type' },
     { list: 'criticalities', codes: [d.criticality], field: 'criticality' },
+  ],
+  leave: (l: Pick<LeaveInput, 'type'>): CodeCheck[] => [
+    { list: 'leaveTypes', codes: [l.type], field: 'type' },
   ],
   integration: (i: Omit<MockDatabase['integrations'][number], 'id' | 'audit'>): CodeCheck[] => [
     { list: 'integrationTypes', codes: [i.type], field: 'type' },

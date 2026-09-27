@@ -34,6 +34,7 @@ export const MASTER_DATA_LIST_KEYS = [
   'dependencyTypes',
   'integrationTypes',
   'integrationFrequencies',
+  'leaveTypes',
 ] as const;
 export type MasterDataListKey = (typeof MASTER_DATA_LIST_KEYS)[number];
 

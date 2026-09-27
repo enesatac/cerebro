@@ -170,6 +170,7 @@ export function personDeletionImpact(db: MockDatabase, id: EntityId): DeletionIm
         db.decisions.filter((d) => d.decidedByIds.includes(id)).length,
     },
     { label: 'kullanıcı hesabı', count: db.users.filter((u) => u.personId === id).length },
+    { label: 'izin kaydı', count: db.leaves.filter((l) => l.personId === id).length },
     {
       label: 'kayıt geçmişi',
       count: audited.filter(

@@ -56,3 +56,35 @@ export function toIsoDate(date: Date): string {
 export function isoDateInDays(days: number, now: Date = new Date()): string {
   return toIsoDate(addDays(now, days));
 }
+
+/** `1–5 Eki 2026`, `28 Eyl – 3 Eki 2026` or `29 Ara 2026 – 2 Oca 2027` (inclusive range). */
+export function formatDateRange(start: string, end: string): string {
+  const from = parse(start);
+  const to = parse(end);
+  if (!from || !to) return '—';
+  if (start === end) return format(from, DATE_FORMAT, { locale: tr });
+  if (from.getFullYear() !== to.getFullYear()) {
+    return `${format(from, DATE_FORMAT, { locale: tr })} – ${format(to, DATE_FORMAT, { locale: tr })}`;
+  }
+  if (from.getMonth() !== to.getMonth()) {
+    return `${format(from, 'd MMM', { locale: tr })} – ${format(to, DATE_FORMAT, { locale: tr })}`;
+  }
+  return `${format(from, 'd', { locale: tr })}–${format(to, DATE_FORMAT, { locale: tr })}`;
+}
+
+/** Short weekday (`Pt`, `Sa`, …) and month headings (`Eylül 2026`) for calendars. */
+export function formatWeekdayShort(value: string): string {
+  const date = parse(value);
+  return date ? format(date, 'EEEEEE', { locale: tr }) : '';
+}
+
+export function formatMonthYear(value: string): string {
+  const date = parse(value);
+  return date ? format(date, 'LLLL yyyy', { locale: tr }) : '';
+}
+
+/** Long form for assistive text: `1 Ekim 2026 Perşembe`. */
+export function formatDateLong(value: string): string {
+  const date = parse(value);
+  return date ? format(date, 'd MMMM yyyy EEEE', { locale: tr }) : '';
+}

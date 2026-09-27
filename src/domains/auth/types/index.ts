@@ -15,6 +15,7 @@ export const PERMISSIONS = [
   'portfolio:delete',
   'users:manage',
   'masterData:manage',
+  'leaves:manage',
 ] as const;
 export type Permission = (typeof PERMISSIONS)[number];
 
