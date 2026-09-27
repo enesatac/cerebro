@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { emptyToNull, optionalText, requiredText } from '@/lib/validation';
+import { idText, optionalText, requiredText, toIdOrNull } from '@/lib/validation';
 import type { BusinessUnit, BusinessUnitInput } from '../types';
 
 export const businessUnitFormSchema = z.object({
@@ -19,7 +19,7 @@ export function toBusinessUnitFormValues(unit?: BusinessUnit): BusinessUnitFormV
     code: unit?.code ?? '',
     name: unit?.name ?? '',
     description: unit?.description ?? '',
-    headId: unit?.headId ?? '',
+    headId: idText(unit?.headId),
   };
 }
 
@@ -28,6 +28,6 @@ export function toBusinessUnitInput(values: BusinessUnitFormValues): BusinessUni
     code: values.code.trim(),
     name: values.name.trim(),
     description: values.description.trim(),
-    headId: emptyToNull(values.headId),
+    headId: toIdOrNull(values.headId),
   };
 }

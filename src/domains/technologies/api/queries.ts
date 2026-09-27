@@ -48,5 +48,5 @@ export function useTechnology(id: TechnologyId) {
 
 export function useTechnologyOptions() {
   const technologies = useTechnologies();
-  return (technologies.data ?? []).map((tech) => ({ value: tech.id, label: tech.name }));
+  return (technologies.data ?? []).map((tech) => ({ value: String(tech.id), label: tech.name }));
 }

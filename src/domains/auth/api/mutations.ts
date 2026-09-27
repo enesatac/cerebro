@@ -1,10 +1,11 @@
 import { useQueryClient } from '@tanstack/react-query';
+import type { EntityId } from '@/domains/shared/types';
 import { useRepositoryMutation } from '@/hooks/useRepositoryMutation';
 import { useRepositories } from '@/services/RepositoryContext';
 import type { UserAccountInput } from '../types';
 import { authKeys } from './queries';
 
-export function useSaveUser(id?: string) {
+export function useSaveUser(id?: EntityId) {
   const { users } = useRepositories();
   const queryClient = useQueryClient();
   return useRepositoryMutation(
@@ -25,7 +26,7 @@ export function useDeleteUser() {
   const { users } = useRepositories();
   const queryClient = useQueryClient();
   return useRepositoryMutation(
-    async (id: string) => {
+    async (id: EntityId) => {
       await users.remove(id);
       await queryClient.invalidateQueries({ queryKey: authKeys.users });
       await queryClient.invalidateQueries({ queryKey: authKeys.signInAccounts });

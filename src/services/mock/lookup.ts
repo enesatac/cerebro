@@ -1,4 +1,4 @@
-import type { EntityRef } from '@/domains/shared/types';
+import type { EntityId, EntityRef } from '@/domains/shared/types';
 import type { MockDatabase } from './database';
 
 /**
@@ -7,9 +7,9 @@ import type { MockDatabase } from './database';
  */
 export function createLookup(db: MockDatabase) {
   const ref = (
-    rows: readonly { id: string }[],
+    rows: readonly { id: EntityId }[],
     nameOf: (row: never) => string,
-    id: string | null | undefined,
+    id: EntityId | null | undefined,
   ): EntityRef | null => {
     if (!id) return null;
     const row = rows.find((candidate) => candidate.id === id);
@@ -17,11 +17,11 @@ export function createLookup(db: MockDatabase) {
   };
 
   return {
-    person: (id: string | null | undefined) =>
+    person: (id: EntityId | null | undefined) =>
       ref(db.people, (p: MockDatabase['people'][number]) => p.fullName, id),
-    team: (id: string | null | undefined) =>
+    team: (id: EntityId | null | undefined) =>
       ref(db.teams, (t: MockDatabase['teams'][number]) => t.name, id),
-    businessUnit: (id: string | null | undefined) =>
+    businessUnit: (id: EntityId | null | undefined) =>
       ref(db.businessUnits, (b: MockDatabase['businessUnits'][number]) => b.name, id),
   };
 }

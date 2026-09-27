@@ -1,3 +1,4 @@
+import type { Draft } from '@/domains/shared/types';
 import type { MasterDataItem, MasterDataList, MasterDataListKey, MasterDataUsage } from '../types';
 
 export interface MasterDataRepository {
@@ -10,5 +11,5 @@ export interface MasterDataRepository {
    * @throws ValidationError when a system value is missing or deactivated, a code or label is
    *   duplicated, or a removed value is still used by records.
    */
-  update(key: MasterDataListKey, items: MasterDataItem[]): Promise<MasterDataList>;
+  update(key: MasterDataListKey, items: Draft<MasterDataItem>[]): Promise<MasterDataList>;
 }

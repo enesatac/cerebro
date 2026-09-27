@@ -1,7 +1,9 @@
 import type { ApplicationRepository } from '@/domains/applications/api/ApplicationRepository';
+import type { EntityId } from '@/domains/shared/types';
 import {
   APPLICATION_LIFECYCLES,
   type Application,
+  type ApplicationId,
   type ApplicationInput,
   type ApplicationListItem,
   type ApplicationListQuery,
@@ -94,7 +96,7 @@ export class MockApplicationRepository implements ApplicationRepository {
   ) {}
 
   /** Server-side validation: unique code and every referenced id must exist. */
-  private validate(input: ApplicationInput, excludeId: string | null) {
+  private validate(input: ApplicationInput, excludeId: EntityId | null) {
     const { db, kit } = this;
     kit.assertUnique(
       db.applications,
@@ -134,39 +136,63 @@ export class MockApplicationRepository implements ApplicationRepository {
     );
   }
 
+  /** Child tables: stored rows keep their keys, new rows take the next value of their sequence. */
+  private withChildIds(input: ApplicationInput, current?: Application) {
+    const { kit } = this;
+    const application = copy(input);
+    return {
+      ...application,
+      roles: kit.withIds(application.roles, 'roleAssignments', current?.roles),
+      teams: kit.withIds(application.teams, 'teamAssignments', current?.teams),
+      technologies: kit.withIds(
+        application.technologies,
+        'technologyUsages',
+        current?.technologies,
+      ),
+      dataStores: kit.withIds(application.dataStores, 'dataStores', current?.dataStores),
+      repositories: kit.withIds(application.repositories, 'repositories', current?.repositories),
+      environments: kit.withIds(application.environments, 'environments', current?.environments),
+      documentation: kit.withIds(
+        application.documentation,
+        'documentationLinks',
+        current?.documentation,
+      ),
+    };
+  }
+
   async create(input: ApplicationInput) {
     const user = await this.kit.begin();
     this.validate(input, null);
     const application: Application = {
-      ...copy(input),
-      id: this.kit.uniqueId('app', input.name, this.db.applications),
+      ...this.withChildIds(input),
+      id: this.kit.nextId('applications'),
       audit: this.kit.newAudit(user),
     };
     this.db.applications.push(application);
     return copy(application);
   }
 
-  async update(id: string, input: ApplicationInput) {
+  async update(id: ApplicationId, input: ApplicationInput) {
     const user = await this.kit.begin();
     const current = findOrThrow(this.db.applications, id, 'Uygulama');
     this.validate(input, id);
     return copy(
       replaceRow(this.db.applications, {
-        ...copy(input),
+        ...this.withChildIds(input, current),
         id,
         audit: this.kit.touch(current.audit, user),
       }),
     );
   }
 
-  async remove(id: string) {
+  async remove(id: ApplicationId) {
     await this.kit.begin('portfolio:delete');
     findOrThrow(this.db.applications, id, 'Uygulama');
     deleteApplicationCascade(this.db, id);
     removeRow(this.db.applications, id);
   }
 
-  async getDeletionImpact(id: string) {
+  async getDeletionImpact(id: EntityId) {
     await delay(this.latencyMs);
     findOrThrow(this.db.applications, id, 'Uygulama');
     return applicationDeletionImpact(this.db, id);
@@ -186,7 +212,7 @@ export class MockApplicationRepository implements ApplicationRepository {
     return copy(paginate(rows, query.page, query.pageSize));
   }
 
-  async getById(id: string) {
+  async getById(id: EntityId) {
     await delay(this.latencyMs);
     return copy(findOrThrow(this.db.applications, id, 'Uygulama'));
   }

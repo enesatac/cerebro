@@ -6,6 +6,7 @@ import {
   serializeApplicationListParams,
   toApplicationListQuery,
 } from './applicationListParams';
+import { BU, TEAM, TECH } from '@/services/mock/data/ids';
 
 describe('applicationListParams', () => {
   it('returns defaults for an empty URL', () => {
@@ -20,9 +21,9 @@ describe('applicationListParams', () => {
       search: 'payment',
       lifecycle: 'active' as const,
       criticality: 'critical' as const,
-      teamId: 'team-payments',
-      technologyId: 'tech-oracle',
-      businessUnitId: 'bu-finance',
+      teamId: TEAM.payments,
+      technologyId: TECH.oracle,
+      businessUnitId: BU.finance,
       sort: { field: 'criticality' as const, direction: 'desc' as const },
       page: 2,
       pageSize: 50,
@@ -61,7 +62,7 @@ describe('applicationListParams', () => {
 
   it('counts active filters but not sorting or paging', () => {
     expect(
-      countActiveFilters({ ...DEFAULT_APPLICATION_LIST_STATE, search: 'x', teamId: 't', page: 3 }),
+      countActiveFilters({ ...DEFAULT_APPLICATION_LIST_STATE, search: 'x', teamId: 7, page: 3 }),
     ).toBe(2);
   });
 });

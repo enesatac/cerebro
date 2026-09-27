@@ -119,7 +119,7 @@ export default function UsersListPage() {
           <Table
             data={users}
             columns={columns}
-            getRowId={(row) => row.id}
+            getRowId={(row) => String(row.id)}
             sorting={{ defaultValue: [{ id: 'name', desc: false }] }}
             emptyState={<EmptyState compact title="Henüz kullanıcı hesabı yok" />}
           />

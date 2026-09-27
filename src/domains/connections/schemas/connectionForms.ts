@@ -2,10 +2,12 @@ import { z } from 'zod';
 import { CRITICALITIES } from '@/domains/shared/types';
 import {
   enumChoice,
+  idText,
   optionalText,
   requiredChoice,
   requiredText,
   secretFreeText,
+  toId,
 } from '@/lib/validation';
 import {
   type ApplicationDependency,
@@ -34,8 +36,8 @@ export function toDependencyFormValues(
   sourceId = '',
 ): DependencyFormValues {
   return {
-    sourceApplicationId: dependency?.sourceApplicationId ?? sourceId,
-    targetApplicationId: dependency?.targetApplicationId ?? '',
+    sourceApplicationId: dependency ? idText(dependency.sourceApplicationId) : sourceId,
+    targetApplicationId: idText(dependency?.targetApplicationId),
     type: dependency?.type ?? 'runtime',
     criticality: dependency?.criticality ?? 'medium',
     description: dependency?.description ?? '',
@@ -44,6 +46,8 @@ export function toDependencyFormValues(
 
 export const toDependencyInput = (values: DependencyFormValues): DependencyInput => ({
   ...values,
+  sourceApplicationId: toId(values.sourceApplicationId),
+  targetApplicationId: toId(values.targetApplicationId),
   description: values.description.trim(),
 });
 
@@ -98,9 +102,9 @@ export function toIntegrationFormValues(
     name: integration?.name ?? '',
     type: integration?.type ?? 'rest-api',
     frequency: integration?.frequency ?? 'real-time',
-    fromApplicationId: integration?.fromApplicationId ?? fromId,
+    fromApplicationId: integration ? idText(integration.fromApplicationId) : fromId,
     targetKind: integration && integration.toApplicationId === null ? 'external' : 'application',
-    toApplicationId: integration?.toApplicationId ?? '',
+    toApplicationId: idText(integration?.toApplicationId),
     externalPartyName: integration?.externalPartyName ?? '',
     dataExchanged: integration?.dataExchanged ?? '',
     description: integration?.description ?? '',
@@ -113,8 +117,8 @@ export function toIntegrationInput(values: IntegrationFormValues): IntegrationIn
     name: values.name.trim(),
     type: values.type,
     frequency: values.frequency,
-    fromApplicationId: values.fromApplicationId,
-    toApplicationId: toApplication ? values.toApplicationId : null,
+    fromApplicationId: toId(values.fromApplicationId),
+    toApplicationId: toApplication ? toId(values.toApplicationId) : null,
     externalPartyName: toApplication ? null : values.externalPartyName.trim(),
     dataExchanged: values.dataExchanged.trim(),
     description: values.description.trim(),

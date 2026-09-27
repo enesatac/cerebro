@@ -2,13 +2,13 @@ import { DetailList } from '@/components/data-display/DetailList';
 import { EmptyState } from '@/components/feedback/EmptyState';
 import { SectionCard } from '@/components/layout/SectionCard';
 import { usePeopleById } from '@/domains/people/api/queries';
-import type { AuditMetadata } from '@/domains/shared/types';
+import type { AuditMetadata, EntityId } from '@/domains/shared/types';
 import { formatDateTime } from '@/lib/dates';
 
 /** Record history for any aggregate. Field-level change history is a Governance-phase feature. */
 export function AuditHistory({ audit }: { audit: AuditMetadata }) {
   const people = usePeopleById();
-  const name = (id: string | null) => (id ? (people.data?.get(id)?.fullName ?? id) : 'unknown');
+  const name = (id: EntityId | null) => (id ? (people.data?.get(id)?.fullName ?? id) : 'unknown');
 
   return (
     <div className="c-stack">

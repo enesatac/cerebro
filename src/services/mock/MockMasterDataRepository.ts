@@ -1,3 +1,5 @@
+import type { ApplicationInput } from '@/domains/applications/types';
+import type { ProjectInput } from '@/domains/projects/types';
 import type { MasterDataRepository } from '@/domains/master-data/api/MasterDataRepository';
 import { getListDefinition } from '@/domains/master-data/catalog';
 import {
@@ -188,7 +190,14 @@ export function createMockMasterDataRepository(
     getUsage: async (key) => (await delay(latencyMs), masterDataUsage(db, key)),
     async update(key, items) {
       await kit.begin('masterData:manage');
-      const next = items.map((item) => ({
+      const owned = new Set(
+        (db.masterData.find((list) => list.key === key)?.items ?? []).map((item) => item.id),
+      );
+      const foreign = items.find((item) => item.id !== null && !owned.has(item.id));
+      if (foreign) throw new ValidationError(`Geçersiz değer kimliği: ${foreign.id}.`);
+      const next: MasterDataItem[] = items.map((item) => ({
+        // New values take the next id of the `master_data_items` sequence.
+        id: item.id ?? kit.nextId('masterDataItems'),
         code: item.code.trim(),
         label: item.label.trim(),
         description: item.description.trim(),
@@ -211,7 +220,7 @@ interface CodeCheck {
   field: string;
 }
 
-type Portfolio = Pick<MockDatabase['applications'][number], 'roles' | 'teams' | 'documentation'>;
+type Portfolio = Pick<ApplicationInput, 'roles' | 'teams' | 'documentation'>;
 
 const portfolioChecks = (row: Portfolio): CodeCheck[] => [
   { list: 'stakeholderRoles', codes: row.roles.map((r) => r.role), field: 'roles' },
@@ -225,11 +234,7 @@ const portfolioChecks = (row: Portfolio): CodeCheck[] => [
 
 /** Master data codes stored on each kind of record, for server-side validation of writes. */
 export const codeChecks = {
-  application: (
-    a:
-      | MockDatabase['applications'][number]
-      | Omit<MockDatabase['applications'][number], 'id' | 'audit'>,
-  ): CodeCheck[] => [
+  application: (a: ApplicationInput): CodeCheck[] => [
     { list: 'applicationTypes', codes: [a.type], field: 'type' },
     { list: 'applicationLifecycles', codes: [a.lifecycle], field: 'lifecycle' },
     { list: 'criticalities', codes: [a.criticality], field: 'criticality' },
@@ -253,7 +258,7 @@ export const codeChecks = {
     },
     ...portfolioChecks(a),
   ],
-  project: (p: Omit<MockDatabase['projects'][number], 'id' | 'audit'>): CodeCheck[] => [
+  project: (p: ProjectInput): CodeCheck[] => [
     { list: 'projectTypes', codes: [p.type], field: 'type' },
     { list: 'projectStatuses', codes: [p.status], field: 'status' },
     { list: 'projectHealths', codes: [p.health], field: 'health' },

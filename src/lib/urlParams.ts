@@ -26,3 +26,10 @@ export function parsePageSize(
   const size = nonNegativeInt(value);
   return size !== null && allowed.includes(size) ? size : fallback;
 }
+
+/** A record id from a route or search param: a positive integer, otherwise `null`. */
+export function parseId(value: string | null | undefined): number | null {
+  if (value == null || !/^[1-9]\d*$/.test(value)) return null;
+  const id = Number(value);
+  return Number.isSafeInteger(id) ? id : null;
+}

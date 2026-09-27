@@ -144,7 +144,7 @@ export function BusinessUnitsEditor() {
           <Table
             data={units}
             columns={columns}
-            getRowId={(row) => row.id}
+            getRowId={(row) => String(row.id)}
             emptyState={<EmptyState compact title="Henüz iş birimi yok" />}
           />
           {editing && (

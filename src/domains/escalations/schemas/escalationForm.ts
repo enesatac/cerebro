@@ -4,11 +4,14 @@ import { CRITICALITIES } from '@/domains/shared/types';
 import {
   emptyToNull,
   enumChoice,
+  idText,
   optionalDate,
   optionalText,
   requiredChoice,
   requiredDate,
   requiredText,
+  toId,
+  toIdOrNull,
 } from '@/lib/validation';
 import { ESCALATION_STATUSES, type Escalation, type EscalationInput } from '../types';
 
@@ -52,14 +55,15 @@ export function toEscalationFormValues(
     description: escalation?.description ?? '',
     severity: escalation?.severity ?? 'high',
     status: escalation?.status ?? 'open',
-    ownerId: escalation?.ownerId ?? '',
-    responsibleTeamId: escalation?.responsibleTeamId ?? '',
-    raisedById: escalation?.raisedById ?? '',
+    ownerId: idText(escalation?.ownerId),
+    responsibleTeamId: idText(escalation?.responsibleTeamId),
+    raisedById: idText(escalation?.raisedById),
     raisedAt: escalation?.raisedAt.slice(0, 10) ?? today,
     targetResolutionDate: escalation?.targetResolutionDate ?? '',
     resolution: escalation?.resolution ?? '',
-    relatedApplicationIds: escalation?.relatedApplicationIds ?? prefill.relatedApplicationIds,
-    relatedProjectIds: escalation?.relatedProjectIds ?? prefill.relatedProjectIds,
+    relatedApplicationIds:
+      escalation?.relatedApplicationIds.map(String) ?? prefill.relatedApplicationIds,
+    relatedProjectIds: escalation?.relatedProjectIds.map(String) ?? prefill.relatedProjectIds,
   };
 }
 
@@ -67,8 +71,11 @@ export function toEscalationInput(values: EscalationFormValues): EscalationInput
   return {
     ...values,
     title: values.title.trim(),
-    ownerId: emptyToNull(values.ownerId),
-    responsibleTeamId: emptyToNull(values.responsibleTeamId),
+    ownerId: toIdOrNull(values.ownerId),
+    responsibleTeamId: toIdOrNull(values.responsibleTeamId),
+    raisedById: toId(values.raisedById),
+    relatedApplicationIds: values.relatedApplicationIds.map(toId),
+    relatedProjectIds: values.relatedProjectIds.map(toId),
     raisedAt: `${values.raisedAt}T09:00:00Z`,
     targetResolutionDate: emptyToNull(values.targetResolutionDate),
     resolution: emptyToNull(values.resolution),

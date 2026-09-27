@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import type { EntityId } from '@/domains/shared/types';
 import type { ApplicationId } from '@/domains/applications/types';
 import { useRepositories } from '@/services/RepositoryContext';
 
@@ -42,7 +43,7 @@ export function useAllIntegrations() {
   });
 }
 
-export function useDependency(id: string) {
+export function useDependency(id: EntityId) {
   const { connections } = useRepositories();
   return useQuery({
     queryKey: [...connectionKeys.all, 'dependency', id],
@@ -50,7 +51,7 @@ export function useDependency(id: string) {
   });
 }
 
-export function useIntegration(id: string) {
+export function useIntegration(id: EntityId) {
   const { connections } = useRepositories();
   return useQuery({
     queryKey: [...connectionKeys.all, 'integration', id],

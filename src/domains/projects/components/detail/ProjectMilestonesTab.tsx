@@ -41,7 +41,7 @@ export function ProjectMilestonesTab({ project }: { project: Project }) {
       <Table
         data={[...project.milestones].sort((a, b) => a.dueDate.localeCompare(b.dueDate))}
         columns={columns}
-        getRowId={(row) => row.id}
+        getRowId={(row) => String(row.id)}
         emptyState={<EmptyState compact title="Bu proje için henüz kilometre taşı tanımlanmadı" />}
       />
     </SectionCard>

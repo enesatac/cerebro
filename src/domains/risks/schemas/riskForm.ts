@@ -3,10 +3,13 @@ import { CRITICALITIES } from '@/domains/shared/types';
 import {
   emptyToNull,
   enumChoice,
-  requiredChoice,
+  idText,
   optionalDate,
   optionalText,
+  requiredChoice,
   requiredText,
+  toId,
+  toIdOrNull,
 } from '@/lib/validation';
 import { RISK_LIKELIHOODS, RISK_STATUSES, type Risk, type RiskInput } from '../types';
 
@@ -59,11 +62,11 @@ export function toRiskFormValues(
     impact: risk?.impact ?? 'medium',
     severity: risk?.severity ?? 'medium',
     status: risk?.status ?? 'open',
-    ownerId: risk?.ownerId ?? '',
+    ownerId: idText(risk?.ownerId),
     mitigationPlan: risk?.mitigationPlan ?? '',
     dueDate: risk?.dueDate ?? '',
-    relatedApplicationIds: risk?.relatedApplicationIds ?? prefill.relatedApplicationIds,
-    relatedProjectIds: risk?.relatedProjectIds ?? prefill.relatedProjectIds,
+    relatedApplicationIds: risk?.relatedApplicationIds.map(String) ?? prefill.relatedApplicationIds,
+    relatedProjectIds: risk?.relatedProjectIds.map(String) ?? prefill.relatedProjectIds,
   };
 }
 
@@ -71,7 +74,9 @@ export function toRiskInput(values: RiskFormValues): RiskInput {
   return {
     ...values,
     title: values.title.trim(),
-    ownerId: emptyToNull(values.ownerId),
+    ownerId: toIdOrNull(values.ownerId),
+    relatedApplicationIds: values.relatedApplicationIds.map(toId),
+    relatedProjectIds: values.relatedProjectIds.map(toId),
     dueDate: emptyToNull(values.dueDate),
   };
 }

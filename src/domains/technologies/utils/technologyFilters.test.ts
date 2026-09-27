@@ -7,7 +7,7 @@ import {
 } from './technologyFilters';
 
 const tech = (
-  id: string,
+  id: number,
   name: string,
   category: TechnologyListItem['category'],
   status: TechnologyListItem['status'],
@@ -23,9 +23,9 @@ const tech = (
   }) satisfies TechnologyListItem;
 
 const catalogue = [
-  tech('a', 'Java', 'backend', 'preferred'),
-  tech('b', 'IBM MQ', 'messaging', 'deprecated'),
-  tech('c', 'Kafka', 'messaging', 'preferred'),
+  tech(1, 'Java', 'backend', 'preferred'),
+  tech(2, 'IBM MQ', 'messaging', 'deprecated'),
+  tech(3, 'Kafka', 'messaging', 'preferred'),
 ];
 
 describe('technologyFilters', () => {
@@ -43,7 +43,7 @@ describe('technologyFilters', () => {
       filterTechnologies(catalogue, { search: 'KAF', category: null, status: null }).map(
         (t) => t.id,
       ),
-    ).toEqual(['c']);
+    ).toEqual([3]);
   });
 
   it('round-trips through the URL and drops invalid values', () => {

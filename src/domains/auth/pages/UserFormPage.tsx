@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import type { EntityId } from '@/domains/shared/types';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router';
 import { paths } from '@/app/router/paths';
@@ -18,6 +19,7 @@ import {
 import { USER_ROLES, type UserAccount } from '../types';
 import { ROLE_PRESENTATION } from '../utils/rolePresentation';
 import { UserDeleteAction } from '../components/UserDeleteAction';
+import { parseId } from '@/lib/urlParams';
 
 const ROLE_OPTIONS = USER_ROLES.map((role) => ({
   value: role,
@@ -38,7 +40,10 @@ function UserForm({ user }: { user?: UserAccount }) {
   const { control } = form;
   const personOptions = [...(people.data?.values() ?? [])]
     .sort((a, b) => a.fullName.localeCompare(b.fullName))
-    .map((person) => ({ value: person.id, label: `${person.fullName} — ${person.jobTitle}` }));
+    .map((person) => ({
+      value: String(person.id),
+      label: `${person.fullName} — ${person.jobTitle}`,
+    }));
 
   return (
     <FormPage
@@ -117,10 +122,10 @@ function UserForm({ user }: { user?: UserAccount }) {
 
 export default function UserFormPage() {
   const { userId } = useParams();
-  return userId ? <EditUser id={userId} /> : <UserForm />;
+  return userId ? <EditUser id={parseId(userId) ?? 0} /> : <UserForm />;
 }
 
-function EditUser({ id }: { id: string }) {
+function EditUser({ id }: { id: EntityId }) {
   const query = useUserAccount(id);
   return (
     <QueryView

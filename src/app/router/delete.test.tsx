@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
 import { createMockRepositories } from '@/services/mock';
 import { renderRoute, TEST_VIEWER } from '@/test/renderWithProviders';
+import { APP } from '@/services/mock/data/ids';
 
 describe('deleting records', () => {
   it('deletes a risk from its register row after confirmation', async () => {
@@ -27,7 +28,7 @@ describe('deleting records', () => {
   });
 
   it('offers delete on detail pages and list rows only to admins', async () => {
-    renderRoute('/applications/app-payment-gateway');
+    renderRoute(`/applications/${APP.paymentGateway}`);
     expect(await screen.findByRole('button', { name: 'Uygulama sil' })).toBeInTheDocument();
   });
 

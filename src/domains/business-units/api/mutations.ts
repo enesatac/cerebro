@@ -1,8 +1,9 @@
 import { useRepositoryMutation } from '@/hooks/useRepositoryMutation';
+import type { EntityId } from '@/domains/shared/types';
 import { useRepositories } from '@/services/RepositoryContext';
 import type { BusinessUnitInput } from '../types';
 
-export function useSaveBusinessUnit(id?: string) {
+export function useSaveBusinessUnit(id?: EntityId) {
   const { businessUnits } = useRepositories();
   return useRepositoryMutation(
     (input: BusinessUnitInput) =>
@@ -13,7 +14,7 @@ export function useSaveBusinessUnit(id?: string) {
 
 export function useDeleteBusinessUnit() {
   const { businessUnits } = useRepositories();
-  return useRepositoryMutation((id: string) => businessUnits.remove(id), {
+  return useRepositoryMutation((id: EntityId) => businessUnits.remove(id), {
     successTitle: () => 'İş birimi silindi',
   });
 }

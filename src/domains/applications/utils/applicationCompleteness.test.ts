@@ -2,8 +2,9 @@ import { describe, expect, it } from 'vitest';
 import { applications } from '@/services/mock/data/applications';
 import type { Application } from '../types';
 import { evaluateApplicationCompleteness } from './applicationCompleteness';
+import { APP } from '@/services/mock/data/ids';
 
-function app(id: string): Application {
+function app(id: number): Application {
   const found = applications.find((candidate) => candidate.id === id);
   if (!found) throw new Error(`Seed application ${id} missing`);
   return structuredClone(found);
@@ -11,13 +12,13 @@ function app(id: string): Application {
 
 describe('evaluateApplicationCompleteness', () => {
   it('scores a fully documented application at 100%', () => {
-    const report = evaluateApplicationCompleteness(app('app-customer-identity'));
+    const report = evaluateApplicationCompleteness(app(APP.customerIdentity));
     expect(report.score).toBe(100);
     expect(report.missing).toEqual([]);
   });
 
   it('reports a missing technical owner as a required gap', () => {
-    const report = evaluateApplicationCompleteness(app('app-legacy-booking-console'));
+    const report = evaluateApplicationCompleteness(app(APP.legacyBookingConsole));
     const missingIds = report.missing.map((rule) => rule.id);
     expect(missingIds).toContain('technical-owner');
     expect(report.missing.find((rule) => rule.id === 'technical-owner')?.importance).toBe(
@@ -27,7 +28,7 @@ describe('evaluateApplicationCompleteness', () => {
   });
 
   it('weights required rules more heavily than recommended ones', () => {
-    const base = app('app-customer-identity');
+    const base = app(APP.customerIdentity);
     const noDocs = evaluateApplicationCompleteness({ ...base, documentation: [] }).score;
     const noOwner = evaluateApplicationCompleteness({
       ...base,
@@ -37,14 +38,14 @@ describe('evaluateApplicationCompleteness', () => {
   });
 
   it('does not expect repositories or technologies for vendor-hosted SaaS', () => {
-    const report = evaluateApplicationCompleteness(app('app-expense-management'));
+    const report = evaluateApplicationCompleteness(app(APP.expenseManagement));
     const evaluatedIds = report.results.map((rule) => rule.id);
     expect(evaluatedIds).not.toContain('repository');
     expect(evaluatedIds).not.toContain('technologies');
   });
 
   it('does not expect a production environment before go-live', () => {
-    const report = evaluateApplicationCompleteness(app('app-management-reporting-hub'));
+    const report = evaluateApplicationCompleteness(app(APP.managementReportingHub));
     expect(report.results.map((rule) => rule.id)).not.toContain('production-environment');
   });
 });

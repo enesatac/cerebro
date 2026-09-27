@@ -4,12 +4,13 @@ import { createMemoryRouter, RouterProvider } from 'react-router';
 import { AppProviders } from '@/app/providers/AppProviders';
 import { routes } from '@/app/router/routes';
 import { createMockRepositories } from '@/services/mock';
+import { USER } from '@/services/mock/data/ids';
 import type { Repositories } from '@/services/repositories';
 
 /** Renders the real route tree at `path` with in-memory repositories and a fresh query client. */
-/** Seed account used by tests: an admin (`user-can-ozturk`) unless a test passes another. */
-export const TEST_ADMIN = 'user-can-ozturk';
-export const TEST_VIEWER = 'user-elif-kaya';
+/** Seed accounts used by tests: an admin (Can Öztürk) unless a test passes another. */
+export const TEST_ADMIN = USER.canOzturk;
+export const TEST_VIEWER = USER.elifKaya;
 
 export function renderRoute(
   path: string,

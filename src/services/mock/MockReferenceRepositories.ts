@@ -1,4 +1,5 @@
 import type { BusinessUnitRepository } from '@/domains/business-units/api/BusinessUnitRepository';
+import type { EntityId } from '@/domains/shared/types';
 import type { BusinessUnitInput } from '@/domains/business-units/types';
 import type { GovernanceRepository } from '@/domains/governance/api/GovernanceRepository';
 import {
@@ -38,7 +39,7 @@ export function createMockReferenceRepositories(
   const wait = () => delay(latencyMs);
 
   // People and business units are master data: not audited, managed by administrators.
-  const validatePerson = (input: PersonInput, excludeId: string | null) => {
+  const validatePerson = (input: PersonInput, excludeId: EntityId | null) => {
     kit.assertUnique(
       db.people,
       input.email,
@@ -56,7 +57,7 @@ export function createMockReferenceRepositories(
     async create(input) {
       await kit.begin('masterData:manage');
       validatePerson(input, null);
-      const person = { ...copy(input), id: kit.uniqueId('person', input.fullName, db.people) };
+      const person = { ...copy(input), id: kit.nextId('people') };
       db.people.push(person);
       return copy(person);
     },
@@ -80,7 +81,7 @@ export function createMockReferenceRepositories(
     },
   };
 
-  const validateBusinessUnit = (input: BusinessUnitInput, excludeId: string | null) => {
+  const validateBusinessUnit = (input: BusinessUnitInput, excludeId: EntityId | null) => {
     kit.assertUnique(
       db.businessUnits,
       input.code,
@@ -105,7 +106,7 @@ export function createMockReferenceRepositories(
     async create(input) {
       await kit.begin('masterData:manage');
       validateBusinessUnit(input, null);
-      const unit = { ...copy(input), id: kit.uniqueId('bu', input.name, db.businessUnits) };
+      const unit = { ...copy(input), id: kit.nextId('businessUnits') };
       db.businessUnits.push(unit);
       return copy(unit);
     },
@@ -158,8 +159,7 @@ export function createMockReferenceRepositories(
       latencyMs,
       rows: () => db.teams,
       entityLabel: 'Ekip',
-      idPrefix: 'team',
-      nameOf: (input) => input.name,
+      sequence: 'teams',
       build: (input, id, audit) => ({ ...input, id, audit }),
       validate(input, excludeId) {
         kit.assertUnique(
@@ -207,7 +207,7 @@ export function createMockReferenceRepositories(
         `"${input.name}" zaten katalogda.`,
         'name',
       );
-      const technology = { ...copy(input), id: kit.uniqueId('tech', input.name, db.technologies) };
+      const technology = { ...copy(input), id: kit.nextId('technologies') };
       db.technologies.push(technology);
       return copy(technology);
     },

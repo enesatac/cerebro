@@ -123,7 +123,7 @@ export function ProjectsTable({
     <Table
       data={result?.items ?? []}
       columns={canEdit ? [...columns, actionsColumn] : columns}
-      getRowId={(row) => row.id}
+      getRowId={(row) => String(row.id)}
       manual
       loading={loading}
       emptyState={emptyState}

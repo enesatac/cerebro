@@ -1,5 +1,13 @@
 import { z } from 'zod';
-import { emptyToNull, optionalEmail, optionalText, requiredText } from '@/lib/validation';
+import {
+  emptyToNull,
+  idText,
+  optionalEmail,
+  optionalText,
+  requiredText,
+  toId,
+  toIdOrNull,
+} from '@/lib/validation';
 import type { Team, TeamInput } from '../types';
 
 export const teamFormSchema = z.object({
@@ -18,8 +26,8 @@ export function toTeamFormValues(team?: Team): TeamFormValues {
   return {
     name: team?.name ?? '',
     description: team?.description ?? '',
-    managerId: team?.managerId ?? '',
-    memberIds: team?.memberIds ?? [],
+    managerId: idText(team?.managerId),
+    memberIds: team?.memberIds.map(String) ?? [],
     contactEmail: team?.contactEmail ?? '',
     chatChannel: team?.chatChannel ?? '',
     responsibilities: team?.responsibilities ?? [],
@@ -27,12 +35,11 @@ export function toTeamFormValues(team?: Team): TeamFormValues {
 }
 
 export function toTeamInput(values: TeamFormValues): TeamInput {
-  const managerId = emptyToNull(values.managerId);
+  const managerId = toIdOrNull(values.managerId);
   // The manager is always a member.
+  const selected = values.memberIds.map(toId);
   const memberIds =
-    managerId && !values.memberIds.includes(managerId)
-      ? [managerId, ...values.memberIds]
-      : values.memberIds;
+    managerId !== null && !selected.includes(managerId) ? [managerId, ...selected] : selected;
   return {
     name: values.name.trim(),
     description: values.description.trim(),

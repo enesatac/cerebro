@@ -34,6 +34,7 @@ import { ActionMenu } from '@/components/actions/ActionMenu';
 import { MasterBadge } from '@/domains/master-data/components/MasterBadge';
 import { MasterLabel } from '@/domains/master-data/components/MasterLabel';
 import { ApplicationDeleteAction } from '../components/ApplicationDeleteAction';
+import { parseId } from '@/lib/urlParams';
 
 const TAB_CONTENT: Record<ApplicationDetailTab, (application: Application) => ReactNode> = {
   overview: (a) => <OverviewTab application={a} />,
@@ -64,7 +65,9 @@ function tabCount(tab: ApplicationDetailTab, application: Application): number |
 
 export default function ApplicationDetailPage() {
   const navigate = useNavigate();
-  const { applicationId = '' } = useParams();
+  const requestedId = useParams().applicationId ?? '';
+  // Unknown or malformed ids resolve to 0, which no sequence ever produces → "not found".
+  const applicationId = parseId(requestedId) ?? 0;
   const [activeTab, selectTab] = useTabParam(APPLICATION_DETAIL_TAB_IDS);
   const query = useApplication(applicationId);
 
@@ -73,7 +76,7 @@ export default function ApplicationDetailPage() {
     return isNotFoundError(query.error) ? (
       <NotFoundState
         title="Uygulama bulunamadı"
-        description={`"${applicationId}" kimliğine sahip bir uygulama yok. Kaldırılmış ya da bağlantı hatalı olabilir.`}
+        description={`"${requestedId}" kimliğine sahip bir uygulama yok. Kaldırılmış ya da bağlantı hatalı olabilir.`}
         backTo={paths.applications.list()}
         backLabel="Uygulamalara dön"
       />

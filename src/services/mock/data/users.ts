@@ -1,20 +1,22 @@
-import type { UserAccount } from '@/domains/auth/types';
+import type { UserAccount, UserAccountId } from '@/domains/auth/types';
+import type { PersonId } from '@/domains/shared/types';
 import { auditOf } from './audit';
+import { PERSON, USER } from './ids';
 
 type UserSeed = [
-  id: string,
+  id: UserAccountId,
   displayName: string,
   role: UserAccount['role'],
-  personId: string | null,
+  personId: PersonId | null,
   active: boolean,
 ];
 
 const seeds: UserSeed[] = [
-  ['user-can-ozturk', 'Can Öztürk', 'admin', 'person-can-ozturk', true],
-  ['user-selin-aydin', 'Selin Aydın', 'admin', 'person-selin-aydin', true],
-  ['user-elif-kaya', 'Elif Kaya', 'user', 'person-elif-kaya', true],
-  ['user-tom-brennan', 'Tom Brennan', 'user', 'person-tom-brennan', true],
-  ['user-nadia-petrova', 'Nadia Petrova', 'user', 'person-nadia-petrova', false],
+  [USER.canOzturk, 'Can Öztürk', 'admin', PERSON.canOzturk, true],
+  [USER.selinAydin, 'Selin Aydın', 'admin', PERSON.selinAydin, true],
+  [USER.elifKaya, 'Elif Kaya', 'user', PERSON.elifKaya, true],
+  [USER.tomBrennan, 'Tom Brennan', 'user', PERSON.tomBrennan, true],
+  [USER.nadiaPetrova, 'Nadia Petrova', 'user', PERSON.nadiaPetrova, false],
 ];
 
 const emailFor = (name: string) =>
@@ -37,6 +39,6 @@ export const users: UserAccount[] = seeds.map(([id, displayName, role, personId,
     created: '2025-06-01',
     updated: '2026-06-01',
     reviewed: null,
-    by: 'person-can-ozturk',
+    by: PERSON.canOzturk,
   }),
 }));

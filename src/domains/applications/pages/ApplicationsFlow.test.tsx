@@ -2,6 +2,7 @@ import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
 import { renderRoute } from '@/test/renderWithProviders';
+import { APP, TECH } from '@/services/mock/data/ids';
 
 describe('Applications list → detail', () => {
   it('lists applications and opens the detail page from a row link', async () => {
@@ -17,13 +18,13 @@ describe('Applications list → detail', () => {
     expect(
       await screen.findByRole('heading', { level: 1, name: 'Ödeme Geçidi' }),
     ).toBeInTheDocument();
-    expect(router.state.location.pathname).toBe('/applications/app-payment-gateway');
+    expect(router.state.location.pathname).toBe(`/applications/${APP.paymentGateway}`);
     const breadcrumb = screen.getByRole('navigation', { name: 'Sayfa yolu' });
     expect(within(breadcrumb).getByRole('link', { name: 'Uygulamalar' })).toBeInTheDocument();
   });
 
   it('applies filters from the URL so filtered views are shareable', async () => {
-    renderRoute('/applications?technology=tech-oracle');
+    renderRoute(`/applications?technology=${TECH.oracle}`);
     expect(await screen.findByText('4 uygulama')).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Ekip Planlama Motoru' })).toBeInTheDocument();
     expect(screen.queryByRole('link', { name: 'Müşteri Portalı' })).not.toBeInTheDocument();
@@ -41,7 +42,7 @@ describe('Applications list → detail', () => {
   });
 
   it('shows ownership, lifecycle and criticality on the detail page', async () => {
-    renderRoute('/applications/app-customer-identity');
+    renderRoute(`/applications/${APP.customerIdentity}`);
     expect(
       await screen.findByRole('heading', { level: 1, name: 'Müşteri Kimlik Platformu' }),
     ).toBeInTheDocument();
@@ -52,13 +53,13 @@ describe('Applications list → detail', () => {
   });
 
   it('deep-links to a tab and resolves related applications', async () => {
-    renderRoute('/applications/app-customer-identity?tab=dependencies');
+    renderRoute(`/applications/${APP.customerIdentity}?tab=dependencies`);
     expect(
       await screen.findByRole('tab', { name: 'Bağımlılıklar', selected: true }),
     ).toBeInTheDocument();
     expect(await screen.findByRole('link', { name: 'Müşteri Portalı' })).toHaveAttribute(
       'href',
-      '/applications/app-customer-portal',
+      `/applications/${APP.customerPortal}`,
     );
   });
 

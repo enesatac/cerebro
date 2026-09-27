@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import type { EntityId } from '@/domains/shared/types';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useParams, useSearchParams } from 'react-router';
 import { paths } from '@/app/router/paths';
@@ -22,6 +23,7 @@ import {
 import { type Decision } from '../types';
 import { MasterSelectField } from '@/domains/master-data/components/MasterSelectField';
 import { DecisionDeleteAction } from '../components/DecisionDeleteAction';
+import { parseId } from '@/lib/urlParams';
 
 function DecisionForm({ decision }: { decision?: Decision }) {
   const navigate = useNavigate();
@@ -124,10 +126,10 @@ function DecisionForm({ decision }: { decision?: Decision }) {
 
 export default function DecisionFormPage() {
   const { decisionId } = useParams();
-  return decisionId ? <EditDecision id={decisionId} /> : <DecisionForm />;
+  return decisionId ? <EditDecision id={parseId(decisionId) ?? 0} /> : <DecisionForm />;
 }
 
-function EditDecision({ id }: { id: string }) {
+function EditDecision({ id }: { id: EntityId }) {
   const query = useDecision(id);
   return (
     <QueryView query={query} loadingLabel="Karar yükleniyor" errorTitle="Bu karar yüklenemedi">

@@ -1,11 +1,17 @@
-import type { AuditMetadata, DeletionImpact, WriteRepository } from '@/domains/shared/types';
+import type {
+  AuditMetadata,
+  DeletionImpact,
+  EntityId,
+  WriteRepository,
+} from '@/domains/shared/types';
 import { ValidationError } from '@/lib/errors';
 import { NO_IMPACT } from './cascade';
+import type { SequenceName } from './database';
 import { copy, delay, findOrThrow } from './query';
 import { removeRow, replaceRow, type WriteKit } from './writeKit';
 
 interface AuditedEntity {
-  id: string;
+  id: EntityId;
   audit: AuditMetadata;
 }
 
@@ -15,12 +21,12 @@ interface AuditedWriteOptions<T extends AuditedEntity, I> {
   /** Getter, because cascades may replace the underlying array. */
   rows: () => T[];
   entityLabel: string;
-  idPrefix: string;
-  nameOf: (input: I) => string;
-  build: (input: I, id: string, audit: AuditMetadata) => T;
-  validate?: (input: I, excludeId: string | null) => void;
-  impact?: (id: string) => DeletionImpact;
-  cascade?: (id: string) => void;
+  /** Sequence that feeds the table's primary key. */
+  sequence: SequenceName;
+  build: (input: I, id: EntityId, audit: AuditMetadata) => T;
+  validate?: (input: I, excludeId: EntityId | null) => void;
+  impact?: (id: EntityId) => DeletionImpact;
+  cascade?: (id: EntityId) => void;
 }
 
 /** create / update / remove / getDeletionImpact for an audited aggregate, with permission checks. */
@@ -32,11 +38,7 @@ export function createAuditedWriteRepository<T extends AuditedEntity, I>(
     async create(input) {
       const user = await kit.begin();
       options.validate?.(input, null);
-      const entity = options.build(
-        copy(input),
-        kit.uniqueId(options.idPrefix, options.nameOf(input), rows()),
-        kit.newAudit(user),
-      );
+      const entity = options.build(copy(input), kit.nextId(options.sequence), kit.newAudit(user));
       rows().push(entity);
       return copy(entity);
     },

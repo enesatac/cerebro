@@ -109,7 +109,7 @@ export default function TeamsListPage() {
               <Table
                 data={visible}
                 columns={canEdit ? [...columns, actionsColumn] : columns}
-                getRowId={(row) => row.id}
+                getRowId={(row) => String(row.id)}
                 sorting={{ defaultValue: [{ id: 'name', desc: false }] }}
                 emptyState={
                   <EmptyState

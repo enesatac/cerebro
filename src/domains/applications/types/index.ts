@@ -1,6 +1,7 @@
 import type {
   AuditMetadata,
   Criticality,
+  Draft,
   DocumentationLink,
   EntityId,
   EntityRef,
@@ -62,6 +63,7 @@ export interface Hosting {
 
 /** How an application uses a catalogued technology. */
 export interface TechnologyUsage {
+  id: EntityId;
   technologyId: TechnologyId;
   layer: TechnologyLayer;
   version?: string;
@@ -203,5 +205,27 @@ export interface ApplicationListQuery extends ApplicationFilters, PageRequest {
   sort?: SortSpec<ApplicationSortField>;
 }
 
-/** Writable fields; `id` and `audit` are assigned by the server. */
-export type ApplicationInput = Omit<Application, 'id' | 'audit'>;
+/**
+ * Writable fields; `id` and `audit` are assigned by the server, and so are the ids of new child
+ * rows (`Draft`).
+ */
+export type ApplicationInput = Omit<
+  Application,
+  | 'id'
+  | 'audit'
+  | 'roles'
+  | 'teams'
+  | 'technologies'
+  | 'dataStores'
+  | 'repositories'
+  | 'environments'
+  | 'documentation'
+> & {
+  roles: Draft<RoleAssignment>[];
+  teams: Draft<TeamAssignment>[];
+  technologies: Draft<TechnologyUsage>[];
+  dataStores: Draft<DataStore>[];
+  repositories: Draft<SourceRepository>[];
+  environments: Draft<Environment>[];
+  documentation: Draft<DocumentationLink>[];
+};

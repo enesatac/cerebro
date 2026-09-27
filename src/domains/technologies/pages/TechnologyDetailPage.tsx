@@ -18,6 +18,7 @@ import { EditAction } from '@/domains/auth/components/RecordActions';
 import { MasterBadge } from '@/domains/master-data/components/MasterBadge';
 import { MasterLabel } from '@/domains/master-data/components/MasterLabel';
 import { TechnologyDeleteAction } from '../components/TechnologyDeleteAction';
+import { parseId } from '@/lib/urlParams';
 
 const USAGE_PAGE_SIZE = 100;
 
@@ -73,7 +74,7 @@ function UsedBy({ technology }: { technology: Technology }) {
           <Table
             data={result.items}
             columns={columns}
-            getRowId={(row) => row.id}
+            getRowId={(row) => String(row.id)}
             emptyState={
               <EmptyState compact title={`${technology.name} kullandığını kaydeden uygulama yok`} />
             }
@@ -86,7 +87,9 @@ function UsedBy({ technology }: { technology: Technology }) {
 
 export default function TechnologyDetailPage() {
   const navigate = useNavigate();
-  const { technologyId = '' } = useParams();
+  const requestedId = useParams().technologyId ?? '';
+  // Unknown or malformed ids resolve to 0, which no sequence ever produces → "not found".
+  const technologyId = parseId(requestedId) ?? 0;
   const query = useTechnology(technologyId);
 
   if (query.isPending) return <LoadingState label="Teknoloji yükleniyor" />;
@@ -94,7 +97,7 @@ export default function TechnologyDetailPage() {
     return isNotFoundError(query.error) ? (
       <NotFoundState
         title="Teknoloji bulunamadı"
-        description={`Katalogda "${technologyId}" kimliğine sahip bir teknoloji yok.`}
+        description={`Katalogda "${requestedId}" kimliğine sahip bir teknoloji yok.`}
         backTo={paths.technologies.list()}
         backLabel="Teknolojilere dön"
       />

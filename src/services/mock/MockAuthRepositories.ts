@@ -86,7 +86,7 @@ export function createMockAuthRepositories(
       validate(input, null, actor);
       const user: UserAccount = {
         ...copy(input),
-        id: kit.uniqueId('user', input.displayName, db.users),
+        id: kit.nextId('users'),
         lastSignInAt: null,
         audit: kit.newAudit(actor),
       };

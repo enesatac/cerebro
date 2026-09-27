@@ -83,7 +83,10 @@ A task is not complete until `npm run validate` passes.
 
 - Files: `PascalCase.tsx` for components, `camelCase.ts` for modules; one component per file.
 - Routes: always build URLs via `src/app/router/paths.ts` helpers — no string literals.
-- IDs: stable, meaningful string ids (`app-payment-gateway`), never array indices.
+- IDs: every table row has a numeric primary key from its own sequence (`EntityId = number`),
+  assigned by the server; new child rows are sent with `id: null` (`Draft<T>`). Never array indices.
+  Seed/test code refers to seed rows by name (`APP.paymentGateway` in `services/mock/data/ids.ts`).
+  Schema: `docs/database-schema.sql`.
 - Every async view has loading, empty and error states (`components/feedback`).
 - Tests next to code as `*.test.ts(x)`; prioritise domain logic, schemas, filters, flows.
 - Record significant architectural decisions in `docs/decisions.md`.

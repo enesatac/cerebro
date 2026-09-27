@@ -1,39 +1,40 @@
 import type { BusinessUnit } from '@/domains/business-units/types';
+import { BU, PERSON } from './ids';
 
 export const businessUnits: BusinessUnit[] = [
   {
-    id: 'bu-digital-channels',
+    id: BU.digitalChannels,
     code: 'DCH',
     name: 'Dijital Kanallar',
     description: 'Müşteriye yönelik web ve mobil kanallar, e-ticaret ve sadakat.',
-    headId: 'person-elif-kaya',
+    headId: PERSON.elifKaya,
   },
   {
-    id: 'bu-finance',
+    id: BU.finance,
     code: 'FIN',
     name: 'Finans ve Hazine',
     description: 'Ödemeler, muhasebe, mutabakat ve finansal raporlama.',
-    headId: 'person-hannah-schulz',
+    headId: PERSON.hannahSchulz,
   },
   {
-    id: 'bu-operations',
+    id: BU.operations,
     code: 'OPS',
     name: 'Operasyon',
     description: 'Uçuş, ekip ve yer operasyonlarının planlanması ve kontrolü.',
-    headId: 'person-omar-haddad',
+    headId: PERSON.omarHaddad,
   },
   {
-    id: 'bu-people-workplace',
+    id: BU.peopleWorkplace,
     code: 'PWP',
     name: 'İnsan ve Çalışma Ortamı',
     description: 'İK, çalışan hizmetleri ve kurum içi iş birliği.',
-    headId: 'person-claire-dubois',
+    headId: PERSON.claireDubois,
   },
   {
-    id: 'bu-technology',
+    id: BU.technology,
     code: 'TEC',
     name: 'Teknoloji Platformları',
     description: 'Ortak platformlar: kimlik, entegrasyon, veri ve mesajlaşma.',
-    headId: 'person-can-ozturk',
+    headId: PERSON.canOzturk,
   },
 ];

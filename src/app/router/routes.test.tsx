@@ -1,18 +1,19 @@
 import { screen, waitFor } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { renderRoute } from '@/test/renderWithProviders';
+import { APP, PRJ, TEAM, TECH } from '@/services/mock/data/ids';
 
 /** Every navigation target renders a real page (no placeholders) with a single h1. */
 describe('routes', () => {
   it.each([
     ['/', 'Gösterge paneli'],
     ['/projects', 'Projeler'],
-    ['/projects/prj-payment-modernisation', 'Ödeme Platformu Modernizasyonu'],
+    [`/projects/${PRJ.paymentModernisation}`, 'Ödeme Platformu Modernizasyonu'],
     ['/architecture', 'Bağlantılar'],
     ['/teams', 'Ekipler'],
-    ['/teams/team-payments', 'Ödeme Mühendisliği'],
+    [`/teams/${TEAM.payments}`, 'Ödeme Mühendisliği'],
     ['/technologies', 'Teknolojiler'],
-    ['/technologies/tech-kafka', 'Apache Kafka'],
+    [`/technologies/${TECH.kafka}`, 'Apache Kafka'],
     ['/risks', 'Riskler ve Eskalasyonlar'],
     ['/reports', 'Raporlar'],
   ])('%s renders "%s"', async (path, heading) => {
@@ -32,7 +33,7 @@ describe('routes', () => {
   });
 
   it('runs impact analysis for the application in the URL', async () => {
-    renderRoute('/architecture?app=app-payment-gateway');
+    renderRoute(`/architecture?app=${APP.paymentGateway}`);
     expect(await screen.findByText(/Ödeme Geçidi erişilemezse etkilenenler/)).toBeInTheDocument();
     await waitFor(() =>
       expect(screen.getByRole('link', { name: 'Sipariş Yönetim Sistemi' })).toBeInTheDocument(),

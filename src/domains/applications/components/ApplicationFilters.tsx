@@ -7,6 +7,7 @@ import { useMasterData } from '@/domains/master-data/context';
 import { useTeams } from '@/domains/teams/api/queries';
 import { useTechnologies } from '@/domains/technologies/api/queries';
 import { countActiveFilters, type ApplicationListState } from '../utils/applicationListParams';
+import { parseId } from '@/lib/urlParams';
 
 type FilterPatch = Partial<Omit<ApplicationListState, 'sort' | 'page' | 'pageSize'>>;
 
@@ -64,24 +65,30 @@ export function ApplicationFilters({
         label="Ekip"
         allLabel="Tüm ekipler"
         value={state.teamId}
-        options={(teams.data ?? []).map((team) => ({ value: team.id, label: team.name }))}
-        onChange={(value) => onChange({ teamId: value })}
+        options={(teams.data ?? []).map((team) => ({ value: String(team.id), label: team.name }))}
+        onChange={(value) => onChange({ teamId: parseId(value) })}
         disabled={!teams.data}
       />
       <FilterSelect
         label="Teknoloji"
         allLabel="Tüm teknolojiler"
         value={state.technologyId}
-        options={(technologies.data ?? []).map((tech) => ({ value: tech.id, label: tech.name }))}
-        onChange={(value) => onChange({ technologyId: value })}
+        options={(technologies.data ?? []).map((tech) => ({
+          value: String(tech.id),
+          label: tech.name,
+        }))}
+        onChange={(value) => onChange({ technologyId: parseId(value) })}
         disabled={!technologies.data}
       />
       <FilterSelect
         label="İş birimi"
         allLabel="Tüm iş birimleri"
         value={state.businessUnitId}
-        options={(businessUnits.data ?? []).map((unit) => ({ value: unit.id, label: unit.name }))}
-        onChange={(value) => onChange({ businessUnitId: value })}
+        options={(businessUnits.data ?? []).map((unit) => ({
+          value: String(unit.id),
+          label: unit.name,
+        }))}
+        onChange={(value) => onChange({ businessUnitId: parseId(value) })}
         disabled={!businessUnits.data}
       />
     </Toolbar>

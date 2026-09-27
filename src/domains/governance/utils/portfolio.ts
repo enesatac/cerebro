@@ -1,4 +1,5 @@
 import { APPLICATION_LIFECYCLES, type Application } from '@/domains/applications/types';
+import type { EntityId } from '@/domains/shared/types';
 import { evaluateApplicationCompleteness } from '@/domains/applications/utils/applicationCompleteness';
 import type { BusinessUnit } from '@/domains/business-units/types';
 import type { Escalation } from '@/domains/escalations/types';
@@ -40,13 +41,16 @@ const isOpenProject = (project: Project) =>
 const isLiveApplication = (application: Application) => application.lifecycle !== 'retired';
 
 function nameIndex(snapshot: PortfolioSnapshot) {
-  const names = new Map<string, string>();
-  for (const row of snapshot.applications) names.set(row.id, row.name);
-  for (const row of snapshot.projects) names.set(row.id, row.name);
+  // Ids are unique per table only, so each table gets its own index.
+  const applicationNames = new Map(snapshot.applications.map((row) => [row.id, row.name]));
+  const projectNames = new Map(snapshot.projects.map((row) => [row.id, row.name]));
   const people = new Map(snapshot.people.map((person) => [person.id, person.fullName]));
-  const describe = (applicationIds: string[], projectIds: string[]) =>
-    [...applicationIds, ...projectIds].map((id) => names.get(id) ?? id).join(', ');
-  const person = (id: string | null): EntityRef | null => {
+  const describe = (applicationIds: EntityId[], projectIds: EntityId[]) =>
+    [
+      ...applicationIds.map((id) => applicationNames.get(id) ?? `#${id}`),
+      ...projectIds.map((id) => projectNames.get(id) ?? `#${id}`),
+    ].join(', ');
+  const person = (id: EntityId | null): EntityRef | null => {
     const name = id ? people.get(id) : undefined;
     return id && name ? { id, name } : null;
   };
@@ -269,7 +273,7 @@ export function buildApplicationHealthReport(
 
   return snapshot.applications.map((app) => {
     const completeness = evaluateApplicationCompleteness(app);
-    const outdated = new Map<string, ApplicationHealthRow['outdatedTechnologies'][number]>();
+    const outdated = new Map<EntityId, ApplicationHealthRow['outdatedTechnologies'][number]>();
     for (const usage of app.technologies) {
       const tech = technologies.get(usage.technologyId);
       if (tech && (tech.status === 'deprecated' || tech.status === 'retired')) {

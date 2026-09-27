@@ -58,7 +58,7 @@ export function EnvironmentsTab({ application }: { application: Application }) {
       <Table
         data={environments}
         columns={columns}
-        getRowId={(row) => row.id}
+        getRowId={(row) => String(row.id)}
         emptyState={
           <EmptyState
             compact

@@ -5,18 +5,25 @@ import {
   teamAssignmentSchema,
   toDocumentationFormValues,
   toDocumentationLinks,
+  toRoleAssignments,
+  toRoleFormValues,
+  toTeamAssignments,
+  toTeamFormValues,
   uniqueRoleAssignments,
 } from '@/domains/shared/schemas/sharedFormSchemas';
 import {
+  childRowId,
   emptyToNull,
   enumChoice,
-  newRowId,
+  idText,
   optionalDate,
   optionalText,
   optionalWholeNumber,
   requiredChoice,
   requiredDate,
   requiredText,
+  toId,
+  toIdOrNull,
   toNumberOrNull,
 } from '@/lib/validation';
 import {
@@ -30,7 +37,7 @@ import {
 } from '../types';
 
 const milestoneSchema = z.object({
-  id: z.string(),
+  id: childRowId,
   title: requiredText('Kilometre taşı', 160),
   dueDate: requiredDate('Termin tarihi'),
   status: enumChoice(MILESTONE_STATUSES, 'bir durum'),
@@ -38,6 +45,7 @@ const milestoneSchema = z.object({
 });
 
 const impactSchema = z.object({
+  id: childRowId,
   applicationId: requiredChoice('bir uygulama'),
   impactType: requiredChoice('bir etki'),
   description: optionalText('Ne değişiyor', 300),
@@ -141,7 +149,7 @@ export type ProjectFormValues = z.infer<typeof projectFormSchema>;
 export type MilestoneFormValues = z.infer<typeof milestoneSchema>;
 
 export const emptyMilestone = (): MilestoneFormValues => ({
-  id: newRowId('ms'),
+  id: null,
   title: '',
   dueDate: '',
   status: 'planned',
@@ -149,6 +157,7 @@ export const emptyMilestone = (): MilestoneFormValues => ({
 });
 
 export const emptyImpact = () => ({
+  id: null,
   applicationId: '',
   impactType: 'modifies' as const,
   description: '',
@@ -172,9 +181,9 @@ export function toProjectFormValues(project?: Project): ProjectFormValues {
     objective: project?.objective ?? '',
     scope: project?.scope ?? '',
     outOfScope: project?.outOfScope ?? '',
-    businessUnitId: project?.businessUnitId ?? '',
-    roles: project?.roles ?? [],
-    teams: project?.teams ?? [],
+    businessUnitId: idText(project?.businessUnitId),
+    roles: toRoleFormValues(project?.roles ?? []),
+    teams: toTeamFormValues(project?.teams ?? []),
     plannedStartDate: project?.timeline.plannedStartDate ?? '',
     actualStartDate: project?.timeline.actualStartDate ?? '',
     plannedEndDate: project?.timeline.plannedEndDate ?? '',
@@ -188,7 +197,10 @@ export function toProjectFormValues(project?: Project): ProjectFormValues {
     budget: numberText(financials?.budget),
     actualCost: numberText(financials?.actualCost),
     forecastCost: numberText(financials?.forecastCost),
-    applicationImpacts: project?.applicationImpacts ?? [],
+    applicationImpacts: (project?.applicationImpacts ?? []).map((impact) => ({
+      ...impact,
+      applicationId: idText(impact.applicationId),
+    })),
     milestones: (project?.milestones ?? []).map((m: Milestone) => ({
       ...m,
       completedDate: m.completedDate ?? '',
@@ -212,9 +224,9 @@ export function toProjectInput(values: ProjectFormValues): ProjectInput {
     health: values.health,
     confidentiality: values.confidentiality,
     tags: [...new Set(values.tags)],
-    businessUnitId: emptyToNull(values.businessUnitId),
-    roles: values.roles,
-    teams: values.teams,
+    businessUnitId: toIdOrNull(values.businessUnitId),
+    roles: toRoleAssignments(values.roles),
+    teams: toTeamAssignments(values.teams),
     timeline: {
       plannedStartDate: emptyToNull(values.plannedStartDate),
       actualStartDate: emptyToNull(values.actualStartDate),
@@ -235,6 +247,7 @@ export function toProjectInput(values: ProjectFormValues): ProjectInput {
       : null,
     applicationImpacts: values.applicationImpacts.map((impact) => ({
       ...impact,
+      applicationId: toId(impact.applicationId),
       description: impact.description.trim(),
     })),
     milestones: values.milestones.map((m) => ({

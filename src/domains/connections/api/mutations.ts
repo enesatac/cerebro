@@ -1,8 +1,9 @@
 import { useRepositoryMutation } from '@/hooks/useRepositoryMutation';
+import type { EntityId } from '@/domains/shared/types';
 import { useRepositories } from '@/services/RepositoryContext';
 import type { DependencyInput, IntegrationInput } from '../types';
 
-export function useSaveDependency(id?: string) {
+export function useSaveDependency(id?: EntityId) {
   const { connections } = useRepositories();
   return useRepositoryMutation(
     (input: DependencyInput) =>
@@ -13,12 +14,12 @@ export function useSaveDependency(id?: string) {
 
 export function useDeleteDependency() {
   const { connections } = useRepositories();
-  return useRepositoryMutation((id: string) => connections.dependencies.remove(id), {
+  return useRepositoryMutation((id: EntityId) => connections.dependencies.remove(id), {
     successTitle: () => 'Bağımlılık silindi',
   });
 }
 
-export function useSaveIntegration(id?: string) {
+export function useSaveIntegration(id?: EntityId) {
   const { connections } = useRepositories();
   return useRepositoryMutation(
     (input: IntegrationInput) =>
@@ -32,7 +33,7 @@ export function useSaveIntegration(id?: string) {
 
 export function useDeleteIntegration() {
   const { connections } = useRepositories();
-  return useRepositoryMutation((id: string) => connections.integrations.remove(id), {
+  return useRepositoryMutation((id: EntityId) => connections.integrations.remove(id), {
     successTitle: () => 'Entegrasyon silindi',
   });
 }

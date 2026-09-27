@@ -37,7 +37,7 @@ export function DocumentationTable({
     <Table
       data={links}
       columns={columns}
-      getRowId={(row) => row.id}
+      getRowId={(row) => String(row.id)}
       emptyState={<EmptyState compact title={emptyTitle} description={emptyDescription} />}
     />
   );

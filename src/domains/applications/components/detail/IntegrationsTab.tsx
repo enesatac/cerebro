@@ -98,7 +98,7 @@ export function IntegrationsTab({ application }: { application: Application }) {
             <Table
               data={outbound}
               columns={columns('outbound', canEdit)}
-              getRowId={(row) => row.id}
+              getRowId={(row) => String(row.id)}
               emptyState={<EmptyState compact title="Kayıtlı giden entegrasyon yok" />}
             />
           </SectionCard>
@@ -109,7 +109,7 @@ export function IntegrationsTab({ application }: { application: Application }) {
             <Table
               data={inbound}
               columns={columns('inbound', canEdit)}
-              getRowId={(row) => row.id}
+              getRowId={(row) => String(row.id)}
               emptyState={<EmptyState compact title="Kayıtlı gelen entegrasyon yok" />}
             />
           </SectionCard>

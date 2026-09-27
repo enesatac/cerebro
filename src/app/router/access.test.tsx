@@ -3,13 +3,14 @@ import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
 import { createMockRepositories } from '@/services/mock';
 import { renderRoute, TEST_VIEWER } from '@/test/renderWithProviders';
+import { APP, DEC, DEP, ESC, INT, PRJ, RISK, TEAM, USER } from '@/services/mock/data/ids';
 
 describe('role-based access', () => {
   it('shows create and edit actions to admins', async () => {
-    renderRoute('/applications/app-payment-gateway');
+    renderRoute(`/applications/${APP.paymentGateway}`);
     expect(
       await screen.findByRole('link', { name: /^Düzenle$/ }, { timeout: 3000 }),
-    ).toHaveAttribute('href', '/applications/app-payment-gateway/edit');
+    ).toHaveAttribute('href', `/applications/${APP.paymentGateway}/edit`);
   });
 
   it('hides every change action from read-only users', async () => {
@@ -50,20 +51,21 @@ describe('create flow', () => {
     await user.click(screen.getByRole('button', { name: 'Teknoloji ekle' }));
 
     expect(await screen.findByRole('heading', { level: 1, name: 'Rust' })).toBeInTheDocument();
-    await waitFor(() => expect(router.state.location.pathname).toBe('/technologies/tech-rust'));
+    // The new row takes the next value of the technologies sequence (30 seed rows → 31).
+    await waitFor(() => expect(router.state.location.pathname).toBe('/technologies/31'));
   });
 
   it('renders every edit form without errors', async () => {
     for (const path of [
-      '/applications/app-payment-gateway/edit',
-      '/projects/prj-digital-onboarding/edit',
-      '/teams/team-platform/edit',
-      '/risks/risk-dot-vendor/edit',
-      '/escalations/esc-dot-vendor/edit',
-      '/decisions/dec-lbc-retire/edit',
-      '/architecture/dependencies/dep-oms-pay/edit',
-      '/architecture/integrations/int-oms-pay-auth/edit',
-      '/admin/users/user-elif-kaya/edit',
+      `/applications/${APP.paymentGateway}/edit`,
+      `/projects/${PRJ.digitalOnboarding}/edit`,
+      `/teams/${TEAM.platform}/edit`,
+      `/risks/${RISK.dotVendor}/edit`,
+      `/escalations/${ESC.dotVendor}/edit`,
+      `/decisions/${DEC.lbcRetire}/edit`,
+      `/architecture/dependencies/${DEP.omsPay}/edit`,
+      `/architecture/integrations/${INT.omsPayAuth}/edit`,
+      `/admin/users/${USER.elifKaya}/edit`,
     ]) {
       const { unmount } = renderRoute(path);
       expect(

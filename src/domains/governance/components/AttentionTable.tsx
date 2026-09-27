@@ -51,7 +51,7 @@ export function AttentionTable({ items }: { items: AttentionItem[] }) {
     <Table
       data={items}
       columns={columns}
-      getRowId={(row) => row.id}
+      getRowId={(row) => String(row.id)}
       pagination={{ pageSize: 10, pageSizeOptions: [10, 25, 50] }}
       emptyState={
         <EmptyState

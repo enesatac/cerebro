@@ -49,5 +49,5 @@ export function useProjectOptions() {
   const refs = useProjectRefs();
   return [...(refs.data?.values() ?? [])]
     .sort((a, b) => a.name.localeCompare(b.name))
-    .map((ref) => ({ value: ref.id, label: `${ref.name} (${ref.code})` }));
+    .map((ref) => ({ value: String(ref.id), label: `${ref.name} (${ref.code})` }));
 }

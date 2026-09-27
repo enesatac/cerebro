@@ -3,6 +3,7 @@ import type { BusinessUnitId } from '@/domains/business-units/types';
 import type {
   AuditMetadata,
   DocumentationLink,
+  Draft,
   EntityId,
   EntityRef,
   IsoDate,
@@ -73,6 +74,7 @@ export type ApplicationImpactType = string;
 
 /** A project's explicit relationship to an application it affects. */
 export interface ProjectApplicationImpact {
+  id: EntityId;
   applicationId: ApplicationId;
   impactType: ApplicationImpactType;
   description: string;
@@ -188,4 +190,14 @@ export interface ProjectListQuery extends PageRequest {
   sort?: SortSpec<ProjectSortField>;
 }
 
-export type ProjectInput = Omit<Project, 'id' | 'audit'>;
+/** Writable fields; the server assigns `id`, `audit` and the ids of new child rows. */
+export type ProjectInput = Omit<
+  Project,
+  'id' | 'audit' | 'roles' | 'teams' | 'applicationImpacts' | 'milestones' | 'documentation'
+> & {
+  roles: Draft<RoleAssignment>[];
+  teams: Draft<TeamAssignment>[];
+  applicationImpacts: Draft<ProjectApplicationImpact>[];
+  milestones: Draft<Milestone>[];
+  documentation: Draft<DocumentationLink>[];
+};

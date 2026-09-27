@@ -6,6 +6,7 @@ import { useBusinessUnits } from '@/domains/business-units/api/queries';
 import { useTeams } from '@/domains/teams/api/queries';
 import { countActiveProjectFilters, type ProjectListState } from '../utils/projectListParams';
 import { useMasterData } from '@/domains/master-data/context';
+import { parseId } from '@/lib/urlParams';
 
 type FilterPatch = Partial<Omit<ProjectListState, 'sort' | 'page' | 'pageSize'>>;
 
@@ -55,16 +56,19 @@ export function ProjectFilters({ state, onChange, onReset, resultSummary }: Proj
         label="İş birimi"
         allLabel="Tüm iş birimleri"
         value={state.businessUnitId}
-        options={(businessUnits.data ?? []).map((unit) => ({ value: unit.id, label: unit.name }))}
-        onChange={(value) => onChange({ businessUnitId: value })}
+        options={(businessUnits.data ?? []).map((unit) => ({
+          value: String(unit.id),
+          label: unit.name,
+        }))}
+        onChange={(value) => onChange({ businessUnitId: parseId(value) })}
         disabled={!businessUnits.data}
       />
       <FilterSelect
         label="Teslimat ekibi"
         allLabel="Tüm ekipler"
         value={state.teamId}
-        options={(teams.data ?? []).map((team) => ({ value: team.id, label: team.name }))}
-        onChange={(value) => onChange({ teamId: value })}
+        options={(teams.data ?? []).map((team) => ({ value: String(team.id), label: team.name }))}
+        onChange={(value) => onChange({ teamId: parseId(value) })}
         disabled={!teams.data}
       />
     </Toolbar>

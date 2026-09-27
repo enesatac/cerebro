@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import type { EntityId } from '@/domains/shared/types';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useParams, useSearchParams } from 'react-router';
 import { paths } from '@/app/router/paths';
@@ -21,6 +22,7 @@ import { RISK_LIKELIHOODS, type Risk } from '../types';
 import { readRelatedPrefill, relatedReturnPath } from '../utils/relatedPrefill';
 import { MasterSelectField } from '@/domains/master-data/components/MasterSelectField';
 import { RiskDeleteAction } from '../components/RiskDeleteAction';
+import { parseId } from '@/lib/urlParams';
 
 function RiskForm({ risk }: { risk?: Risk }) {
   const navigate = useNavigate();
@@ -153,10 +155,10 @@ function RiskForm({ risk }: { risk?: Risk }) {
 
 export default function RiskFormPage() {
   const { riskId } = useParams();
-  return riskId ? <EditRisk id={riskId} /> : <RiskForm />;
+  return riskId ? <EditRisk id={parseId(riskId) ?? 0} /> : <RiskForm />;
 }
 
-function EditRisk({ id }: { id: string }) {
+function EditRisk({ id }: { id: EntityId }) {
   const query = useRisk(id);
   return (
     <QueryView query={query} loadingLabel="Risk yükleniyor" errorTitle="Bu risk yüklenemedi">

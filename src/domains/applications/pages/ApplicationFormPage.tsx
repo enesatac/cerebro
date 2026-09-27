@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import type { EntityId } from '@/domains/shared/types';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router';
 import { paths } from '@/app/router/paths';
@@ -23,6 +24,7 @@ import {
 } from '../schemas/applicationForm';
 import type { Application } from '../types';
 import { ApplicationDeleteAction } from '../components/ApplicationDeleteAction';
+import { parseId } from '@/lib/urlParams';
 
 const APPLICATION_ROLE_ORDER = [
   'technical-owner',
@@ -92,10 +94,10 @@ function ApplicationForm({ application }: { application?: Application }) {
 
 export default function ApplicationFormPage() {
   const { applicationId } = useParams();
-  return applicationId ? <EditApplication id={applicationId} /> : <ApplicationForm />;
+  return applicationId ? <EditApplication id={parseId(applicationId) ?? 0} /> : <ApplicationForm />;
 }
 
-function EditApplication({ id }: { id: string }) {
+function EditApplication({ id }: { id: EntityId }) {
   const query = useApplication(id);
   return (
     <QueryView

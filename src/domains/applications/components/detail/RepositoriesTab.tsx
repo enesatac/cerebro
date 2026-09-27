@@ -33,7 +33,7 @@ export function RepositoriesTab({ application }: { application: Application }) {
       <Table
         data={application.repositories}
         columns={columns}
-        getRowId={(row) => row.id}
+        getRowId={(row) => String(row.id)}
         emptyState={
           <EmptyState
             compact

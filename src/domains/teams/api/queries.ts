@@ -42,5 +42,5 @@ export function useTeam(id: TeamId) {
 
 export function useTeamOptions() {
   const teams = useTeams();
-  return (teams.data ?? []).map((team) => ({ value: team.id, label: team.name }));
+  return (teams.data ?? []).map((team) => ({ value: String(team.id), label: team.name }));
 }

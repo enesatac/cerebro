@@ -22,5 +22,8 @@ export function usePersonOptions() {
   const people = usePeopleById();
   return [...(people.data?.values() ?? [])]
     .sort((a, b) => a.fullName.localeCompare(b.fullName))
-    .map((person) => ({ value: person.id, label: `${person.fullName} — ${person.jobTitle}` }));
+    .map((person) => ({
+      value: String(person.id),
+      label: `${person.fullName} — ${person.jobTitle}`,
+    }));
 }

@@ -195,7 +195,7 @@ export function DataQualityReport({ rows }: { rows: ApplicationHealthRow[] }) {
       <Table
         data={visible}
         columns={columns}
-        getRowId={(row) => row.id}
+        getRowId={(row) => String(row.id)}
         sorting={{ defaultValue: [{ id: 'completeness', desc: false }] }}
         pagination={{ pageSize: 25, pageSizeOptions: [25, 50, 100] }}
         emptyState={

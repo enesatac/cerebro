@@ -15,28 +15,37 @@ import type {
   TeamAssignment,
   TeamResponsibility,
 } from '@/domains/shared/types';
-import type { TechnologyLayer } from '@/domains/technologies/types';
+import type { TechnologyId, TechnologyLayer } from '@/domains/technologies/types';
+import type { PersonId, TeamId } from '@/domains/shared/types';
+import { seedId } from './sequence';
 
-/** Terse constructors that keep seed files readable. Fictional hosts use the reserved `.example` TLD. */
+/**
+ * Terse constructors that keep seed files readable. Each child row takes the next id of its table's
+ * sequence (`seedId`). Fictional hosts use the reserved `.example` TLD.
+ */
 
-export const role = (personId: string, r: StakeholderRole): RoleAssignment => ({
+export const role = (personId: PersonId, r: StakeholderRole): RoleAssignment => ({
+  id: seedId('roleAssignments'),
   personId,
   role: r,
 });
 
-export const team = (teamId: string, responsibility: TeamResponsibility): TeamAssignment => ({
+export const team = (teamId: TeamId, responsibility: TeamResponsibility): TeamAssignment => ({
+  id: seedId('teamAssignments'),
   teamId,
   responsibility,
 });
 
 export const uses = (
-  technologyId: string,
+  technologyId: TechnologyId,
   layer: TechnologyLayer,
   version?: string,
-): TechnologyUsage => (version ? { technologyId, layer, version } : { technologyId, layer });
+): TechnologyUsage => {
+  const id = seedId('technologyUsages');
+  return version ? { id, technologyId, layer, version } : { id, technologyId, layer };
+};
 
 export const doc = (
-  id: string,
   type: DocumentationLinkType,
   title: string,
   path: string,
@@ -54,17 +63,17 @@ export const doc = (
     repository: 'git.corp.example',
   };
   const url = `https://${host[type] ?? 'docs.corp.example'}/${path}`;
+  const id = seedId('documentationLinks');
   return description ? { id, type, title, url, description } : { id, type, title, url };
 };
 
 export const repo = (
-  id: string,
   name: string,
   type: SourceRepositoryType,
   description?: string,
   defaultBranch = 'main',
 ): SourceRepository => ({
-  id,
+  id: seedId('repositories'),
   name,
   type,
   url: `https://git.corp.example/${name}`,
@@ -73,7 +82,6 @@ export const repo = (
 });
 
 export const env = (
-  id: string,
   type: EnvironmentType,
   host: string | null,
   status: EnvironmentStatus = 'available',
@@ -89,7 +97,7 @@ export const env = (
     'disaster-recovery': 'Felaket kurtarma',
   };
   return {
-    id,
+    id: seedId('environments'),
     type,
     name: names[type] ?? type,
     url: host ? `https://${host}.corp.example` : null,
@@ -100,22 +108,20 @@ export const env = (
 };
 
 export const store = (
-  id: string,
   name: string,
-  technologyId: string,
+  technologyId: TechnologyId,
   purpose: string,
   containsPersonalData = false,
-): DataStore => ({ id, name, technologyId, purpose, containsPersonalData });
+): DataStore => ({ id: seedId('dataStores'), name, technologyId, purpose, containsPersonalData });
 
 /** The standard dev → test → uat → prod (+ optional DR) environment ladder for an app slug. */
 export function standardEnvironments(slug: string, options: { dr?: boolean } = {}): Environment[] {
   const list = [
-    env(`${slug}-env-dev`, 'development', `${slug}.dev`),
-    env(`${slug}-env-test`, 'test', `${slug}.test`),
-    env(`${slug}-env-uat`, 'uat', `${slug}.uat`),
-    env(`${slug}-env-prod`, 'production', slug),
+    env('development', `${slug}.dev`),
+    env('test', `${slug}.test`),
+    env('uat', `${slug}.uat`),
+    env('production', slug),
   ];
-  if (options.dr)
-    list.push(env(`${slug}-env-dr`, 'disaster-recovery', `${slug}.dr`, 'available', 'eu-west'));
+  if (options.dr) list.push(env('disaster-recovery', `${slug}.dr`, 'available', 'eu-west'));
   return list;
 }

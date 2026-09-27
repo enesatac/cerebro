@@ -1,34 +1,42 @@
 import { z } from 'zod';
 import {
-  newRowId,
+  childRowId,
+  idText,
   requiredChoice,
   requiredText,
   requiredUrl,
   secretFreeText,
+  toId,
 } from '@/lib/validation';
-import { type DocumentationLink, type RoleAssignment, type TeamAssignment } from '../types';
+import type { DocumentationLink, Draft, RoleAssignment, TeamAssignment } from '../types';
 
 export const roleAssignmentSchema = z.object({
+  id: childRowId,
   personId: requiredChoice('bir kişi'),
   role: requiredChoice('bir rol'),
 });
 
 export const teamAssignmentSchema = z.object({
+  id: childRowId,
   teamId: requiredChoice('bir ekip'),
   responsibility: requiredChoice('bir sorumluluk'),
 });
 
 export const documentationLinkSchema = z.object({
-  id: z.string(),
+  id: childRowId,
   type: requiredChoice('bir tür'),
   title: requiredText('Bağlantı başlığı', 160),
   url: requiredUrl('Adres'),
   description: secretFreeText('Açıklama', 300),
 });
 
+export type RoleAssignmentFormValues = z.infer<typeof roleAssignmentSchema>;
+export type TeamAssignmentFormValues = z.infer<typeof teamAssignmentSchema>;
+export type DocumentationLinkFormValues = z.infer<typeof documentationLinkSchema>;
+
 /** The same person in the same role twice is almost always a data-entry slip. */
 export function uniqueRoleAssignments(
-  rows: RoleAssignment[],
+  rows: RoleAssignmentFormValues[],
   ctx: z.RefinementCtx,
   path = 'roles',
 ) {
@@ -46,14 +54,30 @@ export function uniqueRoleAssignments(
   });
 }
 
-export type DocumentationLinkFormValues = z.infer<typeof documentationLinkSchema>;
+export const toRoleFormValues = (roles: readonly RoleAssignment[]): RoleAssignmentFormValues[] =>
+  roles.map((row) => ({ id: row.id, personId: idText(row.personId), role: row.role }));
+
+export const toRoleAssignments = (rows: RoleAssignmentFormValues[]): Draft<RoleAssignment>[] =>
+  rows.map((row) => ({ id: row.id, personId: toId(row.personId), role: row.role }));
+
+export const toTeamFormValues = (teams: readonly TeamAssignment[]): TeamAssignmentFormValues[] =>
+  teams.map((row) => ({
+    id: row.id,
+    teamId: idText(row.teamId),
+    responsibility: row.responsibility,
+  }));
+
+export const toTeamAssignments = (rows: TeamAssignmentFormValues[]): Draft<TeamAssignment>[] =>
+  rows.map((row) => ({ id: row.id, teamId: toId(row.teamId), responsibility: row.responsibility }));
 
 export const toDocumentationFormValues = (
-  links: DocumentationLink[],
+  links: readonly DocumentationLink[],
 ): DocumentationLinkFormValues[] =>
   links.map((link) => ({ ...link, description: link.description ?? '' }));
 
-export const toDocumentationLinks = (rows: DocumentationLinkFormValues[]): DocumentationLink[] =>
+export const toDocumentationLinks = (
+  rows: DocumentationLinkFormValues[],
+): Draft<DocumentationLink>[] =>
   rows.map((row) => ({
     id: row.id,
     type: row.type,
@@ -63,15 +87,20 @@ export const toDocumentationLinks = (rows: DocumentationLinkFormValues[]): Docum
   }));
 
 export const emptyDocumentationLink = (): DocumentationLinkFormValues => ({
-  id: newRowId('doc'),
+  id: null,
   type: 'confluence',
   title: '',
   url: '',
   description: '',
 });
 
-export const emptyRoleAssignment = (): RoleAssignment => ({ personId: '', role: 'stakeholder' });
-export const emptyTeamAssignment = (): TeamAssignment => ({
+export const emptyRoleAssignment = (): RoleAssignmentFormValues => ({
+  id: null,
+  personId: '',
+  role: 'stakeholder',
+});
+export const emptyTeamAssignment = (): TeamAssignmentFormValues => ({
+  id: null,
   teamId: '',
   responsibility: 'development',
 });

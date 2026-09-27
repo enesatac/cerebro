@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { NotFoundError } from '@/lib/errors';
 import { createMockRepositories } from './index';
+import { APP, TEAM, TECH } from '@/services/mock/data/ids';
 
 const baseQuery = { page: 0, pageSize: 100 };
 
@@ -15,7 +16,7 @@ describe('MockApplicationRepository', () => {
   });
 
   it('answers "which applications use Oracle?" via the technology filter', async () => {
-    const result = await applications.list({ ...baseQuery, technologyId: 'tech-oracle' });
+    const result = await applications.list({ ...baseQuery, technologyId: TECH.oracle });
     expect(result.items.map((item) => item.code).sort()).toEqual(['CREW', 'FINP', 'LBC', 'PAYGW']);
   });
 
@@ -23,7 +24,7 @@ describe('MockApplicationRepository', () => {
     const result = await applications.list({
       ...baseQuery,
       criticalities: ['critical'],
-      teamId: 'team-platform',
+      teamId: TEAM.platform,
     });
     expect(result.items.map((item) => item.code)).toEqual(['CIP']);
   });
@@ -73,13 +74,13 @@ describe('MockApplicationRepository', () => {
   });
 
   it('throws NotFoundError for unknown ids', async () => {
-    await expect(applications.getById('app-unknown')).rejects.toBeInstanceOf(NotFoundError);
+    await expect(applications.getById(9999)).rejects.toBeInstanceOf(NotFoundError);
   });
 
   it('returns copies so callers cannot mutate repository state', async () => {
-    const first = await applications.getById('app-payment-gateway');
+    const first = await applications.getById(APP.paymentGateway);
     first.name = 'Mutated';
-    const second = await applications.getById('app-payment-gateway');
+    const second = await applications.getById(APP.paymentGateway);
     expect(second.name).toBe('Ödeme Geçidi');
   });
 });
@@ -88,11 +89,12 @@ describe('MockConnectionRepository', () => {
   const { connections } = createMockRepositories();
 
   it('splits dependencies by direction', async () => {
-    const { outgoing, incoming } =
-      await connections.getApplicationDependencies('app-customer-identity');
-    expect(outgoing.every((d) => d.sourceApplicationId === 'app-customer-identity')).toBe(true);
-    expect(incoming.every((d) => d.targetApplicationId === 'app-customer-identity')).toBe(true);
-    expect(incoming.map((d) => d.sourceApplicationId)).toContain('app-customer-portal');
+    const { outgoing, incoming } = await connections.getApplicationDependencies(
+      APP.customerIdentity,
+    );
+    expect(outgoing.every((d) => d.sourceApplicationId === APP.customerIdentity)).toBe(true);
+    expect(incoming.every((d) => d.targetApplicationId === APP.customerIdentity)).toBe(true);
+    expect(incoming.map((d) => d.sourceApplicationId)).toContain(APP.customerPortal);
   });
 });
 
@@ -100,7 +102,7 @@ describe('MockProjectRepository', () => {
   const { projects } = createMockRepositories();
 
   it('lists projects affecting an application with the impact', async () => {
-    const links = await projects.listByApplication('app-loyalty-engine');
+    const links = await projects.listByApplication(APP.loyaltyEngine);
     expect(links).toHaveLength(1);
     expect(links[0]?.impact.impactType).toBe('creates');
     expect(links[0]?.project.projectManager?.name).toBe('Lucas Moreau');
@@ -112,7 +114,7 @@ describe('portfolio read models', () => {
 
   it('summarises teams with ownership counts', async () => {
     const summaries = await repositories.teams.listSummaries();
-    const platform = summaries.find((t) => t.id === 'team-platform');
+    const platform = summaries.find((t) => t.id === TEAM.platform);
     expect(platform?.manager?.name).toBe('Aylin Demir');
     expect(platform?.applicationCount).toBe(2);
     expect(platform?.projectCount).toBe(3);
@@ -120,12 +122,12 @@ describe('portfolio read models', () => {
 
   it('summarises technologies with usage counts', async () => {
     const summaries = await repositories.technologies.listSummaries();
-    expect(summaries.find((t) => t.id === 'tech-oracle')?.applicationCount).toBe(4);
+    expect(summaries.find((t) => t.id === TECH.oracle)?.applicationCount).toBe(4);
   });
 
   it('filters projects by delivery team', async () => {
     const result = await repositories.projects.list({
-      teamId: 'team-commerce',
+      teamId: TEAM.commerce,
       page: 0,
       pageSize: 50,
     });

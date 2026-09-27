@@ -1,9 +1,10 @@
 import type { Person } from '../types';
+import type { EntityId } from '@/domains/shared/types';
 
 interface PersonSummaryProps {
   person: Person | undefined;
   /** Rendered when the id does not resolve (stale reference). */
-  fallbackId?: string;
+  fallbackId?: EntityId;
   showEmail?: boolean;
 }
 

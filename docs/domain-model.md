@@ -23,13 +23,17 @@ Risk / Escalation / Decision ── relatedApplicationIds[], relatedProjectIds[]
 
 ## Core rules
 
-1. **References are ids.** Never names. Names are resolved via lookups or read models.
+1. **References are ids.** Never names. Names are resolved via lookups or read models. Ids are
+   numeric primary keys, unique **per table** (application 2 and project 2 can coexist), each fed
+   by its own database sequence — see `docs/database-schema.sql`.
 2. **Roles are contextual** (`RoleAssignment { personId, role }` on applications and projects). A
    person can be technical owner of one application and stakeholder on another.
 3. **Team assignments carry a responsibility** (`development`, `support`, `operations`,
    `delivery`), so "who builds it" and "who supports it" are distinguishable.
-4. **Aggregates own value objects** with stable ids: environments, source repositories, data
-   stores, documentation links (application); milestones, impacts (project).
+4. **Aggregates own child rows** with their own ids and sequences: environments, source
+   repositories, data stores, technology usages, documentation links (application); milestones,
+   application impacts (project); role and team assignments (both). Writes send `Draft<T>` rows —
+   `id: null` for new rows; the server assigns ids and refuses ids owned by another record.
 5. **Relationships between aggregates are entities** (`ApplicationDependency`, `Integration`) so
    they can carry metadata and be queried in both directions.
 6. **Every aggregate carries `AuditMetadata`** (`created*`, `updated*`, `lastReviewed*`).

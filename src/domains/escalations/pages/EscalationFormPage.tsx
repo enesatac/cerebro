@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import type { EntityId } from '@/domains/shared/types';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useParams, useSearchParams } from 'react-router';
 import { paths } from '@/app/router/paths';
@@ -23,6 +24,7 @@ import {
 import { type Escalation } from '../types';
 import { MasterSelectField } from '@/domains/master-data/components/MasterSelectField';
 import { EscalationDeleteAction } from '../components/EscalationDeleteAction';
+import { parseId } from '@/lib/urlParams';
 
 function EscalationForm({ escalation }: { escalation?: Escalation }) {
   const navigate = useNavigate();
@@ -146,10 +148,10 @@ function EscalationForm({ escalation }: { escalation?: Escalation }) {
 
 export default function EscalationFormPage() {
   const { escalationId } = useParams();
-  return escalationId ? <EditEscalation id={escalationId} /> : <EscalationForm />;
+  return escalationId ? <EditEscalation id={parseId(escalationId) ?? 0} /> : <EscalationForm />;
 }
 
-function EditEscalation({ id }: { id: string }) {
+function EditEscalation({ id }: { id: EntityId }) {
   const query = useEscalation(id);
   return (
     <QueryView

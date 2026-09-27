@@ -27,5 +27,5 @@ export function useBusinessUnitsById() {
 
 export function useBusinessUnitOptions() {
   const units = useBusinessUnits();
-  return (units.data ?? []).map((unit) => ({ value: unit.id, label: unit.name }));
+  return (units.data ?? []).map((unit) => ({ value: String(unit.id), label: unit.name }));
 }

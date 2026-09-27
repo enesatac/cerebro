@@ -1,5 +1,12 @@
 import { z } from 'zod';
-import { email, emptyToNull, optionalText, requiredText } from '@/lib/validation';
+import {
+  email,
+  emptyToNull,
+  idText,
+  optionalText,
+  requiredText,
+  toIdOrNull,
+} from '@/lib/validation';
 import type { Person, PersonInput } from '../types';
 
 export const personFormSchema = z.object({
@@ -17,7 +24,7 @@ export function toPersonFormValues(person?: Person): PersonFormValues {
     fullName: person?.fullName ?? '',
     jobTitle: person?.jobTitle ?? '',
     email: person?.email ?? '',
-    businessUnitId: person?.businessUnitId ?? '',
+    businessUnitId: idText(person?.businessUnitId),
     location: person?.location ?? '',
   };
 }
@@ -27,7 +34,7 @@ export function toPersonInput(values: PersonFormValues): PersonInput {
     fullName: values.fullName.trim(),
     jobTitle: values.jobTitle.trim(),
     email: values.email.trim().toLowerCase(),
-    businessUnitId: emptyToNull(values.businessUnitId),
+    businessUnitId: toIdOrNull(values.businessUnitId),
     location: emptyToNull(values.location),
   };
 }

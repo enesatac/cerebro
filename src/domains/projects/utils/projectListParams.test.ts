@@ -5,6 +5,7 @@ import {
   serializeProjectListParams,
   toProjectListQuery,
 } from './projectListParams';
+import { TEAM } from '@/services/mock/data/ids';
 
 describe('projectListParams', () => {
   it('round-trips state through the URL', () => {
@@ -13,7 +14,7 @@ describe('projectListParams', () => {
       search: 'loyalty',
       status: 'in-progress' as const,
       health: 'at-risk' as const,
-      teamId: 'team-commerce',
+      teamId: TEAM.commerce,
       sort: { field: 'plannedEndDate' as const, direction: 'desc' as const },
       page: 1,
     };

@@ -1,17 +1,18 @@
-import type { Permission, UserAccount } from '@/domains/auth/types';
+import type { Permission, UserAccount, UserAccountId } from '@/domains/auth/types';
+import type { PersonId } from '@/domains/shared/types';
 import { hasPermission } from '@/domains/auth/utils/permissions';
 import { ForbiddenError, UnauthenticatedError } from '@/lib/errors';
 import type { MockDatabase } from './database';
 
-const STORAGE_KEY = 'cerebro.demo-session';
+const STORAGE_KEY = 'cerebro.demo-session.v2';
 
 /** Where the signed-in account id lives. Persisted in development so a reload keeps the session. */
 export interface SessionStore {
-  get(): string | null;
-  set(userId: string | null): void;
+  get(): UserAccountId | null;
+  set(userId: UserAccountId | null): void;
 }
 
-export function createMemorySessionStore(initial: string | null = null): SessionStore {
+export function createMemorySessionStore(initial: UserAccountId | null = null): SessionStore {
   let current = initial;
   return { get: () => current, set: (id) => void (current = id) };
 }
@@ -22,7 +23,8 @@ export function createBrowserSessionStore(): SessionStore {
   return {
     get() {
       try {
-        return window.localStorage.getItem(STORAGE_KEY) ?? memory.get();
+        const stored = Number(window.localStorage.getItem(STORAGE_KEY));
+        return Number.isInteger(stored) && stored > 0 ? stored : memory.get();
       } catch {
         return memory.get();
       }
@@ -30,7 +32,7 @@ export function createBrowserSessionStore(): SessionStore {
     set(id) {
       memory.set(id);
       try {
-        if (id) window.localStorage.setItem(STORAGE_KEY, id);
+        if (id !== null) window.localStorage.setItem(STORAGE_KEY, String(id));
         else window.localStorage.removeItem(STORAGE_KEY);
       } catch {
         // Memory fallback already holds the value.
@@ -51,7 +53,7 @@ export class MockAuthority {
 
   currentUser(): UserAccount | null {
     const id = this.store.get();
-    const user = id ? this.db.users.find((candidate) => candidate.id === id) : undefined;
+    const user = id !== null ? this.db.users.find((candidate) => candidate.id === id) : undefined;
     return user?.active ? user : null;
   }
 
@@ -62,8 +64,8 @@ export class MockAuthority {
     return user;
   }
 
-  /** Person id recorded in audit fields (falls back to the account id for unlinked accounts). */
-  static actorId(user: UserAccount): string {
-    return user.personId ?? user.id;
+  /** Person recorded in audit fields; `null` for accounts not linked to a person. */
+  static actorId(user: UserAccount): PersonId | null {
+    return user.personId;
   }
 }

@@ -4,6 +4,7 @@ import type {
   MasterDataListKey,
   MasterDataVariant,
 } from '@/domains/master-data/types';
+import { seedId } from './sequence';
 
 type Row = [code: string, label: string, description?: string];
 type ColoredRow = [code: string, label: string, variant: MasterDataVariant, description?: string];
@@ -11,6 +12,7 @@ type ColoredRow = [code: string, label: string, variant: MasterDataVariant, desc
 const plain = (key: MasterDataListKey, rows: Row[]): MasterDataList => ({
   key,
   items: rows.map(([code, label, description = '']): MasterDataItem => ({
+    id: seedId('masterDataItems'),
     code,
     label,
     description,
@@ -22,6 +24,7 @@ const plain = (key: MasterDataListKey, rows: Row[]): MasterDataList => ({
 const colored = (key: MasterDataListKey, rows: ColoredRow[]): MasterDataList => ({
   key,
   items: rows.map(([code, label, variant, description = '']): MasterDataItem => ({
+    id: seedId('masterDataItems'),
     code,
     label,
     description,

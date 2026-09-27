@@ -132,7 +132,7 @@ export default function TechnologiesListPage() {
               <Table
                 data={visible}
                 columns={canEdit ? [...columns, actionsColumn] : columns}
-                getRowId={(row) => row.id}
+                getRowId={(row) => String(row.id)}
                 sorting={{ defaultValue: [{ id: 'name', desc: false }] }}
                 pagination={{ pageSize: 25, pageSizeOptions: [25, 50, 100] }}
                 emptyState={<EmptyState compact title="Bu filtrelere uyan teknoloji yok" />}

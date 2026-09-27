@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import type { EntityId } from '@/domains/shared/types';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useParams, useSearchParams } from 'react-router';
 import { paths } from '@/app/router/paths';
@@ -18,6 +19,7 @@ import {
 import { type ApplicationDependency } from '../types';
 import { MasterSelectField } from '@/domains/master-data/components/MasterSelectField';
 import { DependencyDeleteAction } from '../components/DependencyDeleteAction';
+import { parseId } from '@/lib/urlParams';
 
 function DependencyForm({ dependency }: { dependency?: ApplicationDependency }) {
   const navigate = useNavigate();
@@ -26,11 +28,11 @@ function DependencyForm({ dependency }: { dependency?: ApplicationDependency }) 
   const applications = useApplicationOptions();
   const form = useForm<DependencyFormValues>({
     resolver: zodResolver(dependencyFormSchema),
-    defaultValues: toDependencyFormValues(dependency, params.get('source') ?? ''),
+    defaultValues: toDependencyFormValues(dependency, String(parseId(params.get('source')) ?? '')),
     mode: 'onTouched',
   });
   const { control } = form;
-  const origin = dependency?.sourceApplicationId ?? params.get('source');
+  const origin = dependency?.sourceApplicationId ?? parseId(params.get('source'));
   const returnTo = origin
     ? `${paths.applications.detail(origin)}?tab=dependencies`
     : `${paths.architecture()}?tab=dependencies`;
@@ -101,10 +103,10 @@ function DependencyForm({ dependency }: { dependency?: ApplicationDependency }) 
 
 export default function DependencyFormPage() {
   const { dependencyId } = useParams();
-  return dependencyId ? <EditDependency id={dependencyId} /> : <DependencyForm />;
+  return dependencyId ? <EditDependency id={parseId(dependencyId) ?? 0} /> : <DependencyForm />;
 }
 
-function EditDependency({ id }: { id: string }) {
+function EditDependency({ id }: { id: EntityId }) {
   const query = useDependency(id);
   return (
     <QueryView

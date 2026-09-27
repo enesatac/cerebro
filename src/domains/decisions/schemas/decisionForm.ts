@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { relatedEntitiesSchema, requireRelated } from '@/domains/risks/schemas/riskForm';
-import { enumChoice, optionalText, requiredDate, requiredText } from '@/lib/validation';
+import { enumChoice, optionalText, requiredDate, requiredText, toId } from '@/lib/validation';
 import { DECISION_STATUSES, type Decision, type DecisionInput } from '../types';
 
 export const decisionFormSchema = z
@@ -34,12 +34,19 @@ export function toDecisionFormValues(
     rationale: decision?.rationale ?? '',
     alternatives: decision?.alternatives ?? [],
     consequences: decision?.consequences ?? '',
-    decidedByIds: decision?.decidedByIds ?? [],
-    relatedApplicationIds: decision?.relatedApplicationIds ?? prefill.relatedApplicationIds,
-    relatedProjectIds: decision?.relatedProjectIds ?? prefill.relatedProjectIds,
+    decidedByIds: decision?.decidedByIds.map(String) ?? [],
+    relatedApplicationIds:
+      decision?.relatedApplicationIds.map(String) ?? prefill.relatedApplicationIds,
+    relatedProjectIds: decision?.relatedProjectIds.map(String) ?? prefill.relatedProjectIds,
   };
 }
 
 export function toDecisionInput(values: DecisionFormValues): DecisionInput {
-  return { ...values, title: values.title.trim() };
+  return {
+    ...values,
+    title: values.title.trim(),
+    decidedByIds: values.decidedByIds.map(toId),
+    relatedApplicationIds: values.relatedApplicationIds.map(toId),
+    relatedProjectIds: values.relatedProjectIds.map(toId),
+  };
 }

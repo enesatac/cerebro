@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import type { EntityId } from '@/domains/shared/types';
 import { useForm, useWatch } from 'react-hook-form';
 import { useNavigate, useParams, useSearchParams } from 'react-router';
 import { paths } from '@/app/router/paths';
@@ -18,6 +19,7 @@ import {
 import { type Integration } from '../types';
 import { MasterSelectField } from '@/domains/master-data/components/MasterSelectField';
 import { IntegrationDeleteAction } from '../components/IntegrationDeleteAction';
+import { parseId } from '@/lib/urlParams';
 
 const TARGET_OPTIONS = [
   { value: 'application', label: 'Başka bir Cerebro uygulaması' },
@@ -31,12 +33,12 @@ function IntegrationForm({ integration }: { integration?: Integration }) {
   const applications = useApplicationOptions();
   const form = useForm<IntegrationFormValues>({
     resolver: zodResolver(integrationFormSchema),
-    defaultValues: toIntegrationFormValues(integration, params.get('from') ?? ''),
+    defaultValues: toIntegrationFormValues(integration, String(parseId(params.get('from')) ?? '')),
     mode: 'onTouched',
   });
   const { control } = form;
   const targetKind = useWatch({ control, name: 'targetKind' });
-  const origin = integration?.fromApplicationId ?? params.get('from');
+  const origin = integration?.fromApplicationId ?? parseId(params.get('from'));
   const returnTo = origin
     ? `${paths.applications.detail(origin)}?tab=integrations`
     : `${paths.architecture()}?tab=integrations`;
@@ -142,10 +144,10 @@ function IntegrationForm({ integration }: { integration?: Integration }) {
 
 export default function IntegrationFormPage() {
   const { integrationId } = useParams();
-  return integrationId ? <EditIntegration id={integrationId} /> : <IntegrationForm />;
+  return integrationId ? <EditIntegration id={parseId(integrationId) ?? 0} /> : <IntegrationForm />;
 }
 
-function EditIntegration({ id }: { id: string }) {
+function EditIntegration({ id }: { id: EntityId }) {
   const query = useIntegration(id);
   return (
     <QueryView

@@ -6,12 +6,17 @@ import {
   teamAssignmentSchema,
   toDocumentationFormValues,
   toDocumentationLinks,
+  toRoleAssignments,
+  toRoleFormValues,
+  toTeamAssignments,
+  toTeamFormValues,
   uniqueRoleAssignments,
 } from '@/domains/shared/schemas/sharedFormSchemas';
 import {
+  childRowId,
   emptyToNull,
   enumChoice,
-  newRowId,
+  idText,
   optionalText,
   optionalUrl,
   optionalWholeNumber,
@@ -19,6 +24,8 @@ import {
   requiredText,
   requiredUrl,
   secretFreeText,
+  toId,
+  toIdOrNull,
   toNumberOrNull,
 } from '@/lib/validation';
 import {
@@ -29,13 +36,14 @@ import {
 } from '../types';
 
 const technologyUsageSchema = z.object({
+  id: childRowId,
   technologyId: requiredChoice('bir teknoloji'),
   layer: requiredChoice('bir katman'),
   version: optionalText('Sürüm', 30),
 });
 
 const dataStoreSchema = z.object({
-  id: z.string(),
+  id: childRowId,
   name: requiredText('Veri deposu adı', 80),
   technologyId: requiredChoice('bir teknoloji'),
   purpose: optionalText('Amaç', 300),
@@ -43,7 +51,7 @@ const dataStoreSchema = z.object({
 });
 
 const environmentSchema = z.object({
-  id: z.string(),
+  id: childRowId,
   type: requiredChoice('bir ortam türü'),
   name: requiredText('Ortam adı', 60),
   url: optionalUrl,
@@ -53,7 +61,7 @@ const environmentSchema = z.object({
 });
 
 const repositorySchema = z.object({
-  id: z.string(),
+  id: childRowId,
   name: requiredText('Kod deposu adı', 120),
   type: requiredChoice('bir tür'),
   url: requiredUrl('Kod deposu adresi'),
@@ -120,19 +128,20 @@ export const applicationFormSchema = z
 export type ApplicationFormValues = z.infer<typeof applicationFormSchema>;
 
 export const emptyTechnologyUsage = () => ({
+  id: null,
   technologyId: '',
   layer: 'backend' as const,
   version: '',
 });
 export const emptyDataStore = () => ({
-  id: newRowId('ds'),
+  id: null,
   name: '',
   technologyId: '',
   purpose: '',
   containsPersonalData: false,
 });
 export const emptyEnvironment = () => ({
-  id: newRowId('env'),
+  id: null,
   type: 'production' as const,
   name: 'Canlı',
   url: '',
@@ -141,7 +150,7 @@ export const emptyEnvironment = () => ({
   notes: '',
 });
 export const emptyRepository = () => ({
-  id: newRowId('repo'),
+  id: null,
   name: '',
   type: 'backend' as const,
   url: '',
@@ -161,17 +170,21 @@ export function toApplicationFormValues(app?: Application): ApplicationFormValue
     shortDescription: app?.shortDescription ?? '',
     detailedDescription: app?.detailedDescription ?? '',
     businessPurpose: app?.businessPurpose ?? '',
-    businessUnitId: app?.businessUnitId ?? '',
+    businessUnitId: idText(app?.businessUnitId),
     businessProcesses: app?.businessProcesses ?? [],
     userGroups: app?.userGroups ?? [],
     estimatedUserCount: app?.estimatedUserCount == null ? '' : String(app.estimatedUserCount),
-    roles: app?.roles ?? [],
-    teams: app?.teams ?? [],
+    roles: toRoleFormValues(app?.roles ?? []),
+    teams: toTeamFormValues(app?.teams ?? []),
     technologies: (app?.technologies ?? []).map((usage) => ({
       ...usage,
+      technologyId: idText(usage.technologyId),
       version: usage.version ?? '',
     })),
-    dataStores: app?.dataStores ?? [],
+    dataStores: (app?.dataStores ?? []).map((store) => ({
+      ...store,
+      technologyId: idText(store.technologyId),
+    })),
     hostingModel: app?.hosting.model ?? 'public-cloud',
     cloudProvider: app?.hosting.cloudProvider ?? '',
     hostingNotes: app?.hosting.notes ?? '',
@@ -202,17 +215,20 @@ export function toApplicationInput(values: ApplicationFormValues): ApplicationIn
     criticality: values.criticality,
     operationalStatus: values.operationalStatus,
     tags: [...new Set(values.tags)],
-    businessUnitId: emptyToNull(values.businessUnitId),
+    businessUnitId: toIdOrNull(values.businessUnitId),
     businessProcesses: values.businessProcesses,
     userGroups: values.userGroups,
     estimatedUserCount: toNumberOrNull(values.estimatedUserCount),
-    roles: values.roles,
-    teams: values.teams,
-    technologies: values.technologies.map(({ version, ...usage }) =>
-      version.trim() ? { ...usage, version: version.trim() } : usage,
-    ),
+    roles: toRoleAssignments(values.roles),
+    teams: toTeamAssignments(values.teams),
+    technologies: values.technologies.map(({ version, technologyId, ...usage }) => ({
+      ...usage,
+      technologyId: toId(technologyId),
+      ...(version.trim() ? { version: version.trim() } : {}),
+    })),
     dataStores: values.dataStores.map((store) => ({
       ...store,
+      technologyId: toId(store.technologyId),
       name: trim(store.name),
       purpose: trim(store.purpose),
     })),

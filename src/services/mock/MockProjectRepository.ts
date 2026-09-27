@@ -1,4 +1,5 @@
 import type { ProjectRepository } from '@/domains/projects/api/ProjectRepository';
+import type { EntityId } from '@/domains/shared/types';
 import {
   PROJECT_HEALTHS,
   PROJECT_PRIORITIES,
@@ -58,7 +59,7 @@ export class MockProjectRepository implements ProjectRepository {
     private readonly kit: WriteKit,
   ) {}
 
-  private validate(input: ProjectInput, excludeId: string | null) {
+  private validate(input: ProjectInput, excludeId: EntityId | null) {
     const { db, kit } = this;
     kit.assertUnique(
       db.projects,
@@ -91,39 +92,61 @@ export class MockProjectRepository implements ProjectRepository {
     );
   }
 
+  /** Child tables: stored rows keep their keys, new rows take the next value of their sequence. */
+  private withChildIds(input: ProjectInput, current?: Project) {
+    const { kit } = this;
+    const project = copy(input);
+    return {
+      ...project,
+      roles: kit.withIds(project.roles, 'roleAssignments', current?.roles),
+      teams: kit.withIds(project.teams, 'teamAssignments', current?.teams),
+      applicationImpacts: kit.withIds(
+        project.applicationImpacts,
+        'applicationImpacts',
+        current?.applicationImpacts,
+      ),
+      milestones: kit.withIds(project.milestones, 'milestones', current?.milestones),
+      documentation: kit.withIds(
+        project.documentation,
+        'documentationLinks',
+        current?.documentation,
+      ),
+    };
+  }
+
   async create(input: ProjectInput) {
     const user = await this.kit.begin();
     this.validate(input, null);
     const project: Project = {
-      ...copy(input),
-      id: this.kit.uniqueId('prj', input.name, this.db.projects),
+      ...this.withChildIds(input),
+      id: this.kit.nextId('projects'),
       audit: this.kit.newAudit(user),
     };
     this.db.projects.push(project);
     return copy(project);
   }
 
-  async update(id: string, input: ProjectInput) {
+  async update(id: EntityId, input: ProjectInput) {
     const user = await this.kit.begin();
     const current = findOrThrow(this.db.projects, id, 'Proje');
     this.validate(input, id);
     return copy(
       replaceRow(this.db.projects, {
-        ...copy(input),
+        ...this.withChildIds(input, current),
         id,
         audit: this.kit.touch(current.audit, user),
       }),
     );
   }
 
-  async remove(id: string) {
+  async remove(id: EntityId) {
     await this.kit.begin('portfolio:delete');
     findOrThrow(this.db.projects, id, 'Proje');
     deleteProjectCascade(this.db, id);
     removeRow(this.db.projects, id);
   }
 
-  async getDeletionImpact(id: string) {
+  async getDeletionImpact(id: EntityId) {
     await delay(this.latencyMs);
     findOrThrow(this.db.projects, id, 'Proje');
     return projectDeletionImpact(this.db, id);
@@ -148,7 +171,7 @@ export class MockProjectRepository implements ProjectRepository {
     return copy(paginate(rows, query.page, query.pageSize));
   }
 
-  async getById(id: string) {
+  async getById(id: EntityId) {
     await delay(this.latencyMs);
     return copy(findOrThrow(this.db.projects, id, 'Proje'));
   }
@@ -158,7 +181,7 @@ export class MockProjectRepository implements ProjectRepository {
     return this.db.projects.map(({ id, name, code }) => ({ id, name, code }));
   }
 
-  async listByApplication(applicationId: string) {
+  async listByApplication(applicationId: EntityId) {
     await delay(this.latencyMs);
     return copy(
       this.db.projects.flatMap((project) =>

@@ -19,7 +19,7 @@ const {
   decisions,
 } = seedTables;
 
-const ids = (rows: { id: string }[]) => new Set(rows.map((row) => row.id));
+const ids = (rows: readonly { id: number }[]) => new Set(rows.map((row) => row.id));
 const personIds = ids(people);
 const teamIds = ids(teams);
 const technologyIds = ids(technologies);
@@ -27,16 +27,33 @@ const businessUnitIds = ids(businessUnits);
 const applicationIds = ids(applications);
 const projectIds = ids(projects);
 
-function expectAll(values: (string | null)[], known: Set<string>, what: string) {
-  const unknown = values.filter((value): value is string => value !== null && !known.has(value));
+function expectAll(values: (number | null)[], known: Set<number>, what: string) {
+  const unknown = values.filter((value): value is number => value !== null && !known.has(value));
   expect(unknown, `unknown ${what}`).toEqual([]);
 }
 
 describe('mock data integrity', () => {
-  it('has unique ids per table', () => {
-    for (const [name, rows] of Object.entries(seedTables)) {
-      if (name === 'masterData') continue;
-      expect(ids(rows as { id: string }[]).size, name).toBe(rows.length);
+  it('has unique positive integer primary keys in every table, child tables included', () => {
+    const portfolio = [...applications, ...projects];
+    const tables: Record<string, readonly { id: number }[]> = {
+      ...Object.fromEntries(Object.entries(seedTables).filter(([name]) => name !== 'masterData')),
+      masterDataItems: seedTables.masterData.flatMap((list) => list.items),
+      roleAssignments: portfolio.flatMap((row) => row.roles),
+      teamAssignments: portfolio.flatMap((row) => row.teams),
+      technologyUsages: applications.flatMap((a) => a.technologies),
+      dataStores: applications.flatMap((a) => a.dataStores),
+      repositories: applications.flatMap((a) => a.repositories),
+      environments: applications.flatMap((a) => a.environments),
+      documentationLinks: portfolio.flatMap((row) => row.documentation),
+      milestones: projects.flatMap((p) => p.milestones),
+      applicationImpacts: projects.flatMap((p) => p.applicationImpacts),
+    };
+    for (const [name, rows] of Object.entries(tables)) {
+      expect(ids(rows).size, name).toBe(rows.length);
+      expect(
+        rows.every((row) => Number.isSafeInteger(row.id) && row.id > 0),
+        name,
+      ).toBe(true);
     }
   });
 

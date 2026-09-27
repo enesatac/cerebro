@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import type { EntityId } from '@/domains/shared/types';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router';
 import { paths } from '@/app/router/paths';
@@ -17,6 +18,7 @@ import {
 } from '../schemas/teamForm';
 import type { Team } from '../types';
 import { TeamDeleteAction } from '../components/TeamDeleteAction';
+import { parseId } from '@/lib/urlParams';
 
 function TeamForm({ team }: { team?: Team }) {
   const navigate = useNavigate();
@@ -110,10 +112,10 @@ function TeamForm({ team }: { team?: Team }) {
 
 export default function TeamFormPage() {
   const { teamId } = useParams();
-  return teamId ? <EditTeam id={teamId} /> : <TeamForm />;
+  return teamId ? <EditTeam id={parseId(teamId) ?? 0} /> : <TeamForm />;
 }
 
-function EditTeam({ id }: { id: string }) {
+function EditTeam({ id }: { id: EntityId }) {
   const query = useTeam(id);
   return (
     <QueryView query={query} loadingLabel="Ekip yükleniyor" errorTitle="Bu ekip yüklenemedi">

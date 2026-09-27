@@ -1,11 +1,14 @@
 import { z } from 'zod';
-import { optionalText, requiredText } from '@/lib/validation';
+import type { Draft } from '@/domains/shared/types';
+import { childRowId, optionalText, requiredText } from '@/lib/validation';
 import { getListDefinition } from '../catalog';
 import type { MasterDataItem, MasterDataListKey, MasterDataVariant } from '../types';
 
 const CODE_PATTERN = /^[A-Za-z0-9]+(?:[-_][A-Za-z0-9]+)*$/;
 
 const itemSchema = z.object({
+  /** Stored primary key; `null` for values added in this session. */
+  id: childRowId,
   code: z
     .string()
     .trim()
@@ -61,6 +64,7 @@ export type ValueListRow = ValueListFormValues['items'][number];
 export function toValueListFormValues(items: readonly MasterDataItem[]): ValueListFormValues {
   return {
     items: items.map((item) => ({
+      id: item.id,
       code: item.code,
       label: item.label,
       description: item.description,
@@ -73,6 +77,7 @@ export function toValueListFormValues(items: readonly MasterDataItem[]): ValueLi
 
 export function emptyValueListRow(colored: boolean): ValueListRow {
   return {
+    id: null,
     code: '',
     label: '',
     description: '',
@@ -85,9 +90,10 @@ export function emptyValueListRow(colored: boolean): ValueListRow {
 export function toMasterDataItems(
   key: MasterDataListKey,
   values: ValueListFormValues,
-): MasterDataItem[] {
+): Draft<MasterDataItem>[] {
   const { colored } = getListDefinition(key);
   return values.items.map((row) => ({
+    id: row.id,
     code: row.code.trim(),
     label: row.label.trim(),
     description: row.description.trim(),

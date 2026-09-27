@@ -106,11 +106,14 @@ export const emptyToNull = (value: string): string | null =>
 export const toNumberOrNull = (value: string): number | null =>
   value.trim() === '' ? null : Number(value);
 
-/** Short random id for rows added in forms (environments, milestones…). */
-export function newRowId(prefix: string): string {
-  const random =
-    typeof crypto !== 'undefined' && 'randomUUID' in crypto
-      ? crypto.randomUUID().slice(0, 8)
-      : Math.random().toString(36).slice(2, 10);
-  return `${prefix}-${random}`;
-}
+/**
+ * Record ids travel through form controls as text (selects hold strings) and are numeric primary
+ * keys everywhere else. These helpers convert at the form boundary.
+ */
+export const idText = (id: number | null | undefined): string => (id == null ? '' : String(id));
+export const toId = (value: string): number => Number(value);
+export const toIdOrNull = (value: string): number | null =>
+  value.trim() === '' ? null : Number(value);
+
+/** Id of a child row in a form: the stored primary key, or `null` for a row not saved yet. */
+export const childRowId = z.number().int().positive().nullable();

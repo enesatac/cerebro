@@ -40,8 +40,8 @@ describe('master data index', () => {
     {
       key: 'applicationTypes',
       items: [
-        { code: 'web', label: 'Web', description: '', variant: null, active: true },
-        { code: 'old', label: 'Eski', description: '', variant: null, active: false },
+        { id: 1, code: 'web', label: 'Web', description: '', variant: null, active: true },
+        { id: 2, code: 'old', label: 'Eski', description: '', variant: null, active: false },
       ],
     },
   ]);

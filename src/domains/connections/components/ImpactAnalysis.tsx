@@ -1,4 +1,5 @@
 import { Field, Select, Table, type TableColumnDef } from '@takeoff-ui/react-spar';
+import type { EntityId } from '@/domains/shared/types';
 import { useSearchParams } from 'react-router';
 import { EmptyState } from '@/components/feedback/EmptyState';
 import { QueryView } from '@/components/feedback/QueryView';
@@ -9,8 +10,9 @@ import { pluralize } from '@/lib/format';
 import { useAllDependencies } from '../api/queries';
 import { analyseImpact, type ImpactNode } from '../utils/impact';
 import { MasterBadge } from '@/domains/master-data/components/MasterBadge';
+import { parseId } from '@/lib/urlParams';
 
-function impactColumns(nameOf: (id: string) => string): TableColumnDef<ImpactNode>[] {
+function impactColumns(nameOf: (id: EntityId) => string): TableColumnDef<ImpactNode>[] {
   return [
     {
       id: 'application',
@@ -44,29 +46,33 @@ function impactColumns(nameOf: (id: string) => string): TableColumnDef<ImpactNod
 /** Pick an application and see what fails with it (downstream) and what it needs (upstream). */
 export function ImpactAnalysis() {
   const [params, setParams] = useSearchParams();
-  const selectedId = params.get('app');
+  const selectedId = parseId(params.get('app'));
   const refs = useApplicationRefs();
   const dependencies = useAllDependencies();
 
-  const select = (id: string) => {
+  const select = (value: string) => {
     const next = new URLSearchParams(params);
-    next.set('app', id);
+    next.set('app', value);
     setParams(next, { replace: true });
   };
   const options = [...(refs.data?.values() ?? [])].sort((a, b) => a.name.localeCompare(b.name));
-  const nameOf = (id: string) => refs.data?.get(id)?.name ?? id;
-  const selected = selectedId ? refs.data?.get(selectedId) : undefined;
+  const nameOf = (id: EntityId) => refs.data?.get(id)?.name ?? `#${id}`;
+  const selected = selectedId !== null ? refs.data?.get(selectedId) : undefined;
 
   return (
     <div className="c-stack">
       <Field className="c-impact-picker" disabled={!refs.data}>
         <Field.Label>Uygulama</Field.Label>
-        <Select size="small" value={selectedId ?? undefined} onChange={select}>
+        <Select
+          size="small"
+          value={selectedId === null ? undefined : String(selectedId)}
+          onChange={select}
+        >
           <Select.Trigger placeholder="Analiz edilecek uygulamayı seçin" />
           <Select.Content>
             <Select.Viewport>
               {options.map((ref) => (
-                <Select.Item key={ref.id} value={ref.id} label={ref.name}>
+                <Select.Item key={ref.id} value={String(ref.id)} label={ref.name}>
                   {ref.name}
                 </Select.Item>
               ))}
@@ -79,7 +85,7 @@ export function ImpactAnalysis() {
         </Field.Description>
       </Field>
 
-      {!selectedId ? (
+      {selectedId === null ? (
         <EmptyState
           title="Etki alanını görmek için bir uygulama seçin"
           description="Cerebro kayıtlı bağımlılıkları iki yönde izler: uygulama çökerse neyin durduğu ve çalışmak için neye ihtiyaç duyduğu."
@@ -93,7 +99,7 @@ export function ImpactAnalysis() {
           {(all) => {
             const downstream = analyseImpact(all, selectedId, 'downstream');
             const upstream = analyseImpact(all, selectedId, 'upstream');
-            const name = selected?.name ?? selectedId;
+            const name = selected?.name ?? `#${selectedId}`;
             const direct = downstream.filter((node) => node.depth === 1).length;
             return (
               <>
@@ -108,7 +114,7 @@ export function ImpactAnalysis() {
                   <Table
                     data={downstream}
                     columns={impactColumns(nameOf)}
-                    getRowId={(row) => row.applicationId}
+                    getRowId={(row) => String(row.applicationId)}
                     emptyState={
                       <EmptyState
                         compact
@@ -121,7 +127,7 @@ export function ImpactAnalysis() {
                   <Table
                     data={upstream}
                     columns={impactColumns(nameOf)}
-                    getRowId={(row) => row.applicationId}
+                    getRowId={(row) => String(row.applicationId)}
                     emptyState={
                       <EmptyState compact title={`${name} için kayıtlı bağımlılık yok`} />
                     }

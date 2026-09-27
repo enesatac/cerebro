@@ -61,7 +61,7 @@ picker only):
 ### Demo data
 
 Seed data lives in `src/services/mock/data/` and is entirely fictional. In development, changes
-are persisted to `localStorage` (`cerebro.demo-db.v3`, session in `cerebro.demo-session`). Clear
+are persisted to `localStorage` (`cerebro.demo-db.v4`, session in `cerebro.demo-session.v2`). Clear
 those keys (or the site data) to reset to the seed.
 
 ## Scripts
@@ -104,6 +104,7 @@ repository context (enforced by ESLint).
 - [Development guide](docs/development.md)
 - [Roadmap](docs/roadmap.md)
 - [Architecture decisions](docs/decisions.md)
+- [Database schema (PostgreSQL)](docs/database-schema.sql)
 - [`CLAUDE.md`](CLAUDE.md) / [`AGENTS.md`](AGENTS.md) — guidance for AI coding agents
 - `.claude/skills/` — project skills (architecture, Takeoff UI, features, domain model, quality,
   review)

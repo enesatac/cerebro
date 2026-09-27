@@ -1,28 +1,16 @@
 import type { Permission, UserAccount } from '@/domains/auth/types';
-import type { AuditMetadata } from '@/domains/shared/types';
+import type { AuditMetadata, Draft, EntityId } from '@/domains/shared/types';
 import { ValidationError } from '@/lib/errors';
+import type { SequenceName, Sequences } from './database';
 import { delay } from './query';
 import { MockAuthority } from './session';
-
-function slugify(value: string): string {
-  return (
-    value
-      .replace(/ı/g, 'i')
-      .replace(/İ/g, 'I')
-      .normalize('NFD')
-      .replace(/[̀-ͯ]/g, '')
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-+|-+$/g, '')
-      .slice(0, 48) || 'item'
-  );
-}
 
 /** Shared mechanics of mock writes: auth check, latency, audit stamping, ids and reference checks. */
 export class WriteKit {
   constructor(
     readonly authority: MockAuthority,
     private readonly latencyMs: number,
+    private readonly sequences: Sequences,
     private readonly now: () => Date = () => new Date(),
   ) {}
 
@@ -55,36 +43,51 @@ export class WriteKit {
     return { ...audit, updatedAt: at, updatedBy: by, lastReviewedAt: at, lastReviewedBy: by };
   }
 
-  /** `prefix-slug`, suffixed with a counter when taken. */
-  uniqueId(prefix: string, name: string, rows: readonly { id: string }[]): string {
-    const base = `${prefix}-${slugify(name)}`;
-    const taken = new Set(rows.map((row) => row.id));
-    if (!taken.has(base)) return base;
-    for (let n = 2; ; n += 1) {
-      if (!taken.has(`${base}-${n}`)) return `${base}-${n}`;
-    }
+  /** `nextval('<table>_id_seq')`: primary keys are never reused, even after deletes. */
+  nextId(sequence: SequenceName): EntityId {
+    this.sequences[sequence] += 1;
+    return this.sequences[sequence];
+  }
+
+  /**
+   * Stores child rows: existing rows keep their id, new rows (`id: null`) get the next one.
+   * `existing` are the ids the parent already owns; any other id is refused so a request cannot
+   * take over another record's rows (what a composite foreign key enforces in the database).
+   */
+  withIds<T extends { id: EntityId }>(
+    rows: readonly Draft<T>[],
+    sequence: SequenceName,
+    existing: readonly { id: EntityId }[] = [],
+  ): T[] {
+    const owned = new Set(existing.map((row) => row.id));
+    return rows.map((row) => {
+      if (row.id !== null && !owned.has(row.id)) {
+        throw new ValidationError(`Geçersiz alt kayıt kimliği: ${row.id}.`);
+      }
+      return { ...row, id: row.id ?? this.nextId(sequence) } as T;
+    });
   }
 
   /** Throws when any non-null id does not exist in `rows`. */
   assertRefs(
-    ids: readonly (string | null | undefined)[],
-    rows: readonly { id: string }[],
+    ids: readonly (EntityId | null | undefined)[],
+    rows: readonly { id: EntityId }[],
     label: string,
     field?: string,
   ) {
     const known = new Set(rows.map((row) => row.id));
-    const unknown = ids.filter((id): id is string => Boolean(id) && !known.has(id as string));
+    const unknown = ids.filter((id): id is EntityId => id != null && !known.has(id));
     if (unknown.length > 0) {
       throw new ValidationError(`Bilinmeyen ${label}: ${unknown.join(', ')}.`, field);
     }
   }
 
   /** Case-insensitive uniqueness check on a text field. */
-  assertUnique<T extends { id: string }>(
+  assertUnique<T extends { id: EntityId }>(
     rows: readonly T[],
     value: string,
     read: (row: T) => string,
-    excludeId: string | null,
+    excludeId: EntityId | null,
     message: string,
     field: string,
   ) {
@@ -96,13 +99,13 @@ export class WriteKit {
 }
 
 /** Replaces the row with `id` in place; returns the stored copy. */
-export function replaceRow<T extends { id: string }>(rows: T[], next: T): T {
+export function replaceRow<T extends { id: EntityId }>(rows: T[], next: T): T {
   const index = rows.findIndex((row) => row.id === next.id);
   rows[index] = next;
   return next;
 }
 
-export function removeRow<T extends { id: string }>(rows: T[], id: string) {
+export function removeRow<T extends { id: EntityId }>(rows: T[], id: EntityId) {
   const index = rows.findIndex((row) => row.id === id);
   if (index >= 0) rows.splice(index, 1);
 }

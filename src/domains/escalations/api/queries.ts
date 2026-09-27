@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import type { EntityId } from '@/domains/shared/types';
 import type { RelatedEntityFilter } from '@/domains/risks/types';
 import { useRepositories } from '@/services/RepositoryContext';
 
@@ -15,7 +16,7 @@ export function useEscalations(filter: RelatedEntityFilter) {
   });
 }
 
-export function useEscalation(id: string) {
+export function useEscalation(id: EntityId) {
   const { escalations } = useRepositories();
   return useQuery({
     queryKey: [...escalationKeys.all, 'detail', id],

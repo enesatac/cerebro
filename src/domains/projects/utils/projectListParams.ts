@@ -1,5 +1,5 @@
-import type { SortSpec } from '@/domains/shared/types';
-import { oneOf, parsePageIndex, parsePageSize } from '@/lib/urlParams';
+import type { SortSpec, EntityId } from '@/domains/shared/types';
+import { oneOf, parsePageIndex, parsePageSize, parseId } from '@/lib/urlParams';
 import {
   PROJECT_HEALTHS,
   PROJECT_SORT_FIELDS,
@@ -18,8 +18,8 @@ export interface ProjectListState {
   search: string;
   status: ProjectStatus | null;
   health: ProjectHealth | null;
-  businessUnitId: string | null;
-  teamId: string | null;
+  businessUnitId: EntityId | null;
+  teamId: EntityId | null;
   sort: SortSpec<ProjectSortField>;
   page: number;
   pageSize: number;
@@ -42,8 +42,8 @@ export function parseProjectListParams(params: URLSearchParams): ProjectListStat
     search: params.get('q')?.trim() ?? '',
     status: oneOf(PROJECT_STATUSES, params.get('status')),
     health: oneOf(PROJECT_HEALTHS, params.get('health')),
-    businessUnitId: params.get('bu') || null,
-    teamId: params.get('team') || null,
+    businessUnitId: parseId(params.get('bu')),
+    teamId: parseId(params.get('team')),
     sort: sortField
       ? { field: sortField, direction: params.get('dir') === 'desc' ? 'desc' : 'asc' }
       : DEFAULT_PROJECT_SORT,
@@ -57,8 +57,8 @@ export function serializeProjectListParams(state: ProjectListState): URLSearchPa
   if (state.search) params.set('q', state.search);
   if (state.status) params.set('status', state.status);
   if (state.health) params.set('health', state.health);
-  if (state.businessUnitId) params.set('bu', state.businessUnitId);
-  if (state.teamId) params.set('team', state.teamId);
+  if (state.businessUnitId !== null) params.set('bu', String(state.businessUnitId));
+  if (state.teamId !== null) params.set('team', String(state.teamId));
   if (
     state.sort.field !== DEFAULT_PROJECT_SORT.field ||
     state.sort.direction !== DEFAULT_PROJECT_SORT.direction

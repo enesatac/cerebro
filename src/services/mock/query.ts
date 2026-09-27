@@ -1,4 +1,4 @@
-import type { PagedResult, SortDirection } from '@/domains/shared/types';
+import type { EntityId, PagedResult, SortDirection } from '@/domains/shared/types';
 import { NotFoundError } from '@/lib/errors';
 
 export function delay(ms: number): Promise<void> {
@@ -44,9 +44,9 @@ export function paginate<T>(items: readonly T[], page: number, pageSize: number)
   };
 }
 
-export function findOrThrow<T extends { id: string }>(
+export function findOrThrow<T extends { id: EntityId }>(
   rows: readonly T[],
-  id: string,
+  id: EntityId,
   entity: string,
 ): T {
   const row = rows.find((candidate) => candidate.id === id);

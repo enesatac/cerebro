@@ -25,6 +25,7 @@ import { EditAction } from '@/domains/auth/components/RecordActions';
 import { MasterBadge } from '@/domains/master-data/components/MasterBadge';
 import { useMasterData } from '@/domains/master-data/context';
 import { TeamDeleteAction } from '../components/TeamDeleteAction';
+import { parseId } from '@/lib/urlParams';
 
 /** Upper bound for "everything this team owns" — teams own tens, not hundreds, of systems. */
 const OWNERSHIP_PAGE_SIZE = 100;
@@ -80,7 +81,7 @@ function OwnedApplications({ team }: { team: Team }) {
           <Table
             data={result.items}
             columns={columns}
-            getRowId={(row) => row.id}
+            getRowId={(row) => String(row.id)}
             emptyState={<EmptyState compact title={`${team.name} hiçbir uygulamaya atanmamış`} />}
           />
         </SectionCard>
@@ -129,7 +130,7 @@ function DeliveredProjects({ team }: { team: Team }) {
           <Table
             data={result.items}
             columns={columns}
-            getRowId={(row) => row.id}
+            getRowId={(row) => String(row.id)}
             emptyState={
               <EmptyState compact title={`${team.name} şu anda hiçbir proje yürütmüyor`} />
             }
@@ -164,7 +165,9 @@ function Members({ team }: { team: Team }) {
 
 export default function TeamDetailPage() {
   const navigate = useNavigate();
-  const { teamId = '' } = useParams();
+  const requestedId = useParams().teamId ?? '';
+  // Unknown or malformed ids resolve to 0, which no sequence ever produces → "not found".
+  const teamId = parseId(requestedId) ?? 0;
   const query = useTeam(teamId);
   const people = usePeopleById();
 
@@ -173,7 +176,7 @@ export default function TeamDetailPage() {
     return isNotFoundError(query.error) ? (
       <NotFoundState
         title="Ekip bulunamadı"
-        description={`"${teamId}" kimliğine sahip bir ekip yok.`}
+        description={`"${requestedId}" kimliğine sahip bir ekip yok.`}
         backTo={paths.teams.list()}
         backLabel="Ekiplere dön"
       />

@@ -1,4 +1,4 @@
-import type { DeletionImpact } from '@/domains/shared/types';
+import type { DeletionImpact, EntityId } from '@/domains/shared/types';
 import type { MockDatabase } from './database';
 
 /**
@@ -12,7 +12,7 @@ const nonZero = (references: DeletionImpact['references']) => references.filter(
 function relatedCount(
   db: MockDatabase,
   key: 'relatedApplicationIds' | 'relatedProjectIds',
-  id: string,
+  id: EntityId,
 ) {
   return {
     risks: db.risks.filter((r) => r[key].includes(id)).length,
@@ -24,14 +24,14 @@ function relatedCount(
 function unlinkRelated(
   db: MockDatabase,
   key: 'relatedApplicationIds' | 'relatedProjectIds',
-  id: string,
+  id: EntityId,
 ) {
   for (const row of [...db.risks, ...db.escalations, ...db.decisions]) {
     row[key] = row[key].filter((value) => value !== id);
   }
 }
 
-export function applicationDeletionImpact(db: MockDatabase, id: string): DeletionImpact {
+export function applicationDeletionImpact(db: MockDatabase, id: EntityId): DeletionImpact {
   const related = relatedCount(db, 'relatedApplicationIds', id);
   return {
     blockedReason: null,
@@ -59,7 +59,7 @@ export function applicationDeletionImpact(db: MockDatabase, id: string): Deletio
   };
 }
 
-export function deleteApplicationCascade(db: MockDatabase, id: string) {
+export function deleteApplicationCascade(db: MockDatabase, id: EntityId) {
   db.dependencies = db.dependencies.filter(
     (d) => d.sourceApplicationId !== id && d.targetApplicationId !== id,
   );
@@ -74,7 +74,7 @@ export function deleteApplicationCascade(db: MockDatabase, id: string) {
   unlinkRelated(db, 'relatedApplicationIds', id);
 }
 
-export function projectDeletionImpact(db: MockDatabase, id: string): DeletionImpact {
+export function projectDeletionImpact(db: MockDatabase, id: EntityId): DeletionImpact {
   const related = relatedCount(db, 'relatedProjectIds', id);
   return {
     blockedReason: null,
@@ -86,11 +86,11 @@ export function projectDeletionImpact(db: MockDatabase, id: string): DeletionImp
   };
 }
 
-export function deleteProjectCascade(db: MockDatabase, id: string) {
+export function deleteProjectCascade(db: MockDatabase, id: EntityId) {
   unlinkRelated(db, 'relatedProjectIds', id);
 }
 
-export function teamDeletionImpact(db: MockDatabase, id: string): DeletionImpact {
+export function teamDeletionImpact(db: MockDatabase, id: EntityId): DeletionImpact {
   return {
     blockedReason: null,
     references: nonZero([
@@ -110,7 +110,7 @@ export function teamDeletionImpact(db: MockDatabase, id: string): DeletionImpact
   };
 }
 
-export function deleteTeamCascade(db: MockDatabase, id: string) {
+export function deleteTeamCascade(db: MockDatabase, id: EntityId) {
   for (const row of [...db.applications, ...db.projects]) {
     row.teams = row.teams.filter((assignment) => assignment.teamId !== id);
   }
@@ -120,7 +120,7 @@ export function deleteTeamCascade(db: MockDatabase, id: string) {
 }
 
 /** Technologies in use cannot be deleted — retire them instead so history stays intact. */
-export function technologyDeletionImpact(db: MockDatabase, id: string): DeletionImpact {
+export function technologyDeletionImpact(db: MockDatabase, id: EntityId): DeletionImpact {
   const applications = db.applications.filter(
     (a) =>
       a.technologies.some((t) => t.technologyId === id) ||
@@ -138,7 +138,7 @@ export function technologyDeletionImpact(db: MockDatabase, id: string): Deletion
 export const NO_IMPACT: DeletionImpact = { references: [], blockedReason: null };
 
 /** People are referenced from history and ownership; deleting a referenced person is refused. */
-export function personDeletionImpact(db: MockDatabase, id: string): DeletionImpact {
+export function personDeletionImpact(db: MockDatabase, id: EntityId): DeletionImpact {
   const portfolio = [...db.applications, ...db.projects];
   const audited = [
     ...portfolio,
@@ -188,7 +188,7 @@ export function personDeletionImpact(db: MockDatabase, id: string): DeletionImpa
 }
 
 /** Business units in use by applications or projects cannot be deleted; people are unassigned. */
-export function businessUnitDeletionImpact(db: MockDatabase, id: string): DeletionImpact {
+export function businessUnitDeletionImpact(db: MockDatabase, id: EntityId): DeletionImpact {
   const applications = db.applications.filter((a) => a.businessUnitId === id).length;
   const projects = db.projects.filter((p) => p.businessUnitId === id).length;
   return {
@@ -204,7 +204,7 @@ export function businessUnitDeletionImpact(db: MockDatabase, id: string): Deleti
   };
 }
 
-export function deleteBusinessUnitCascade(db: MockDatabase, id: string) {
+export function deleteBusinessUnitCascade(db: MockDatabase, id: EntityId) {
   for (const person of db.people) {
     if (person.businessUnitId === id) person.businessUnitId = null;
   }

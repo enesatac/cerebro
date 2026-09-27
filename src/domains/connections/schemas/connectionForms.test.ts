@@ -4,17 +4,19 @@ import {
   toIntegrationFormValues,
   toIntegrationInput,
 } from './connectionForms';
+import { APP } from '@/services/mock/data/ids';
 
 describe('integration form', () => {
   const base = {
-    ...toIntegrationFormValues(undefined, 'app-order-management'),
+    ...toIntegrationFormValues(undefined, String(APP.orderManagement)),
     name: 'Orders API',
   };
 
   it('requires a receiving application or an external party', () => {
     expect(integrationFormSchema.safeParse(base).success).toBe(false);
     expect(
-      integrationFormSchema.safeParse({ ...base, toApplicationId: 'app-payment-gateway' }).success,
+      integrationFormSchema.safeParse({ ...base, toApplicationId: String(APP.paymentGateway) })
+        .success,
     ).toBe(true);
     expect(
       integrationFormSchema.safeParse({
@@ -29,7 +31,7 @@ describe('integration form', () => {
     const input = toIntegrationInput({
       ...base,
       targetKind: 'external',
-      toApplicationId: 'app-payment-gateway',
+      toApplicationId: String(APP.paymentGateway),
       externalPartyName: 'Bank',
     });
     expect(input.toApplicationId).toBeNull();
@@ -39,7 +41,7 @@ describe('integration form', () => {
   it('refuses credentials in descriptions', () => {
     const result = integrationFormSchema.safeParse({
       ...base,
-      toApplicationId: 'app-payment-gateway',
+      toApplicationId: String(APP.paymentGateway),
       description: 'client_secret=xyz',
     });
     expect(result.success).toBe(false);

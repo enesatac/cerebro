@@ -10,6 +10,7 @@ import type { Application, DataStore } from '../../types';
 import { paths } from '@/app/router/paths';
 import { EntityLink } from '@/components/data-display/EntityLink';
 import { MasterLabel } from '@/domains/master-data/components/MasterLabel';
+import type { EntityId } from '@/domains/shared/types';
 
 /** Layers used by the application, in admin order; layers missing from the list come last. */
 function layersInUse(order: string[], application: Application): string[] {
@@ -23,7 +24,7 @@ function layersInUse(order: string[], application: Application): string[] {
 export function TechnicalTab({ application }: { application: Application }) {
   const masterData = useMasterData();
   const technologies = useTechnologiesById();
-  const catalogue = technologies.data ?? new Map<string, Technology>();
+  const catalogue = technologies.data ?? new Map<EntityId, Technology>();
 
   return (
     <div className="c-stack">
@@ -55,7 +56,7 @@ export function TechnicalTab({ application }: { application: Application }) {
                     .map((usage) => {
                       const technology = catalogue.get(usage.technologyId);
                       return (
-                        <li key={`${usage.technologyId}-${layer}`} className="c-tech-item">
+                        <li key={usage.id} className="c-tech-item">
                           <span>
                             <EntityLink to={paths.technologies.detail(usage.technologyId)}>
                               {technology?.name ?? usage.technologyId}
@@ -88,7 +89,7 @@ export function TechnicalTab({ application }: { application: Application }) {
         <Table
           data={application.dataStores}
           columns={dataStoreColumns(catalogue)}
-          getRowId={(row) => row.id}
+          getRowId={(row) => String(row.id)}
           emptyState={<EmptyState compact title="Bu uygulama için kayıtlı veri deposu yok" />}
         />
       </SectionCard>
@@ -113,7 +114,7 @@ export function TechnicalTab({ application }: { application: Application }) {
   );
 }
 
-function dataStoreColumns(catalogue: Map<string, Technology>): TableColumnDef<DataStore>[] {
+function dataStoreColumns(catalogue: Map<EntityId, Technology>): TableColumnDef<DataStore>[] {
   return [
     {
       id: 'name',
@@ -125,7 +126,7 @@ function dataStoreColumns(catalogue: Map<string, Technology>): TableColumnDef<Da
       id: 'technology',
       header: 'Teknoloji',
       cell: ({ row }) =>
-        catalogue.get(row.original.technologyId)?.name ?? row.original.technologyId,
+        catalogue.get(row.original.technologyId)?.name ?? `#${row.original.technologyId}`,
     },
     { id: 'purpose', header: 'Amaç', accessor: 'purpose' },
     {

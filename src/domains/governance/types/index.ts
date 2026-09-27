@@ -12,6 +12,7 @@ export type CompletenessImportance = 'required' | 'recommended';
  * makes no sense (e.g. repositories for a vendor-hosted SaaS product).
  */
 export interface CompletenessRule<T> {
+  /** Rule key (not a table row). */
   id: string;
   label: string;
   /** Explains what "passing" means, shown next to failing rules. */
@@ -52,6 +53,7 @@ export type AttentionKind =
 export type AttentionSubjectKind = 'application' | 'project' | 'risk' | 'escalation';
 
 export interface AttentionItem {
+  /** Derived key, e.g. `owner-12` (attention items are computed, not stored). */
   id: string;
   kind: AttentionKind;
   severity: Criticality;

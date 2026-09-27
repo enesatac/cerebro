@@ -142,7 +142,7 @@ export function ApplicationsTable({
     <Table
       data={result?.items ?? []}
       columns={columns}
-      getRowId={(row) => row.id}
+      getRowId={(row) => String(row.id)}
       manual
       loading={loading}
       emptyState={emptyState}

@@ -15,7 +15,7 @@ export class AppError extends Error {
 export class NotFoundError extends AppError {
   constructor(
     readonly entity: string,
-    readonly id: string,
+    readonly id: string | number,
   ) {
     super(`${entity} "${id}" bulunamadı.`, 'not-found');
     this.name = 'NotFoundError';

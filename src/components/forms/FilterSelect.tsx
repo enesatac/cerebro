@@ -7,7 +7,8 @@ export interface FilterOption {
 
 interface FilterSelectProps {
   label: string;
-  value: string | null;
+  /** Current filter; record ids may be passed as numbers. */
+  value: string | number | null;
   options: readonly FilterOption[];
   /** Label of the "no filter" option, e.g. "All lifecycles". */
   allLabel: string;
@@ -32,7 +33,7 @@ export function FilterSelect({
       <Field.Label>{label}</Field.Label>
       <Select
         size="small"
-        value={value ?? ALL}
+        value={value === null ? ALL : String(value)}
         onChange={(next) => onChange(next === ALL ? null : next)}
       >
         <Select.Trigger placeholder={allLabel} />

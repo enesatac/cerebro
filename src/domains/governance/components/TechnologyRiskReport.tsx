@@ -72,7 +72,7 @@ export function TechnologyRiskReport({ rows }: { rows: ApplicationHealthRow[] })
       <Table
         data={affected}
         columns={columns}
-        getRowId={(row) => row.id}
+        getRowId={(row) => String(row.id)}
         emptyState={
           <EmptyState
             compact

@@ -160,6 +160,15 @@ teams and technologies.
 - URLs must be http(s); free text next to environments/integrations is rejected when it looks like
   a credential (`looksLikeSecret`).
 
+## Identifiers and database shape
+
+- `EntityId = number`: a per-table sequence value, assigned by the server (`WriteKit.nextId`).
+- Aggregates are written with `Draft<T>` child rows; `WriteKit.withIds` keeps stored ids, assigns
+  new ones and rejects foreign ones.
+- Forms hold ids as text (select values) and convert at the boundary (`idText`, `toId`,
+  `toIdOrNull` in `lib/validation.ts`); route params go through `parseId` (`lib/urlParams.ts`).
+- Relational schema with sequences, foreign keys and link tables: `docs/database-schema.sql`.
+
 ## Master data
 
 - Catalogue of lists: `domains/master-data/catalog.ts` (label, group, `systemCodes`, `extensible`,
@@ -176,8 +185,8 @@ teams and technologies.
 ## Development persistence
 
 The mock database and session are persisted in `localStorage` in the browser
-(`cerebro.demo-db.v3`, `cerebro.demo-session`) so records survive a reload. Tests use in-memory
-stores. To reset the demo data, clear the site's storage (or remove `cerebro.demo-db.v3`).
+(`cerebro.demo-db.v4`, `cerebro.demo-session.v2`) so records survive a reload. Tests use in-memory
+stores. To reset the demo data, clear the site's storage (or remove `cerebro.demo-db.v4`).
 
 ## Security posture (frontend)
 

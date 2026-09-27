@@ -1,4 +1,5 @@
 import type { BadgeVariant } from '@takeoff-ui/react-spar';
+import type { EntityId } from '@/domains/shared/types';
 
 /**
  * Every administrable value list. The key is stable (stored nowhere in records — records store the
@@ -53,8 +54,12 @@ export const MASTER_DATA_VARIANTS = [
 ] as const satisfies readonly BadgeVariant[];
 export type MasterDataVariant = (typeof MASTER_DATA_VARIANTS)[number];
 
-/** One value of a list. Records store `code`; everything else is presentation an admin can edit. */
+/**
+ * One value of a list (a row of the `master_data_items` table). Records reference it by `code`,
+ * which is unique per list and never changes; everything else is presentation an admin can edit.
+ */
 export interface MasterDataItem {
+  id: EntityId;
   code: string;
   label: string;
   description: string;

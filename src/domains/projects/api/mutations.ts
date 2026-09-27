@@ -1,8 +1,9 @@
 import { useRepositoryMutation } from '@/hooks/useRepositoryMutation';
+import type { EntityId } from '@/domains/shared/types';
 import { useRepositories } from '@/services/RepositoryContext';
 import type { ProjectInput } from '../types';
 
-export function useSaveProject(id?: string) {
+export function useSaveProject(id?: EntityId) {
   const { projects } = useRepositories();
   return useRepositoryMutation(
     (input: ProjectInput) => (id ? projects.update(id, input) : projects.create(input)),
@@ -15,7 +16,7 @@ export function useSaveProject(id?: string) {
 
 export function useDeleteProject() {
   const { projects } = useRepositories();
-  return useRepositoryMutation((id: string) => projects.remove(id), {
+  return useRepositoryMutation((id: EntityId) => projects.remove(id), {
     successTitle: () => 'Proje silindi',
   });
 }

@@ -179,7 +179,7 @@ export function PeopleEditor() {
               <Table
                 data={visible}
                 columns={columns}
-                getRowId={(row) => row.id}
+                getRowId={(row) => String(row.id)}
                 pagination={{ pageSize: 25, pageSizeOptions: [25, 50, 100] }}
                 emptyState={<EmptyState compact title="Bu aramaya uyan kişi yok" />}
               />

@@ -130,7 +130,7 @@ export function DependencyRegister() {
                     ]
                   : dependencyColumns
               }
-              getRowId={(row) => row.id}
+              getRowId={(row) => String(row.id)}
               pagination={PAGINATION}
               emptyState={<EmptyState compact title="Bu filtrelere uyan bağımlılık yok" />}
             />
@@ -237,7 +237,7 @@ export function IntegrationRegister() {
                     ]
                   : integrationColumns
               }
-              getRowId={(row) => row.id}
+              getRowId={(row) => String(row.id)}
               pagination={PAGINATION}
               emptyState={<EmptyState compact title="Bu filtreye uyan entegrasyon yok" />}
             />

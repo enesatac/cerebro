@@ -75,7 +75,7 @@ export function ProjectsTab({ application }: { application: Application }) {
           <Table
             data={links}
             columns={columns}
-            getRowId={(row) => `${row.project.id}-${row.impact.impactType}`}
+            getRowId={(row) => String(row.impact.id)}
             emptyState={
               <EmptyState
                 compact

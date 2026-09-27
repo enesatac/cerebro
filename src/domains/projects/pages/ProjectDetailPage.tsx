@@ -30,6 +30,7 @@ import { ActionMenu } from '@/components/actions/ActionMenu';
 import { SmallCreateAction } from '@/domains/auth/components/RecordActions';
 import { MasterBadge } from '@/domains/master-data/components/MasterBadge';
 import { ProjectDeleteAction } from '../components/ProjectDeleteAction';
+import { parseId } from '@/lib/urlParams';
 
 const TABS = [
   { id: 'overview', label: 'Genel bakış' },
@@ -101,7 +102,9 @@ function tabCount(tab: ProjectTab, project: Project): number | null {
 
 export default function ProjectDetailPage() {
   const navigate = useNavigate();
-  const { projectId = '' } = useParams();
+  const requestedId = useParams().projectId ?? '';
+  // Unknown or malformed ids resolve to 0, which no sequence ever produces → "not found".
+  const projectId = parseId(requestedId) ?? 0;
   const [activeTab, selectTab] = useTabParam(TAB_IDS);
   const query = useProject(projectId);
 
@@ -110,7 +113,7 @@ export default function ProjectDetailPage() {
     return isNotFoundError(query.error) ? (
       <NotFoundState
         title="Proje bulunamadı"
-        description={`"${projectId}" kimliğine sahip bir proje yok. Kaldırılmış ya da bağlantı hatalı olabilir.`}
+        description={`"${requestedId}" kimliğine sahip bir proje yok. Kaldırılmış ya da bağlantı hatalı olabilir.`}
         backTo={paths.projects.list()}
         backLabel="Projelere dön"
       />

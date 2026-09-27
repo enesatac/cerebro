@@ -105,7 +105,7 @@ export function EscalationTable({
     <Table
       data={escalations}
       columns={columns}
-      getRowId={(row) => row.id}
+      getRowId={(row) => String(row.id)}
       emptyState={emptyState}
       pagination={pagination ? { pageSize: 25, pageSizeOptions: [25, 50, 100] } : undefined}
     />

@@ -6,6 +6,7 @@ import type { EscalationRepository } from '@/domains/escalations/api/EscalationR
 import type { Escalation } from '@/domains/escalations/types';
 import type { RiskRepository } from '@/domains/risks/api/RiskRepository';
 import type { RelatedEntityFilter, Risk } from '@/domains/risks/types';
+import type { EntityId } from '@/domains/shared/types';
 import { ValidationError } from '@/lib/errors';
 import { createAuditedWriteRepository } from './auditedWriteRepository';
 import type { MockDatabase } from './database';
@@ -14,8 +15,8 @@ import type { WriteKit } from './writeKit';
 import { assertCodeChecks, codeChecks } from './MockMasterDataRepository';
 
 interface Related {
-  relatedApplicationIds: string[];
-  relatedProjectIds: string[];
+  relatedApplicationIds: EntityId[];
+  relatedProjectIds: EntityId[];
 }
 
 function matchesRelated(row: Related, filter: RelatedEntityFilter | undefined): boolean {
@@ -53,8 +54,7 @@ export function createMockOperationalRepositories(
       latencyMs,
       rows: () => db.risks,
       entityLabel: 'Risk',
-      idPrefix: 'risk',
-      nameOf: (input) => input.title,
+      sequence: 'risks',
       build: (input, id, audit) => ({ ...input, id, audit }),
       validate(input, excludeId) {
         const previous = excludeId ? db.risks.find((row) => row.id === excludeId) : undefined;
@@ -76,8 +76,7 @@ export function createMockOperationalRepositories(
       latencyMs,
       rows: () => db.escalations,
       entityLabel: 'Eskalasyon',
-      idPrefix: 'esc',
-      nameOf: (input) => input.title,
+      sequence: 'escalations',
       build: (input, id, audit) => ({ ...input, id, audit }),
       validate(input, excludeId) {
         const previous = excludeId ? db.escalations.find((row) => row.id === excludeId) : undefined;
@@ -104,8 +103,7 @@ export function createMockOperationalRepositories(
       latencyMs,
       rows: () => db.decisions,
       entityLabel: 'Karar',
-      idPrefix: 'dec',
-      nameOf: (input) => input.title,
+      sequence: 'decisions',
       build: (input, id, audit) => ({ ...input, id, audit }),
       validate(input, excludeId) {
         const previous = excludeId ? db.decisions.find((row) => row.id === excludeId) : undefined;
@@ -147,9 +145,7 @@ export function createMockOperationalRepositories(
         latencyMs,
         rows: () => db.dependencies,
         entityLabel: 'Bağımlılık',
-        idPrefix: 'dep',
-        nameOf: (input) =>
-          `${input.sourceApplicationId}-${input.targetApplicationId}`.replace(/app-/g, ''),
+        sequence: 'dependencies',
         build: (input, id, audit) => ({ ...input, id, audit }),
         validate(input, excludeId) {
           const previous = excludeId
@@ -191,8 +187,7 @@ export function createMockOperationalRepositories(
         latencyMs,
         rows: () => db.integrations,
         entityLabel: 'Entegrasyon',
-        idPrefix: 'int',
-        nameOf: (input) => input.name,
+        sequence: 'integrations',
         build: (input, id, audit) => ({ ...input, id, audit }),
         validate(input, excludeId) {
           const previous = excludeId

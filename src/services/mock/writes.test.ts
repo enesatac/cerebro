@@ -6,13 +6,14 @@ import {
 import { ForbiddenError, UnauthenticatedError, ValidationError } from '@/lib/errors';
 import { createMockRepositories } from './index';
 import { afterWrites } from './persistence';
+import { APP, PERSON, PRJ, RISK, TECH, USER } from '@/services/mock/data/ids';
 
-const ADMIN = 'user-can-ozturk';
-const VIEWER = 'user-elif-kaya';
+const ADMIN = USER.canOzturk;
+const VIEWER = USER.elifKaya;
 
 async function applicationInput(
   repos: ReturnType<typeof createMockRepositories>,
-  id = 'app-payment-gateway',
+  id: number = APP.paymentGateway,
 ) {
   return toApplicationInput(toApplicationFormValues(await repos.applications.getById(id)));
 }
@@ -24,7 +25,7 @@ describe('authorisation is enforced by the repository (backend), not only the UI
     await expect(repos.applications.create({ ...input, code: 'NEW' })).rejects.toBeInstanceOf(
       ForbiddenError,
     );
-    await expect(repos.risks.remove('risk-pay-db-support')).rejects.toBeInstanceOf(ForbiddenError);
+    await expect(repos.risks.remove(RISK.payDbSupport)).rejects.toBeInstanceOf(ForbiddenError);
     await expect(repos.users.list()).rejects.toBeInstanceOf(ForbiddenError);
   });
 
@@ -41,17 +42,64 @@ describe('authorisation is enforced by the repository (backend), not only the UI
   });
 });
 
+/** A copy of an input whose child rows are all new (`id: null`), as the create form sends them. */
+function asNewRows(input: Awaited<ReturnType<typeof applicationInput>>) {
+  const fresh = <T extends { id: number | null }>(rows: T[]) =>
+    rows.map((row) => ({ ...row, id: null }));
+  return {
+    ...input,
+    roles: fresh(input.roles),
+    teams: fresh(input.teams),
+    technologies: fresh(input.technologies),
+    dataStores: fresh(input.dataStores),
+    repositories: fresh(input.repositories),
+    environments: fresh(input.environments),
+    documentation: fresh(input.documentation),
+  };
+}
+
 describe('application writes', () => {
-  it('creates with a slug id and audit stamped with the acting person', async () => {
+  it('keeps child row ids on update and refuses ids owned by another record', async () => {
     const repos = createMockRepositories({ signedInAs: ADMIN });
-    const input = await applicationInput(repos);
+    const gateway = await repos.applications.getById(APP.paymentGateway);
+    const input = await applicationInput(repos, APP.paymentGateway);
+    const [firstEnvironment] = input.environments;
+    const [foreignEnvironment] = (await repos.applications.getById(APP.customerIdentity))
+      .environments;
+    if (!firstEnvironment || !foreignEnvironment) throw new Error('seed environments missing');
+    const updated = await repos.applications.update(APP.paymentGateway, {
+      ...input,
+      environments: [...input.environments, { ...firstEnvironment, id: null, name: 'Yeni' }],
+    });
+    expect(updated.environments.slice(0, -1).map((env) => env.id)).toEqual(
+      gateway.environments.map((env) => env.id),
+    );
+    expect(updated.environments.at(-1)?.id).toBeGreaterThan(0);
+
+    await expect(
+      repos.applications.update(APP.paymentGateway, {
+        ...input,
+        environments: [{ ...firstEnvironment, id: foreignEnvironment.id }],
+      }),
+    ).rejects.toThrow(/Geçersiz alt kayıt kimliği/);
+  });
+
+  it('takes ids from the table sequences and stamps audit with the acting person', async () => {
+    const repos = createMockRepositories({ signedInAs: ADMIN });
+    const input = asNewRows(await applicationInput(repos));
     const created = await repos.applications.create({
       ...input,
       name: 'Payment Gateway Next',
       code: 'PAYGW2',
     });
-    expect(created.id).toBe('app-payment-gateway-next');
-    expect(created.audit.createdBy).toBe('person-can-ozturk');
+    // 17 seed applications → the sequence hands out 18; child rows get ids from their own tables.
+    expect(created.id).toBe(Object.keys(APP).length + 1);
+    expect(created.environments.every((env) => Number.isInteger(env.id) && env.id > 0)).toBe(true);
+    const source = await repos.applications.getById(APP.paymentGateway);
+    expect(Math.min(...created.environments.map((env) => env.id))).toBeGreaterThan(
+      Math.max(...source.environments.map((env) => env.id)),
+    );
+    expect(created.audit.createdBy).toBe(PERSON.canOzturk);
     expect(await repos.applications.getById(created.id)).toMatchObject({ code: 'PAYGW2' });
   });
 
@@ -68,20 +116,16 @@ describe('application writes', () => {
   it('treats saving as a review', async () => {
     const repos = createMockRepositories({ signedInAs: ADMIN });
     const updated = await repos.applications.update(
-      'app-legacy-booking-console',
-      await applicationInput(repos, 'app-legacy-booking-console'),
+      APP.legacyBookingConsole,
+      await applicationInput(repos, APP.legacyBookingConsole),
     );
-    expect(updated.audit.lastReviewedBy).toBe('person-can-ozturk');
+    expect(updated.audit.lastReviewedBy).toBe(PERSON.canOzturk);
     expect(updated.audit.createdAt).toBe('2016-04-18T09:00:00Z');
   });
 
   it('round-trips an application through the form without losing data', async () => {
     const repos = createMockRepositories({ signedInAs: ADMIN });
-    for (const id of [
-      'app-customer-identity',
-      'app-expense-management',
-      'app-management-reporting-hub',
-    ]) {
+    for (const id of [APP.customerIdentity, APP.expenseManagement, APP.managementReportingHub]) {
       const original = await repos.applications.getById(id);
       const { id: _id, audit: _audit, ...expected } = original;
       expect(toApplicationInput(toApplicationFormValues(original))).toEqual(expected);
@@ -90,38 +134,36 @@ describe('application writes', () => {
 
   it('reports and applies the deletion cascade', async () => {
     const repos = createMockRepositories({ signedInAs: ADMIN });
-    const impact = await repos.applications.getDeletionImpact('app-payment-gateway');
+    const impact = await repos.applications.getDeletionImpact(APP.paymentGateway);
     expect(impact.references).toEqual(
       expect.arrayContaining([
         { label: 'proje', count: 1 },
         { label: 'bağımlılık', count: 4 },
       ]),
     );
-    await repos.applications.remove('app-payment-gateway');
+    await repos.applications.remove(APP.paymentGateway);
     expect(
       (await repos.connections.listDependencies()).some(
-        (d) => d.targetApplicationId === 'app-payment-gateway',
+        (d) => d.targetApplicationId === APP.paymentGateway,
       ),
     ).toBe(false);
     expect(
-      (await repos.projects.getById('prj-payment-modernisation')).applicationImpacts.map(
+      (await repos.projects.getById(PRJ.paymentModernisation)).applicationImpacts.map(
         (i) => i.applicationId,
       ),
-    ).not.toContain('app-payment-gateway');
-    expect((await repos.risks.getById('risk-pay-single-acquirer')).relatedApplicationIds).toEqual(
-      [],
-    );
+    ).not.toContain(APP.paymentGateway);
+    expect((await repos.risks.getById(RISK.paySingleAcquirer)).relatedApplicationIds).toEqual([]);
   });
 });
 
 describe('business rules', () => {
   it('blocks deleting a technology that is in use, allows an unused one', async () => {
     const repos = createMockRepositories({ signedInAs: ADMIN });
-    expect((await repos.technologies.getDeletionImpact('tech-oracle')).blockedReason).toMatch(
+    expect((await repos.technologies.getDeletionImpact(TECH.oracle)).blockedReason).toMatch(
       /4 uygulama tarafından kullanılıyor/,
     );
-    await expect(repos.technologies.remove('tech-oracle')).rejects.toBeInstanceOf(ValidationError);
-    await repos.technologies.remove('tech-playwright').catch(() => undefined);
+    await expect(repos.technologies.remove(TECH.oracle)).rejects.toBeInstanceOf(ValidationError);
+    await repos.technologies.remove(TECH.playwright).catch(() => undefined);
     const unused = await repos.technologies.create({
       name: 'Rust',
       category: 'backend',
@@ -138,22 +180,22 @@ describe('business rules', () => {
     await expect(
       repos.connections.dependencies.create({
         ...base,
-        sourceApplicationId: 'app-api-gateway',
-        targetApplicationId: 'app-api-gateway',
+        sourceApplicationId: APP.apiGateway,
+        targetApplicationId: APP.apiGateway,
       }),
     ).rejects.toBeInstanceOf(ValidationError);
     await expect(
       repos.connections.dependencies.create({
         ...base,
-        sourceApplicationId: 'app-oms-missing',
-        targetApplicationId: 'app-api-gateway',
+        sourceApplicationId: 9999,
+        targetApplicationId: APP.apiGateway,
       }),
     ).rejects.toBeInstanceOf(ValidationError);
   });
 
   it('requires risks to be linked to something', async () => {
     const repos = createMockRepositories({ signedInAs: ADMIN });
-    const risk = await repos.risks.getById('risk-pay-db-support');
+    const risk = await repos.risks.getById(RISK.payDbSupport);
     const { id: _id, audit: _audit, ...input } = risk;
     await expect(
       repos.risks.update(risk.id, { ...input, relatedApplicationIds: [], relatedProjectIds: [] }),
@@ -176,7 +218,7 @@ describe('business rules', () => {
     await expect(repos.users.update(ADMIN, { ...asInput(me), role: 'user' })).rejects.toThrow(
       /yönetici rolünüzü/,
     );
-    const other = await repos.users.getById('user-selin-aydin');
+    const other = await repos.users.getById(USER.selinAydin);
     await repos.users.update(other.id, { ...asInput(other), role: 'user' });
     // Can is now the only admin; nobody else can remove that role from them either.
     await expect(
@@ -188,7 +230,7 @@ describe('business rules', () => {
 describe('sign-in', () => {
   it('signs in active accounts only and records the session', async () => {
     const repos = createMockRepositories();
-    await expect(repos.auth.signIn('user-nadia-petrova')).rejects.toBeInstanceOf(ValidationError);
+    await expect(repos.auth.signIn(USER.nadiaPetrova)).rejects.toBeInstanceOf(ValidationError);
     await repos.auth.signIn(VIEWER);
     expect((await repos.auth.getSession())?.id).toBe(VIEWER);
     await repos.auth.signOut();
@@ -224,19 +266,19 @@ describe('user account deletion', () => {
     const repos = createMockRepositories({ signedInAs: ADMIN });
     await expect(repos.users.remove(ADMIN)).rejects.toThrow(/Kendi hesabınızı silemezsiniz/);
 
-    await repos.users.remove('user-nadia-petrova');
-    expect((await repos.users.list()).some((u) => u.id === 'user-nadia-petrova')).toBe(false);
+    await repos.users.remove(USER.nadiaPetrova);
+    expect((await repos.users.list()).some((u) => u.id === USER.nadiaPetrova)).toBe(false);
     // The linked person and their history stay.
-    expect(await repos.people.getById('person-nadia-petrova')).toBeDefined();
+    expect(await repos.people.getById(PERSON.nadiaPetrova)).toBeDefined();
 
     // Selin is the only other admin: after she goes, Can is the last admin — and cannot delete himself.
-    await repos.users.remove('user-selin-aydin');
+    await repos.users.remove(USER.selinAydin);
     const impact = await repos.users.getDeletionImpact(ADMIN);
     expect(impact.blockedReason).not.toBeNull();
   });
 
   it('is limited to user managers', async () => {
     const repos = createMockRepositories({ signedInAs: VIEWER });
-    await expect(repos.users.remove('user-tom-brennan')).rejects.toBeInstanceOf(ForbiddenError);
+    await expect(repos.users.remove(USER.tomBrennan)).rejects.toBeInstanceOf(ForbiddenError);
   });
 });

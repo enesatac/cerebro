@@ -4,18 +4,21 @@ import {
   toApplicationInput,
 } from '@/domains/applications/schemas/applicationForm';
 import type { MasterDataItem, MasterDataListKey } from '@/domains/master-data/types';
+import type { Draft } from '@/domains/shared/types';
 import { ForbiddenError, ValidationError } from '@/lib/errors';
 import { createMockRepositories } from './index';
+import { APP, BU, PERSON, USER } from '@/services/mock/data/ids';
 
-const ADMIN = 'user-can-ozturk';
-const VIEWER = 'user-elif-kaya';
+const ADMIN = USER.canOzturk;
+const VIEWER = USER.elifKaya;
 
 async function itemsOf(repos: ReturnType<typeof createMockRepositories>, key: MasterDataListKey) {
   const lists = await repos.masterData.listAll();
   return lists.find((list) => list.key === key)?.items ?? [];
 }
 
-const custom = (code: string, label: string): MasterDataItem => ({
+const custom = (code: string, label: string): Draft<MasterDataItem> => ({
+  id: null,
   code,
   label,
   description: '',
@@ -57,7 +60,7 @@ describe('master data lists', () => {
       custom('mobile-app', 'Mobil uygulama'),
     ]);
 
-    const app = await repos.applications.getById('app-payment-gateway');
+    const app = await repos.applications.getById(APP.paymentGateway);
     const input = toApplicationInput(toApplicationFormValues(app));
     await repos.applications.update(app.id, { ...input, type: 'mobile-app' });
     expect((await repos.applications.getById(app.id)).type).toBe('mobile-app');
@@ -94,7 +97,7 @@ describe('master data lists', () => {
       ...types,
       custom('mobile-app', 'Mobil uygulama'),
     ]);
-    const app = await repos.applications.getById('app-payment-gateway');
+    const app = await repos.applications.getById(APP.paymentGateway);
     await repos.applications.update(app.id, {
       ...toApplicationInput(toApplicationFormValues(app)),
       type: 'mobile-app',
@@ -115,7 +118,7 @@ describe('master data lists', () => {
       repos.masterData.update('applicationTypes', [...types, custom('web-2', 'Web uygulaması')]),
     ).rejects.toBeInstanceOf(ValidationError);
 
-    const app = await repos.applications.getById('app-payment-gateway');
+    const app = await repos.applications.getById(APP.paymentGateway);
     const input = toApplicationInput(toApplicationFormValues(app));
     await expect(
       repos.applications.update(app.id, { ...input, type: 'unknown-type' }),
@@ -164,18 +167,19 @@ describe('people and business units', () => {
       fullName: 'Deniz Yurt',
       jobTitle: 'Kurumsal Mimar',
       email: 'deniz.yurt@corp.example',
-      businessUnitId: 'bu-technology',
+      businessUnitId: BU.technology,
       location: 'Ankara',
     });
-    expect(person.id).toBe('person-deniz-yurt');
+    // Next value of the people sequence after the seed rows.
+    expect(person.id).toBe(Object.keys(PERSON).length + 1);
     await expect(repos.people.create({ ...person, fullName: 'Başka' })).rejects.toThrow(
       /zaten var/,
     );
 
-    const jonas = await repos.people.getById('person-jonas-berg');
+    const jonas = await repos.people.getById(PERSON.jonasBerg);
     await repos.people.update(jonas.id, { ...jonas, fullName: 'Jonas Berg-Aydın' });
     const list = await repos.applications.list({ page: 0, pageSize: 50 });
-    expect(list.items.find((app) => app.id === 'app-customer-identity')?.technicalOwner?.name).toBe(
+    expect(list.items.find((app) => app.id === APP.customerIdentity)?.technicalOwner?.name).toBe(
       'Jonas Berg-Aydın',
     );
 
@@ -185,12 +189,12 @@ describe('people and business units', () => {
 
   it('refuses to delete referenced people and business units in use', async () => {
     const repos = createMockRepositories({ signedInAs: ADMIN });
-    const impact = await repos.people.getDeletionImpact('person-can-ozturk');
+    const impact = await repos.people.getDeletionImpact(PERSON.canOzturk);
     expect(impact.blockedReason).not.toBeNull();
     expect(impact.references.length).toBeGreaterThan(0);
-    await expect(repos.people.remove('person-can-ozturk')).rejects.toBeInstanceOf(ValidationError);
+    await expect(repos.people.remove(PERSON.canOzturk)).rejects.toBeInstanceOf(ValidationError);
 
-    await expect(repos.businessUnits.remove('bu-finance')).rejects.toThrow(/kullanılıyor/);
+    await expect(repos.businessUnits.remove(BU.finance)).rejects.toThrow(/kullanılıyor/);
     const unit = await repos.businessUnits.create({
       code: 'LAB',
       name: 'Laboratuvar',

@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import type { EntityId } from '@/domains/shared/types';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router';
 import { paths } from '@/app/router/paths';
@@ -23,6 +24,7 @@ import {
 } from '../schemas/projectForm';
 import type { Project } from '../types';
 import { ProjectDeleteAction } from '../components/ProjectDeleteAction';
+import { parseId } from '@/lib/urlParams';
 
 const PROJECT_ROLE_ORDER = [
   'sponsor',
@@ -89,10 +91,10 @@ function ProjectForm({ project }: { project?: Project }) {
 
 export default function ProjectFormPage() {
   const { projectId } = useParams();
-  return projectId ? <EditProject id={projectId} /> : <ProjectForm />;
+  return projectId ? <EditProject id={parseId(projectId) ?? 0} /> : <ProjectForm />;
 }
 
-function EditProject({ id }: { id: string }) {
+function EditProject({ id }: { id: EntityId }) {
   const query = useProject(id);
   return (
     <QueryView query={query} loadingLabel="Proje yükleniyor" errorTitle="Bu proje yüklenemedi">

@@ -9,7 +9,7 @@ Full reference: `docs/domain-model.md`. Types live in `src/domains/<domain>/type
 
 ## 1. Modelling rules
 
-1. **Relationships are ids, never names.** `businessUnitId: 'bu-digital-channels'`, not
+1. **Relationships are ids, never names.** `businessUnitId: BU.digitalChannels` (a numeric key), not
    `businessUnit: 'Digital Channels'`. Resolve names through lookups or read models.
 2. **Roles are contextual.** A person is not globally a "Technical Owner". Applications and
    projects hold `roles: RoleAssignment[]` (`{ personId, role }`). Use the helpers in
@@ -17,8 +17,9 @@ Full reference: `docs/domain-model.md`. Types live in `src/domains/<domain>/type
 3. **Teams are assigned with a responsibility**: `teams: TeamAssignment[]`
    (`{ teamId, responsibility: 'development' | 'support' | 'operations' | 'delivery' }`).
 4. **Aggregates own their value objects.** Environments, source repositories, data stores and
-   documentation links are embedded in their application (each with a stable `id`). Milestones
-   and application impacts are embedded in their project.
+   documentation links are embedded in their application; milestones and application impacts in
+   their project; role and team assignments in both. Each is a child table with its own sequence
+   and `id`; write requests carry `Draft<T>` rows (`id: null` = new, server assigns).
 5. **Cross-aggregate relationships are first-class entities**: `ApplicationDependency`,
    `Integration`, `Risk`, `Escalation`, `Decision` reference applications/projects by id arrays
    (`relatedApplicationIds`, `relatedProjectIds`) so they can link many-to-many.
@@ -86,8 +87,10 @@ ownership or lifecycle — record the decision in `docs/decisions.md`.
 
 - Realistic fictional enterprise names (Customer Identity Platform, Payment Gateway, …); no
   Foo/Bar/Test App/lorem ipsum; no real company system names.
-- Stable meaningful ids with type prefixes: `app-`, `prj-`, `team-`, `person-`, `tech-`, `bu-`,
-  `dep-`, `int-`, `risk-`, `esc-`, `dec-`.
+- Numeric primary keys 1..n per table in declaration order, named in `data/ids.ts`
+  (`APP.paymentGateway`, `PERSON.canOzturk`); child rows take ids from `seedId(table)` via the
+  builders. Every new table needs a sequence in `database.ts` and a table in
+  `docs/database-schema.sql`.
 - Every reference must resolve — `src/services/mock/data/integrity.test.ts` enforces this.
 - Include deliberate data-quality gaps (a missing owner, a stale review) so governance features
   have something to show.

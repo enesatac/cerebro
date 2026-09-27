@@ -85,7 +85,7 @@ export function DependenciesTab({ application }: { application: Application }) {
             <Table
               data={[...outgoing].sort(byCriticalityDesc)}
               columns={columns('outgoing', canEdit)}
-              getRowId={(row) => row.id}
+              getRowId={(row) => String(row.id)}
               emptyState={
                 <EmptyState
                   compact
@@ -101,7 +101,7 @@ export function DependenciesTab({ application }: { application: Application }) {
             <Table
               data={[...incoming].sort(byCriticalityDesc)}
               columns={columns('incoming', canEdit)}
-              getRowId={(row) => row.id}
+              getRowId={(row) => String(row.id)}
               emptyState={
                 <EmptyState
                   compact

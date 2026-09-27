@@ -30,7 +30,7 @@ export function ProjectApplicationsTab({ project }: { project: Project }) {
       <Table
         data={project.applicationImpacts}
         columns={columns}
-        getRowId={(row) => `${row.applicationId}-${row.impactType}`}
+        getRowId={(row) => String(row.id)}
         emptyState={
           <EmptyState
             compact

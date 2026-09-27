@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import type { EntityId } from '@/domains/shared/types';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router';
 import { paths } from '@/app/router/paths';
@@ -17,6 +18,7 @@ import {
 import { type Technology } from '../types';
 import { MasterSelectField } from '@/domains/master-data/components/MasterSelectField';
 import { TechnologyDeleteAction } from '../components/TechnologyDeleteAction';
+import { parseId } from '@/lib/urlParams';
 
 function TechnologyForm({ technology }: { technology?: Technology }) {
   const navigate = useNavigate();
@@ -87,10 +89,10 @@ function TechnologyForm({ technology }: { technology?: Technology }) {
 export default function TechnologyFormPage() {
   const { technologyId } = useParams();
   if (!technologyId) return <TechnologyForm />;
-  return <EditTechnology id={technologyId} />;
+  return <EditTechnology id={parseId(technologyId) ?? 0} />;
 }
 
-function EditTechnology({ id }: { id: string }) {
+function EditTechnology({ id }: { id: EntityId }) {
   const query = useTechnology(id);
   return (
     <QueryView
