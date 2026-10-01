@@ -182,6 +182,17 @@ teams and technologies.
   a value list editor (reorder, rename, recolour, (de)activate, add/remove custom values, usage
   counts) and table + dialog editors for business units and people.
 
+## Person page
+
+- `/people/:personId` — one screen with everything a person is mapped to: key facts (business
+  unit, teams, headed units, leave status), applications and projects they hold a role on or
+  work on through one of their teams (direct roles first), escalations they own or raised, risks
+  they own, decisions they took part in, and current/upcoming leaves.
+- Read model `PersonWorkload` from `PersonRepository.getWorkload(id, today)` — one call, built by
+  joins in the repository (`services/mock/personWorkload.ts`), not N register queries in the UI.
+- Every person name links here: `PersonSummary` (team members, key facts, stakeholders), team
+  managers, the people editor and the leave calendar.
+
 ## Leave management
 
 - Entity `LeaveRecord` (`personId`, `type` from the `leaveTypes` master data list, inclusive

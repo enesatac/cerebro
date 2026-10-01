@@ -1,3 +1,5 @@
+import { Link } from 'react-router';
+import { paths } from '@/app/router/paths';
 import { Button, Popover } from '@takeoff-ui/react-spar';
 import { EditIconOutlinedRounded } from '@takeoff-icons/react/edit';
 import { useState, type CSSProperties } from 'react';
@@ -221,7 +223,9 @@ export function LeaveTimeline({
             <tr key={person.id}>
               <th scope="row" className="c-timeline__person">
                 <span className="c-timeline__name">
-                  {person.fullName}
+                  <Link to={paths.people.detail(person.id)} className="c-timeline__link">
+                    {person.fullName}
+                  </Link>
                   {awayToday.has(person.id) && (
                     <span className="c-timeline__away" title="Bugün izinli">
                       <span className="c-visually-hidden"> (bugün izinli)</span>

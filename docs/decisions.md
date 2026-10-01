@@ -2,6 +2,16 @@
 
 Short records of decisions that shape the codebase. Newest first.
 
+## D-017 · Person page from a single workload read model (2026-10-01)
+
+"What does this person work on?" spans roles on applications and projects, team assignments,
+risks, escalations, decisions and leaves. Instead of the page issuing a query per register and
+joining in the browser, `PersonRepository.getWorkload` returns one `PersonWorkload` document
+(an HTTP backend would serve it as one endpoint backed by joins). Team work is attributed through
+the person's teams (`viaTeams`) separately from direct roles, so the page can say _how_ someone
+is involved. The production build now splits vendor code (`vendor-takeoff`, `vendor-react`,
+`vendor`) so library chunks cache across deploys and stay under the 500 kB warning.
+
 ## D-016 · Leave management as a person × day timeline (2026-09-27)
 
 Leaves are their own entity (`leave_records`) referencing a person, with the type drawn from a new

@@ -27,7 +27,8 @@ interfaces; person and business unit detail pages.
 ## Phase 2 — Organisational Context (read views ✅)
 
 Teams list + detail (owned applications, delivered projects, members), Technologies catalogue +
-where-used detail. People and business units are administered as master data; still open: their detail pages.
+where-used detail. People and business units are administered as master data. Person pages ✅
+(`/people/:id`: everything a person is mapped to). Still open: business unit detail pages.
 
 ## Phase 3 — Operational Knowledge (read views ✅)
 

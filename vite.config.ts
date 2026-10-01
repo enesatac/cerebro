@@ -8,6 +8,24 @@ export default defineConfig({
   resolve: {
     alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
   },
+  build: {
+    rolldownOptions: {
+      output: {
+        // Long-lived vendor chunks: libraries change far less often than app code, so they stay
+        // cached across deploys, and no single chunk grows past the 500 kB warning.
+        codeSplitting: {
+          groups: [
+            { name: 'vendor-takeoff', test: /node_modules[\\/]@takeoff-/ },
+            {
+              name: 'vendor-react',
+              test: /node_modules[\\/](react|react-dom|react-router|scheduler)[\\/]/,
+            },
+            { name: 'vendor', test: /node_modules/ },
+          ],
+        },
+      },
+    },
+  },
   test: {
     globals: true,
     environment: 'jsdom',

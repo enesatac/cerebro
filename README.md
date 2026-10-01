@@ -27,6 +27,9 @@ catalogue — kept simple.
   unsaved-changes guard, and a deletion-impact confirmation before destructive actions.
 - **Master data** — one admin page for every value offered in forms and shown as a label or badge
   (statuses, types, categories, scales…), plus business units and people. Changes apply site-wide.
+- **Person pages** — click any person (team members, owners, stakeholders) to see everything they
+  are mapped to on one screen: applications and projects (own role or via team), escalations,
+  risks, decisions, teams and upcoming leaves.
 - **Leave calendar** — `/leaves`: people down the side, days across the top, each leave a bar in
   its type's colour (2 weeks / month / 3 months, filters, list view). Admins add, edit and delete
   leaves; overlapping leaves for the same person are rejected.

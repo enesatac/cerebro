@@ -1,3 +1,5 @@
+import { paths } from '@/app/router/paths';
+import { EntityLink } from '@/components/data-display/EntityLink';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button, Table, type TableColumnDef } from '@takeoff-ui/react-spar';
 import { AddIconOutlinedRounded } from '@takeoff-icons/react/add';
@@ -92,7 +94,7 @@ export function PeopleEditor() {
       width: 220,
       cell: ({ row }) => (
         <span className="c-cell-stack">
-          <span>{row.original.fullName}</span>
+          <EntityLink to={paths.people.detail(row.original.id)}>{row.original.fullName}</EntityLink>
           <span className="c-muted c-cell-stack__secondary">{row.original.email}</span>
         </span>
       ),

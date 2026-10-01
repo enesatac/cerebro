@@ -47,6 +47,9 @@ export const paths = {
       withQuery('/architecture/integrations/new', { from: fromApplicationId }),
     edit: (integrationId: EntityId) => `/architecture/integrations/${id(integrationId)}/edit`,
   },
+  people: {
+    detail: (personId: EntityId) => `/people/${id(personId)}`,
+  },
   teams: {
     list: () => '/teams',
     detail: (teamId: EntityId) => `/teams/${id(teamId)}`,

@@ -1,3 +1,5 @@
+import { paths } from '@/app/router/paths';
+import { EntityLink } from '@/components/data-display/EntityLink';
 import type { Person } from '../types';
 import type { EntityId } from '@/domains/shared/types';
 
@@ -8,14 +10,14 @@ interface PersonSummaryProps {
   showEmail?: boolean;
 }
 
-/** Name, job title and optional contact for a person. People pages arrive in Phase 2. */
+/** Name (linking to the person's page), job title and optional contact for a person. */
 export function PersonSummary({ person, fallbackId, showEmail = false }: PersonSummaryProps) {
   if (!person) {
     return <span className="c-muted">Bilinmeyen kişi{fallbackId ? ` (${fallbackId})` : ''}</span>;
   }
   return (
     <span className="c-cell-stack">
-      <span>{person.fullName}</span>
+      <EntityLink to={paths.people.detail(person.id)}>{person.fullName}</EntityLink>
       <span className="c-muted c-cell-stack__secondary">
         {person.jobTitle}
         {showEmail && (

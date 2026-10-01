@@ -1,10 +1,16 @@
-import type { DeletionImpact, PersonId } from '@/domains/shared/types';
-import type { Person, PersonInput } from '../types';
+import type { DeletionImpact, IsoDate, PersonId } from '@/domains/shared/types';
+import type { Person, PersonInput, PersonWorkload } from '../types';
 
 export interface PersonRepository {
   list(): Promise<Person[]>;
   /** @throws NotFoundError */
   getById(id: PersonId): Promise<Person>;
+  /**
+   * Everything the person is mapped to: roles, teams, the applications and projects they work
+   * on (directly or through a team), risks, escalations, decisions and upcoming leaves.
+   * `today` bounds the leaves. @throws NotFoundError
+   */
+  getWorkload(id: PersonId, today: IsoDate): Promise<PersonWorkload>;
   /** Requires `masterData:manage`. @throws ValidationError on a duplicate email. */
   create(input: PersonInput): Promise<Person>;
   update(id: PersonId, input: PersonInput): Promise<Person>;

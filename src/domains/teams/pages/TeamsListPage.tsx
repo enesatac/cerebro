@@ -37,7 +37,13 @@ const columns: TableColumnDef<TeamListItem>[] = [
     accessor: (row) => row.manager?.name ?? '',
     sortable: true,
     cell: ({ row }) =>
-      row.original.manager?.name ?? <span className="c-text-warning">Atanmamış</span>,
+      row.original.manager ? (
+        <EntityLink to={paths.people.detail(row.original.manager.id)}>
+          {row.original.manager.name}
+        </EntityLink>
+      ) : (
+        <span className="c-text-warning">Atanmamış</span>
+      ),
   },
   { id: 'members', header: 'Üyeler', accessor: 'memberCount', sortable: true, align: 'end' },
   {

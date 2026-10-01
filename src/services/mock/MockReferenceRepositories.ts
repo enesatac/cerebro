@@ -22,6 +22,7 @@ import {
   technologyDeletionImpact,
 } from './cascade';
 import type { MockDatabase } from './database';
+import { buildPersonWorkload } from './personWorkload';
 import type { Lookup } from './lookup';
 import { assertCodeChecks, codeChecks } from './MockMasterDataRepository';
 import { copy, delay, findOrThrow } from './query';
@@ -54,6 +55,7 @@ export function createMockReferenceRepositories(
   const people: PersonRepository = {
     list: async () => (await wait(), copy(db.people)),
     getById: async (id) => (await wait(), copy(findOrThrow(db.people, id, 'Kişi'))),
+    getWorkload: async (id, today) => (await wait(), buildPersonWorkload(db, lookup, id, today)),
     async create(input) {
       await kit.begin('masterData:manage');
       validatePerson(input, null);

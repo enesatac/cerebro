@@ -1958,3 +1958,26 @@ code {
     margin-left: auto;
   }
 }
+
+/* ---------- Person page ---------- */
+
+.c-person-leave {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-s) var(--spacing-l);
+}
+
+.c-timeline__link {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: inherit;
+  text-decoration: none;
+}
+
+.c-timeline__link:hover,
+.c-timeline__link:focus-visible {
+  color: var(--text-darkest);
+  text-decoration: underline;
+}

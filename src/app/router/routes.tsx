@@ -38,6 +38,7 @@ const RiskFormPage = page(() => import('@/domains/risks/pages/RiskFormPage'));
 const EscalationFormPage = page(() => import('@/domains/escalations/pages/EscalationFormPage'));
 const DecisionFormPage = page(() => import('@/domains/decisions/pages/DecisionFormPage'));
 const ReportsPage = page(() => import('@/domains/governance/pages/ReportsPage'));
+const PersonDetailPage = page(() => import('@/domains/people/pages/PersonDetailPage'));
 const LeavesPage = page(() => import('@/domains/leaves/pages/LeavesPage'));
 const MasterDataPage = page(() => import('@/domains/master-data/pages/MasterDataPage'));
 const UsersListPage = page(() => import('@/domains/auth/pages/UsersListPage'));
@@ -89,6 +90,7 @@ export const routes: RouteObject[] = [
         path: 'architecture/integrations/:integrationId/edit',
         element: guarded(<IntegrationFormPage />),
       },
+      { path: 'people/:personId', element: <PersonDetailPage /> },
       { path: 'teams', element: <TeamsListPage /> },
       { path: 'teams/new', element: guarded(<TeamFormPage />) },
       { path: 'teams/:teamId', element: <TeamDetailPage /> },
