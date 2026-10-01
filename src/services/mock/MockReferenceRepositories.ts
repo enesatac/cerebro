@@ -6,6 +6,7 @@ import {
   buildApplicationHealthReport,
   buildPortfolioOverview,
 } from '@/domains/governance/utils/portfolio';
+import { buildPortfolioTrends } from '@/domains/governance/utils/trends';
 import type { PersonRepository } from '@/domains/people/api/PersonRepository';
 import type { PersonInput } from '@/domains/people/types';
 import type { TeamRepository } from '@/domains/teams/api/TeamRepository';
@@ -243,6 +244,7 @@ export function createMockReferenceRepositories(
 
   const governance: GovernanceRepository = {
     getPortfolioOverview: async () => (await wait(), buildPortfolioOverview(db, new Date())),
+    getTrends: async (period, today) => (await wait(), buildPortfolioTrends(db, period, today)),
     getApplicationHealthReport: async () => (
       await wait(),
       buildApplicationHealthReport(db, new Date())

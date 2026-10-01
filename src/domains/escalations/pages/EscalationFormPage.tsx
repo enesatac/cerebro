@@ -136,6 +136,12 @@ function EscalationForm({ escalation }: { escalation?: Escalation }) {
           rows={3}
           description="Eskalasyon çözüldüğünde veya kapatıldığında zorunludur."
         />
+        <DateField
+          control={control}
+          name="resolvedOn"
+          label="Çözüm tarihi"
+          description="Boş bırakılırsa, Çözüldü veya Kapatıldı olarak kaydedildiği gün kullanılır. Raporlardaki çözüm süreleri bu tarihten hesaplanır."
+        />
       </SectionCard>
       <RelatedEntitiesFields
         control={control}

@@ -1,6 +1,12 @@
 import type { ApplicationLifecycle } from '@/domains/applications/types';
 import type { MilestoneStatus } from '@/domains/projects/types';
-import type { Criticality, EntityId, EntityRef, IsoDateTime } from '@/domains/shared/types';
+import type {
+  Criticality,
+  EntityId,
+  EntityRef,
+  IsoDate,
+  IsoDateTime,
+} from '@/domains/shared/types';
 import type { TechnologyStatus } from '@/domains/technologies/types';
 import type { ReviewState } from '../utils/staleness';
 
@@ -121,4 +127,68 @@ export interface ApplicationHealthRow {
   outdatedTechnologies: (EntityRef & { status: TechnologyStatus })[];
   activeRiskCount: number;
   activeEscalationCount: number;
+}
+
+// ---------- Trend reports (charts) ----------
+
+/** Months shown by the trend reports: `months` whole months starting at `from` (a 1st). */
+export interface ReportPeriod {
+  from: IsoDate;
+  months: number;
+}
+
+/**
+ * One line or stack layer of a monthly chart. `key` is a master data code, an entity id (as
+ * text) or a fixed key; the UI resolves labels and colours. `values` align with `months`;
+ * `null` means "no data" (drawn as a gap, not a zero).
+ */
+export interface TrendSeries {
+  key: string;
+  values: (number | null)[];
+}
+
+/** A count per category (master data code or entity id as text). */
+export interface CategoryCount {
+  key: string;
+  label?: string;
+  value: number;
+}
+
+/** Everything the reports' charts need, computed in one pass (an analytics endpoint later). */
+export interface PortfolioTrends {
+  /** First day of each month in the period. */
+  months: IsoDate[];
+  /** Index of the month containing today in `months`, or -1 when outside the period. */
+  currentMonthIndex: number;
+
+  /** Projects running in each month (planned dates for the future). */
+  activeProjects: number[];
+  /** Milestones due in each month, by status. */
+  milestonesByStatus: TrendSeries[];
+  /** Escalations raised per month, by severity. */
+  escalationsRaised: TrendSeries[];
+  /** Escalations still open at the end of each month. */
+  escalationsOpenAtMonthEnd: (number | null)[];
+  /** Median calendar days from raising to resolution, for escalations resolved that month. */
+  escalationMedianDaysToResolve: (number | null)[];
+  /** Risks registered per month, by severity. */
+  risksRegistered: TrendSeries[];
+  /** Decisions taken per month, by status. */
+  decisionsByStatus: TrendSeries[];
+  /** Planned capacity (full-time equivalents, working days) per month, by project id. */
+  capacityByProject: TrendSeries[];
+  /** People over 100 % on at least one day of the month. */
+  overallocatedPeople: (number | null)[];
+  /** Leave working days per month, by leave type. */
+  leaveDaysByType: TrendSeries[];
+
+  // Snapshot distributions (today)
+  applicationsByLifecycle: CategoryCount[];
+  applicationsByCriticality: CategoryCount[];
+  applicationsByBusinessUnit: CategoryCount[];
+  projectsByStatus: CategoryCount[];
+  projectsByHealth: CategoryCount[];
+  topTechnologies: CategoryCount[];
+  /** Active risks by probability × impact. */
+  activeRiskMatrix: { probability: string; impact: string; count: number }[];
 }

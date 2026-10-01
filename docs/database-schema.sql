@@ -412,6 +412,8 @@ CREATE TABLE escalations (
   raised_at                  TIMESTAMPTZ NOT NULL,
   target_resolution_date     DATE,
   resolution                 TEXT,
+  resolved_on                DATE,        -- set when resolved/closed; drives resolution-time reports
+  CHECK (resolved_on IS NULL OR resolved_on >= raised_at::date),
   created_at                 TIMESTAMPTZ NOT NULL DEFAULT now(),
   created_by_person_id       BIGINT      REFERENCES people (id),
   updated_at                 TIMESTAMPTZ NOT NULL DEFAULT now(),

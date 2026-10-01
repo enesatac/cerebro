@@ -2,6 +2,18 @@
 
 Short records of decisions that shape the codebase. Newest first.
 
+## D-020 · Hand-built SVG charts over one trends read model (2026-10-02)
+
+Takeoff UI has no charts. The reports need four forms only — monthly lines, stacked monthly
+columns, horizontal distribution bars and a small matrix — so they are built as small SVG
+components instead of adding a charting library: no dependency, token-driven theming (light and
+dark steps chosen separately and validated for colour-vision deficiency), real tables for
+assistive technology, and full control of the plan/actual distinction. All series come from one
+`getTrends` call computed like a backend analytics endpoint would, so every chart on a tab
+agrees. Escalations gained `resolvedOn` (set automatically when closed without a date) because
+backlog and time-to-resolve cannot be derived otherwise. Closed history for the last year was
+added to the seed so trends are meaningful. Dev storage key moved to `cerebro.demo-db.v8`.
+
 ## D-019 · Structured incident runbooks per application (2026-10-01)
 
 Runbooks already appear as documentation links, but during an incident people need the content

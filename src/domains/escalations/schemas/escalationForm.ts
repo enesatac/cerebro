@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { toIsoDate } from '@/lib/dates';
 import { relatedEntitiesSchema, requireRelated } from '@/domains/risks/schemas/riskForm';
 import { CRITICALITIES } from '@/domains/shared/types';
 import {
@@ -27,6 +28,7 @@ export const escalationFormSchema = z
     raisedAt: requiredDate('Açılış tarihi'),
     targetResolutionDate: optionalDate,
     resolution: optionalText('Çözüm', 2000),
+    resolvedOn: optionalDate,
   })
   .and(relatedEntitiesSchema)
   .superRefine(requireRelated)
@@ -41,7 +43,16 @@ export const escalationFormSchema = z
         path: ['resolution'],
       });
     }
+    if (values.resolvedOn && values.resolvedOn < values.raisedAt) {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'Çözüm tarihi açılış tarihinden önce olamaz.',
+        path: ['resolvedOn'],
+      });
+    }
   });
+
+const isDone = (status: string) => status === 'resolved' || status === 'closed';
 
 export type EscalationFormValues = z.infer<typeof escalationFormSchema>;
 
@@ -61,6 +72,7 @@ export function toEscalationFormValues(
     raisedAt: escalation?.raisedAt.slice(0, 10) ?? today,
     targetResolutionDate: escalation?.targetResolutionDate ?? '',
     resolution: escalation?.resolution ?? '',
+    resolvedOn: escalation?.resolvedOn ?? '',
     relatedApplicationIds:
       escalation?.relatedApplicationIds.map(String) ?? prefill.relatedApplicationIds,
     relatedProjectIds: escalation?.relatedProjectIds.map(String) ?? prefill.relatedProjectIds,
@@ -79,5 +91,9 @@ export function toEscalationInput(values: EscalationFormValues): EscalationInput
     raisedAt: `${values.raisedAt}T09:00:00Z`,
     targetResolutionDate: emptyToNull(values.targetResolutionDate),
     resolution: emptyToNull(values.resolution),
+    // Open escalations have no resolution day; a closed one without a date is closed today.
+    resolvedOn: isDone(values.status)
+      ? (emptyToNull(values.resolvedOn) ?? toIsoDate(new Date()))
+      : null,
   };
 }

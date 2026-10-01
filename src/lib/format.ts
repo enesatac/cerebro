@@ -32,3 +32,9 @@ export function formatCurrency(
     maximumFractionDigits: 2,
   }).format(value);
 }
+
+/** One decimal at most, Turkish separators: `2,5`, `12`. */
+export function formatDecimal(value: number | null | undefined, fallback = '—'): string {
+  if (value == null || Number.isNaN(value)) return fallback;
+  return new Intl.NumberFormat('tr-TR', { maximumFractionDigits: 1 }).format(value);
+}

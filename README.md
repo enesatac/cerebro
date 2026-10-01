@@ -30,6 +30,12 @@ catalogue — kept simple.
 - **Person pages** — click any person (team members, owners, stakeholders) to see everything they
   are mapped to on one screen: applications and projects (own role or via team), escalations,
   risks, decisions, teams and upcoming leaves.
+- **Report charts** — `/reports`: portfolio (active projects per month with the planned outlook,
+  milestones, projects/applications by status, lifecycle, criticality, business unit, top
+  technologies), operations (escalations raised per month by severity, open backlog, median
+  time to resolve, active risk matrix, risks and decisions per month) and resources (planned
+  FTE per project, over-allocated people, leave days). Period presets, every chart has a table
+  view, hover/keyboard tooltips and drill-down links.
 - **Incident runbooks** — every application has a "Sorun anında" tab: first-response checklist,
   addresses to check (dashboards, logs, health checks — with what to look for), whom to call in
   escalation order, and searchable known problems with resolution steps. Never credentials.
@@ -73,7 +79,7 @@ picker only):
 ### Demo data
 
 Seed data lives in `src/services/mock/data/` and is entirely fictional. In development, changes
-are persisted to `localStorage` (`cerebro.demo-db.v7`, session in `cerebro.demo-session.v2`). Clear
+are persisted to `localStorage` (`cerebro.demo-db.v8`, session in `cerebro.demo-session.v2`). Clear
 those keys (or the site data) to reset to the seed.
 
 ## Scripts

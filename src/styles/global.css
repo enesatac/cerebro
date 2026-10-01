@@ -2661,3 +2661,432 @@ code {
   align-self: start;
   margin-top: 2px;
 }
+
+/* ---------- Charts ---------- */
+
+/*
+ * Chart colours. Categorical slots are validated for colour-vision deficiency and contrast against
+ * each mode's card surface (light: white, dark: neutral-800) — separate steps per mode, not a flip.
+ * `--c-chart-v-*` maps master data badge variants to mark colours.
+ */
+:root {
+  --c-chart-1: var(--blue-500);
+  --c-chart-2: var(--business-600);
+  --c-chart-3: var(--teal-600);
+  --c-chart-4: var(--purple-500);
+  --c-chart-5: var(--yellow-700);
+  --c-chart-6: var(--blue-700);
+  --c-chart-7: var(--cyan-600);
+  --c-chart-8: var(--purple-700);
+
+  --c-chart-v-neutral: var(--neutral-400);
+  --c-chart-v-info: var(--blue-500);
+  --c-chart-v-primary: var(--primary-500);
+  --c-chart-v-secondary: var(--secondary-500);
+  --c-chart-v-success: var(--green-600);
+  --c-chart-v-warning: var(--yellow-600);
+  --c-chart-v-danger: var(--red-500);
+  --c-chart-v-purple: var(--purple-500);
+  --c-chart-v-cyan: var(--cyan-600);
+  --c-chart-v-teal: var(--teal-600);
+  --c-chart-v-business: var(--business-600);
+  --c-chart-v-dark: var(--neutral-700);
+
+  --c-chart-surface: var(--static-light);
+  --c-chart-grid: var(--neutral-100);
+  --c-chart-axis: var(--neutral-300);
+  --c-chart-plan: var(--neutral-50);
+}
+
+:root[data-theme='dark'] {
+  --c-chart-8: var(--purple-600);
+  --c-chart-v-neutral: var(--neutral-500);
+  --c-chart-v-dark: var(--neutral-300);
+  --c-chart-grid: var(--alpha-base-white-8);
+  --c-chart-axis: var(--alpha-base-white-12);
+  --c-chart-plan: var(--alpha-base-white-8);
+}
+
+.c-chart-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--spacing-4xl);
+  align-items: start;
+}
+
+.c-chart-grid__wide {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 1100px) {
+  .c-chart-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.c-chart-card {
+  display: grid;
+  gap: var(--spacing-l);
+  min-width: 0;
+}
+
+.c-chart-card__headline {
+  margin: 0;
+  color: var(--text-darkest);
+  font-size: var(--size-sm);
+}
+
+.c-chart-card__headline strong {
+  font-size: var(--size-xl);
+  font-weight: 600;
+  margin-right: var(--spacing-xs);
+}
+
+.c-chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs) var(--spacing-l);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--text-dark);
+  font-size: var(--size-xs);
+}
+
+.c-chart-legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.c-chart-legend__key {
+  flex: none;
+  display: inline-block;
+}
+
+.c-chart-legend__key--box {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+}
+
+.c-chart-legend__key--line {
+  width: 16px;
+  height: 2px;
+  border-radius: 1px;
+}
+
+.c-chart {
+  position: relative;
+  min-width: 0;
+  border-radius: var(--radius-s);
+}
+
+.c-chart:focus-visible {
+  outline: 2px solid var(--primary-500);
+  outline-offset: 4px;
+}
+
+.c-chart__svg {
+  display: block;
+  overflow: visible;
+}
+
+.c-chart__grid {
+  stroke: var(--c-chart-grid);
+  stroke-width: 1;
+  shape-rendering: crispEdges;
+}
+
+.c-chart__axis {
+  stroke: var(--c-chart-axis);
+  stroke-width: 1;
+  shape-rendering: crispEdges;
+}
+
+.c-chart__tick {
+  fill: var(--text-base);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.c-chart__tick--current {
+  fill: var(--text-darkest);
+  font-weight: 600;
+}
+
+.c-chart__value {
+  fill: var(--text-darkest);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.c-chart__plan {
+  fill: var(--c-chart-plan);
+}
+
+.c-chart__plan-label {
+  fill: var(--text-base);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.c-chart__plan-marks {
+  opacity: 0.5;
+}
+
+.c-chart__line {
+  fill: none;
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.c-chart__line--plan {
+  stroke-dasharray: 4 4;
+}
+
+.c-chart__area {
+  opacity: 0.1;
+}
+
+.c-chart__dot {
+  stroke: var(--c-chart-surface);
+  stroke-width: 2;
+}
+
+.c-chart__crosshair {
+  stroke: var(--text-base);
+  stroke-width: 1;
+  shape-rendering: crispEdges;
+}
+
+.c-chart__hover-band {
+  fill: var(--text-darkest);
+  opacity: 0.04;
+}
+
+.c-chart__hit {
+  fill: transparent;
+  cursor: crosshair;
+}
+
+.c-chart__live {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.c-chart__tooltip {
+  position: absolute;
+  top: 0;
+  z-index: 2;
+  min-width: 160px;
+  padding: var(--spacing-s) var(--spacing-l);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-m-base);
+  background: var(--static-light);
+  box-shadow: 0 6px 20px rgb(0 0 0 / 12%);
+  color: var(--text-darkest);
+  font-size: var(--size-xs);
+}
+
+.c-chart__tooltip--left {
+  transform: translateX(-100%);
+}
+
+.c-chart__tooltip-title {
+  margin: 0 0 var(--spacing-xs);
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.c-chart__tooltip ul {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.c-chart__tooltip li {
+  display: grid;
+  grid-template-columns: 14px auto 1fr;
+  align-items: center;
+  gap: var(--spacing-s);
+}
+
+.c-chart__tooltip li span:last-child {
+  color: var(--text-dark);
+}
+
+.c-chart__tooltip-key {
+  width: 14px;
+  height: 2px;
+  border-radius: 1px;
+}
+
+.c-chart__tooltip-total {
+  margin-top: 2px;
+  padding-top: 2px;
+  border-top: 1px solid var(--border-light);
+}
+
+.c-chart__tooltip-total strong {
+  grid-column: 2;
+}
+
+/* Horizontal distribution bars */
+.c-hbars {
+  display: grid;
+  gap: var(--spacing-s);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.c-hbars__row {
+  display: grid;
+  grid-template-columns: minmax(96px, 34%) minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--spacing-l);
+  padding: 2px 0;
+  color: var(--text-darkest);
+  text-decoration: none;
+}
+
+.c-hbars__row--link:hover .c-hbars__label,
+.c-hbars__row--link:focus-visible .c-hbars__label {
+  text-decoration: underline;
+}
+
+.c-hbars__label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--size-sm);
+}
+
+.c-hbars__track {
+  display: block;
+  height: 12px;
+}
+
+.c-hbars__bar {
+  display: block;
+  height: 100%;
+  border-radius: 0 4px 4px 0;
+}
+
+.c-hbars__value {
+  min-width: 64px;
+  font-size: var(--size-sm);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.c-hbars__share {
+  color: var(--text-base);
+  font-weight: 400;
+}
+
+/* Risk matrix */
+.c-heat {
+  overflow-x: auto;
+}
+
+.c-heat__table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 2px;
+  font-size: var(--size-sm);
+}
+
+.c-heat__table th {
+  padding: var(--spacing-s);
+  color: var(--text-dark);
+  font-size: var(--size-xs);
+  font-weight: 600;
+  text-align: center;
+}
+
+.c-heat__table tbody th {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.c-heat__corner {
+  text-align: left !important;
+  font-weight: 400 !important;
+}
+
+.c-heat__cell {
+  height: 56px;
+  border-radius: var(--radius-s);
+  color: var(--text-darkest);
+  font-size: var(--size-lg);
+  font-weight: 700;
+  text-align: center;
+}
+
+.c-heat__cell--b0 {
+  background: var(--yellow-100);
+}
+
+.c-heat__cell--b1 {
+  background: var(--yellow-300);
+}
+
+.c-heat__cell--b2 {
+  background: var(--red-300);
+}
+
+.c-heat__cell--b3 {
+  background: var(--red-500);
+  color: var(--neutral-0);
+}
+
+.c-heat__cell--empty {
+  color: var(--text-base);
+  font-weight: 400;
+  opacity: 0.55;
+}
+
+:root[data-theme='dark'] .c-heat__cell--b0 {
+  background: color-mix(in srgb, var(--yellow-700) 35%, transparent);
+}
+
+:root[data-theme='dark'] .c-heat__cell--b1 {
+  background: color-mix(in srgb, var(--yellow-600) 60%, transparent);
+}
+
+:root[data-theme='dark'] .c-heat__cell--b2 {
+  background: var(--red-700);
+  color: var(--neutral-0);
+}
+
+:root[data-theme='dark'] .c-heat__cell--b3 {
+  background: var(--red-500);
+}
+
+.c-period-presets {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-s);
+}
+
+/* Refetch keeps the frame: the previous render stays, dimmed, until the new data arrives. */
+.c-refreshing {
+  opacity: 0.6;
+  transition: opacity 120ms ease;
+}
+
+/* A surface-coloured halo keeps a direct label legible where it crosses a line or fill. */
+.c-chart__value--halo {
+  paint-order: stroke;
+  stroke: var(--c-chart-surface);
+  stroke-width: 4px;
+  stroke-linejoin: round;
+}

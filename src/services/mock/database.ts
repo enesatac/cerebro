@@ -5,6 +5,7 @@ import { runbooks } from './data/runbooks';
 import { leaves } from './data/leaves';
 import { dependencies, integrations } from './data/connections';
 import { masterData } from './data/masterData';
+import { decisionHistory, escalationHistory, riskHistory } from './data/history';
 import { decisions, escalations, risks } from './data/operations';
 import { people } from './data/people';
 import { projects } from './data/projects';
@@ -22,9 +23,9 @@ export const seedTables = {
   teams,
   technologies,
   businessUnits,
-  risks,
-  escalations,
-  decisions,
+  risks: [...risks, ...riskHistory],
+  escalations: [...escalations, ...escalationHistory],
+  decisions: [...decisions, ...decisionHistory],
   users,
   masterData,
   leaves,

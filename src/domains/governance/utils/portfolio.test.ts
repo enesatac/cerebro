@@ -58,7 +58,10 @@ describe('buildAttentionItems', () => {
     const legacy = data.applications.find((a) => a.id === APP.legacyBookingConsole);
     if (!legacy) throw new Error('seed changed');
     legacy.lifecycle = 'retired';
-    const ids = buildAttentionItems(data, now).map((i) => i.subject.id);
+    // Ids are unique per table only: compare application subjects with application ids.
+    const ids = buildAttentionItems(data, now)
+      .filter((i) => i.subject.kind === 'application')
+      .map((i) => i.subject.id);
     expect(ids).not.toContain(APP.legacyBookingConsole);
   });
 });
@@ -113,7 +116,7 @@ describe('buildApplicationHealthReport', () => {
   });
 
   it('counts active risks and escalations per application', () => {
-    expect(row(APP.paymentGateway)?.activeRiskCount).toBe(1);
+    expect(row(APP.paymentGateway)?.activeRiskCount).toBe(2);
     expect(row(APP.flightOperationsPortal)?.activeEscalationCount).toBe(1);
   });
 });

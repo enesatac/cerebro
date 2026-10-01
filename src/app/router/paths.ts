@@ -25,7 +25,13 @@ export const paths = {
   dashboard: () => '/',
   signIn: (redirectTo?: string) => withQuery('/sign-in', { redirect: redirectTo }),
   applications: {
-    list: () => '/applications',
+    /** Optional filters use the list page's own URL parameters. */
+    list: (filter?: {
+      lifecycle?: string;
+      criticality?: string;
+      bu?: EntityId;
+      technology?: EntityId;
+    }) => withQuery('/applications', { ...filter }),
     detail: (applicationId: EntityId) => `/applications/${id(applicationId)}`,
     create: () => '/applications/new',
     edit: (applicationId: EntityId) => `/applications/${id(applicationId)}/edit`,
@@ -34,7 +40,7 @@ export const paths = {
     editRunbook: (applicationId: EntityId) => `/applications/${id(applicationId)}/runbook/edit`,
   },
   projects: {
-    list: () => '/projects',
+    list: (filter?: { status?: string; health?: string }) => withQuery('/projects', { ...filter }),
     detail: (projectId: EntityId) => `/projects/${id(projectId)}`,
     create: () => '/projects/new',
     edit: (projectId: EntityId) => `/projects/${id(projectId)}/edit`,

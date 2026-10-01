@@ -88,3 +88,9 @@ export function formatDateLong(value: string): string {
   const date = parse(value);
   return date ? format(date, 'd MMMM yyyy EEEE', { locale: tr }) : '';
 }
+
+/** Chart axis month: `Eki` (with the year, `Eki 26`, when asked). */
+export function formatMonthShort(value: string, withYear = false): string {
+  const date = parse(value);
+  return date ? format(date, withYear ? 'LLL yy' : 'LLL', { locale: tr }) : '';
+}

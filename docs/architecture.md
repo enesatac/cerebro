@@ -193,6 +193,23 @@ teams and technologies.
 - Every person name links here: `PersonSummary` (team members, key facts, stakeholders), team
   managers, the people editor and the leave calendar.
 
+## Report charts
+
+- `GovernanceRepository.getTrends(period, today)` returns `PortfolioTrends`: monthly series
+  (aligned with `months`) and today's distributions, built by the pure `buildPortfolioTrends`
+  (`domains/governance/utils/trends.ts`, tested). Past months use actual dates, later months
+  plans; `null` marks "no data" (a gap, not a zero).
+- Chart primitives in `components/charts`: `MonthlyChart` (lines or stacked columns, plan
+  region, crosshair + keyboard tooltip), `CategoryBars` (distribution with value and share,
+  rows link to filtered lists), `HeatMatrix` (risk matrix as a real table), `ChartCard`
+  (title, takeaway, legend, chart ↔ table toggle). SVG, no chart library.
+- Colours: `--c-chart-1…8` categorical slots (validated for colour-vision deficiency and
+  contrast, separate light/dark steps) for identities such as projects; coded values use their
+  master data badge colour (`--c-chart-v-<variant>`), falling back to slots when two values in
+  one chart share a colour (`codedColors`). Text never wears a series colour.
+- Report period lives in the URL (`?period=12-6|24|plan`); while a new period loads the previous
+  charts stay on screen, dimmed.
+
 ## Incident runbooks
 
 - `Runbook` (one per application; `application_runbooks` + child tables for ordered steps, links,
@@ -248,7 +265,7 @@ teams and technologies.
 ## Development persistence
 
 The mock database and session are persisted in `localStorage` in the browser
-(`cerebro.demo-db.v7`, `cerebro.demo-session.v2`) so records survive a reload. Tests use in-memory
+(`cerebro.demo-db.v8`, `cerebro.demo-session.v2`) so records survive a reload. Tests use in-memory
 stores. To reset the demo data, clear the site's storage (or remove `cerebro.demo-db.v7`).
 
 ## Security posture (frontend)

@@ -25,6 +25,8 @@ export interface Escalation {
   raisedAt: IsoDateTime;
   targetResolutionDate: IsoDate | null;
   resolution: string | null;
+  /** Day the escalation was resolved or closed; `null` while it is still open. */
+  resolvedOn: IsoDate | null;
   relatedProjectIds: ProjectId[];
   relatedApplicationIds: ApplicationId[];
   audit: AuditMetadata;

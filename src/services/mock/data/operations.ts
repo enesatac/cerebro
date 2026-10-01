@@ -197,6 +197,7 @@ export const escalations: Escalation[] = [
     raisedAt: '2026-09-23T06:40:00Z',
     targetResolutionDate: '2026-09-30',
     resolution: null,
+    resolvedOn: null,
     relatedProjectIds: [PRJ.opsResilience],
     relatedApplicationIds: [APP.flightOperationsPortal, APP.crewScheduling],
     audit: auditOf({
@@ -218,6 +219,7 @@ export const escalations: Escalation[] = [
     raisedAt: '2026-09-02T12:00:00Z',
     targetResolutionDate: '2026-10-15',
     resolution: null,
+    resolvedOn: null,
     relatedProjectIds: [PRJ.digitalOnboarding],
     relatedApplicationIds: [APP.customerIdentity],
     audit: auditOf({
@@ -239,6 +241,7 @@ export const escalations: Escalation[] = [
     raisedAt: '2026-09-22T08:15:00Z',
     targetResolutionDate: '2026-09-29',
     resolution: null,
+    resolvedOn: null,
     relatedProjectIds: [PRJ.notificationConsolidation],
     relatedApplicationIds: [APP.notificationService, APP.customerIdentity],
     audit: auditOf({
@@ -261,6 +264,7 @@ export const escalations: Escalation[] = [
     targetResolutionDate: '2026-08-08',
     resolution:
       'Mutabakat işindeki saat dilimi kesim hatası düzeltildi ve dosyalar yeniden üretildi.',
+    resolvedOn: '2026-08-07',
     relatedProjectIds: [],
     relatedApplicationIds: [APP.paymentGateway, APP.financePlatform],
     audit: auditOf({
