@@ -39,6 +39,7 @@ const EscalationFormPage = page(() => import('@/domains/escalations/pages/Escala
 const DecisionFormPage = page(() => import('@/domains/decisions/pages/DecisionFormPage'));
 const ReportsPage = page(() => import('@/domains/governance/pages/ReportsPage'));
 const PersonDetailPage = page(() => import('@/domains/people/pages/PersonDetailPage'));
+const RunbookFormPage = page(() => import('@/domains/runbooks/pages/RunbookFormPage'));
 const ResourcePlanPage = page(() => import('@/domains/resources/pages/ResourcePlanPage'));
 const LeavesPage = page(() => import('@/domains/leaves/pages/LeavesPage'));
 const MasterDataPage = page(() => import('@/domains/master-data/pages/MasterDataPage'));
@@ -76,6 +77,10 @@ export const routes: RouteObject[] = [
       { path: 'applications/new', element: guarded(<ApplicationFormPage />) },
       { path: 'applications/:applicationId', element: <ApplicationDetailPage /> },
       { path: 'applications/:applicationId/edit', element: guarded(<ApplicationFormPage />) },
+      {
+        path: 'applications/:applicationId/runbook/edit',
+        element: guarded(<RunbookFormPage />),
+      },
       { path: 'projects', element: <ProjectsListPage /> },
       { path: 'projects/new', element: guarded(<ProjectFormPage />) },
       { path: 'projects/:projectId', element: <ProjectDetailPage /> },

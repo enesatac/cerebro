@@ -1,6 +1,7 @@
 import { applications } from './data/applications';
 import { businessUnits } from './data/businessUnits';
 import { allocations } from './data/allocations';
+import { runbooks } from './data/runbooks';
 import { leaves } from './data/leaves';
 import { dependencies, integrations } from './data/connections';
 import { masterData } from './data/masterData';
@@ -28,6 +29,7 @@ export const seedTables = {
   masterData,
   leaves,
   allocations,
+  runbooks,
 };
 
 /**
@@ -59,6 +61,11 @@ export const SEQUENCES = [
   'applicationImpacts',
   'leaves',
   'allocations',
+  'runbooks',
+  'runbookSteps',
+  'runbookLinks',
+  'runbookContacts',
+  'runbookScenarios',
 ] as const;
 export type SequenceName = (typeof SEQUENCES)[number];
 
@@ -98,6 +105,13 @@ export function sequencesOf(tables: typeof seedTables): Sequences {
     applicationImpacts: maxId(tables.projects.flatMap((p) => p.applicationImpacts)),
     leaves: maxId(tables.leaves),
     allocations: maxId(tables.allocations),
+    runbooks: maxId(tables.runbooks),
+    runbookSteps: maxId(
+      tables.runbooks.flatMap((r) => [...r.firstResponse, ...r.scenarios.flatMap((s) => s.steps)]),
+    ),
+    runbookLinks: maxId(tables.runbooks.flatMap((r) => r.links)),
+    runbookContacts: maxId(tables.runbooks.flatMap((r) => r.contacts)),
+    runbookScenarios: maxId(tables.runbooks.flatMap((r) => r.scenarios)),
   };
 }
 

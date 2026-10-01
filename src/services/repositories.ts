@@ -4,6 +4,7 @@ import type { BusinessUnitRepository } from '@/domains/business-units/api/Busine
 import type { ConnectionRepository } from '@/domains/connections/api/ConnectionRepository';
 import type { DecisionRepository } from '@/domains/decisions/api/DecisionRepository';
 import type { LeaveRepository } from '@/domains/leaves/api/LeaveRepository';
+import type { RunbookRepository } from '@/domains/runbooks/api/RunbookRepository';
 import type { AllocationRepository } from '@/domains/resources/api/AllocationRepository';
 import type { MasterDataRepository } from '@/domains/master-data/api/MasterDataRepository';
 import type { GovernanceRepository } from '@/domains/governance/api/GovernanceRepository';
@@ -37,6 +38,7 @@ export interface Repositories {
   masterData: MasterDataRepository;
   leaves: LeaveRepository;
   allocations: AllocationRepository;
+  runbooks: RunbookRepository;
 }
 
 /**

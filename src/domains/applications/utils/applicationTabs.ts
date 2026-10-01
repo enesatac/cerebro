@@ -1,5 +1,6 @@
 export const APPLICATION_DETAIL_TABS = [
   { id: 'overview', label: 'Genel bakış' },
+  { id: 'runbook', label: 'Sorun anında' },
   { id: 'technical', label: 'Teknik' },
   { id: 'dependencies', label: 'Bağımlılıklar' },
   { id: 'integrations', label: 'Entegrasyonlar' },

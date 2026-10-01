@@ -55,6 +55,10 @@ export function applicationDeletionImpact(db: MockDatabase, id: EntityId): Delet
       { label: 'risk', count: related.risks },
       { label: 'eskalasyon', count: related.escalations },
       { label: 'karar', count: related.decisions },
+      {
+        label: 'müdahale rehberi (silinir)',
+        count: db.runbooks.filter((r) => r.applicationId === id).length,
+      },
     ]),
   };
 }
@@ -72,6 +76,7 @@ export function deleteApplicationCascade(db: MockDatabase, id: EntityId) {
     );
   }
   unlinkRelated(db, 'relatedApplicationIds', id);
+  db.runbooks = db.runbooks.filter((r) => r.applicationId !== id);
 }
 
 export function projectDeletionImpact(db: MockDatabase, id: EntityId): DeletionImpact {
@@ -111,6 +116,10 @@ export function teamDeletionImpact(db: MockDatabase, id: EntityId): DeletionImpa
         label: 'eskalasyon',
         count: db.escalations.filter((e) => e.responsibleTeamId === id).length,
       },
+      {
+        label: 'müdahale rehberi kişisi (kaldırılır)',
+        count: db.runbooks.flatMap((r) => r.contacts).filter((c) => c.teamId === id).length,
+      },
     ]),
   };
 }
@@ -121,6 +130,9 @@ export function deleteTeamCascade(db: MockDatabase, id: EntityId) {
   }
   for (const escalation of db.escalations) {
     if (escalation.responsibleTeamId === id) escalation.responsibleTeamId = null;
+  }
+  for (const runbook of db.runbooks) {
+    runbook.contacts = runbook.contacts.filter((contact) => contact.teamId !== id);
   }
 }
 
@@ -177,6 +189,10 @@ export function personDeletionImpact(db: MockDatabase, id: EntityId): DeletionIm
     { label: 'kullanıcı hesabı', count: db.users.filter((u) => u.personId === id).length },
     { label: 'izin kaydı', count: db.leaves.filter((l) => l.personId === id).length },
     { label: 'kaynak ataması', count: db.allocations.filter((a) => a.personId === id).length },
+    {
+      label: 'müdahale rehberi kişisi',
+      count: db.runbooks.flatMap((r) => r.contacts).filter((c) => c.personId === id).length,
+    },
     {
       label: 'kayıt geçmişi',
       count: audited.filter(

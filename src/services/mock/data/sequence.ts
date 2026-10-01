@@ -12,7 +12,11 @@ export type SeedChildTable =
   | 'documentationLinks'
   | 'milestones'
   | 'applicationImpacts'
-  | 'masterDataItems';
+  | 'masterDataItems'
+  | 'runbookSteps'
+  | 'runbookLinks'
+  | 'runbookContacts'
+  | 'runbookScenarios';
 
 const counters = new Map<SeedChildTable, number>();
 

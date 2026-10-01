@@ -35,6 +35,7 @@ export const MASTER_DATA_LIST_KEYS = [
   'integrationTypes',
   'integrationFrequencies',
   'leaveTypes',
+  'runbookLinkTypes',
 ] as const;
 export type MasterDataListKey = (typeof MASTER_DATA_LIST_KEYS)[number];
 

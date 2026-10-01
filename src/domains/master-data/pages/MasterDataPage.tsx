@@ -1,3 +1,4 @@
+import { foldForSearch } from '@/lib/search';
 import { Field, Input, Select } from '@takeoff-ui/react-spar';
 import { SearchIconOutlinedRounded } from '@takeoff-icons/react/search';
 import { useState } from 'react';
@@ -29,7 +30,7 @@ function parseSection(value: string | null): Section {
   return DEFAULT_SECTION;
 }
 
-const normalise = (value: string) => value.toLocaleLowerCase('tr-TR');
+const normalise = foldForSearch;
 
 function SectionLink({
   section,

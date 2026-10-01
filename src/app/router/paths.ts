@@ -29,6 +29,9 @@ export const paths = {
     detail: (applicationId: EntityId) => `/applications/${id(applicationId)}`,
     create: () => '/applications/new',
     edit: (applicationId: EntityId) => `/applications/${id(applicationId)}/edit`,
+    /** The application's "Sorun anında" tab (its incident runbook). */
+    runbook: (applicationId: EntityId) => `/applications/${id(applicationId)}?tab=runbook`,
+    editRunbook: (applicationId: EntityId) => `/applications/${id(applicationId)}/runbook/edit`,
   },
   projects: {
     list: () => '/projects',

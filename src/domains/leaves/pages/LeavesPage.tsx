@@ -1,3 +1,4 @@
+import { foldForSearch } from '@/lib/search';
 import { Button, Field, Switch } from '@takeoff-ui/react-spar';
 import { AddIconOutlinedRounded } from '@takeoff-icons/react/add';
 import { ChevronLeftIconOutlinedRounded } from '@takeoff-icons/react/chevron-left';
@@ -58,7 +59,7 @@ const VIEW_IDS = VIEWS.map((view) => view.id);
 
 const RANGE_LABELS: Record<CalendarRange, string> = { '2w': '2 hafta', '1m': 'Ay', '3m': '3 ay' };
 
-const normalise = (value: string) => value.toLocaleLowerCase('tr-TR');
+const normalise = foldForSearch;
 
 function periodTitle(range: CalendarRange, period: CalendarPeriod): string {
   if (range === '1m') return formatMonthYear(period.from);

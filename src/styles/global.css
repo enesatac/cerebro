@@ -255,8 +255,13 @@ code {
   align-items: start;
 }
 
+.c-two-column--even {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
 @media (max-width: 1100px) {
-  .c-two-column {
+  .c-two-column,
+  .c-two-column--even {
     grid-template-columns: minmax(0, 1fr);
   }
 }
@@ -876,7 +881,11 @@ code {
   background: var(--background-lightest);
 }
 
-.c-repeatable__remove {
+.c-repeatable__controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-xxs);
   margin-top: 22px;
 }
 
@@ -2440,4 +2449,215 @@ code {
   .c-plan__title {
     display: none;
   }
+}
+
+/* ---------- Runbook ("Sorun anında") ---------- */
+
+.c-runbook__hero {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--spacing-xl);
+  padding: var(--spacing-4xl);
+  border: 1px solid var(--border-light);
+  border-left: 4px solid var(--red-500);
+  border-radius: var(--radius-m-base);
+  background: var(--static-light);
+}
+
+.c-runbook__hero-text {
+  display: grid;
+  gap: var(--spacing-s);
+  max-width: 900px;
+}
+
+.c-runbook__title {
+  margin: 0;
+  color: var(--text-darkest);
+  font-size: var(--size-xl);
+}
+
+.c-runbook__summary {
+  margin: 0;
+  color: var(--text-darkest);
+  font-size: var(--size-md, var(--size-sm));
+  line-height: 1.5;
+}
+
+.c-runbook__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-s) var(--spacing-l);
+  margin: 0;
+  font-size: var(--size-xs);
+}
+
+.c-runbook__progress {
+  margin: 0 0 var(--spacing-l);
+  color: var(--text-dark);
+  font-size: var(--size-xs);
+  font-weight: 600;
+}
+
+.c-runbook__checklist,
+.c-runbook__contacts {
+  display: grid;
+  gap: var(--spacing-m-base);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.c-runbook__check,
+.c-runbook__contact {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  gap: var(--spacing-l);
+  align-items: start;
+  padding: var(--spacing-l);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-m-base);
+  background: var(--background-lightest);
+}
+
+.c-runbook__number {
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: var(--neutral-800);
+  color: var(--neutral-0);
+  font-size: var(--size-xs);
+  font-weight: 700;
+}
+
+:root[data-theme='dark'] .c-runbook__number {
+  background: var(--neutral-200);
+  color: var(--neutral-900);
+}
+
+/* Checkbox first, then the step text on the same line. */
+.c-runbook__check-field {
+  display: grid !important;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: var(--spacing-m-base);
+}
+
+.c-runbook__check-field label {
+  color: var(--text-darkest);
+  font-size: var(--size-sm);
+  font-weight: 500;
+  line-height: 1.45;
+  cursor: pointer;
+}
+
+.c-runbook__check--done {
+  border-color: var(--green-300);
+  background: var(--green-100);
+}
+
+:root[data-theme='dark'] .c-runbook__check--done {
+  border-color: var(--green-700);
+  background: color-mix(in srgb, var(--green-900) 45%, transparent);
+}
+
+.c-runbook__check--done .c-runbook__number {
+  background: var(--green-600);
+  color: var(--neutral-0);
+}
+
+.c-runbook__check--done .c-runbook__check-field label {
+  color: var(--text-dark);
+  text-decoration: line-through;
+}
+
+.c-runbook__contact-body {
+  display: grid;
+  gap: var(--spacing-xxs);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.c-runbook__channel {
+  color: var(--text-darkest);
+  font-weight: 600;
+}
+
+.c-runbook__links {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--spacing-l);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.c-runbook__link {
+  display: grid;
+  align-content: start;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-l);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-m-base);
+  background: var(--background-lightest);
+  min-width: 0;
+}
+
+.c-runbook__link--env {
+  border-style: dashed;
+}
+
+.c-runbook__link-type {
+  color: var(--text-base);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.c-runbook__url {
+  color: var(--text-dark);
+  font-size: 11px;
+  overflow-wrap: anywhere;
+}
+
+.c-runbook__note {
+  margin: var(--spacing-xxs) 0 0;
+  color: var(--text-darkest);
+  font-size: var(--size-xs);
+  line-height: 1.45;
+}
+
+.c-runbook__symptoms {
+  margin: 0 0 var(--spacing-l);
+  color: var(--text-darkest);
+}
+
+.c-runbook__steps {
+  display: grid;
+  gap: var(--spacing-s);
+  margin: 0;
+  padding-left: var(--spacing-4xl);
+  color: var(--text-darkest);
+  line-height: 1.5;
+}
+
+@media (max-width: 600px) {
+  .c-runbook__hero {
+    padding: var(--spacing-xl);
+  }
+}
+
+.c-runbook__contact-body > strong {
+  color: var(--text-darkest);
+  font-weight: 700;
+}
+
+.c-runbook__check-field > :first-child {
+  align-self: start;
+  margin-top: 2px;
 }

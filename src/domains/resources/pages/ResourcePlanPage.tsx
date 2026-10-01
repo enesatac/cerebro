@@ -1,3 +1,4 @@
+import { foldForSearch } from '@/lib/search';
 import { Button, Field, Switch } from '@takeoff-ui/react-spar';
 import { AddIconOutlinedRounded } from '@takeoff-icons/react/add';
 import { ChevronLeftIconOutlinedRounded } from '@takeoff-icons/react/chevron-left';
@@ -64,7 +65,7 @@ const RANGE_LABELS: Record<PlanRange, string> = {
 /** Bar colour slots (see `.c-plan__bar--c<n>` in global.css). */
 const COLOR_SLOTS = 8;
 
-const normalise = (value: string) => value.toLocaleLowerCase('tr-TR');
+const normalise = foldForSearch;
 
 type Editing = { allocation: Allocation | null; prefill?: AllocationPrefill };
 

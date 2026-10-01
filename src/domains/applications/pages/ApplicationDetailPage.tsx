@@ -22,6 +22,7 @@ import { ProjectsTab } from '../components/detail/ProjectsTab';
 import { RepositoriesTab } from '../components/detail/RepositoriesTab';
 import { RisksEscalationsTab } from '../components/detail/RisksEscalationsTab';
 import { TechnicalTab } from '../components/detail/TechnicalTab';
+import { RunbookTab } from '@/domains/runbooks/components/RunbookTab';
 import type { Application } from '../types';
 import {
   APPLICATION_DETAIL_TAB_IDS,
@@ -38,6 +39,7 @@ import { parseId } from '@/lib/urlParams';
 
 const TAB_CONTENT: Record<ApplicationDetailTab, (application: Application) => ReactNode> = {
   overview: (a) => <OverviewTab application={a} />,
+  runbook: (a) => <RunbookTab application={a} />,
   technical: (a) => <TechnicalTab application={a} />,
   dependencies: (a) => <DependenciesTab application={a} />,
   integrations: (a) => <IntegrationsTab application={a} />,

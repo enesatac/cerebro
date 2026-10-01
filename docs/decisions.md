@@ -2,6 +2,17 @@
 
 Short records of decisions that shape the codebase. Newest first.
 
+## D-019 · Structured incident runbooks per application (2026-10-01)
+
+Runbooks already appear as documentation links, but during an incident people need the content
+itself, in the order it is used, not a link to a wiki page that may be stale. A runbook is a
+structured record per application: first-response steps, addresses to check with what to look
+for, contacts in escalation order (linked to people and teams so names, e-mails and channels stay
+current), and known problems with symptoms and steps. Steps are edited as plain lines (fast to
+write, stored as ordered rows). A "last verified" date makes staleness visible. Contact channels
+and on-call lines are allowed; credentials are refused everywhere (`looksLikeSecret`). The
+checklist state is deliberately not persisted — an incident log is a separate concern.
+
 ## D-018 · Resource planning with explicit allocations (2026-10-01)
 
 Project roles say _who_ is involved, not _when_ or _how much_, so they cannot show parallel work.

@@ -88,6 +88,8 @@ function codesInUse(db: MockDatabase, key: MasterDataListKey): string[] {
       return db.integrations.map((i) => i.type);
     case 'integrationFrequencies':
       return db.integrations.map((i) => i.frequency);
+    case 'runbookLinkTypes':
+      return db.runbooks.flatMap((r) => r.links.map((l) => l.type));
     case 'leaveTypes':
       return db.leaves.map((l) => l.type);
   }
@@ -300,6 +302,9 @@ export const codeChecks = {
   dependency: (d: Omit<MockDatabase['dependencies'][number], 'id' | 'audit'>): CodeCheck[] => [
     { list: 'dependencyTypes', codes: [d.type], field: 'type' },
     { list: 'criticalities', codes: [d.criticality], field: 'criticality' },
+  ],
+  runbook: (r: { links: readonly { type: string }[] }): CodeCheck[] => [
+    { list: 'runbookLinkTypes', codes: r.links.map((l) => l.type), field: 'links' },
   ],
   allocation: (a: Pick<AllocationInput, 'role'>): CodeCheck[] => [
     { list: 'stakeholderRoles', codes: [a.role], field: 'role' },

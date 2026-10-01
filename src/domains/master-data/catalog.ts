@@ -1,3 +1,4 @@
+import { RUNBOOK_LINK_TYPES } from '@/domains/runbooks/types';
 import {
   APPLICATION_LIFECYCLES,
   APPLICATION_TYPES,
@@ -349,6 +350,16 @@ export const MASTER_DATA_LISTS: readonly MasterDataListDefinition[] = [
     extensible: true,
     colored: false,
     usedIn: 'Uygulama ve proje formları (Ekipler), ekip sayfaları',
+  }),
+  define({
+    key: 'runbookLinkTypes',
+    label: 'Müdahale adres türleri',
+    description: 'Müdahale rehberindeki kontrol adreslerinin türü (pano, log, sağlık kontrolü…).',
+    group: 'applications',
+    systemCodes: RUNBOOK_LINK_TYPES,
+    extensible: true,
+    colored: false,
+    usedIn: 'Müdahale rehberi formu ve uygulamanın "Sorun anında" sekmesi',
   }),
   define({
     key: 'documentationLinkTypes',

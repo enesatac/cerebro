@@ -1,3 +1,4 @@
+import { includesFolded } from '@/lib/search';
 import { paths } from '@/app/router/paths';
 import { EntityLink } from '@/components/data-display/EntityLink';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -73,7 +74,7 @@ function PersonDialog({ person, onClose }: { person: Person | null; onClose: () 
 
 const matches = (person: Person, term: string) =>
   [person.fullName, person.jobTitle, person.email, person.location ?? ''].some((value) =>
-    value.toLocaleLowerCase('tr-TR').includes(term.toLocaleLowerCase('tr-TR')),
+    includesFolded(value, term),
   );
 
 /** People as master data: search, add, edit and delete (blocked while referenced). */

@@ -273,4 +273,15 @@ export const masterData: MasterDataList[] = [
     ['daily', 'Günlük'],
     ['on-demand', 'İsteğe bağlı'],
   ]),
+  plain('runbookLinkTypes', [
+    ['monitoring', 'İzleme'],
+    ['logs', 'Loglar'],
+    ['health-check', 'Sağlık kontrolü'],
+    ['dashboard', 'Gösterge paneli'],
+    ['alerting', 'Alarmlar'],
+    ['status-page', 'Durum sayfası'],
+    ['console', 'Yönetim konsolu'],
+    ['documentation', 'Doküman'],
+    ['other', 'Diğer'],
+  ]),
 ];

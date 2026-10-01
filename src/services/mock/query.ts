@@ -1,3 +1,4 @@
+import { foldForSearch } from '@/lib/search';
 import type { EntityId, PagedResult, SortDirection } from '@/domains/shared/types';
 import { NotFoundError } from '@/lib/errors';
 
@@ -15,9 +16,7 @@ export function matchesSearch(
   return fields.some((field) => field != null && normalise(field).includes(needle));
 }
 
-function normalise(value: string): string {
-  return value.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
-}
+const normalise = foldForSearch;
 
 export type SortValue = string | number | null;
 

@@ -193,6 +193,22 @@ teams and technologies.
 - Every person name links here: `PersonSummary` (team members, key facts, stakeholders), team
   managers, the people editor and the leave calendar.
 
+## Incident runbooks
+
+- `Runbook` (one per application; `application_runbooks` + child tables for ordered steps, links,
+  contacts and scenarios). `RunbookRepository.getByApplication` returns `null` when none exists;
+  writes follow portfolio permissions; deleting the application deletes its runbook.
+- Application tab "Sorun anında" (`?tab=runbook`, second tab): summary with verification state
+  (stale after 180 days), first-response checklist (ticks are local to the browser tab — a place
+  keeper, not a record), contacts in escalation order (person/team details resolved live),
+  addresses to check plus the production/DR environment URLs, and known problems searchable by
+  symptom (`matchScenarios`).
+- Edit page `/applications/:id/runbook/edit`: steps are written one per line in a text area and
+  stored as ordered rows; links, contacts and scenarios are reorderable lists (`RepeatableList`
+  `onMove`). Every text is checked for credentials (client schema and repository).
+- Text search everywhere folds Turkish casing and accents (`lib/search.ts`): "timeout" finds
+  "PROVIDER_TIMEOUT", "celik" finds "Çelik".
+
 ## Resource planning
 
 - Entity `Allocation` (person, project, role from `stakeholderRoles`, inclusive dates, `percent`
@@ -232,8 +248,8 @@ teams and technologies.
 ## Development persistence
 
 The mock database and session are persisted in `localStorage` in the browser
-(`cerebro.demo-db.v6`, `cerebro.demo-session.v2`) so records survive a reload. Tests use in-memory
-stores. To reset the demo data, clear the site's storage (or remove `cerebro.demo-db.v6`).
+(`cerebro.demo-db.v7`, `cerebro.demo-session.v2`) so records survive a reload. Tests use in-memory
+stores. To reset the demo data, clear the site's storage (or remove `cerebro.demo-db.v7`).
 
 ## Security posture (frontend)
 
