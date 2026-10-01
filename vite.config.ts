@@ -32,5 +32,9 @@ export default defineConfig({
     setupFiles: ['./src/test/setup.ts'],
     css: false,
     include: ['src/**/*.test.{ts,tsx}'],
+    // Route-level tests render the whole app and lazy-load pages; on a cold, shared CI runner
+    // they take several times longer than locally. A generous ceiling avoids false timeouts
+    // without hiding real hangs.
+    testTimeout: 15_000,
   },
 });

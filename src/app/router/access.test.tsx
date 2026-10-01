@@ -55,23 +55,22 @@ describe('create flow', () => {
     await waitFor(() => expect(router.state.location.pathname).toBe('/technologies/31'));
   });
 
-  it('renders every edit form without errors', async () => {
-    for (const path of [
-      `/applications/${APP.paymentGateway}/edit`,
-      `/projects/${PRJ.digitalOnboarding}/edit`,
-      `/teams/${TEAM.platform}/edit`,
-      `/risks/${RISK.dotVendor}/edit`,
-      `/escalations/${ESC.dotVendor}/edit`,
-      `/decisions/${DEC.lbcRetire}/edit`,
-      `/architecture/dependencies/${DEP.omsPay}/edit`,
-      `/architecture/integrations/${INT.omsPayAuth}/edit`,
-      `/admin/users/${USER.elifKaya}/edit`,
-    ]) {
-      const { unmount } = renderRoute(path);
-      expect(
-        await screen.findByRole('button', { name: 'Değişiklikleri kaydet' }, { timeout: 3000 }),
-      ).toBeInTheDocument();
-      unmount();
-    }
+  // One test per form: each gets its own time budget, and a failure names the form.
+  it.each([
+    `/applications/${APP.paymentGateway}/edit`,
+    `/applications/${APP.paymentGateway}/runbook/edit`,
+    `/projects/${PRJ.digitalOnboarding}/edit`,
+    `/teams/${TEAM.platform}/edit`,
+    `/risks/${RISK.dotVendor}/edit`,
+    `/escalations/${ESC.dotVendor}/edit`,
+    `/decisions/${DEC.lbcRetire}/edit`,
+    `/architecture/dependencies/${DEP.omsPay}/edit`,
+    `/architecture/integrations/${INT.omsPayAuth}/edit`,
+    `/admin/users/${USER.elifKaya}/edit`,
+  ])('renders the edit form at %s without errors', async (path) => {
+    renderRoute(path);
+    expect(
+      await screen.findByRole('button', { name: 'Değişiklikleri kaydet' }, { timeout: 5000 }),
+    ).toBeInTheDocument();
   });
 });
