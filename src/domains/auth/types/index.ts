@@ -16,6 +16,7 @@ export const PERMISSIONS = [
   'users:manage',
   'masterData:manage',
   'leaves:manage',
+  'resources:manage',
 ] as const;
 export type Permission = (typeof PERMISSIONS)[number];
 

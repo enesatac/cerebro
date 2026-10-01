@@ -77,6 +77,8 @@ export const paths = {
   },
   reports: () => '/reports',
   leaves: () => '/leaves',
+  /** `person` pre-fills the planner's search (a person's name). */
+  resources: (person?: string) => withQuery('/resources', { q: person }),
   admin: {
     /** `section` is a master data list key, `business-units` or `people`. */
     masterData: (section?: string) =>

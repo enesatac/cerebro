@@ -70,6 +70,17 @@ export interface PersonWorkload {
   risks: PersonGovernanceItem[];
   escalations: PersonGovernanceItem[];
   decisions: PersonGovernanceItem[];
+  /** Current and upcoming project allocations (ending today or later), soonest first. */
+  allocations: {
+    id: EntityId;
+    project: EntityRef;
+    role: StakeholderRole;
+    startDate: IsoDate;
+    endDate: IsoDate;
+    percent: number;
+  }[];
+  /** Allocated work today: parallel allocations and their summed percentage. */
+  loadToday: { count: number; percent: number };
   /** Current and upcoming leaves (ending today or later), soonest first. */
   leaves: { id: EntityId; type: string; startDate: IsoDate; endDate: IsoDate }[];
 }

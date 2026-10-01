@@ -39,6 +39,7 @@ const EscalationFormPage = page(() => import('@/domains/escalations/pages/Escala
 const DecisionFormPage = page(() => import('@/domains/decisions/pages/DecisionFormPage'));
 const ReportsPage = page(() => import('@/domains/governance/pages/ReportsPage'));
 const PersonDetailPage = page(() => import('@/domains/people/pages/PersonDetailPage'));
+const ResourcePlanPage = page(() => import('@/domains/resources/pages/ResourcePlanPage'));
 const LeavesPage = page(() => import('@/domains/leaves/pages/LeavesPage'));
 const MasterDataPage = page(() => import('@/domains/master-data/pages/MasterDataPage'));
 const UsersListPage = page(() => import('@/domains/auth/pages/UsersListPage'));
@@ -108,6 +109,7 @@ export const routes: RouteObject[] = [
       { path: 'decisions/:decisionId/edit', element: guarded(<DecisionFormPage />) },
       { path: 'reports', element: <ReportsPage /> },
       { path: 'leaves', element: <LeavesPage /> },
+      { path: 'resources', element: <ResourcePlanPage /> },
       {
         path: 'admin/master-data',
         element: guarded(<MasterDataPage />, 'masterData:manage', 'ana veri yönetimi'),

@@ -1,3 +1,4 @@
+import { AlignLeftIconOutlinedRounded } from '@takeoff-icons/react/align-left';
 import { CalendarIconOutlinedRounded } from '@takeoff-icons/react/calendar';
 import { CategoryIconOutlinedRounded } from '@takeoff-icons/react/category';
 import { ChartBarIconOutlinedRounded } from '@takeoff-icons/react/chart-bar';
@@ -31,6 +32,7 @@ export const PRIMARY_NAVIGATION: NavigationItem[] = [
   { label: 'Ekipler', to: paths.teams.list(), icon: GroupIconOutlinedRounded },
   { label: 'Teknolojiler', to: paths.technologies.list(), icon: DataObjectIconOutlinedRounded },
   { label: 'Riskler ve Eskalasyonlar', to: paths.risks(), icon: WarningIconOutlinedRounded },
+  { label: 'Kaynak planı', to: paths.resources(), icon: AlignLeftIconOutlinedRounded },
   { label: 'İzinler', to: paths.leaves(), icon: CalendarIconOutlinedRounded },
   { label: 'Raporlar', to: paths.reports(), icon: ChartBarIconOutlinedRounded },
 ];

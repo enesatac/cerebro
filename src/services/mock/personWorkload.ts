@@ -130,6 +130,30 @@ export function buildPersonWorkload(
           ...related(d),
         })),
     ),
+    allocations: db.allocations
+      .filter((a) => a.personId === personId && a.endDate >= today)
+      .sort((a, b) => a.startDate.localeCompare(b.startDate))
+      .flatMap((a) => {
+        const project = projectRef(a.projectId);
+        return project
+          ? [
+              {
+                id: a.id,
+                project,
+                role: a.role,
+                startDate: a.startDate,
+                endDate: a.endDate,
+                percent: a.percent,
+              },
+            ]
+          : [];
+      }),
+    loadToday: db.allocations
+      .filter((a) => a.personId === personId && a.startDate <= today && today <= a.endDate)
+      .reduce((load, a) => ({ count: load.count + 1, percent: load.percent + a.percent }), {
+        count: 0,
+        percent: 0,
+      }),
     leaves: db.leaves
       .filter((l) => l.personId === personId && l.endDate >= today)
       .sort((a, b) => a.startDate.localeCompare(b.startDate))

@@ -22,9 +22,13 @@ export function useProjectList(query: ProjectListQuery) {
   });
 }
 
-export function useProject(id: ProjectId) {
+export function useProject(id: ProjectId, enabled = true) {
   const { projects } = useRepositories();
-  return useQuery({ queryKey: projectKeys.detail(id), queryFn: () => projects.getById(id) });
+  return useQuery({
+    queryKey: projectKeys.detail(id),
+    queryFn: () => projects.getById(id),
+    enabled,
+  });
 }
 
 /** id → `{ name, code }` for every project. */

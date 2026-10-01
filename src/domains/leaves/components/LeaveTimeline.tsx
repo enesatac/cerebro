@@ -7,6 +7,7 @@ import { MasterBadge } from '@/domains/master-data/components/MasterBadge';
 import { useMasterData } from '@/domains/master-data/context';
 import type { Person } from '@/domains/people/types';
 import type { EntityId, IsoDate } from '@/domains/shared/types';
+import { keepOpenForDialogs } from '@/lib/outsideInteraction';
 import { formatDateLong, formatDateRange, formatMonthYear, formatWeekdayShort } from '@/lib/dates';
 import type { LeaveRecord } from '../types';
 import {
@@ -48,20 +49,6 @@ const dayClass = (day: CalendarDay, base: string) =>
   ]
     .filter(Boolean)
     .join(' ');
-
-/**
- * The card's delete confirmation is a dialog portalled outside the popover. Without this guard the
- * popover treats clicks in that dialog as outside clicks and closes, unmounting the confirmation
- * mid-click, so the leave is never deleted and the click falls through to the calendar.
- */
-function keepOpenForDialogs(event: PointerEvent | FocusEvent) {
-  if (
-    event.target instanceof Element &&
-    event.target.closest('.tk-dialog-panel, .tk-dialog-overlay')
-  ) {
-    event.preventDefault();
-  }
-}
 
 function LeaveBar({
   segment,

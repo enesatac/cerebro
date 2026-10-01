@@ -2,6 +2,7 @@ import { Calendar, Field, Input, Popover, useDatePicker } from '@takeoff-ui/reac
 import { CalendarIconOutlinedRounded } from '@takeoff-icons/react/calendar';
 import { format, isValid, parseISO } from 'date-fns';
 import { tr } from 'date-fns/locale';
+import { useEffect } from 'react';
 import {
   Controller,
   type ControllerFieldState,
@@ -42,6 +43,19 @@ function DatePickerControl<T extends FieldValues>({
     defaultValue: toDate(field.value),
     onValueChange: (date) => field.onChange(date ? format(date, 'yyyy-MM-dd') : ''),
   });
+
+  // The picker is uncontrolled; follow values set from outside (`setValue`, `reset`, a default
+  // derived from another field) so the input never shows something other than the form state.
+  const formValue = typeof field.value === 'string' ? field.value : '';
+  const pickerValue = picker.value ? format(picker.value, 'yyyy-MM-dd') : '';
+  const { setValue } = picker;
+  useEffect(() => {
+    if (formValue !== pickerValue && (formValue === '' || toDate(formValue))) {
+      setValue(toDate(formValue));
+    }
+    // Only react to the form value; the picker reports its own edits through onValueChange.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formValue, setValue]);
 
   return (
     <Field invalid={fieldState.invalid} required={required} disabled={disabled}>

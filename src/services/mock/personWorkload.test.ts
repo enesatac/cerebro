@@ -47,6 +47,18 @@ describe('person workload', () => {
     expect(after.projects.find((p) => p.id === project.id)?.roles).toEqual(['analyst']);
   });
 
+  it('includes current allocations and today’s parallel load', async () => {
+    const repos = createMockRepositories({ signedInAs: USER.elifKaya });
+    const workload = await repos.people.getWorkload(PERSON.lucasMoreau, TODAY);
+    expect(workload.loadToday.count).toBeGreaterThanOrEqual(3);
+    expect(workload.loadToday.percent).toBe(
+      workload.allocations
+        .filter((a) => a.startDate <= TODAY && TODAY <= a.endDate)
+        .reduce((sum, a) => sum + a.percent, 0),
+    );
+    expect(workload.allocations.every((a) => a.endDate >= TODAY)).toBe(true);
+  });
+
   it('reports unknown people as not found', async () => {
     const repos = createMockRepositories({ signedInAs: USER.elifKaya });
     await expect(repos.people.getWorkload(999_999, TODAY)).rejects.toBeInstanceOf(NotFoundError);

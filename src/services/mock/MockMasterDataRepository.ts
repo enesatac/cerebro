@@ -1,5 +1,6 @@
 import type { ApplicationInput } from '@/domains/applications/types';
 import type { LeaveInput } from '@/domains/leaves/types';
+import type { AllocationInput } from '@/domains/resources/types';
 import type { ProjectInput } from '@/domains/projects/types';
 import type { MasterDataRepository } from '@/domains/master-data/api/MasterDataRepository';
 import { getListDefinition } from '@/domains/master-data/catalog';
@@ -65,7 +66,10 @@ function codesInUse(db: MockDatabase, key: MasterDataListKey): string[] {
         ...db.dependencies.map((d) => d.criticality),
       ];
     case 'stakeholderRoles':
-      return [...apps, ...projects].flatMap((row) => row.roles.map((r) => r.role));
+      return [
+        ...[...apps, ...projects].flatMap((row) => row.roles.map((r) => r.role)),
+        ...db.allocations.map((a) => a.role),
+      ];
     case 'teamResponsibilities':
       return [...apps, ...projects].flatMap((row) => row.teams.map((t) => t.responsibility));
     case 'documentationLinkTypes':
@@ -296,6 +300,9 @@ export const codeChecks = {
   dependency: (d: Omit<MockDatabase['dependencies'][number], 'id' | 'audit'>): CodeCheck[] => [
     { list: 'dependencyTypes', codes: [d.type], field: 'type' },
     { list: 'criticalities', codes: [d.criticality], field: 'criticality' },
+  ],
+  allocation: (a: Pick<AllocationInput, 'role'>): CodeCheck[] => [
+    { list: 'stakeholderRoles', codes: [a.role], field: 'role' },
   ],
   leave: (l: Pick<LeaveInput, 'type'>): CodeCheck[] => [
     { list: 'leaveTypes', codes: [l.type], field: 'type' },

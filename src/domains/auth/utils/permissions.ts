@@ -9,6 +9,7 @@ export const ROLE_PERMISSIONS: Record<UserRole, readonly Permission[]> = {
     'users:manage',
     'masterData:manage',
     'leaves:manage',
+    'resources:manage',
   ],
   user: ['portfolio:view'],
 };

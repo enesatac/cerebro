@@ -14,7 +14,11 @@ import { MasterBadge } from '@/domains/master-data/components/MasterBadge';
 import { formatDateRange, toIsoDate } from '@/lib/dates';
 import { isNotFoundError } from '@/lib/errors';
 import { parseId } from '@/lib/urlParams';
+import { describeLoad, LOAD_PRESENTATION } from '@/domains/resources/utils/loadPresentation';
+import { loadLevel } from '@/domains/resources/utils/resourcePlan';
+import { StatusBadge } from '@/components/data-display/StatusBadge';
 import { usePersonWorkload } from '../api/queries';
+import { PersonAllocationTable } from '../components/PersonAllocationTable';
 import { PersonGovernanceTable } from '../components/PersonGovernanceTable';
 import { PersonWorkTable } from '../components/PersonWorkTable';
 import type { PersonWorkload } from '../types';
@@ -122,6 +126,15 @@ export default function PersonDetailPage() {
                 ]
               : []),
             {
+              label: 'Bugünkü iş yükü',
+              value: (
+                <StatusBadge
+                  label={describeLoad(workload.loadToday.count, workload.loadToday.percent)}
+                  variant={LOAD_PRESENTATION[loadLevel(workload.loadToday.percent)].variant}
+                />
+              ),
+            },
+            {
               label: 'İzin durumu',
               value:
                 workload.leaves.length > 0 ? (
@@ -178,6 +191,14 @@ export default function PersonDetailPage() {
           items={workload.projects}
           emptyTitle={`${firstName} hiçbir projede yer almıyor`}
         />
+      </SectionCard>
+
+      <SectionCard
+        title={`Kaynak planı (${workload.allocations.length})`}
+        description="Süren ve planlanmış proje atamaları; aynı anda kaç işte, zamanının ne kadarıyla."
+        actions={<EntityLink to={paths.resources(person.fullName)}>Kaynak planında gör</EntityLink>}
+      >
+        <PersonAllocationTable allocations={workload.allocations} />
       </SectionCard>
 
       <SectionCard

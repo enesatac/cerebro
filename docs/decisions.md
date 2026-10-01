@@ -2,6 +2,18 @@
 
 Short records of decisions that shape the codebase. Newest first.
 
+## D-018 · Resource planning with explicit allocations (2026-10-01)
+
+Project roles say _who_ is involved, not _when_ or _how much_, so they cannot show parallel work.
+Allocations are a separate entity (`resource_allocations`: person, project, role, dates, percent).
+Overlaps across projects are allowed — showing and managing them is the point — and the planner
+makes them visible two ways: lanes (a row is as tall as the most work done at once) and a daily
+load strip (sum of percentages; red above 100 %). Over-allocation is warned about, not blocked:
+it is a planning decision. Bars are positioned with CSS variables in a scrollable table rather
+than a charting library — no dependency, keyboard and screen-reader friendly, and the list view is
+the text alternative. Writes need the new `resources:manage` permission (admin). Dev storage key
+moved to `cerebro.demo-db.v6`.
+
 ## D-017 · Person page from a single workload read model (2026-10-01)
 
 "What does this person work on?" spans roles on applications and projects, team assignments,

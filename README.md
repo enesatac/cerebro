@@ -30,6 +30,9 @@ catalogue — kept simple.
 - **Person pages** — click any person (team members, owners, stakeholders) to see everything they
   are mapped to on one screen: applications and projects (own role or via team), escalations,
   risks, decisions, teams and upcoming leaves.
+- **Resource plan** — `/resources`: who works on which project, when and at what share of their
+  time. Parallel allocations stack into lanes, a daily load strip turns red above 100 %, leaves
+  are shaded in. Zoom from a month to a year; admins plan allocations with a live load preview.
 - **Leave calendar** — `/leaves`: people down the side, days across the top, each leave a bar in
   its type's colour (2 weeks / month / 3 months, filters, list view). Admins add, edit and delete
   leaves; overlapping leaves for the same person are rejected.
@@ -67,7 +70,7 @@ picker only):
 ### Demo data
 
 Seed data lives in `src/services/mock/data/` and is entirely fictional. In development, changes
-are persisted to `localStorage` (`cerebro.demo-db.v5`, session in `cerebro.demo-session.v2`). Clear
+are persisted to `localStorage` (`cerebro.demo-db.v6`, session in `cerebro.demo-session.v2`). Clear
 those keys (or the site data) to reset to the seed.
 
 ## Scripts

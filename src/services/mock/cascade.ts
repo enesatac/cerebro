@@ -82,12 +82,17 @@ export function projectDeletionImpact(db: MockDatabase, id: EntityId): DeletionI
       { label: 'risk', count: related.risks },
       { label: 'eskalasyon', count: related.escalations },
       { label: 'karar', count: related.decisions },
+      {
+        label: 'kaynak ataması (silinir)',
+        count: db.allocations.filter((a) => a.projectId === id).length,
+      },
     ]),
   };
 }
 
 export function deleteProjectCascade(db: MockDatabase, id: EntityId) {
   unlinkRelated(db, 'relatedProjectIds', id);
+  db.allocations = db.allocations.filter((a) => a.projectId !== id);
 }
 
 export function teamDeletionImpact(db: MockDatabase, id: EntityId): DeletionImpact {
@@ -171,6 +176,7 @@ export function personDeletionImpact(db: MockDatabase, id: EntityId): DeletionIm
     },
     { label: 'kullanıcı hesabı', count: db.users.filter((u) => u.personId === id).length },
     { label: 'izin kaydı', count: db.leaves.filter((l) => l.personId === id).length },
+    { label: 'kaynak ataması', count: db.allocations.filter((a) => a.personId === id).length },
     {
       label: 'kayıt geçmişi',
       count: audited.filter(

@@ -1981,3 +1981,463 @@ code {
   color: var(--text-darkest);
   text-decoration: underline;
 }
+
+/* ---------- Resource plan ---------- */
+
+/* Positioned children use --o (day offset), --s (span in days) and --l (lane). */
+.c-plan {
+  --c-plan-person: 260px;
+  --c-plan-lane: 30px;
+  --c-plan-strip: 8px;
+  --c-plan-pad: 8px;
+  position: relative;
+  max-height: min(72vh, 820px);
+  overflow: auto;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-m-base);
+  background: var(--static-light);
+  overscroll-behavior-x: contain;
+}
+
+.c-plan:focus-visible {
+  outline: 2px solid var(--primary-500);
+  outline-offset: 2px;
+}
+
+.c-plan__table {
+  border-collapse: separate;
+  border-spacing: 0;
+  table-layout: fixed;
+  width: calc(var(--c-plan-person) + var(--c-plan-days) * var(--c-plan-day));
+}
+
+.c-plan__table th,
+.c-plan__table td {
+  padding: 0;
+  border-bottom: 1px solid var(--border-lightest);
+  vertical-align: top;
+}
+
+.c-plan__corner,
+.c-plan__scale {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--static-light);
+  border-bottom: 1px solid var(--border-light) !important;
+}
+
+.c-plan__corner {
+  left: 0;
+  z-index: 4;
+  width: var(--c-plan-person);
+  padding: 0 var(--spacing-l) var(--spacing-s) !important;
+  border-right: 1px solid var(--border-light);
+  color: var(--text-dark);
+  font-size: var(--size-xs);
+  font-weight: 600;
+  text-align: left;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  vertical-align: bottom !important;
+}
+
+.c-plan__scale {
+  width: calc(var(--c-plan-days) * var(--c-plan-day));
+  height: 56px;
+}
+
+.c-plan__months,
+.c-plan__ticks {
+  position: relative;
+  height: 28px;
+}
+
+.c-plan__month {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(var(--o) * var(--c-plan-day));
+  width: calc(var(--s) * var(--c-plan-day));
+  padding: 6px var(--spacing-s) 0;
+  border-left: 1px solid var(--border-light);
+  color: var(--text-darkest);
+  font-size: var(--size-xs);
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-transform: capitalize;
+}
+
+.c-plan__tick {
+  position: absolute;
+  top: 4px;
+  left: calc(var(--o) * var(--c-plan-day));
+  width: var(--c-plan-day);
+  min-width: 18px;
+  color: var(--text-base);
+  font-size: 11px;
+  text-align: center;
+  transform: translateX(calc((var(--c-plan-day) - max(var(--c-plan-day), 18px)) / 2));
+}
+
+.c-plan--1m .c-plan__tick {
+  transform: none;
+}
+
+.c-plan__tick--weekend {
+  color: var(--text-light, var(--text-base));
+  opacity: 0.6;
+}
+
+.c-plan__today-label {
+  position: absolute;
+  bottom: 0;
+  left: calc(var(--o) * var(--c-plan-day) + var(--c-plan-day) / 2 - 1px);
+  padding: 0 6px;
+  border-radius: 0 var(--radius-s) 0 0;
+  background: var(--primary-500);
+  color: var(--neutral-0);
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 16px;
+}
+
+.c-plan__person {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  width: var(--c-plan-person);
+  padding: var(--spacing-s) var(--spacing-l) !important;
+  background: var(--static-light);
+  border-right: 1px solid var(--border-light);
+  text-align: left;
+  font-weight: 400;
+}
+
+.c-plan__name {
+  display: block;
+  color: var(--text-darkest);
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.c-plan__name:hover,
+.c-plan__name:focus-visible {
+  text-decoration: underline;
+}
+
+.c-plan__title {
+  display: block;
+  color: var(--text-base);
+  font-size: var(--size-xs);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.c-plan__load {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+  margin-top: var(--spacing-xs);
+}
+
+.c-plan tbody tr:hover .c-plan__person,
+.c-plan tbody tr:hover .c-plan__track {
+  background-color: var(--background-lightest);
+}
+
+.c-plan__track {
+  position: relative;
+  height: calc(var(--c-plan-strip) + var(--lanes) * var(--c-plan-lane) + var(--c-plan-pad) * 2);
+  min-height: 72px;
+}
+
+.c-plan--editable .c-plan__track {
+  cursor: copy;
+}
+
+/* Decorations never take clicks: an empty spot on the track means "add an allocation". */
+.c-plan__gridline,
+.c-plan__leave,
+.c-plan__load-strip,
+.c-plan__today,
+.c-plan__empty {
+  position: absolute;
+  pointer-events: none;
+}
+
+.c-plan__gridline {
+  top: 0;
+  bottom: 0;
+  left: calc(var(--o) * var(--c-plan-day));
+  border-left: 1px solid var(--border-light);
+}
+
+.c-plan__leave {
+  top: 0;
+  bottom: 0;
+  left: calc(var(--o) * var(--c-plan-day));
+  width: calc(var(--s) * var(--c-plan-day));
+  background-image: repeating-linear-gradient(
+    135deg,
+    var(--neutral-200) 0 4px,
+    transparent 4px 8px
+  );
+  opacity: 0.8;
+}
+
+:root[data-theme='dark'] .c-plan__leave {
+  background-image: repeating-linear-gradient(
+    135deg,
+    var(--alpha-base-white-12) 0 4px,
+    transparent 4px 8px
+  );
+}
+
+/* Daily load: a thin band above the lanes. */
+.c-plan__load-strip {
+  top: 4px;
+  height: 4px;
+  left: calc(var(--o) * var(--c-plan-day));
+  width: calc(var(--s) * var(--c-plan-day));
+  border-radius: 2px;
+}
+
+.c-plan__load-strip--partial {
+  background: var(--green-300);
+}
+
+.c-plan__load-strip--full {
+  background: var(--blue-500);
+}
+
+.c-plan__load-strip--over {
+  height: 6px;
+  top: 3px;
+  background: var(--red-500);
+}
+
+.c-plan__today {
+  top: 0;
+  bottom: 0;
+  left: calc(var(--o) * var(--c-plan-day) + var(--c-plan-day) / 2);
+  width: 2px;
+  background: var(--primary-500);
+  opacity: 0.7;
+}
+
+.c-plan__empty {
+  top: 50%;
+  left: var(--spacing-l);
+  color: var(--text-base);
+  font-size: var(--size-xs);
+  transform: translateY(-50%);
+}
+
+.c-plan__bar {
+  position: absolute;
+  top: calc(var(--c-plan-strip) + var(--c-plan-pad) + var(--l) * var(--c-plan-lane));
+  left: calc(var(--o) * var(--c-plan-day));
+  width: calc(var(--s) * var(--c-plan-day) - 2px);
+  min-width: 4px;
+  height: calc(var(--c-plan-lane) - 6px);
+  display: flex;
+  align-items: center;
+  padding: 0 var(--spacing-s);
+  border: 0;
+  border-left: 4px solid var(--c-bar-accent);
+  border-radius: var(--radius-s);
+  background: var(--c-bar-bg);
+  color: var(--c-bar-fg);
+  font: inherit;
+  font-size: var(--size-xs);
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  overflow: hidden;
+  box-shadow: 0 0 0 1px var(--static-light);
+  transition:
+    filter 120ms ease,
+    box-shadow 120ms ease;
+}
+
+.c-plan__bar:hover {
+  filter: saturate(1.2);
+  box-shadow: 0 0 0 1px var(--c-bar-accent);
+  z-index: 1;
+}
+
+.c-plan__bar:focus-visible {
+  outline: 2px solid var(--c-bar-accent);
+  outline-offset: 2px;
+  z-index: 1;
+}
+
+.c-plan__bar--from-before {
+  border-left-style: dashed;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.c-plan__bar--to-after {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.c-plan__bar-text {
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.c-plan__bar--c0 {
+  --c-bar-bg: var(--blue-200);
+  --c-bar-fg: var(--blue-900);
+  --c-bar-accent: var(--blue-600);
+}
+
+.c-plan__bar--c1 {
+  --c-bar-bg: var(--teal-200);
+  --c-bar-fg: var(--teal-900);
+  --c-bar-accent: var(--teal-600);
+}
+
+.c-plan__bar--c2 {
+  --c-bar-bg: var(--purple-200);
+  --c-bar-fg: var(--purple-900);
+  --c-bar-accent: var(--purple-600);
+}
+
+.c-plan__bar--c3 {
+  --c-bar-bg: var(--business-200);
+  --c-bar-fg: var(--business-900);
+  --c-bar-accent: var(--business-600);
+}
+
+.c-plan__bar--c4 {
+  --c-bar-bg: var(--cyan-200);
+  --c-bar-fg: var(--cyan-900);
+  --c-bar-accent: var(--cyan-600);
+}
+
+.c-plan__bar--c5 {
+  --c-bar-bg: var(--yellow-200);
+  --c-bar-fg: var(--yellow-900);
+  --c-bar-accent: var(--yellow-600);
+}
+
+.c-plan__bar--c6 {
+  --c-bar-bg: var(--secondary-200);
+  --c-bar-fg: var(--secondary-900);
+  --c-bar-accent: var(--secondary-600);
+}
+
+.c-plan__bar--c7 {
+  --c-bar-bg: var(--green-200);
+  --c-bar-fg: var(--green-900);
+  --c-bar-accent: var(--green-600);
+}
+
+:root[data-theme='dark'] .c-plan__bar--c0 {
+  --c-bar-bg: var(--blue-800);
+  --c-bar-fg: var(--blue-100);
+  --c-bar-accent: var(--blue-400);
+}
+
+:root[data-theme='dark'] .c-plan__bar--c1 {
+  --c-bar-bg: var(--teal-800);
+  --c-bar-fg: var(--teal-100);
+  --c-bar-accent: var(--teal-400);
+}
+
+:root[data-theme='dark'] .c-plan__bar--c2 {
+  --c-bar-bg: var(--purple-800);
+  --c-bar-fg: var(--purple-100);
+  --c-bar-accent: var(--purple-400);
+}
+
+:root[data-theme='dark'] .c-plan__bar--c3 {
+  --c-bar-bg: var(--business-800);
+  --c-bar-fg: var(--business-100);
+  --c-bar-accent: var(--business-400);
+}
+
+:root[data-theme='dark'] .c-plan__bar--c4 {
+  --c-bar-bg: var(--cyan-800);
+  --c-bar-fg: var(--cyan-100);
+  --c-bar-accent: var(--cyan-400);
+}
+
+:root[data-theme='dark'] .c-plan__bar--c5 {
+  --c-bar-bg: var(--yellow-800);
+  --c-bar-fg: var(--yellow-100);
+  --c-bar-accent: var(--yellow-400);
+}
+
+:root[data-theme='dark'] .c-plan__bar--c6 {
+  --c-bar-bg: var(--secondary-800);
+  --c-bar-fg: var(--secondary-100);
+  --c-bar-accent: var(--secondary-400);
+}
+
+:root[data-theme='dark'] .c-plan__bar--c7 {
+  --c-bar-bg: var(--green-800);
+  --c-bar-fg: var(--green-100);
+  --c-bar-accent: var(--green-400);
+}
+
+.c-plan-legend__swatch {
+  flex: none;
+  display: inline-block;
+  width: 22px;
+  height: 14px;
+  border-left: 3px solid var(--c-bar-accent);
+  border-radius: var(--radius-s);
+  background: var(--c-bar-bg);
+}
+
+.c-plan-legend__swatch--leave {
+  border: 1px solid var(--border-light);
+  background-image: repeating-linear-gradient(
+    135deg,
+    var(--neutral-300) 0 3px,
+    transparent 3px 6px
+  );
+}
+
+.c-plan-legend__strip {
+  flex: none;
+  display: inline-block;
+  width: 22px;
+  height: 5px;
+  border-radius: 2px;
+}
+
+@media (max-width: 900px) {
+  .c-plan {
+    --c-plan-person: 180px;
+    max-height: 70vh;
+  }
+
+  .c-plan__corner,
+  .c-plan__person {
+    padding-inline: var(--spacing-s) !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .c-plan {
+    --c-plan-person: 132px;
+  }
+
+  .c-plan__title {
+    display: none;
+  }
+}

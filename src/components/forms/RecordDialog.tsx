@@ -2,19 +2,7 @@ import { Alert, Button, Dialog } from '@takeoff-ui/react-spar';
 import type { ReactNode } from 'react';
 import type { FieldValues, Path, UseFormReturn } from 'react-hook-form';
 import { getErrorMessage, isValidationError } from '@/lib/errors';
-
-/**
- * Takeoff portals select lists, date pickers and popovers to `<body>`, outside the dialog panel, so
- * the dialog sees a click on an option as an outside click and closes. Clicks inside those layers
- * belong to the form.
- */
-const FLOATING_LAYERS = '.tk-select-content, .tk-popover-content, .tk-dropdown-content';
-
-function keepOpenForFloatingLayers(event: PointerEvent | FocusEvent) {
-  if (event.target instanceof Element && event.target.closest(FLOATING_LAYERS)) {
-    event.preventDefault();
-  }
-}
+import { keepOpenForFloatingLayers } from '@/lib/outsideInteraction';
 
 interface RecordDialogProps<T extends FieldValues> {
   open: boolean;

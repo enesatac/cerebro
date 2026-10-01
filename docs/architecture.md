@@ -193,6 +193,28 @@ teams and technologies.
 - Every person name links here: `PersonSummary` (team members, key facts, stakeholders), team
   managers, the people editor and the leave calendar.
 
+## Resource planning
+
+- Entity `Allocation` (person, project, role from `stakeholderRoles`, inclusive dates, `percent`
+  5–100 in steps of 5, note); table `resource_allocations` (check constraints + an exclusion
+  constraint against booking one person twice onto one project for overlapping days).
+  Allocations on _different_ projects may overlap — that is the parallel work being managed.
+- `AllocationRepository.list({ from, to, personIds?, projectIds? })`; writes need
+  `resources:manage` (admin). Deleting a project deletes its allocations.
+- Page `/resources`: URL state in `utils/planParams.ts`; pure planning maths in
+  `utils/resourcePlan.ts` (periods, scale, clipping, greedy lane assignment = max parallel work,
+  daily load runs, peak) — tested. Load bands (`free/partial/full/over`) are presented from
+  `utils/loadPresentation.ts`.
+- `ResourceTimeline`: a table (row header per person) whose track cell positions bars with CSS
+  variables (`--o` offset, `--s` span, `--l` lane) at a per-zoom day width. Bars keep a stable
+  colour per project; the load strip and leave shading are decorations that ignore clicks, so a
+  click on empty track space means "allocate this person from this day" (admins).
+- `AllocationDialog` fills empty dates from the project timeline and previews the person's peak
+  load with the new allocation before saving (over 100 % is allowed but stated).
+- The person page shows current/upcoming allocations and today's load.
+- Shared guards for portalled layers live in `lib/outsideInteraction.ts` (dialogs ignore clicks in
+  selects/pickers; popovers ignore clicks in dialogs opened from them).
+
 ## Leave management
 
 - Entity `LeaveRecord` (`personId`, `type` from the `leaveTypes` master data list, inclusive
@@ -210,8 +232,8 @@ teams and technologies.
 ## Development persistence
 
 The mock database and session are persisted in `localStorage` in the browser
-(`cerebro.demo-db.v5`, `cerebro.demo-session.v2`) so records survive a reload. Tests use in-memory
-stores. To reset the demo data, clear the site's storage (or remove `cerebro.demo-db.v5`).
+(`cerebro.demo-db.v6`, `cerebro.demo-session.v2`) so records survive a reload. Tests use in-memory
+stores. To reset the demo data, clear the site's storage (or remove `cerebro.demo-db.v6`).
 
 ## Security posture (frontend)
 

@@ -4,6 +4,7 @@ import { createMockDatabase } from './database';
 import { afterWrites, type DatabaseStore } from './persistence';
 import { createLookup } from './lookup';
 import { MockApplicationRepository } from './MockApplicationRepository';
+import { createMockAllocationRepository } from './MockAllocationRepository';
 import { createMockLeaveRepository } from './MockLeaveRepository';
 import { createMockMasterDataRepository } from './MockMasterDataRepository';
 import { createMockAuthRepositories } from './MockAuthRepositories';
@@ -41,6 +42,7 @@ export function createMockRepositories({
     search: new MockSearchRepository(db, latencyMs),
     masterData: createMockMasterDataRepository(db, latencyMs, kit),
     leaves: createMockLeaveRepository(db, latencyMs, kit),
+    allocations: createMockAllocationRepository(db, latencyMs, kit),
     ...createMockReferenceRepositories(db, lookup, latencyMs, kit),
     ...createMockOperationalRepositories(db, latencyMs, kit),
     ...createMockAuthRepositories(db, authority, kit, latencyMs),
