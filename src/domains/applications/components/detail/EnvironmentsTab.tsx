@@ -1,3 +1,5 @@
+import { ExcelExportButton } from '@/components/actions/ExcelExportButton';
+import { sheet } from '@/lib/xlsxTypes';
 import { Table, type TableColumnDef } from '@takeoff-ui/react-spar';
 import { ExternalLink } from '@/components/data-display/ExternalLink';
 import { EmptyState } from '@/components/feedback/EmptyState';
@@ -45,15 +47,38 @@ const columns: TableColumnDef<Environment>[] = [
 
 export function EnvironmentsTab({ application }: { application: Application }) {
   // Promotion order (dev → prod → DR, as ordered in master data) reads naturally.
-  const order = useMasterData()
-    .items('environmentTypes')
-    .map((item) => item.code);
+  const masterData = useMasterData();
+  const order = masterData.items('environmentTypes').map((item) => item.code);
   const rank = (type: string) => (order.includes(type) ? order.indexOf(type) : order.length);
   const environments = [...application.environments].sort((a, b) => rank(a.type) - rank(b.type));
   return (
     <SectionCard
       title="Ortamlar"
       description="Uygulamanın nereye kurulduğu. Cerebro asla kimlik bilgisi saklamaz — ekibin secrets manager'ını kullanın."
+      actions={
+        <ExcelExportButton
+          title={`${application.name} — ortamlar`}
+          disabled={environments.length === 0}
+          build={() => [
+            sheet<Environment>({
+              name: 'Ortamlar',
+              title: `${application.name} ortamları`,
+              rows: environments,
+              columns: [
+                { header: 'Ortam', value: (e) => e.name },
+                { header: 'Tür', value: (e) => masterData.label('environmentTypes', e.type) },
+                {
+                  header: 'Durum',
+                  value: (e) => masterData.label('environmentStatuses', e.status),
+                },
+                { header: 'URL', value: (e) => e.url, type: 'link' },
+                { header: 'Bölge', value: (e) => e.region },
+                { header: 'Notlar', value: (e) => e.notes, width: 40 },
+              ],
+            }),
+          ]}
+        />
+      }
     >
       <Table
         data={environments}

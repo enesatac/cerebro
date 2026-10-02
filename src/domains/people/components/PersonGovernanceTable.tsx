@@ -6,12 +6,7 @@ import { MasterBadge } from '@/domains/master-data/components/MasterBadge';
 import type { MasterDataListKey } from '@/domains/master-data/types';
 import { formatDate } from '@/lib/dates';
 import type { PersonGovernanceItem } from '../types';
-
-const INVOLVEMENT: Record<PersonGovernanceItem['involvement'][number], string> = {
-  owner: 'Sahibi',
-  raised: 'Açan',
-  decider: 'Karar veren',
-};
+import { describeInvolvement } from '../utils/personPresentation';
 
 interface PersonGovernanceTableProps {
   items: readonly PersonGovernanceItem[];
@@ -34,7 +29,7 @@ export function PersonGovernanceTable({
       id: 'involvement',
       header: 'İlgisi',
       width: 130,
-      cell: ({ row }) => row.original.involvement.map((i) => INVOLVEMENT[i]).join(', '),
+      cell: ({ row }) => describeInvolvement(row.original),
     },
     ...(hasSeverity
       ? [

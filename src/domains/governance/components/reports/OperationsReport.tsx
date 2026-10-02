@@ -132,7 +132,7 @@ export function OperationsReport({ trends }: { trends: PortfolioTrends }) {
         <ChartCard
           title="Eskalasyon çözüm süresi"
           description="O ay çözülen eskalasyonların açılıştan çözüme medyan gün sayısı. Boşluk: o ay çözülen yok."
-          table={monthlyTable(trends.months, resolve, { format: days })}
+          table={monthlyTable(trends.months, resolve, { type: 'decimal' })}
         >
           <MonthlyChart
             months={trends.months}

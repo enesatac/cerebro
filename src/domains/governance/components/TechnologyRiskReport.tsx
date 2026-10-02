@@ -1,3 +1,6 @@
+import { ExcelExportButton } from '@/components/actions/ExcelExportButton';
+import { useMasterData } from '@/domains/master-data/context';
+import { sheet } from '@/lib/xlsxTypes';
 import { Table, type TableColumnDef } from '@takeoff-ui/react-spar';
 import { paths } from '@/app/router/paths';
 import { EntityLink } from '@/components/data-display/EntityLink';
@@ -56,6 +59,7 @@ const columns: TableColumnDef<ApplicationHealthRow>[] = [
 
 /** Live applications running on deprecated or retired catalogue technologies, most critical first. */
 export function TechnologyRiskReport({ rows }: { rows: ApplicationHealthRow[] }) {
+  const masterData = useMasterData();
   const affected = rows
     .filter((row) => row.lifecycle !== 'retired' && row.outdatedTechnologies.length > 0)
     .sort(
@@ -68,6 +72,44 @@ export function TechnologyRiskReport({ rows }: { rows: ApplicationHealthRow[] })
     <SectionCard
       title={`Güncelliğini yitirmiş teknoloji kullanan uygulamalar (${affected.length})`}
       description="Emekli teknolojiler artık desteklenmez ve önce listelenir; kullanımdan kalkanlar yeni işlerde kullanılmamalıdır."
+      actions={
+        <ExcelExportButton
+          title="Teknoloji riski raporu"
+          disabled={affected.length === 0}
+          build={() => [
+            sheet<{
+              row: ApplicationHealthRow;
+              tech: ApplicationHealthRow['outdatedTechnologies'][number];
+            }>({
+              name: 'Teknoloji riski',
+              title: 'Güncelliğini yitirmiş teknoloji kullanan uygulamalar',
+              // One row per application × technology: easy to filter and pivot in Excel.
+              rows: affected.flatMap((row) =>
+                row.outdatedTechnologies.map((tech) => ({ row, tech })),
+              ),
+              columns: [
+                { header: 'Kod', value: (r) => r.row.code },
+                { header: 'Uygulama', value: (r) => r.row.name },
+                {
+                  header: 'Yaşam döngüsü',
+                  value: (r) => masterData.label('applicationLifecycles', r.row.lifecycle),
+                },
+                {
+                  header: 'Kritiklik',
+                  value: (r) => masterData.label('criticalities', r.row.criticality),
+                },
+                { header: 'Teknoloji', value: (r) => r.tech.name },
+                {
+                  header: 'Teknoloji durumu',
+                  value: (r) => masterData.label('technologyStatuses', r.tech.status),
+                },
+                { header: 'Teknik sahip', value: (r) => r.row.technicalOwner?.name ?? 'Atanmamış' },
+                { header: 'İş birimi', value: (r) => r.row.businessUnit?.name },
+              ],
+            }),
+          ]}
+        />
+      }
     >
       <Table
         data={affected}

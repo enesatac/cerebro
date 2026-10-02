@@ -1,3 +1,7 @@
+import { loadPortfolioNames } from '@/domains/shared/utils/portfolioNames';
+import { useRepositories } from '@/services/RepositoryContext';
+import { ExcelExportButton } from '@/components/actions/ExcelExportButton';
+import { describeFilters, sheet } from '@/lib/xlsxTypes';
 import { Table, type TableColumnDef } from '@takeoff-ui/react-spar';
 import { useSearchParams } from 'react-router';
 import { EmptyState } from '@/components/feedback/EmptyState';
@@ -71,6 +75,7 @@ export function DependencyRegister() {
   const canEdit = usePermission('portfolio:edit');
   const [type, setType] = useParamFilter('type', codesOf(masterData.items('dependencyTypes')));
   const [criticality, setCriticality] = useParamFilter('criticality', CRITICALITIES);
+  const repositories = useRepositories();
   return (
     <QueryView
       query={query}
@@ -91,14 +96,51 @@ export function DependencyRegister() {
               label="Bağımlılıkları filtrele"
               add={<SmallCreateAction to={paths.dependencies.create()} label="Bağımlılık kaydet" />}
               end={
-                <FilterSummary
-                  summary={pluralize(visible.length, 'bağımlılık')}
-                  activeFilterCount={[type, criticality].filter(Boolean).length}
-                  onReset={() => {
-                    setType(null);
-                    setCriticality(null);
-                  }}
-                />
+                <>
+                  <FilterSummary
+                    summary={pluralize(visible.length, 'bağımlılık')}
+                    activeFilterCount={[type, criticality].filter(Boolean).length}
+                    onReset={() => {
+                      setType(null);
+                      setCriticality(null);
+                    }}
+                  />
+                  <ExcelExportButton
+                    title="Bağımlılıklar"
+                    disabled={visible.length === 0}
+                    build={async () => {
+                      const names = await loadPortfolioNames(repositories);
+                      const appName = names.application;
+                      return [
+                        sheet<ApplicationDependency>({
+                          name: 'Bağımlılıklar',
+                          title: 'Bağımlılıklar',
+                          subtitle: describeFilters([
+                            ['Tür', type && masterData.label('dependencyTypes', type)],
+                            ['Etki', criticality && masterData.label('criticalities', criticality)],
+                          ]),
+                          rows: visible,
+                          columns: [
+                            { header: 'Uygulama', value: (d) => appName(d.sourceApplicationId) },
+                            {
+                              header: 'Bağımlı olduğu',
+                              value: (d) => appName(d.targetApplicationId),
+                            },
+                            {
+                              header: 'Tür',
+                              value: (d) => masterData.label('dependencyTypes', d.type),
+                            },
+                            {
+                              header: 'Erişilemezse etkisi',
+                              value: (d) => masterData.label('criticalities', d.criticality),
+                            },
+                            { header: 'Açıklama', value: (d) => d.description, width: 50 },
+                          ],
+                        }),
+                      ];
+                    }}
+                  />
+                </>
               }
             >
               <FilterSelect
@@ -192,6 +234,7 @@ export function IntegrationRegister() {
   const query = useAllIntegrations();
   const canEdit = usePermission('portfolio:edit');
   const [type, setType] = useParamFilter('itype', codesOf(masterData.items('integrationTypes')));
+  const repositories = useRepositories();
   return (
     <QueryView
       query={query}
@@ -208,11 +251,52 @@ export function IntegrationRegister() {
                 <SmallCreateAction to={paths.integrations.create()} label="Entegrasyon kaydet" />
               }
               end={
-                <FilterSummary
-                  summary={pluralize(visible.length, 'entegrasyon')}
-                  activeFilterCount={type ? 1 : 0}
-                  onReset={() => setType(null)}
-                />
+                <>
+                  <FilterSummary
+                    summary={pluralize(visible.length, 'entegrasyon')}
+                    activeFilterCount={type ? 1 : 0}
+                    onReset={() => setType(null)}
+                  />
+                  <ExcelExportButton
+                    title="Entegrasyonlar"
+                    disabled={visible.length === 0}
+                    build={async () => {
+                      const names = await loadPortfolioNames(repositories);
+                      const appName = names.application;
+                      return [
+                        sheet<Integration>({
+                          name: 'Entegrasyonlar',
+                          title: 'Entegrasyonlar',
+                          subtitle: describeFilters([
+                            ['Tür', type && masterData.label('integrationTypes', type)],
+                          ]),
+                          rows: visible,
+                          columns: [
+                            { header: 'Entegrasyon', value: (i) => i.name },
+                            { header: 'Kaynak', value: (i) => appName(i.fromApplicationId) },
+                            {
+                              header: 'Hedef',
+                              value: (i) =>
+                                i.toApplicationId
+                                  ? appName(i.toApplicationId)
+                                  : `${i.externalPartyName ?? ''} (harici)`,
+                            },
+                            {
+                              header: 'Tür',
+                              value: (i) => masterData.label('integrationTypes', i.type),
+                            },
+                            {
+                              header: 'Sıklık',
+                              value: (i) => masterData.label('integrationFrequencies', i.frequency),
+                            },
+                            { header: 'Aktarılan veri', value: (i) => i.dataExchanged, width: 40 },
+                            { header: 'Açıklama', value: (i) => i.description, width: 50 },
+                          ],
+                        }),
+                      ];
+                    }}
+                  />
+                </>
               }
             >
               <FilterSelect

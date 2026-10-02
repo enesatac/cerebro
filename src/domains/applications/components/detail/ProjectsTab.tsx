@@ -1,3 +1,6 @@
+import { ExcelExportButton } from '@/components/actions/ExcelExportButton';
+import { useMasterData } from '@/domains/master-data/context';
+import { sheet } from '@/lib/xlsxTypes';
 import { Table, type TableColumnDef } from '@takeoff-ui/react-spar';
 import { EmptyState } from '@/components/feedback/EmptyState';
 import { QueryView } from '@/components/feedback/QueryView';
@@ -61,6 +64,7 @@ const columns: TableColumnDef<ApplicationProjectLink>[] = [
 
 export function ProjectsTab({ application }: { application: Application }) {
   const query = useProjectsByApplication(application.id);
+  const masterData = useMasterData();
   return (
     <QueryView
       query={query}
@@ -71,6 +75,42 @@ export function ProjectsTab({ application }: { application: Application }) {
         <SectionCard
           title="Bu uygulamayı etkileyen projeler"
           description="Planlanan ve süren değişiklikler ile bunların bu uygulamaya etkisi."
+          actions={
+            <ExcelExportButton
+              title={`${application.name} — projeler`}
+              disabled={links.length === 0}
+              build={() => [
+                sheet<ApplicationProjectLink>({
+                  name: 'Projeler',
+                  title: `${application.name} uygulamasını etkileyen projeler`,
+                  rows: links,
+                  columns: [
+                    { header: 'Kod', value: (l) => l.project.code },
+                    { header: 'Proje', value: (l) => l.project.name },
+                    {
+                      header: 'Etki',
+                      value: (l) => masterData.label('applicationImpactTypes', l.impact.impactType),
+                    },
+                    { header: 'Etki açıklaması', value: (l) => l.impact.description, width: 50 },
+                    {
+                      header: 'Durum',
+                      value: (l) => masterData.label('projectStatuses', l.project.status),
+                    },
+                    {
+                      header: 'Sağlık',
+                      value: (l) => masterData.label('projectHealths', l.project.health),
+                    },
+                    { header: 'Proje yöneticisi', value: (l) => l.project.projectManager?.name },
+                    {
+                      header: 'Planlanan bitiş',
+                      value: (l) => l.project.plannedEndDate,
+                      type: 'date',
+                    },
+                  ],
+                }),
+              ]}
+            />
+          }
         >
           <Table
             data={links}

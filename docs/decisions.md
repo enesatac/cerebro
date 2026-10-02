@@ -2,6 +2,16 @@
 
 Short records of decisions that shape the codebase. Newest first.
 
+## D-021 · Own .xlsx writer on fflate instead of a spreadsheet library (2026-10-03)
+
+Users want tables "as Excel, nicely formatted". CSV loses types and formatting and needs a BOM
+trick for Turkish characters. Full spreadsheet libraries are heavy (ExcelJS) or have unpatched
+advisories on npm (SheetJS). The export needs one narrow feature set — typed cells, a styled
+header, frozen pane, auto-filter, widths, hyperlinks — so `lib/xlsx.ts` writes the XML parts and
+zips them with `fflate` (~8 kB, loaded only when "Excel'e aktar" is clicked). Text is always an
+inline string, never a formula. The CSV export of the data quality report was replaced and the CSV
+helper removed. Validated by reading generated files with openpyxl.
+
 ## D-020 · Hand-built SVG charts over one trends read model (2026-10-02)
 
 Takeoff UI has no charts. The reports need four forms only — monthly lines, stacked monthly

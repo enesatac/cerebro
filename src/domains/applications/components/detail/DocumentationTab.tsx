@@ -9,6 +9,7 @@ export function DocumentationTab({ application }: { application: Application }) 
       description="Confluence alanları, Jira panoları, runbook'lar, tasarımlar ve gösterge panelleri."
     >
       <DocumentationTable
+        exportTitle={`${application.name} — dokümantasyon`}
         links={application.documentation}
         emptyTitle="Bu uygulamaya henüz dokümantasyon bağlanmadı"
         emptyDescription="En azından mimari genel bakışı ve destek runbook'unu bağlayın."

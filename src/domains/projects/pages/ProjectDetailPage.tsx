@@ -84,6 +84,7 @@ const TAB_CONTENT: Record<ProjectTab, (project: Project) => ReactNode> = {
   documentation: (p) => (
     <SectionCard title="Dokümantasyon">
       <DocumentationTable
+        exportTitle={`${p.name} — dokümantasyon`}
         links={p.documentation}
         emptyTitle="Bu projeye henüz dokümantasyon bağlanmadı"
         emptyDescription="Proje beratını, analizi ve teslimat panosunu bağlayın."

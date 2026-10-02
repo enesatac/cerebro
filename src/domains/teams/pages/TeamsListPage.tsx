@@ -1,3 +1,5 @@
+import { ExcelExportButton } from '@/components/actions/ExcelExportButton';
+import { sheet } from '@/lib/xlsxTypes';
 import { Table, type TableColumnDef } from '@takeoff-ui/react-spar';
 import { useSearchParams } from 'react-router';
 import { paths } from '@/app/router/paths';
@@ -83,13 +85,41 @@ export default function TeamsListPage() {
   const query = useTeamSummaries();
   const setSearch = (value: string) =>
     setSearchParams(value ? { q: value } : {}, { replace: true });
+  const visibleTeams = query.data ? filterTeams(query.data, search) : [];
+  const exportSheets = () => [
+    sheet<TeamListItem>({
+      name: 'Ekipler',
+      title: 'Ekipler',
+      subtitle: search ? `Arama: ${search}` : 'Filtre yok',
+      rows: [...visibleTeams].sort((a, b) => a.name.localeCompare(b.name, 'tr')),
+      columns: [
+        { header: 'Ekip', value: (t) => t.name },
+        { header: 'Açıklama', value: (t) => t.description, width: 50 },
+        { header: 'Yönetici', value: (t) => t.manager?.name },
+        { header: 'Üye sayısı', value: (t) => t.memberCount, type: 'integer' },
+        { header: 'Uygulama sayısı', value: (t) => t.applicationCount, type: 'integer' },
+        { header: 'Proje sayısı', value: (t) => t.projectCount, type: 'integer' },
+        { header: 'Ekip e-posta kutusu', value: (t) => t.contactEmail },
+        { header: 'Sohbet kanalı', value: (t) => t.chatChannel },
+      ],
+    }),
+  ];
 
   return (
     <>
       <PageHeader
         title="Ekipler"
         subtitle="Kim neyi geliştiriyor ve destekliyor — ve onlara nasıl ulaşılır."
-        actions={<CreateAction to={paths.teams.create()} label="Ekip oluştur" />}
+        actions={
+          <>
+            <ExcelExportButton
+              title="Ekipler"
+              build={exportSheets}
+              disabled={visibleTeams.length === 0}
+            />
+            <CreateAction to={paths.teams.create()} label="Ekip oluştur" />
+          </>
+        }
       />
       <QueryView query={query} loadingLabel="Ekipler yükleniyor" errorTitle="Ekipler yüklenemedi">
         {(teams) => {

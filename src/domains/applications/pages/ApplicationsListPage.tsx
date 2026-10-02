@@ -17,6 +17,14 @@ import {
 } from '../utils/applicationListParams';
 import { CreateAction } from '@/domains/auth/components/RecordActions';
 import { paths } from '@/app/router/paths';
+import { ExcelExportButton } from '@/components/actions/ExcelExportButton';
+import { useBusinessUnitsById } from '@/domains/business-units/api/queries';
+import { useMasterData } from '@/domains/master-data/context';
+import { useTeamsById } from '@/domains/teams/api/queries';
+import { useTechnologiesById } from '@/domains/technologies/api/queries';
+import { describeFilters } from '@/lib/xlsxTypes';
+import { applicationSheet } from '../utils/applicationExport';
+import { useRepositories } from '@/services/RepositoryContext';
 
 export default function ApplicationsListPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -34,12 +42,50 @@ export default function ApplicationsListPage() {
   const hasFilters = countActiveFilters(state) > 0;
   const total = query.data?.total;
 
+  const { applications } = useRepositories();
+  const masterData = useMasterData();
+  const teams = useTeamsById();
+  const units = useBusinessUnitsById();
+  const technologies = useTechnologiesById();
+  // Every matching application, not just the visible page.
+  const exportSheets = async () => {
+    const all = await applications.list({
+      ...toApplicationListQuery(state),
+      page: 0,
+      pageSize: Math.max(total ?? 0, 1000),
+    });
+    return [
+      applicationSheet(all.items, masterData, {
+        title: 'Uygulamalar',
+        subtitle: describeFilters([
+          ['Arama', state.search],
+          [
+            'Yaşam döngüsü',
+            state.lifecycle && masterData.label('applicationLifecycles', state.lifecycle),
+          ],
+          ['Kritiklik', state.criticality && masterData.label('criticalities', state.criticality)],
+          ['Ekip', state.teamId ? teams.data?.get(state.teamId)?.name : null],
+          [
+            'Teknoloji',
+            state.technologyId ? technologies.data?.get(state.technologyId)?.name : null,
+          ],
+          ['İş birimi', state.businessUnitId ? units.data?.get(state.businessUnitId)?.name : null],
+        ]),
+      }),
+    ];
+  };
+
   return (
     <>
       <PageHeader
         title="Uygulamalar"
         subtitle="Portföydeki tüm uygulamalar: ne yaptıkları, sahiplerinin kim olduğu ve ne kadar kritik oldukları."
-        actions={<CreateAction to={paths.applications.create()} label="Uygulama kaydet" />}
+        actions={
+          <>
+            <ExcelExportButton title="Uygulamalar" build={exportSheets} disabled={!total} />
+            <CreateAction to={paths.applications.create()} label="Uygulama kaydet" />
+          </>
+        }
       />
       <ApplicationFilters
         state={state}

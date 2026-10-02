@@ -1,3 +1,6 @@
+import { TableExportBar } from '@/components/actions/TableExportBar';
+import { useMasterData } from '@/domains/master-data/context';
+import { sheet } from '@/lib/xlsxTypes';
 import { Table, type TableColumnDef } from '@takeoff-ui/react-spar';
 import { EntityLink } from '@/components/data-display/EntityLink';
 import { EmptyState } from '@/components/feedback/EmptyState';
@@ -47,19 +50,43 @@ const columns: TableColumnDef<AttentionItem>[] = [
 ];
 
 export function AttentionTable({ items }: { items: AttentionItem[] }) {
+  const masterData = useMasterData();
   return (
-    <Table
-      data={items}
-      columns={columns}
-      getRowId={(row) => String(row.id)}
-      pagination={{ pageSize: 10, pageSizeOptions: [10, 25, 50] }}
-      emptyState={
-        <EmptyState
-          compact
-          title="Şu anda ilgilenilmesi gereken bir şey yok"
-          description="Sahipler atanmış, gözden geçirmeler güncel ve açık ciddi bir sorun yok."
-        />
-      }
-    />
+    <>
+      <TableExportBar
+        title="Dikkat gerektirenler"
+        disabled={items.length === 0}
+        build={() => [
+          sheet<AttentionItem>({
+            name: 'Dikkat gerektirenler',
+            title: 'Dikkat gerektirenler',
+            rows: items,
+            columns: [
+              {
+                header: 'Önem derecesi',
+                value: (i) => masterData.label('criticalities', i.severity),
+              },
+              { header: 'Kayıt', value: (i) => i.subject.name },
+              { header: 'Tür', value: (i) => subtitle(i) },
+              { header: 'Neden', value: (i) => i.reason, width: 60 },
+              { header: 'Tarih', value: (i) => i.date, type: 'date' },
+            ],
+          }),
+        ]}
+      />
+      <Table
+        data={items}
+        columns={columns}
+        getRowId={(row) => String(row.id)}
+        pagination={{ pageSize: 10, pageSizeOptions: [10, 25, 50] }}
+        emptyState={
+          <EmptyState
+            compact
+            title="Şu anda ilgilenilmesi gereken bir şey yok"
+            description="Sahipler atanmış, gözden geçirmeler güncel ve açık ciddi bir sorun yok."
+          />
+        }
+      />
+    </>
   );
 }

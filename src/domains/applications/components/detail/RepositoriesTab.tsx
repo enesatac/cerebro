@@ -1,3 +1,6 @@
+import { ExcelExportButton } from '@/components/actions/ExcelExportButton';
+import { useMasterData } from '@/domains/master-data/context';
+import { sheet } from '@/lib/xlsxTypes';
 import { Table, type TableColumnDef } from '@takeoff-ui/react-spar';
 import { ExternalLink } from '@/components/data-display/ExternalLink';
 import { EmptyState } from '@/components/feedback/EmptyState';
@@ -25,10 +28,31 @@ const columns: TableColumnDef<SourceRepository>[] = [
 ];
 
 export function RepositoriesTab({ application }: { application: Application }) {
+  const masterData = useMasterData();
   return (
     <SectionCard
       title="Kaynak kod depoları"
       description="Kodun, altyapının ve yapılandırmanın bulunduğu yerler."
+      actions={
+        <ExcelExportButton
+          title={`${application.name} — kod depoları`}
+          disabled={application.repositories.length === 0}
+          build={() => [
+            sheet<SourceRepository>({
+              name: 'Kod depoları',
+              title: `${application.name} kod depoları`,
+              rows: application.repositories,
+              columns: [
+                { header: 'Kod deposu', value: (r) => r.name },
+                { header: 'Tür', value: (r) => masterData.label('sourceRepositoryTypes', r.type) },
+                { header: 'Adres', value: (r) => r.url, type: 'link' },
+                { header: 'Varsayılan dal', value: (r) => r.defaultBranch },
+                { header: 'Açıklama', value: (r) => r.description, width: 50 },
+              ],
+            }),
+          ]}
+        />
+      }
     >
       <Table
         data={application.repositories}

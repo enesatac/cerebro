@@ -1,3 +1,6 @@
+import { ExcelExportButton } from '@/components/actions/ExcelExportButton';
+import { sheet } from '@/lib/xlsxTypes';
+import type { TechnologyUsage } from '../../types';
 import { Table, type TableColumnDef } from '@takeoff-ui/react-spar';
 import { DetailList } from '@/components/data-display/DetailList';
 import { EmptyState } from '@/components/feedback/EmptyState';
@@ -31,6 +34,51 @@ export function TechnicalTab({ application }: { application: Application }) {
       <SectionCard
         title="Teknoloji yığını"
         description="Katalogdaki teknolojiler, kullanıldıkları katmana göre gruplanmış."
+        actions={
+          <ExcelExportButton
+            title={`${application.name} — teknik bilgiler`}
+            disabled={application.technologies.length + application.dataStores.length === 0}
+            build={() => [
+              sheet<TechnologyUsage>({
+                name: 'Teknoloji yığını',
+                title: `${application.name} teknoloji yığını`,
+                rows: application.technologies,
+                columns: [
+                  {
+                    header: 'Katman',
+                    value: (u) => masterData.label('technologyCategories', u.layer),
+                  },
+                  {
+                    header: 'Teknoloji',
+                    value: (u) => catalogue.get(u.technologyId)?.name ?? `#${u.technologyId}`,
+                  },
+                  { header: 'Sürüm', value: (u) => u.version },
+                  {
+                    header: 'Katalog durumu',
+                    value: (u) => {
+                      const status = catalogue.get(u.technologyId)?.status;
+                      return status ? masterData.label('technologyStatuses', status) : null;
+                    },
+                  },
+                ],
+              }),
+              sheet<DataStore>({
+                name: 'Veri depoları',
+                title: `${application.name} veri depoları`,
+                rows: application.dataStores,
+                columns: [
+                  { header: 'Ad', value: (d) => d.name },
+                  {
+                    header: 'Teknoloji',
+                    value: (d) => catalogue.get(d.technologyId)?.name ?? `#${d.technologyId}`,
+                  },
+                  { header: 'Amaç', value: (d) => d.purpose, width: 50 },
+                  { header: 'Kişisel veri', value: (d) => d.containsPersonalData },
+                ],
+              }),
+            ]}
+          />
+        }
       >
         {application.technologies.length === 0 ? (
           <EmptyState

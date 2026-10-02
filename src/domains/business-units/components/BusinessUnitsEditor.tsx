@@ -1,3 +1,5 @@
+import { ExcelExportButton } from '@/components/actions/ExcelExportButton';
+import { sheet } from '@/lib/xlsxTypes';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button, Table, type TableColumnDef } from '@takeoff-ui/react-spar';
 import { AddIconOutlinedRounded } from '@takeoff-icons/react/add';
@@ -132,13 +134,35 @@ export function BusinessUnitsEditor() {
           title={`İş birimleri (${units.length})`}
           description="Uygulama ve projelerin sahibi olan organizasyon birimleri. Kullanımdaki birimler silinemez."
           actions={
-            <Button
-              size="small"
-              startContent={<AddIconOutlinedRounded aria-hidden="true" />}
-              onClick={() => setEditing('new')}
-            >
-              İş birimi ekle
-            </Button>
+            <>
+              <ExcelExportButton
+                title="İş birimleri"
+                disabled={units.length === 0}
+                build={() => [
+                  sheet<BusinessUnit>({
+                    name: 'İş birimleri',
+                    title: 'İş birimleri',
+                    rows: units,
+                    columns: [
+                      { header: 'Kod', value: (u) => u.code },
+                      { header: 'Ad', value: (u) => u.name },
+                      { header: 'Açıklama', value: (u) => u.description, width: 50 },
+                      {
+                        header: 'Yönetici',
+                        value: (u) => (u.headId ? people.data?.get(u.headId)?.fullName : null),
+                      },
+                    ],
+                  }),
+                ]}
+              />
+              <Button
+                size="small"
+                startContent={<AddIconOutlinedRounded aria-hidden="true" />}
+                onClick={() => setEditing('new')}
+              >
+                İş birimi ekle
+              </Button>
+            </>
           }
         >
           <Table

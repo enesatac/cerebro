@@ -30,6 +30,11 @@ catalogue — kept simple.
 - **Person pages** — click any person (team members, owners, stakeholders) to see everything they
   are mapped to on one screen: applications and projects (own role or via team), escalations,
   risks, decisions, teams and upcoming leaves.
+- **Excel export everywhere** — every table (lists, registers, detail tabs, reports, chart tables,
+  master data) has "Excel'e aktar": a formatted .xlsx with a title and filter/context line,
+  styled frozen header, auto-filter, fitted columns, real dates/numbers/percentages and clickable
+  links. Paged lists export all matching records; pages with several tables export one sheet per
+  table (e.g. a person's work summary).
 - **Report charts** — `/reports`: portfolio (active projects per month with the planned outlook,
   milestones, projects/applications by status, lifecycle, criticality, business unit, top
   technologies), operations (escalations raised per month by severity, open backlog, median
@@ -106,7 +111,7 @@ src/
   components/   cross-domain building blocks (layout, forms, feedback, data display)
   domains/      one folder per domain: types, api, schemas, utils, components, pages
   services/     repository registry + implementations (mock/ today, http/ later)
-  lib/          framework-agnostic helpers (dates, errors, validation, csv)
+  lib/          framework-agnostic helpers (dates, errors, validation, search, xlsx)
   hooks/        shared React hooks
   test/         test setup and route-level render helpers
 docs/           architecture, domain model, development guide, roadmap, decisions

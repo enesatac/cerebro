@@ -1,3 +1,8 @@
+import { loadPortfolioNames } from '@/domains/shared/utils/portfolioNames';
+import { useRepositories } from '@/services/RepositoryContext';
+import { TableExportBar } from '@/components/actions/TableExportBar';
+import { useMasterData } from '@/domains/master-data/context';
+import { sheet } from '@/lib/xlsxTypes';
 import { Table, type TableColumnDef } from '@takeoff-ui/react-spar';
 import type { ReactNode } from 'react';
 import { usePeopleById } from '@/domains/people/api/queries';
@@ -17,10 +22,20 @@ interface RiskTableProps {
   showRelated?: boolean;
   emptyState: ReactNode;
   pagination?: boolean;
+  /** Workbook title for the Excel export, e.g. "Ödeme Geçidi — riskler". */
+  exportTitle?: string;
 }
 
-export function RiskTable({ risks, showRelated = false, emptyState, pagination }: RiskTableProps) {
+export function RiskTable({
+  risks,
+  showRelated = false,
+  emptyState,
+  pagination,
+  exportTitle = 'Riskler',
+}: RiskTableProps) {
   const people = usePeopleById();
+  const masterData = useMasterData();
+  const repositories = useRepositories();
   const canEdit = usePermission('portfolio:edit');
   const columns: TableColumnDef<Risk>[] = [
     {
@@ -88,13 +103,51 @@ export function RiskTable({ risks, showRelated = false, emptyState, pagination }
       : []),
   ];
 
+  const exportSheets = async () => {
+    const names = await loadPortfolioNames(repositories);
+    return [
+      sheet<Risk>({
+        name: 'Riskler',
+        title: exportTitle,
+        rows: risks,
+        columns: [
+          { header: 'Risk', value: (r) => r.title },
+          { header: 'Açıklama', value: (r) => r.description, width: 50 },
+          { header: 'Kategori', value: (r) => masterData.label('riskCategories', r.category) },
+          { header: 'Olasılık', value: (r) => masterData.label('criticalities', r.probability) },
+          { header: 'Etki', value: (r) => masterData.label('criticalities', r.impact) },
+          { header: 'Önem derecesi', value: (r) => masterData.label('criticalities', r.severity) },
+          { header: 'Durum', value: (r) => masterData.label('riskStatuses', r.status) },
+          {
+            header: 'Sahip',
+            value: (r) => (r.ownerId ? people.data?.get(r.ownerId)?.fullName : 'Atanmamış'),
+          },
+          { header: 'Azaltma planı', value: (r) => r.mitigationPlan, width: 50 },
+          { header: 'Termin', value: (r) => r.dueDate, type: 'date' },
+          {
+            header: 'Etkilenen uygulamalar',
+            value: (r) => names.applications(r.relatedApplicationIds),
+          },
+          {
+            header: 'Etkilenen projeler',
+            value: (r) => names.projects(r.relatedProjectIds),
+          },
+          { header: 'Kayıt tarihi', value: (r) => r.audit.createdAt, type: 'date' },
+        ],
+      }),
+    ];
+  };
+
   return (
-    <Table
-      data={risks}
-      columns={columns}
-      getRowId={(row) => String(row.id)}
-      emptyState={emptyState}
-      pagination={pagination ? { pageSize: 25, pageSizeOptions: [25, 50, 100] } : undefined}
-    />
+    <>
+      <TableExportBar title={exportTitle} build={exportSheets} disabled={risks.length === 0} />
+      <Table
+        data={risks}
+        columns={columns}
+        getRowId={(row) => String(row.id)}
+        emptyState={emptyState}
+        pagination={pagination ? { pageSize: 25, pageSizeOptions: [25, 50, 100] } : undefined}
+      />
+    </>
   );
 }

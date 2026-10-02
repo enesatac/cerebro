@@ -1,3 +1,7 @@
+import { ExcelExportButton } from '@/components/actions/ExcelExportButton';
+import { applicationSheet } from '@/domains/applications/utils/applicationExport';
+import { projectSheet } from '@/domains/projects/utils/projectExport';
+import { sheet } from '@/lib/xlsxTypes';
 import { Table, type TableColumnDef } from '@takeoff-ui/react-spar';
 import { useNavigate, useParams } from 'react-router';
 import { paths } from '@/app/router/paths';
@@ -77,6 +81,15 @@ function OwnedApplications({ team }: { team: Team }) {
         <SectionCard
           title={`Uygulamalar (${result.total})`}
           description="Bu ekibin geliştirdiği veya desteklediği uygulamalar."
+          actions={
+            <ExcelExportButton
+              title={`${team.name} — uygulamalar`}
+              disabled={result.items.length === 0}
+              build={() => [
+                applicationSheet(result.items, masterData, { title: `${team.name} uygulamaları` }),
+              ]}
+            />
+          }
         >
           <Table
             data={result.items}
@@ -91,6 +104,7 @@ function OwnedApplications({ team }: { team: Team }) {
 }
 
 function DeliveredProjects({ team }: { team: Team }) {
+  const masterData = useMasterData();
   const query = useProjectList({ teamId: team.id, page: 0, pageSize: OWNERSHIP_PAGE_SIZE });
   const columns: TableColumnDef<ProjectListItem>[] = [
     {
@@ -126,6 +140,15 @@ function DeliveredProjects({ team }: { team: Team }) {
         <SectionCard
           title={`Projeler (${result.total})`}
           description="Bu ekibin yürüttüğü projeler."
+          actions={
+            <ExcelExportButton
+              title={`${team.name} — projeler`}
+              disabled={result.items.length === 0}
+              build={() => [
+                projectSheet(result.items, masterData, { title: `${team.name} projeleri` }),
+              ]}
+            />
+          }
         >
           <Table
             data={result.items}
@@ -147,7 +170,29 @@ function Members({ team }: { team: Team }) {
     .map((id) => people.data?.get(id))
     .filter((person): person is Person => person !== undefined);
   return (
-    <SectionCard title={`Üyeler (${team.memberIds.length})`}>
+    <SectionCard
+      title={`Üyeler (${team.memberIds.length})`}
+      actions={
+        <ExcelExportButton
+          title={`${team.name} — üyeler`}
+          disabled={members.length === 0}
+          build={() => [
+            sheet<Person>({
+              name: 'Üyeler',
+              title: `${team.name} üyeleri`,
+              rows: members,
+              columns: [
+                { header: 'Ad soyad', value: (p) => p.fullName },
+                { header: 'Unvan', value: (p) => p.jobTitle },
+                { header: 'E-posta', value: (p) => p.email },
+                { header: 'Konum', value: (p) => p.location },
+                { header: 'Ekip yöneticisi', value: (p) => p.id === team.managerId },
+              ],
+            }),
+          ]}
+        />
+      }
+    >
       {team.memberIds.length === 0 ? (
         <EmptyState compact title="Bu ekibe henüz üye eklenmedi" />
       ) : (

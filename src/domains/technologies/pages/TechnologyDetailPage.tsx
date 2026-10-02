@@ -1,3 +1,6 @@
+import { ExcelExportButton } from '@/components/actions/ExcelExportButton';
+import { applicationSheet } from '@/domains/applications/utils/applicationExport';
+import { useMasterData } from '@/domains/master-data/context';
 import { Alert, Table, type TableColumnDef } from '@takeoff-ui/react-spar';
 import { useNavigate, useParams } from 'react-router';
 import { paths } from '@/app/router/paths';
@@ -54,6 +57,7 @@ const columns: TableColumnDef<ApplicationListItem>[] = [
 ];
 
 function UsedBy({ technology }: { technology: Technology }) {
+  const masterData = useMasterData();
   const query = useApplicationList({
     technologyId: technology.id,
     page: 0,
@@ -70,6 +74,17 @@ function UsedBy({ technology }: { technology: Technology }) {
         <SectionCard
           title={`Kullananlar (${result.total})`}
           description="Bu teknolojiyi yığınında kaydeden uygulamalar, en kritik olanlar önce."
+          actions={
+            <ExcelExportButton
+              title={`${technology.name} — kullanan uygulamalar`}
+              disabled={result.items.length === 0}
+              build={() => [
+                applicationSheet(result.items, masterData, {
+                  title: `${technology.name} kullanan uygulamalar`,
+                }),
+              ]}
+            />
+          }
         >
           <Table
             data={result.items}

@@ -77,7 +77,7 @@ export function ResourcesReport({ trends }: { trends: PortfolioTrends }) {
             title="Projelere göre planlanan kapasite"
             description="Kaynak atamalarından: ayın iş günlerine göre ortalama tam zamanlı eşdeğer (FTE)."
             legend={capacity}
-            table={monthlyTable(trends.months, capacity, { total: true, format: formatDecimal })}
+            table={monthlyTable(trends.months, capacity, { total: true, type: 'decimal' })}
           >
             <MonthlyChart
               months={trends.months}

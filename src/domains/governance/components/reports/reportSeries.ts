@@ -6,7 +6,6 @@ import { useMasterData } from '@/domains/master-data/context';
 import type { MasterDataListKey } from '@/domains/master-data/types';
 import type { IsoDate } from '@/domains/shared/types';
 import { formatMonthYear } from '@/lib/dates';
-import { formatInteger } from '@/lib/format';
 import type { CategoryCount, TrendSeries } from '../../types';
 
 /**
@@ -59,22 +58,17 @@ export function useCoded(list: MasterDataListKey) {
 export function monthlyTable(
   months: readonly IsoDate[],
   series: readonly ChartSeries[],
-  {
-    total = false,
-    format = formatInteger,
-  }: { total?: boolean; format?: (v: number) => string } = {},
+  { total = false, type = 'integer' }: { total?: boolean; type?: 'integer' | 'decimal' } = {},
 ): ChartTable {
   return {
     head: ['Ay', ...series.map((s) => s.label), ...(total ? ['Toplam'] : [])],
+    types: ['text', ...series.map(() => type), ...(total ? [type] : [])],
     rows: months.map((month, index) => {
       const values = series.map((s) => s.values[index] ?? null);
+      const sum = values.reduce<number>((acc, v) => acc + (v ?? 0), 0);
       return {
         key: month,
-        cells: [
-          formatMonthYear(month),
-          ...values.map((v) => (v == null ? '—' : format(v))),
-          ...(total ? [format(values.reduce<number>((sum, v) => sum + (v ?? 0), 0))] : []),
-        ],
+        cells: [formatMonthYear(month), ...values, ...(total ? [Math.round(sum * 10) / 10] : [])],
       };
     }),
   };
@@ -84,13 +78,10 @@ export function barsTable(items: readonly CategoryBarItem[], head: string): Char
   const total = items.reduce((sum, item) => sum + item.value, 0);
   return {
     head: [head, 'Sayı', 'Pay'],
+    types: ['text', 'integer', 'percent'],
     rows: items.map((item) => ({
       key: item.key,
-      cells: [
-        item.label,
-        item.value,
-        total === 0 ? '%0' : `%${Math.round((item.value / total) * 100)}`,
-      ],
+      cells: [item.label, item.value, total === 0 ? 0 : Math.round((item.value / total) * 100)],
     })),
   };
 }

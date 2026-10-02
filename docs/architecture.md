@@ -193,6 +193,24 @@ teams and technologies.
 - Every person name links here: `PersonSummary` (team members, key facts, stakeholders), team
   managers, the people editor and the leave calendar.
 
+## Excel export
+
+- `lib/xlsx.ts` writes Office Open XML directly (zipped with `fflate`): inline strings only (no
+  formulas, so no spreadsheet formula injection), typed number/date/percent cells, a styled
+  frozen header row with an auto-filter, content-fitted column widths and hyperlinks for `link`
+  columns. It is loaded with `import()` on click; tables only import the sheet types from
+  `lib/xlsxTypes.ts` (`sheet<T>()`, `describeFilters`).
+- `components/actions/ExcelExportButton` ("Excel'e aktar") builds the sheets on click, adds the
+  context line (filters · row count · export time) and downloads `<title>-<date>.xlsx`;
+  `TableExportBar` places it above a table that has no header of its own.
+- Exports use labels, not codes (master data), and resolve names when clicked
+  (`domains/shared/utils/portfolioNames.ts` reads application/project names from the
+  repositories) instead of subscribing tables to extra queries. Shared sheet definitions:
+  `applicationSheet`, `projectSheet`, `personWorkbook`.
+- Paged lists (applications, projects) re-query with the page's filters and a large page size so
+  the file holds every match. Chart tables keep raw numbers (`ChartTable.types`) so numbers reach
+  Excel as numbers.
+
 ## Report charts
 
 - `GovernanceRepository.getTrends(period, today)` returns `PortfolioTrends`: monthly series

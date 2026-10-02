@@ -1,3 +1,8 @@
+import { loadPortfolioNames } from '@/domains/shared/utils/portfolioNames';
+import { useRepositories } from '@/services/RepositoryContext';
+import { TableExportBar } from '@/components/actions/TableExportBar';
+import { useMasterData } from '@/domains/master-data/context';
+import { sheet } from '@/lib/xlsxTypes';
 import { Table, type TableColumnDef } from '@takeoff-ui/react-spar';
 import { EmptyState } from '@/components/feedback/EmptyState';
 import { QueryView } from '@/components/feedback/QueryView';
@@ -63,6 +68,32 @@ function columns(
 export function DependenciesTab({ application }: { application: Application }) {
   const query = useApplicationDependencies(application.id);
   const canEdit = usePermission('portfolio:edit');
+  const masterData = useMasterData();
+  const repositories = useRepositories();
+  const dependencySheet = (
+    nameOf: (id: number) => string,
+    name: string,
+    title: string,
+    rows: ApplicationDependency[],
+    other: 'target' | 'source',
+  ) =>
+    sheet<ApplicationDependency>({
+      name,
+      title,
+      rows: [...rows].sort(byCriticalityDesc),
+      columns: [
+        {
+          header: 'Uygulama',
+          value: (d) => nameOf(other === 'target' ? d.targetApplicationId : d.sourceApplicationId),
+        },
+        { header: 'Tür', value: (d) => masterData.label('dependencyTypes', d.type) },
+        {
+          header: 'Erişilemezse etkisi',
+          value: (d) => masterData.label('criticalities', d.criticality),
+        },
+        { header: 'Açıklama', value: (d) => d.description, width: 50 },
+      ],
+    });
 
   return (
     <QueryView
@@ -72,6 +103,29 @@ export function DependenciesTab({ application }: { application: Application }) {
     >
       {({ outgoing, incoming }) => (
         <div className="c-stack">
+          <TableExportBar
+            title={`${application.name} — bağımlılıklar`}
+            disabled={outgoing.length + incoming.length === 0}
+            build={async () => {
+              const names = await loadPortfolioNames(repositories);
+              return [
+                dependencySheet(
+                  names.application,
+                  'Bağımlı olduğu',
+                  `${application.name} şunlara bağımlı`,
+                  outgoing,
+                  'target',
+                ),
+                dependencySheet(
+                  names.application,
+                  'Kullananlar',
+                  `${application.name} uygulamasını kullananlar`,
+                  incoming,
+                  'source',
+                ),
+              ];
+            }}
+          />
           <SectionCard
             title={`Bağımlı olduğu (${outgoing.length})`}
             description={`${application.name} uygulamasının çalışmak için ihtiyaç duyduğu uygulamalar.`}

@@ -3090,3 +3090,10 @@ code {
   stroke-width: 4px;
   stroke-linejoin: round;
 }
+
+/* ---------- Table tools (Excel export above a table) ---------- */
+.c-table-tools {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: var(--spacing-m-base);
+}

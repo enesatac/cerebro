@@ -17,6 +17,13 @@ import {
 } from '../utils/projectListParams';
 import { CreateAction } from '@/domains/auth/components/RecordActions';
 import { paths } from '@/app/router/paths';
+import { ExcelExportButton } from '@/components/actions/ExcelExportButton';
+import { useBusinessUnitsById } from '@/domains/business-units/api/queries';
+import { useMasterData } from '@/domains/master-data/context';
+import { useTeamsById } from '@/domains/teams/api/queries';
+import { describeFilters } from '@/lib/xlsxTypes';
+import { projectSheet } from '../utils/projectExport';
+import { useRepositories } from '@/services/RepositoryContext';
 
 export default function ProjectsListPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -32,12 +39,42 @@ export default function ProjectsListPage() {
 
   const total = query.data?.total;
 
+  const { projects } = useRepositories();
+  const masterData = useMasterData();
+  const teams = useTeamsById();
+  const units = useBusinessUnitsById();
+  // Every matching project, not just the visible page.
+  const exportSheets = async () => {
+    const all = await projects.list({
+      ...toProjectListQuery(state),
+      page: 0,
+      pageSize: Math.max(total ?? 0, 1000),
+    });
+    return [
+      projectSheet(all.items, masterData, {
+        title: 'Projeler',
+        subtitle: describeFilters([
+          ['Arama', state.search],
+          ['Durum', state.status && masterData.label('projectStatuses', state.status)],
+          ['Sağlık', state.health && masterData.label('projectHealths', state.health)],
+          ['İş birimi', state.businessUnitId ? units.data?.get(state.businessUnitId)?.name : null],
+          ['Ekip', state.teamId ? teams.data?.get(state.teamId)?.name : null],
+        ]),
+      }),
+    ];
+  };
+
   return (
     <>
       <PageHeader
         title="Projeler"
         subtitle="Süren değişiklikler: durum, sağlık, zaman çizelgesi ve her projenin etkilediği uygulamalar."
-        actions={<CreateAction to={paths.projects.create()} label="Proje oluştur" />}
+        actions={
+          <>
+            <ExcelExportButton title="Projeler" build={exportSheets} disabled={!total} />
+            <CreateAction to={paths.projects.create()} label="Proje oluştur" />
+          </>
+        }
       />
       <ProjectFilters
         state={state}

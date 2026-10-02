@@ -1,3 +1,5 @@
+import { ExcelExportButton } from '@/components/actions/ExcelExportButton';
+import { sheet } from '@/lib/xlsxTypes';
 import { Table, type TableColumnDef } from '@takeoff-ui/react-spar';
 import { AddIconOutlinedRounded } from '@takeoff-icons/react/add';
 import { paths } from '@/app/router/paths';
@@ -90,12 +92,38 @@ export default function UsersListPage() {
         title="Kullanıcılar ve roller"
         subtitle="Cerebro'ya kimlerin giriş yapabileceği ve neler yapabileceği."
         actions={
-          <ButtonLink
-            to={paths.admin.createUser()}
-            startContent={<AddIconOutlinedRounded aria-hidden="true" />}
-          >
-            Kullanıcı ekle
-          </ButtonLink>
+          <>
+            <ExcelExportButton
+              title="Kullanıcılar ve roller"
+              disabled={!query.data?.length}
+              build={() => [
+                sheet<UserAccount>({
+                  name: 'Kullanıcılar',
+                  title: 'Kullanıcılar ve roller',
+                  rows: [...(query.data ?? [])].sort((a, b) =>
+                    a.displayName.localeCompare(b.displayName, 'tr'),
+                  ),
+                  columns: [
+                    { header: 'Ad', value: (u) => u.displayName },
+                    { header: 'E-posta', value: (u) => u.email },
+                    { header: 'Rol', value: (u) => ROLE_PRESENTATION[u.role].label },
+                    {
+                      header: 'Bağlı kişi',
+                      value: (u) => (u.personId ? people.data?.get(u.personId)?.fullName : null),
+                    },
+                    { header: 'Durum', value: (u) => (u.active ? 'Aktif' : 'Devre dışı') },
+                    { header: 'Son giriş', value: (u) => u.lastSignInAt, type: 'date' },
+                  ],
+                }),
+              ]}
+            />
+            <ButtonLink
+              to={paths.admin.createUser()}
+              startContent={<AddIconOutlinedRounded aria-hidden="true" />}
+            >
+              Kullanıcı ekle
+            </ButtonLink>
+          </>
         }
       />
       <SectionCard title="Roller">

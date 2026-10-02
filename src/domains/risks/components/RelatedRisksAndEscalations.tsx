@@ -42,6 +42,7 @@ export function RelatedRisksAndEscalations({
             }
           >
             <EscalationTable
+              exportTitle={`${subjectName} — eskalasyonlar`}
               escalations={prioritise(list, (e) => isActiveEscalation(e.status))}
               emptyState={
                 <EmptyState compact title={`${subjectName} için açılmış eskalasyon yok`} />
@@ -57,6 +58,7 @@ export function RelatedRisksAndEscalations({
             actions={<SmallCreateAction to={paths.riskForms.create(prefill)} label="Risk kaydet" />}
           >
             <RiskTable
+              exportTitle={`${subjectName} — riskler`}
               risks={prioritise(list, (r) => isActiveRisk(r.status))}
               emptyState={<EmptyState compact title={`${subjectName} için kaydedilmiş risk yok`} />}
             />

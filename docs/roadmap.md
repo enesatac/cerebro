@@ -42,7 +42,7 @@ integration registers. Still open: graph visualisation (evaluate a library over 
 
 ## Phase 5 — Governance (reports ✅)
 
-Data-quality report (completeness, ownership gaps, review state, CSV export) and technology-risk
+Data-quality report (completeness, ownership gaps, review state, Excel export) and technology-risk
 report. Still open: review reminders, lifecycle governance workflows, field-level audit history.
 
 ## Phase 6 — Enterprise Integrations

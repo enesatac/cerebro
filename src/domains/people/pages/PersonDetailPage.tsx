@@ -1,6 +1,9 @@
 import { useParams } from 'react-router';
 import { paths } from '@/app/router/paths';
 import { CopyLinkButton } from '@/components/actions/CopyLinkButton';
+import { ExcelExportButton } from '@/components/actions/ExcelExportButton';
+import { useMasterData } from '@/domains/master-data/context';
+import { personWorkbook } from '../utils/personExport';
 import { DetailList } from '@/components/data-display/DetailList';
 import { EntityLink } from '@/components/data-display/EntityLink';
 import { StatTile } from '@/components/data-display/StatTile';
@@ -66,6 +69,7 @@ export default function PersonDetailPage() {
   const personId = parseId(requestedId) ?? 0;
   const today = toIsoDate(new Date());
   const query = usePersonWorkload(personId, today);
+  const masterData = useMasterData();
 
   if (query.isPending) return <LoadingState label="Kişi yükleniyor" rows={8} />;
   if (query.isError) {
@@ -95,7 +99,15 @@ export default function PersonDetailPage() {
         breadcrumbs={[{ label: 'Ekipler', to: paths.teams.list() }, { label: person.fullName }]}
         title={person.fullName}
         subtitle={person.jobTitle}
-        actions={<CopyLinkButton />}
+        actions={
+          <>
+            <ExcelExportButton
+              title={`${person.fullName} — iş özeti`}
+              build={() => personWorkbook(workload, masterData)}
+            />
+            <CopyLinkButton />
+          </>
+        }
       />
 
       <section aria-label="Temel bilgiler" className="c-key-facts">

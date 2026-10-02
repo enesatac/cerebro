@@ -1,3 +1,5 @@
+import { ExcelExportButton } from '@/components/actions/ExcelExportButton';
+import { describeFilters, sheet } from '@/lib/xlsxTypes';
 import { Table, type TableColumnDef } from '@takeoff-ui/react-spar';
 import { useSearchParams } from 'react-router';
 import { paths } from '@/app/router/paths';
@@ -80,13 +82,50 @@ export default function TechnologiesListPage() {
   const update = (patch: Partial<TechnologyFilterState>) =>
     setSearchParams(serializeTechnologyFilters({ ...filters, ...patch }), { replace: true });
   const activeFilters = [filters.search, filters.category, filters.status].filter(Boolean).length;
+  const visibleTechnologies = query.data ? filterTechnologies(query.data, filters) : [];
+  const exportSheets = () => [
+    sheet<TechnologyListItem>({
+      name: 'Teknolojiler',
+      title: 'Teknoloji kataloğu',
+      subtitle: describeFilters([
+        ['Arama', filters.search],
+        [
+          'Kategori',
+          filters.category && masterData.label('technologyCategories', filters.category),
+        ],
+        ['Durum', filters.status && masterData.label('technologyStatuses', filters.status)],
+      ]),
+      rows: [...visibleTechnologies].sort((a, b) => a.name.localeCompare(b.name, 'tr')),
+      columns: [
+        { header: 'Teknoloji', value: (t) => t.name },
+        { header: 'Kategori', value: (t) => masterData.label('technologyCategories', t.category) },
+        { header: 'Durum', value: (t) => masterData.label('technologyStatuses', t.status) },
+        { header: 'Açıklama', value: (t) => t.description, width: 50 },
+        { header: 'Kullanan uygulama', value: (t) => t.applicationCount, type: 'integer' },
+        {
+          header: 'Aktif kullanan uygulama',
+          value: (t) => t.activeApplicationCount,
+          type: 'integer',
+        },
+      ],
+    }),
+  ];
 
   return (
     <>
       <PageHeader
         title="Teknolojiler"
         subtitle="Teknoloji kataloğu, kurum içi durumları ve her teknolojinin nerede kullanıldığı."
-        actions={<CreateAction to={paths.technologies.create()} label="Teknoloji ekle" />}
+        actions={
+          <>
+            <ExcelExportButton
+              title="Teknoloji kataloğu"
+              build={exportSheets}
+              disabled={visibleTechnologies.length === 0}
+            />
+            <CreateAction to={paths.technologies.create()} label="Teknoloji ekle" />
+          </>
+        }
       />
       <QueryView
         query={query}

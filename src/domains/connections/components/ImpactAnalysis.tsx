@@ -1,3 +1,6 @@
+import { TableExportBar } from '@/components/actions/TableExportBar';
+import { useMasterData } from '@/domains/master-data/context';
+import { sheet } from '@/lib/xlsxTypes';
 import { Field, Select, Table, type TableColumnDef } from '@takeoff-ui/react-spar';
 import type { EntityId } from '@/domains/shared/types';
 import { useSearchParams } from 'react-router';
@@ -49,6 +52,7 @@ export function ImpactAnalysis() {
   const selectedId = parseId(params.get('app'));
   const refs = useApplicationRefs();
   const dependencies = useAllDependencies();
+  const masterData = useMasterData();
 
   const select = (value: string) => {
     const next = new URLSearchParams(params);
@@ -101,8 +105,39 @@ export function ImpactAnalysis() {
             const upstream = analyseImpact(all, selectedId, 'upstream');
             const name = selected?.name ?? `#${selectedId}`;
             const direct = downstream.filter((node) => node.depth === 1).length;
+            const impactSheet = (sheetName: string, title: string, nodes: ImpactNode[]) =>
+              sheet<ImpactNode>({
+                name: sheetName,
+                title,
+                rows: nodes,
+                columns: [
+                  { header: 'Uygulama', value: (n) => nameOf(n.applicationId) },
+                  {
+                    header: 'İlişki',
+                    value: (n) => (n.depth === 1 ? 'Doğrudan' : `Dolaylı · ${n.depth} adım`),
+                  },
+                  { header: 'Adım', value: (n) => n.depth, type: 'integer' },
+                  {
+                    header: 'Etki',
+                    value: (n) => masterData.label('criticalities', n.pathCriticality),
+                  },
+                  {
+                    header: 'Yol',
+                    value: (n) => [name, ...n.path.map(nameOf)].join(' → '),
+                    width: 60,
+                  },
+                ],
+              });
             return (
               <>
+                <TableExportBar
+                  title={`${name} — etki analizi`}
+                  disabled={downstream.length + upstream.length === 0}
+                  build={() => [
+                    impactSheet('Etkilenenler', `${name} erişilemezse etkilenenler`, downstream),
+                    impactSheet('Bağımlı olduğu', `${name} şunlara bağımlı`, upstream),
+                  ]}
+                />
                 <SectionCard
                   title={`${name} erişilemezse etkilenenler (${downstream.length})`}
                   description={

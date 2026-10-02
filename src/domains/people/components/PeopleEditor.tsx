@@ -1,3 +1,5 @@
+import { ExcelExportButton } from '@/components/actions/ExcelExportButton';
+import { sheet } from '@/lib/xlsxTypes';
 import { includesFolded } from '@/lib/search';
 import { paths } from '@/app/router/paths';
 import { EntityLink } from '@/components/data-display/EntityLink';
@@ -158,13 +160,38 @@ export function PeopleEditor() {
             title={`Kişiler (${all.length})`}
             description="Uygulama ve projelerde rol alan, ekiplerde yer alan kişiler. Başka kayıtlarda geçen kişiler silinemez."
             actions={
-              <Button
-                size="small"
-                startContent={<AddIconOutlinedRounded aria-hidden="true" />}
-                onClick={() => setEditing('new')}
-              >
-                Kişi ekle
-              </Button>
+              <>
+                <ExcelExportButton
+                  title="Kişiler"
+                  disabled={visible.length === 0}
+                  build={() => [
+                    sheet<Person>({
+                      name: 'Kişiler',
+                      title: 'Kişiler',
+                      subtitle: search ? `Arama: ${search}` : 'Filtre yok',
+                      rows: visible,
+                      columns: [
+                        { header: 'Ad soyad', value: (p) => p.fullName },
+                        { header: 'Unvan', value: (p) => p.jobTitle },
+                        { header: 'E-posta', value: (p) => p.email },
+                        {
+                          header: 'İş birimi',
+                          value: (p) =>
+                            p.businessUnitId ? units.data?.get(p.businessUnitId)?.name : null,
+                        },
+                        { header: 'Konum', value: (p) => p.location },
+                      ],
+                    }),
+                  ]}
+                />
+                <Button
+                  size="small"
+                  startContent={<AddIconOutlinedRounded aria-hidden="true" />}
+                  onClick={() => setEditing('new')}
+                >
+                  Kişi ekle
+                </Button>
+              </>
             }
           >
             <div className="c-stack c-stack--s">

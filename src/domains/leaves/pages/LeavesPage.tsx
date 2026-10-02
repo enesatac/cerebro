@@ -1,3 +1,6 @@
+import { ExcelExportButton } from '@/components/actions/ExcelExportButton';
+import type { Person } from '@/domains/people/types';
+import { describeFilters, sheet } from '@/lib/xlsxTypes';
 import { foldForSearch } from '@/lib/search';
 import { Button, Field, Switch } from '@takeoff-ui/react-spar';
 import { AddIconOutlinedRounded } from '@takeoff-icons/react/add';
@@ -281,11 +284,83 @@ export default function LeavesPage() {
           <Toolbar
             label="İzinleri filtrele"
             end={
-              <FilterSummary
-                summary={`${peopleWithLeave} kişi izinli`}
-                activeFilterCount={activeFilters}
-                onReset={resetFilters}
-              />
+              <>
+                <FilterSummary
+                  summary={`${peopleWithLeave} kişi izinli`}
+                  activeFilterCount={activeFilters}
+                  onReset={resetFilters}
+                />
+                <ExcelExportButton
+                  title={`İzinler — ${periodTitle(state.range, period)}`}
+                  disabled={rows.length === 0}
+                  build={() => {
+                    const context = describeFilters([
+                      ['Dönem', formatDateRange(period.from, period.to)],
+                      ['Arama', state.search],
+                      [
+                        'İş birimi',
+                        businessUnits.data?.find((u) => u.id === state.businessUnitId)?.name,
+                      ],
+                      ['Ekip', teams.data?.find((t) => t.id === state.teamId)?.name],
+                      ['İzin türü', state.type && masterData.label('leaveTypes', state.type)],
+                    ]);
+                    const leaves = rows.flatMap((row) =>
+                      row.leaves.map((leave) => ({ person: row.person, leave })),
+                    );
+                    const inPeriod = (leave: LeaveRecord) =>
+                      workingDays(
+                        leave.startDate < period.from ? period.from : leave.startDate,
+                        leave.endDate > period.to ? period.to : leave.endDate,
+                      );
+                    return [
+                      sheet<{ person: Person; leave: LeaveRecord }>({
+                        name: 'İzinler',
+                        title: `İzinler — ${periodTitle(state.range, period)}`,
+                        subtitle: context,
+                        rows: leaves,
+                        columns: [
+                          { header: 'Kişi', value: (r) => r.person.fullName },
+                          { header: 'Unvan', value: (r) => r.person.jobTitle },
+                          {
+                            header: 'İzin türü',
+                            value: (r) => masterData.label('leaveTypes', r.leave.type),
+                          },
+                          { header: 'Başlangıç', value: (r) => r.leave.startDate, type: 'date' },
+                          { header: 'Bitiş', value: (r) => r.leave.endDate, type: 'date' },
+                          {
+                            header: 'Toplam iş günü',
+                            value: (r) => workingDays(r.leave.startDate, r.leave.endDate),
+                            type: 'integer',
+                          },
+                          {
+                            header: 'Dönemdeki iş günü',
+                            value: (r) => inPeriod(r.leave),
+                            type: 'integer',
+                          },
+                          { header: 'Not', value: (r) => r.leave.note, width: 40 },
+                        ],
+                      }),
+                      sheet<TimelineRow>({
+                        name: 'Kişi özeti',
+                        title: 'Kişi bazında izin özeti',
+                        subtitle: context,
+                        rows,
+                        columns: [
+                          { header: 'Kişi', value: (r) => r.person.fullName },
+                          { header: 'Unvan', value: (r) => r.person.jobTitle },
+                          { header: 'İzin sayısı', value: (r) => r.leaves.length, type: 'integer' },
+                          {
+                            header: 'Dönemdeki iş günü',
+                            value: (r) => r.leaves.reduce((sum, l) => sum + inPeriod(l), 0),
+                            type: 'integer',
+                          },
+                          { header: 'Bugün izinli', value: (r) => awayToday.has(r.person.id) },
+                        ],
+                      }),
+                    ];
+                  }}
+                />
+              </>
             }
           >
             <SearchField

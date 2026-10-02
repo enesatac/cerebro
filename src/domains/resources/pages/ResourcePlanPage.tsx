@@ -1,3 +1,6 @@
+import { ExcelExportButton } from '@/components/actions/ExcelExportButton';
+import { useMasterData } from '@/domains/master-data/context';
+import { describeFilters, sheet } from '@/lib/xlsxTypes';
 import { foldForSearch } from '@/lib/search';
 import { Button, Field, Switch } from '@takeoff-ui/react-spar';
 import { AddIconOutlinedRounded } from '@takeoff-icons/react/add';
@@ -86,6 +89,7 @@ export default function ResourcePlanPage() {
     );
 
   const canEdit = usePermission('resources:manage');
+  const masterData = useMasterData();
   const people = usePeopleById();
   const teams = useTeams();
   const businessUnits = useBusinessUnits();
@@ -330,11 +334,99 @@ export default function ResourcePlanPage() {
           <Toolbar
             label="Kaynak planını filtrele"
             end={
-              <FilterSummary
-                summary={`${stats.overInPeriod} kişi aşırı yüklü`}
-                activeFilterCount={activeFilters}
-                onReset={resetFilters}
-              />
+              <>
+                <FilterSummary
+                  summary={`${stats.overInPeriod} kişi aşırı yüklü`}
+                  activeFilterCount={activeFilters}
+                  onReset={resetFilters}
+                />
+                <ExcelExportButton
+                  title={`Kaynak planı — ${title}`}
+                  disabled={rows.length === 0}
+                  build={() => {
+                    const projectName = (id: EntityId) =>
+                      projectRefs.data?.get(id)?.name ?? `#${id}`;
+                    const context = describeFilters([
+                      ['Dönem', formatDateRange(period.from, period.to)],
+                      ['Arama', state.search],
+                      ['Proje', state.projectId !== null ? projectName(state.projectId) : null],
+                      ['Ekip', teams.data?.find((t) => t.id === state.teamId)?.name],
+                      [
+                        'İş birimi',
+                        businessUnits.data?.find((u) => u.id === state.businessUnitId)?.name,
+                      ],
+                      ['Yalnızca aşırı yüklüler', state.overOnly ? 'Evet' : null],
+                    ]);
+                    return [
+                      sheet<{ row: PlanRow; allocation: Allocation }>({
+                        name: 'Atamalar',
+                        title: `Kaynak planı — ${title}`,
+                        subtitle: context,
+                        rows: rows.flatMap((row) =>
+                          row.allocations.map((allocation) => ({ row, allocation })),
+                        ),
+                        columns: [
+                          { header: 'Kişi', value: (r) => r.row.person.fullName },
+                          { header: 'Unvan', value: (r) => r.row.person.jobTitle },
+                          { header: 'Proje', value: (r) => projectName(r.allocation.projectId) },
+                          {
+                            header: 'Rol',
+                            value: (r) => masterData.label('stakeholderRoles', r.allocation.role),
+                          },
+                          {
+                            header: 'Başlangıç',
+                            value: (r) => r.allocation.startDate,
+                            type: 'date',
+                          },
+                          { header: 'Bitiş', value: (r) => r.allocation.endDate, type: 'date' },
+                          {
+                            header: 'Doluluk',
+                            value: (r) => r.allocation.percent,
+                            type: 'percent',
+                          },
+                          { header: 'Not', value: (r) => r.allocation.note, width: 40 },
+                        ],
+                      }),
+                      sheet<PlanRow>({
+                        name: 'Kişi yükü',
+                        title: 'Kişi bazında yük',
+                        subtitle: context,
+                        rows,
+                        columns: [
+                          { header: 'Kişi', value: (r) => r.person.fullName },
+                          { header: 'Unvan', value: (r) => r.person.jobTitle },
+                          {
+                            header: 'Atama sayısı',
+                            value: (r) => r.allocations.length,
+                            type: 'integer',
+                          },
+                          {
+                            header: 'Bugünkü iş sayısı',
+                            value: (r) => loadOn(r.allocations, today).count,
+                            type: 'integer',
+                          },
+                          {
+                            header: 'Bugünkü yük',
+                            value: (r) => loadOn(r.allocations, today).percent,
+                            type: 'percent',
+                          },
+                          {
+                            header: 'Dönemde en yüksek yük',
+                            value: (r) => peakLoad(loadSegments(r.allocations, period)).percent,
+                            type: 'percent',
+                          },
+                          {
+                            header: 'En fazla paralel iş',
+                            value: (r) => peakLoad(loadSegments(r.allocations, period)).count,
+                            type: 'integer',
+                          },
+                          { header: 'İzin sayısı', value: (r) => r.leaves.length, type: 'integer' },
+                        ],
+                      }),
+                    ];
+                  }}
+                />
+              </>
             }
           >
             <SearchField

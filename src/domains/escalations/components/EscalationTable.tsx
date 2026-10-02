@@ -1,3 +1,8 @@
+import { loadPortfolioNames } from '@/domains/shared/utils/portfolioNames';
+import { useRepositories } from '@/services/RepositoryContext';
+import { TableExportBar } from '@/components/actions/TableExportBar';
+import { useMasterData } from '@/domains/master-data/context';
+import { sheet } from '@/lib/xlsxTypes';
 import { Table, type TableColumnDef } from '@takeoff-ui/react-spar';
 import type { ReactNode } from 'react';
 import { usePeopleById } from '@/domains/people/api/queries';
@@ -16,6 +21,8 @@ interface EscalationTableProps {
   showRelated?: boolean;
   emptyState: ReactNode;
   pagination?: boolean;
+  /** Workbook title for the Excel export, e.g. "Ödeme Geçidi — eskalasyonlar". */
+  exportTitle?: string;
 }
 
 export function EscalationTable({
@@ -23,8 +30,11 @@ export function EscalationTable({
   showRelated = false,
   emptyState,
   pagination,
+  exportTitle = 'Eskalasyonlar',
 }: EscalationTableProps) {
   const people = usePeopleById();
+  const masterData = useMasterData();
+  const repositories = useRepositories();
   const teams = useTeamsById();
   const canEdit = usePermission('portfolio:edit');
   const columns: TableColumnDef<Escalation>[] = [
@@ -101,13 +111,58 @@ export function EscalationTable({
       : []),
   ];
 
+  const exportSheets = async () => {
+    const names = await loadPortfolioNames(repositories);
+    return [
+      sheet<Escalation>({
+        name: 'Eskalasyonlar',
+        title: exportTitle,
+        rows: escalations,
+        columns: [
+          { header: 'Eskalasyon', value: (e) => e.title },
+          { header: 'Açıklama', value: (e) => e.description, width: 50 },
+          { header: 'Önem derecesi', value: (e) => masterData.label('criticalities', e.severity) },
+          { header: 'Durum', value: (e) => masterData.label('escalationStatuses', e.status) },
+          {
+            header: 'Sahip',
+            value: (e) => (e.ownerId ? people.data?.get(e.ownerId)?.fullName : 'Atanmamış'),
+          },
+          {
+            header: 'Sorumlu ekip',
+            value: (e) => (e.responsibleTeamId ? teams.data?.get(e.responsibleTeamId)?.name : null),
+          },
+          { header: 'Açan', value: (e) => people.data?.get(e.raisedById)?.fullName },
+          { header: 'Açılış', value: (e) => e.raisedAt, type: 'date' },
+          { header: 'Hedef çözüm', value: (e) => e.targetResolutionDate, type: 'date' },
+          { header: 'Çözüm tarihi', value: (e) => e.resolvedOn, type: 'date' },
+          { header: 'Çözüm', value: (e) => e.resolution, width: 50 },
+          {
+            header: 'Etkilenen uygulamalar',
+            value: (e) => names.applications(e.relatedApplicationIds),
+          },
+          {
+            header: 'Etkilenen projeler',
+            value: (e) => names.projects(e.relatedProjectIds),
+          },
+        ],
+      }),
+    ];
+  };
+
   return (
-    <Table
-      data={escalations}
-      columns={columns}
-      getRowId={(row) => String(row.id)}
-      emptyState={emptyState}
-      pagination={pagination ? { pageSize: 25, pageSizeOptions: [25, 50, 100] } : undefined}
-    />
+    <>
+      <TableExportBar
+        title={exportTitle}
+        build={exportSheets}
+        disabled={escalations.length === 0}
+      />
+      <Table
+        data={escalations}
+        columns={columns}
+        getRowId={(row) => String(row.id)}
+        emptyState={emptyState}
+        pagination={pagination ? { pageSize: 25, pageSizeOptions: [25, 50, 100] } : undefined}
+      />
+    </>
   );
 }

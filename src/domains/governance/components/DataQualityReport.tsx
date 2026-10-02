@@ -1,5 +1,4 @@
-import { Button, Table, type TableColumnDef } from '@takeoff-ui/react-spar';
-import { ArrowDownloadIconOutlinedRounded } from '@takeoff-icons/react/arrow-download';
+import { Table, type TableColumnDef } from '@takeoff-ui/react-spar';
 import { useSearchParams } from 'react-router';
 import { paths } from '@/app/router/paths';
 import { EntityLink } from '@/components/data-display/EntityLink';
@@ -10,8 +9,9 @@ import { FilterSelect } from '@/components/forms/FilterSelect';
 import { FilterSummary } from '@/components/layout/FilterSummary';
 import { Toolbar } from '@/components/layout/Toolbar';
 import { PercentMeter } from '@/components/data-display/PercentMeter';
-import { downloadCsv, toCsv } from '@/lib/csv';
-import { toIsoDate } from '@/lib/dates';
+import { ExcelExportButton } from '@/components/actions/ExcelExportButton';
+import { useMasterData } from '@/domains/master-data/context';
+import { describeFilters, sheet } from '@/lib/xlsxTypes';
 import { pluralize } from '@/lib/format';
 import { oneOf } from '@/lib/urlParams';
 import type { ApplicationHealthRow } from '../types';
@@ -102,27 +102,8 @@ const columns: TableColumnDef<ApplicationHealthRow>[] = [
   },
 ];
 
-function exportCsv(rows: readonly ApplicationHealthRow[]) {
-  const csv = toCsv(rows, [
-    { header: 'Kod', value: (r) => r.code },
-    { header: 'Uygulama', value: (r) => r.name },
-    { header: 'Yaşam döngüsü', value: (r) => r.lifecycle },
-    { header: 'Kritiklik', value: (r) => r.criticality },
-    { header: 'İş birimi', value: (r) => r.businessUnit?.name },
-    { header: 'Teknik sahip', value: (r) => r.technicalOwner?.name },
-    { header: 'Tamamlanma %', value: (r) => r.completenessScore },
-    { header: 'Eksik (zorunlu)', value: (r) => r.missingRequired.join('; ') },
-    { header: 'Eksik (önerilen)', value: (r) => r.missingRecommended.join('; ') },
-    { header: 'Gözden geçirme', value: (r) => reviewStateLabel(r.reviewState) },
-    {
-      header: 'Güncelliğini yitirmiş teknolojiler',
-      value: (r) => r.outdatedTechnologies.map((t) => t.name).join('; '),
-    },
-  ]);
-  downloadCsv(`cerebro-data-quality-${toIsoDate(new Date())}.csv`, csv);
-}
-
 export function DataQualityReport({ rows }: { rows: ApplicationHealthRow[] }) {
+  const masterData = useMasterData();
   const [params, setParams] = useSearchParams();
   const gap = oneOf(GAP_FILTERS, params.get('gap'));
   const setGap = (value: string | null) => {
@@ -172,15 +153,54 @@ export function DataQualityReport({ rows }: { rows: ApplicationHealthRow[] }) {
               activeFilterCount={gap ? 1 : 0}
               onReset={() => setGap(null)}
             />
-            <Button
-              size="small"
-              variant="neutral"
-              appearance="outlined"
-              startContent={<ArrowDownloadIconOutlinedRounded aria-hidden="true" />}
-              onClick={() => exportCsv(visible)}
-            >
-              CSV olarak dışa aktar
-            </Button>
+            <ExcelExportButton
+              title="Veri kalitesi raporu"
+              disabled={visible.length === 0}
+              build={() => [
+                sheet<ApplicationHealthRow>({
+                  name: 'Veri kalitesi',
+                  title: 'Veri kalitesi raporu',
+                  subtitle: describeFilters([['Göster', gap ? GAP_LABELS[gap] : null]]),
+                  rows: [...visible].sort((a, b) => a.completenessScore - b.completenessScore),
+                  columns: [
+                    { header: 'Kod', value: (r) => r.code },
+                    { header: 'Uygulama', value: (r) => r.name },
+                    {
+                      header: 'Yaşam döngüsü',
+                      value: (r) => masterData.label('applicationLifecycles', r.lifecycle),
+                    },
+                    {
+                      header: 'Kritiklik',
+                      value: (r) => masterData.label('criticalities', r.criticality),
+                    },
+                    { header: 'İş birimi', value: (r) => r.businessUnit?.name },
+                    { header: 'Teknik sahip', value: (r) => r.technicalOwner?.name ?? 'Atanmamış' },
+                    { header: 'Tamamlanma', value: (r) => r.completenessScore, type: 'percent' },
+                    {
+                      header: 'Eksik (zorunlu)',
+                      value: (r) => r.missingRequired.join('\n'),
+                      width: 36,
+                    },
+                    {
+                      header: 'Eksik (önerilen)',
+                      value: (r) => r.missingRecommended.join('\n'),
+                      width: 36,
+                    },
+                    { header: 'Gözden geçirme', value: (r) => reviewStateLabel(r.reviewState) },
+                    {
+                      header: 'Güncelliğini yitirmiş teknolojiler',
+                      value: (r) => r.outdatedTechnologies.map((t) => t.name).join('\n'),
+                    },
+                    { header: 'Aktif risk', value: (r) => r.activeRiskCount, type: 'integer' },
+                    {
+                      header: 'Aktif eskalasyon',
+                      value: (r) => r.activeEscalationCount,
+                      type: 'integer',
+                    },
+                  ],
+                }),
+              ]}
+            />
           </>
         }
       >

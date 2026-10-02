@@ -1,3 +1,6 @@
+import { ExcelExportButton } from '@/components/actions/ExcelExportButton';
+import { useMasterData } from '@/domains/master-data/context';
+import { sheet } from '@/lib/xlsxTypes';
 import { Table, type TableColumnDef } from '@takeoff-ui/react-spar';
 import { EmptyState } from '@/components/feedback/EmptyState';
 import { SectionCard } from '@/components/layout/SectionCard';
@@ -11,6 +14,8 @@ function isOverdue(milestone: Milestone, today: string): boolean {
 
 export function ProjectMilestonesTab({ project }: { project: Project }) {
   const today = toIsoDate(new Date());
+  const masterData = useMasterData();
+  const milestones = [...project.milestones].sort((a, b) => a.dueDate.localeCompare(b.dueDate));
   const columns: TableColumnDef<Milestone>[] = [
     { id: 'title', header: 'Kilometre taşı', accessor: 'title', width: 280 },
     {
@@ -37,9 +42,31 @@ export function ProjectMilestonesTab({ project }: { project: Project }) {
   ];
 
   return (
-    <SectionCard title="Kilometre taşları">
+    <SectionCard
+      title="Kilometre taşları"
+      actions={
+        <ExcelExportButton
+          title={`${project.name} — kilometre taşları`}
+          disabled={milestones.length === 0}
+          build={() => [
+            sheet<Milestone>({
+              name: 'Kilometre taşları',
+              title: `${project.name} — kilometre taşları`,
+              rows: milestones,
+              columns: [
+                { header: 'Kilometre taşı', value: (m) => m.title },
+                { header: 'Durum', value: (m) => masterData.label('milestoneStatuses', m.status) },
+                { header: 'Termin', value: (m) => m.dueDate, type: 'date' },
+                { header: 'Tamamlandı', value: (m) => m.completedDate, type: 'date' },
+                { header: 'Gecikmiş', value: (m) => isOverdue(m, today) },
+              ],
+            }),
+          ]}
+        />
+      }
+    >
       <Table
-        data={[...project.milestones].sort((a, b) => a.dueDate.localeCompare(b.dueDate))}
+        data={milestones}
         columns={columns}
         getRowId={(row) => String(row.id)}
         emptyState={<EmptyState compact title="Bu proje için henüz kilometre taşı tanımlanmadı" />}

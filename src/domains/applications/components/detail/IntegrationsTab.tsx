@@ -1,3 +1,8 @@
+import { loadPortfolioNames } from '@/domains/shared/utils/portfolioNames';
+import { useRepositories } from '@/services/RepositoryContext';
+import { TableExportBar } from '@/components/actions/TableExportBar';
+import { useMasterData } from '@/domains/master-data/context';
+import { sheet } from '@/lib/xlsxTypes';
 import { Table, type TableColumnDef } from '@takeoff-ui/react-spar';
 import { EmptyState } from '@/components/feedback/EmptyState';
 import { QueryView } from '@/components/feedback/QueryView';
@@ -76,6 +81,36 @@ function columns(direction: IntegrationDirection, canEdit: boolean): TableColumn
 export function IntegrationsTab({ application }: { application: Application }) {
   const query = useApplicationIntegrations(application.id);
   const canEdit = usePermission('portfolio:edit');
+  const masterData = useMasterData();
+  const repositories = useRepositories();
+  const integrationSheet = (
+    nameOf: (id: number) => string,
+    name: string,
+    title: string,
+    rows: Integration[],
+    direction: IntegrationDirection,
+  ) =>
+    sheet<Integration>({
+      name,
+      title,
+      rows,
+      columns: [
+        { header: 'Entegrasyon', value: (i) => i.name },
+        {
+          header: direction === 'outbound' ? 'Hedef' : 'Kaynak',
+          value: (i) =>
+            direction === 'inbound'
+              ? nameOf(i.fromApplicationId)
+              : i.toApplicationId
+                ? nameOf(i.toApplicationId)
+                : `${i.externalPartyName ?? ''} (harici)`,
+        },
+        { header: 'Tür', value: (i) => masterData.label('integrationTypes', i.type) },
+        { header: 'Sıklık', value: (i) => masterData.label('integrationFrequencies', i.frequency) },
+        { header: 'Aktarılan veri', value: (i) => i.dataExchanged, width: 40 },
+        { header: 'Açıklama', value: (i) => i.description, width: 50 },
+      ],
+    });
 
   return (
     <QueryView
@@ -85,6 +120,29 @@ export function IntegrationsTab({ application }: { application: Application }) {
     >
       {({ outbound, inbound }) => (
         <div className="c-stack">
+          <TableExportBar
+            title={`${application.name} — entegrasyonlar`}
+            disabled={outbound.length + inbound.length === 0}
+            build={async () => {
+              const names = await loadPortfolioNames(repositories);
+              return [
+                integrationSheet(
+                  names.application,
+                  'Giden',
+                  `${application.name} giden entegrasyonlar`,
+                  outbound,
+                  'outbound',
+                ),
+                integrationSheet(
+                  names.application,
+                  'Gelen',
+                  `${application.name} gelen entegrasyonlar`,
+                  inbound,
+                  'inbound',
+                ),
+              ];
+            }}
+          />
           <SectionCard
             title={`Giden (${outbound.length})`}
             description={`${application.name} uygulamasının çağırdığı veya yayın yaptığı arayüzler.`}
