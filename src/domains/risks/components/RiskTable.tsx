@@ -1,3 +1,5 @@
+import { useMemo } from 'react';
+import { AttachmentsButton } from '@/domains/attachments/components/AttachmentsButton';
 import { loadPortfolioNames } from '@/domains/shared/utils/portfolioNames';
 import { useRepositories } from '@/services/RepositoryContext';
 import { TableExportBar } from '@/components/actions/TableExportBar';
@@ -37,71 +39,88 @@ export function RiskTable({
   const masterData = useMasterData();
   const repositories = useRepositories();
   const canEdit = usePermission('portfolio:edit');
-  const columns: TableColumnDef<Risk>[] = [
-    {
-      id: 'title',
-      header: 'Risk',
-      width: 320,
-      cell: ({ row }) => (
-        <span className="c-cell-stack">
-          <span>{row.original.title}</span>
-          <span className="c-muted c-cell-stack__secondary">{row.original.mitigationPlan}</span>
-        </span>
-      ),
-    },
-    {
-      id: 'category',
-      header: 'Kategori',
-      cell: ({ row }) => <MasterLabel list="riskCategories" code={row.original.category} />,
-    },
-    {
-      id: 'severity',
-      header: 'Önem derecesi',
-      cell: ({ row }) => <MasterBadge list="criticalities" code={row.original.severity} />,
-    },
-    {
-      id: 'status',
-      header: 'Durum',
-      cell: ({ row }) => <MasterBadge list="riskStatuses" code={row.original.status} />,
-    },
-    {
-      id: 'owner',
-      header: 'Sahip',
-      cell: ({ row }) =>
-        (row.original.ownerId && people.data?.get(row.original.ownerId)?.fullName) || (
-          <span className="c-text-warning">Atanmamış</span>
+  // Stable column definitions: Takeoff's table remounts cells when their renderers change, which
+  // would reset row-level state (an open attachments or delete dialog) on every re-render.
+  const columns = useMemo<TableColumnDef<Risk>[]>(
+    () => [
+      {
+        id: 'title',
+        header: 'Risk',
+        width: 320,
+        cell: ({ row }) => (
+          <span className="c-cell-stack">
+            <span>{row.original.title}</span>
+            <span className="c-muted c-cell-stack__secondary">{row.original.mitigationPlan}</span>
+          </span>
         ),
-    },
-    ...(showRelated
-      ? [
-          {
-            id: 'related',
-            header: 'Etkilenen',
-            cell: ({ row }) => (
-              <RelatedEntityLinks
-                applicationIds={row.original.relatedApplicationIds}
-                projectIds={row.original.relatedProjectIds}
-              />
-            ),
-          } satisfies TableColumnDef<Risk>,
-        ]
-      : []),
-    {
-      id: 'due',
-      header: 'Termin',
-      align: 'end',
-      cell: ({ row }) => formatDate(row.original.dueDate),
-    },
-    ...(canEdit
-      ? [
-          editColumn<Risk>(
-            (risk) => paths.riskForms.edit(risk.id),
-            (risk) => risk.title,
-            (risk) => <RiskDeleteAction record={risk} compact />,
+      },
+      {
+        id: 'category',
+        header: 'Kategori',
+        cell: ({ row }) => <MasterLabel list="riskCategories" code={row.original.category} />,
+      },
+      {
+        id: 'severity',
+        header: 'Önem derecesi',
+        cell: ({ row }) => <MasterBadge list="criticalities" code={row.original.severity} />,
+      },
+      {
+        id: 'status',
+        header: 'Durum',
+        cell: ({ row }) => <MasterBadge list="riskStatuses" code={row.original.status} />,
+      },
+      {
+        id: 'owner',
+        header: 'Sahip',
+        cell: ({ row }) =>
+          (row.original.ownerId && people.data?.get(row.original.ownerId)?.fullName) || (
+            <span className="c-text-warning">Atanmamış</span>
           ),
-        ]
-      : []),
-  ];
+      },
+      ...(showRelated
+        ? [
+            {
+              id: 'related',
+              header: 'Etkilenen',
+              cell: ({ row }) => (
+                <RelatedEntityLinks
+                  applicationIds={row.original.relatedApplicationIds}
+                  projectIds={row.original.relatedProjectIds}
+                />
+              ),
+            } satisfies TableColumnDef<Risk>,
+          ]
+        : []),
+      {
+        id: 'due',
+        header: 'Termin',
+        align: 'end',
+        cell: ({ row }) => formatDate(row.original.dueDate),
+      },
+      {
+        id: 'attachments',
+        header: 'Ekler',
+        width: 80,
+        align: 'end',
+        cell: ({ row }) => (
+          <AttachmentsButton
+            owner={{ type: 'risk', id: row.original.id }}
+            ownerName={row.original.title}
+          />
+        ),
+      },
+      ...(canEdit
+        ? [
+            editColumn<Risk>(
+              (risk) => paths.riskForms.edit(risk.id),
+              (risk) => risk.title,
+              (risk) => <RiskDeleteAction record={risk} compact />,
+            ),
+          ]
+        : []),
+    ],
+    [people.data, canEdit, showRelated],
+  );
 
   const exportSheets = async () => {
     const names = await loadPortfolioNames(repositories);

@@ -16,3 +16,11 @@ export const keepOpenForFloatingLayers = ignoreInside(
 
 /** For popovers: keep open while a dialog opened from them (e.g. a delete confirmation) is used. */
 export const keepOpenForDialogs = ignoreInside('.tk-dialog-panel, .tk-dialog-overlay');
+
+/**
+ * For a dialog that hosts both pickers and its own nested dialogs (delete confirmation, edit
+ * dialog): neither should close it.
+ */
+export const keepOpenForNestedLayers = ignoreInside(
+  '.tk-select-content, .tk-popover-content, .tk-dropdown-content, .tk-dialog-panel, .tk-dialog-overlay',
+);

@@ -1,3 +1,4 @@
+import { AttachmentsSection } from '@/domains/attachments/components/AttachmentsSection';
 import { ExcelExportButton } from '@/components/actions/ExcelExportButton';
 import { applicationSheet } from '@/domains/applications/utils/applicationExport';
 import { projectSheet } from '@/domains/projects/utils/projectExport';
@@ -279,6 +280,12 @@ export default function TeamDetailPage() {
         </div>
         <Members team={team} />
       </div>
+      <AttachmentsSection
+        owner={{ type: 'team', id: team.id }}
+        ownerName={team.name}
+        title="Ekip belgeleri"
+        description="Nöbet el kitabı, süreç dokümanları, sözleşmeler ve diğer referanslar."
+      />
     </div>
   );
 }

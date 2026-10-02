@@ -193,6 +193,29 @@ teams and technologies.
 - Every person name links here: `PersonSummary` (team members, key facts, stakeholders), team
   managers, the people editor and the leave calendar.
 
+## Attachments
+
+- `Attachment` (owner `{ type, id }`, `documentType` from master data `documentTypes`, file
+  name, content type, size, description, uploader). `AttachmentRepository`: `list(owner)`,
+  `countByOwner(type)`, `upload`, `update`, `remove`, `download`. Uploading needs
+  `portfolio:edit`, deleting `portfolio:delete`; reading is open to everyone.
+- Bytes are not in the mock database: `BlobStore` (IndexedDB in the browser, memory in tests)
+  keeps them under the attachment id, like object storage would. Seed files are metadata only;
+  their bytes are valid PDFs generated from the metadata (`samplePdf`). Bytes of files whose
+  record was deleted are dropped when the backend starts (`BlobStore.retain`).
+- Validation in the repository (and the picker's `accept`): an allow-list of document, image,
+  diagram and archive extensions (no executables, scripts, HTML or SVG), 1 byte–20 MB, sanitised
+  file names, secret-free descriptions, a known document type and an existing owner.
+- `REQUIRED_DOCUMENTS` lists the document types each record type must carry (applications,
+  projects); `RequiredDocuments` shows them as a checklist with per-row upload.
+- UI: `AttachmentsSection`/`AttachmentsPanel` (checklist, `AttachmentUploader` on Takeoff
+  `Upload`, `AttachmentTable` with open/download/edit/delete and Excel export) on the
+  documentation tabs, team and technology pages and the risk/escalation/decision edit forms
+  (`FormPage` `after` slot, outside the `<form>`); `AttachmentsButton` opens the panel in a
+  dialog from register rows and decisions.
+- Tables with row-level dialogs memoise their column definitions: Takeoff's table remounts a
+  cell when its renderer changes, which would reset an open dialog.
+
 ## Excel export
 
 - `lib/xlsx.ts` writes Office Open XML directly (zipped with `fflate`): inline strings only (no
@@ -283,7 +306,7 @@ teams and technologies.
 ## Development persistence
 
 The mock database and session are persisted in `localStorage` in the browser
-(`cerebro.demo-db.v8`, `cerebro.demo-session.v2`) so records survive a reload. Tests use in-memory
+(`cerebro.demo-db.v9`, `cerebro.demo-session.v2`) so records survive a reload. Tests use in-memory
 stores. To reset the demo data, clear the site's storage (or remove `cerebro.demo-db.v7`).
 
 ## Security posture (frontend)

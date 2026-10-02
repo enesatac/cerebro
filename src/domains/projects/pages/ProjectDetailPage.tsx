@@ -1,3 +1,4 @@
+import { AttachmentsSection } from '@/domains/attachments/components/AttachmentsSection';
 import type { ReactNode } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { paths } from '@/app/router/paths';
@@ -82,14 +83,20 @@ const TAB_CONTENT: Record<ProjectTab, (project: Project) => ReactNode> = {
   risks: (p) => <RelatedRisksAndEscalations filter={{ projectId: p.id }} subjectName={p.name} />,
   decisions: (p) => <ProjectDecisions project={p} />,
   documentation: (p) => (
-    <SectionCard title="Dokümantasyon">
-      <DocumentationTable
-        exportTitle={`${p.name} — dokümantasyon`}
-        links={p.documentation}
-        emptyTitle="Bu projeye henüz dokümantasyon bağlanmadı"
-        emptyDescription="Proje beratını, analizi ve teslimat panosunu bağlayın."
-      />
-    </SectionCard>
+    <div className="c-stack">
+      <AttachmentsSection owner={{ type: 'project', id: p.id }} ownerName={p.name} />
+      <SectionCard
+        title="Bağlantılar"
+        description="Confluence, Jira, tasarım ve teslimat panoları."
+      >
+        <DocumentationTable
+          exportTitle={`${p.name} — dokümantasyon`}
+          links={p.documentation}
+          emptyTitle="Bu projeye henüz dokümantasyon bağlanmadı"
+          emptyDescription="Proje beratını, analizi ve teslimat panosunu bağlayın."
+        />
+      </SectionCard>
+    </div>
   ),
   history: (p) => <AuditHistory audit={p.audit} />,
 };

@@ -88,6 +88,8 @@ function codesInUse(db: MockDatabase, key: MasterDataListKey): string[] {
       return db.integrations.map((i) => i.type);
     case 'integrationFrequencies':
       return db.integrations.map((i) => i.frequency);
+    case 'documentTypes':
+      return db.attachments.map((a) => a.documentType);
     case 'runbookLinkTypes':
       return db.runbooks.flatMap((r) => r.links.map((l) => l.type));
     case 'leaveTypes':

@@ -1,3 +1,4 @@
+import { AttachmentsSection } from '@/domains/attachments/components/AttachmentsSection';
 import { ExcelExportButton } from '@/components/actions/ExcelExportButton';
 import { applicationSheet } from '@/domains/applications/utils/applicationExport';
 import { useMasterData } from '@/domains/master-data/context';
@@ -168,6 +169,12 @@ export default function TechnologyDetailPage() {
         </Alert>
       )}
       <UsedBy technology={technology} />
+      <AttachmentsSection
+        owner={{ type: 'technology', id: technology.id }}
+        ownerName={technology.name}
+        title="Belgeler"
+        description="Lisans ve destek sözleşmeleri, kurulum ve güvenlik kılavuzları."
+      />
     </div>
   );
 }

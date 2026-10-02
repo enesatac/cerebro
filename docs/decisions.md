@@ -2,6 +2,17 @@
 
 Short records of decisions that shape the codebase. Newest first.
 
+## D-022 · Attachments: metadata in the database, bytes in object storage (2026-10-03)
+
+Records need their documents, not just links: required ones (an application's architecture and
+security assessment, a project's charter and go-live approval) and any reference material. One
+polymorphic `attachments` table (one nullable foreign key per owner type, exactly one set) keeps
+metadata and integrity; bytes go to object storage under the row id, never into the database —
+mirrored in the mock by an IndexedDB `BlobStore`. Required documents are a per-record-type list of
+`documentTypes` codes in code (system codes, so their labels stay editable); making the list
+itself administrable is a later step. Only an allow-list of document/image/archive types up to
+20 MB is accepted (no executables, scripts, HTML or SVG). Upload uses Takeoff `Upload`.
+
 ## D-021 · Own .xlsx writer on fflate instead of a spreadsheet library (2026-10-03)
 
 Users want tables "as Excel, nicely formatted". CSV loses types and formatting and needs a BOM

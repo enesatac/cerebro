@@ -20,6 +20,11 @@ interface FormPageProps<T extends FieldValues> {
   /** Optional destructive action shown at the start of the action bar (edit pages). */
   deleteAction?: ReactNode;
   children: ReactNode;
+  /**
+   * Content after the form that saves on its own (e.g. attachments, uploaded immediately) — kept
+   * outside the `<form>` so its inputs never submit it.
+   */
+  after?: ReactNode;
 }
 
 /**
@@ -36,6 +41,7 @@ export function FormPage<T extends FieldValues>({
   submitLabel,
   deleteAction,
   children,
+  after,
 }: FormPageProps<T>) {
   const navigate = useNavigate();
   const { formState } = form;
@@ -104,6 +110,7 @@ export function FormPage<T extends FieldValues>({
           </div>
         </div>
       </form>
+      {after}
       <ConfirmDialog
         open={blocker.state === 'blocked'}
         onOpenChange={(open) => !open && blocker.reset?.()}

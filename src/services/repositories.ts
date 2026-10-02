@@ -4,6 +4,7 @@ import type { BusinessUnitRepository } from '@/domains/business-units/api/Busine
 import type { ConnectionRepository } from '@/domains/connections/api/ConnectionRepository';
 import type { DecisionRepository } from '@/domains/decisions/api/DecisionRepository';
 import type { LeaveRepository } from '@/domains/leaves/api/LeaveRepository';
+import type { AttachmentRepository } from '@/domains/attachments/api/AttachmentRepository';
 import type { RunbookRepository } from '@/domains/runbooks/api/RunbookRepository';
 import type { AllocationRepository } from '@/domains/resources/api/AllocationRepository';
 import type { MasterDataRepository } from '@/domains/master-data/api/MasterDataRepository';
@@ -16,6 +17,7 @@ import type { SearchRepository } from '@/domains/search/api/SearchRepository';
 import type { TeamRepository } from '@/domains/teams/api/TeamRepository';
 import type { TechnologyRepository } from '@/domains/technologies/api/TechnologyRepository';
 import { createMockRepositories } from './mock';
+import { createIndexedDbBlobStore } from './mock/blobStore';
 import { createBrowserDatabaseStore } from './mock/persistence';
 import { createBrowserSessionStore } from './mock/session';
 
@@ -39,6 +41,7 @@ export interface Repositories {
   leaves: LeaveRepository;
   allocations: AllocationRepository;
   runbooks: RunbookRepository;
+  attachments: AttachmentRepository;
 }
 
 /**
@@ -50,5 +53,6 @@ export function createRepositories(): Repositories {
     latencyMs: import.meta.env.MODE === 'test' ? 0 : 250,
     session: createBrowserSessionStore(),
     store: createBrowserDatabaseStore(),
+    blobs: createIndexedDbBlobStore(),
   });
 }

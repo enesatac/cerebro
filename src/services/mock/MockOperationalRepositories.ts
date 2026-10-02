@@ -1,3 +1,4 @@
+import { attachmentsOnlyImpact, deleteAttachmentsOf } from './cascade';
 import type { ConnectionRepository } from '@/domains/connections/api/ConnectionRepository';
 import type { ApplicationDependency, Integration } from '@/domains/connections/types';
 import type { DecisionRepository } from '@/domains/decisions/api/DecisionRepository';
@@ -55,6 +56,8 @@ export function createMockOperationalRepositories(
       rows: () => db.risks,
       entityLabel: 'Risk',
       sequence: 'risks',
+      impact: (id) => attachmentsOnlyImpact(db, { type: 'risk', id }),
+      cascade: (id) => deleteAttachmentsOf(db, { type: 'risk', id }),
       build: (input, id, audit) => ({ ...input, id, audit }),
       validate(input, excludeId) {
         const previous = excludeId ? db.risks.find((row) => row.id === excludeId) : undefined;
@@ -77,6 +80,8 @@ export function createMockOperationalRepositories(
       rows: () => db.escalations,
       entityLabel: 'Eskalasyon',
       sequence: 'escalations',
+      impact: (id) => attachmentsOnlyImpact(db, { type: 'escalation', id }),
+      cascade: (id) => deleteAttachmentsOf(db, { type: 'escalation', id }),
       build: (input, id, audit) => ({ ...input, id, audit }),
       validate(input, excludeId) {
         const previous = excludeId ? db.escalations.find((row) => row.id === excludeId) : undefined;
@@ -104,6 +109,8 @@ export function createMockOperationalRepositories(
       rows: () => db.decisions,
       entityLabel: 'Karar',
       sequence: 'decisions',
+      impact: (id) => attachmentsOnlyImpact(db, { type: 'decision', id }),
+      cascade: (id) => deleteAttachmentsOf(db, { type: 'decision', id }),
       build: (input, id, audit) => ({ ...input, id, audit }),
       validate(input, excludeId) {
         const previous = excludeId ? db.decisions.find((row) => row.id === excludeId) : undefined;

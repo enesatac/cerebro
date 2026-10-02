@@ -2,6 +2,7 @@ import { applications } from './data/applications';
 import { businessUnits } from './data/businessUnits';
 import { allocations } from './data/allocations';
 import { runbooks } from './data/runbooks';
+import { attachments } from './data/attachments';
 import { leaves } from './data/leaves';
 import { dependencies, integrations } from './data/connections';
 import { masterData } from './data/masterData';
@@ -31,6 +32,7 @@ export const seedTables = {
   leaves,
   allocations,
   runbooks,
+  attachments,
 };
 
 /**
@@ -67,6 +69,7 @@ export const SEQUENCES = [
   'runbookLinks',
   'runbookContacts',
   'runbookScenarios',
+  'attachments',
 ] as const;
 export type SequenceName = (typeof SEQUENCES)[number];
 
@@ -113,6 +116,7 @@ export function sequencesOf(tables: typeof seedTables): Sequences {
     runbookLinks: maxId(tables.runbooks.flatMap((r) => r.links)),
     runbookContacts: maxId(tables.runbooks.flatMap((r) => r.contacts)),
     runbookScenarios: maxId(tables.runbooks.flatMap((r) => r.scenarios)),
+    attachments: maxId(tables.attachments),
   };
 }
 

@@ -1,3 +1,4 @@
+import { AttachmentsButton } from '@/domains/attachments/components/AttachmentsButton';
 import { Accordion } from '@takeoff-ui/react-spar';
 import { DetailList } from '@/components/data-display/DetailList';
 import { EmptyState } from '@/components/feedback/EmptyState';
@@ -66,6 +67,13 @@ export function DecisionList({ decisions, emptyTitle }: DecisionListProps) {
                 },
               ]}
             />
+            <p className="c-decision-list__edit">
+              <AttachmentsButton
+                owner={{ type: 'decision', id: decision.id }}
+                ownerName={decision.title}
+                showLabel
+              />
+            </p>
             {canEdit && (
               <p className="c-decision-list__edit">
                 <Link

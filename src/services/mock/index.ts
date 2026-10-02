@@ -6,6 +6,8 @@ import { createLookup } from './lookup';
 import { MockApplicationRepository } from './MockApplicationRepository';
 import { createMockAllocationRepository } from './MockAllocationRepository';
 import { createMockRunbookRepository } from './MockRunbookRepository';
+import { createMockAttachmentRepository } from './MockAttachmentRepository';
+import { createMemoryBlobStore, type BlobStore } from './blobStore';
 import { createMockLeaveRepository } from './MockLeaveRepository';
 import { createMockMasterDataRepository } from './MockMasterDataRepository';
 import { createMockAuthRepositories } from './MockAuthRepositories';
@@ -25,6 +27,8 @@ export interface MockRepositoryOptions {
   signedInAs?: UserAccountId;
   /** Persists writes (development); omitted in tests so each test starts from seed data. */
   store?: DatabaseStore;
+  /** Where uploaded file bytes are kept. Defaults to memory (tests); IndexedDB in the browser. */
+  blobs?: BlobStore;
 }
 
 export function createMockRepositories({
@@ -32,6 +36,7 @@ export function createMockRepositories({
   session,
   signedInAs,
   store,
+  blobs,
 }: MockRepositoryOptions = {}): Repositories {
   const db = store?.load() ?? createMockDatabase();
   const lookup = createLookup(db);
@@ -45,6 +50,12 @@ export function createMockRepositories({
     leaves: createMockLeaveRepository(db, latencyMs, kit),
     allocations: createMockAllocationRepository(db, latencyMs, kit),
     runbooks: createMockRunbookRepository(db, latencyMs, kit),
+    attachments: createMockAttachmentRepository(
+      db,
+      blobs ?? createMemoryBlobStore(),
+      latencyMs,
+      kit,
+    ),
     ...createMockReferenceRepositories(db, lookup, latencyMs, kit),
     ...createMockOperationalRepositories(db, latencyMs, kit),
     ...createMockAuthRepositories(db, authority, kit, latencyMs),

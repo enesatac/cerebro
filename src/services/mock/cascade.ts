@@ -1,3 +1,4 @@
+import type { AttachmentOwner } from '@/domains/attachments/types';
 import type { DeletionImpact, EntityId } from '@/domains/shared/types';
 import type { MockDatabase } from './database';
 
@@ -59,6 +60,7 @@ export function applicationDeletionImpact(db: MockDatabase, id: EntityId): Delet
         label: 'müdahale rehberi (silinir)',
         count: db.runbooks.filter((r) => r.applicationId === id).length,
       },
+      attachmentReference(db, { type: 'application', id }),
     ]),
   };
 }
@@ -77,6 +79,7 @@ export function deleteApplicationCascade(db: MockDatabase, id: EntityId) {
   }
   unlinkRelated(db, 'relatedApplicationIds', id);
   db.runbooks = db.runbooks.filter((r) => r.applicationId !== id);
+  deleteAttachmentsOf(db, { type: 'application', id });
 }
 
 export function projectDeletionImpact(db: MockDatabase, id: EntityId): DeletionImpact {
@@ -91,6 +94,7 @@ export function projectDeletionImpact(db: MockDatabase, id: EntityId): DeletionI
         label: 'kaynak ataması (silinir)',
         count: db.allocations.filter((a) => a.projectId === id).length,
       },
+      attachmentReference(db, { type: 'project', id }),
     ]),
   };
 }
@@ -98,6 +102,7 @@ export function projectDeletionImpact(db: MockDatabase, id: EntityId): DeletionI
 export function deleteProjectCascade(db: MockDatabase, id: EntityId) {
   unlinkRelated(db, 'relatedProjectIds', id);
   db.allocations = db.allocations.filter((a) => a.projectId !== id);
+  deleteAttachmentsOf(db, { type: 'project', id });
 }
 
 export function teamDeletionImpact(db: MockDatabase, id: EntityId): DeletionImpact {
@@ -116,6 +121,7 @@ export function teamDeletionImpact(db: MockDatabase, id: EntityId): DeletionImpa
         label: 'eskalasyon',
         count: db.escalations.filter((e) => e.responsibleTeamId === id).length,
       },
+      attachmentReference(db, { type: 'team', id }),
       {
         label: 'müdahale rehberi kişisi (kaldırılır)',
         count: db.runbooks.flatMap((r) => r.contacts).filter((c) => c.teamId === id).length,
@@ -134,6 +140,7 @@ export function deleteTeamCascade(db: MockDatabase, id: EntityId) {
   for (const runbook of db.runbooks) {
     runbook.contacts = runbook.contacts.filter((contact) => contact.teamId !== id);
   }
+  deleteAttachmentsOf(db, { type: 'team', id });
 }
 
 /** Technologies in use cannot be deleted — retire them instead so history stays intact. */
@@ -144,7 +151,10 @@ export function technologyDeletionImpact(db: MockDatabase, id: EntityId): Deleti
       a.dataStores.some((d) => d.technologyId === id),
   ).length;
   return {
-    references: nonZero([{ label: 'uygulama', count: applications }]),
+    references: nonZero([
+      { label: 'uygulama', count: applications },
+      attachmentReference(db, { type: 'technology', id }),
+    ]),
     blockedReason:
       applications > 0
         ? `${applications} uygulama tarafından kullanılıyor. Bunun yerine durumunu Emekli yapın ya da önce bu uygulamalardan kaldırın.`
@@ -153,6 +163,29 @@ export function technologyDeletionImpact(db: MockDatabase, id: EntityId): Deleti
 }
 
 export const NO_IMPACT: DeletionImpact = { references: [], blockedReason: null };
+
+export const sameOwner = (a: AttachmentOwner, b: AttachmentOwner) =>
+  a.type === b.type && a.id === b.id;
+
+/** "N ek dosya (silinir)" for a record's deletion confirmation. */
+export const attachmentReference = (db: MockDatabase, owner: AttachmentOwner) => ({
+  label: 'ek dosya (silinir)',
+  count: db.attachments.filter((a) => sameOwner(a.owner, owner)).length,
+});
+
+/** Impact of deleting a record whose only dependants are its files. */
+export const attachmentsOnlyImpact = (
+  db: MockDatabase,
+  owner: AttachmentOwner,
+): DeletionImpact => ({
+  blockedReason: null,
+  references: nonZero([attachmentReference(db, owner)]),
+});
+
+/** Removes the files of a deleted record (metadata; bytes are dropped by `BlobStore.retain`). */
+export function deleteAttachmentsOf(db: MockDatabase, owner: AttachmentOwner) {
+  db.attachments = db.attachments.filter((a) => !sameOwner(a.owner, owner));
+}
 
 /** People are referenced from history and ownership; deleting a referenced person is refused. */
 export function personDeletionImpact(db: MockDatabase, id: EntityId): DeletionImpact {

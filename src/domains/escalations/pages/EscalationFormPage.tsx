@@ -1,3 +1,4 @@
+import { AttachmentsSection } from '@/domains/attachments/components/AttachmentsSection';
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { EntityId } from '@/domains/shared/types';
 import { useForm } from 'react-hook-form';
@@ -61,6 +62,20 @@ function EscalationForm({ escalation }: { escalation?: Escalation }) {
         { label: escalation ? 'Eskalasyonu düzenle' : 'Yeni eskalasyon' },
       ]}
       cancelTo={returnTo}
+      after={
+        escalation ? (
+          <AttachmentsSection
+            owner={{ type: 'escalation', id: escalation.id }}
+            ownerName={escalation.title}
+            description="Raporlar, değerlendirmeler ve kanıtlar. Dosyalar hemen kaydedilir; formu kaydetmek gerekmez."
+          />
+        ) : (
+          <p className="c-muted">
+            Dosya eklemek için önce kaydı oluşturun; ardından düzenleme sayfasından
+            yükleyebilirsiniz.
+          </p>
+        )
+      }
       submitLabel={escalation ? 'Değişiklikleri kaydet' : 'Eskalasyon aç'}
       onSubmit={async (values) => {
         await save.mutateAsync(toEscalationInput(values));

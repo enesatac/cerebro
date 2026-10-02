@@ -1,3 +1,4 @@
+import { AttachmentsSection } from '@/domains/attachments/components/AttachmentsSection';
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { EntityId } from '@/domains/shared/types';
 import { useForm } from 'react-hook-form';
@@ -54,6 +55,20 @@ function RiskForm({ risk }: { risk?: Risk }) {
         { label: risk ? 'Riski düzenle' : 'Yeni risk' },
       ]}
       cancelTo={returnTo}
+      after={
+        risk ? (
+          <AttachmentsSection
+            owner={{ type: 'risk', id: risk.id }}
+            ownerName={risk.title}
+            description="Raporlar, değerlendirmeler ve kanıtlar. Dosyalar hemen kaydedilir; formu kaydetmek gerekmez."
+          />
+        ) : (
+          <p className="c-muted">
+            Dosya eklemek için önce kaydı oluşturun; ardından düzenleme sayfasından
+            yükleyebilirsiniz.
+          </p>
+        )
+      }
       submitLabel={risk ? 'Değişiklikleri kaydet' : 'Risk kaydet'}
       onSubmit={async (values) => {
         await save.mutateAsync(toRiskInput(values));

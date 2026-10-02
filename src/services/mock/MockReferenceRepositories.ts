@@ -17,6 +17,7 @@ import { createAuditedWriteRepository } from './auditedWriteRepository';
 import {
   businessUnitDeletionImpact,
   deleteBusinessUnitCascade,
+  deleteAttachmentsOf,
   deleteTeamCascade,
   personDeletionImpact,
   teamDeletionImpact,
@@ -233,6 +234,7 @@ export function createMockReferenceRepositories(
       findOrThrow(db.technologies, id, 'Teknoloji');
       const impact = technologyDeletionImpact(db, id);
       if (impact.blockedReason) throw new ValidationError(impact.blockedReason);
+      deleteAttachmentsOf(db, { type: 'technology', id });
       removeRow(db.technologies, id);
     },
     async getDeletionImpact(id) {

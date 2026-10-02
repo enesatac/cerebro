@@ -1,3 +1,4 @@
+import { DOCUMENT_TYPES } from '@/domains/attachments/types';
 import { RUNBOOK_LINK_TYPES } from '@/domains/runbooks/types';
 import {
   APPLICATION_LIFECYCLES,
@@ -360,6 +361,17 @@ export const MASTER_DATA_LISTS: readonly MasterDataListDefinition[] = [
     extensible: true,
     colored: false,
     usedIn: 'Müdahale rehberi formu ve uygulamanın "Sorun anında" sekmesi',
+  }),
+  define({
+    key: 'documentTypes',
+    label: 'Belge türleri',
+    description:
+      'Yüklenen dosyaların türü. Uygulama ve projelerin gerekli belgeleri bu türlerden oluşur (mimari doküman, test raporu…).',
+    group: 'shared',
+    systemCodes: DOCUMENT_TYPES,
+    extensible: true,
+    colored: false,
+    usedIn: 'Uygulama, proje, ekip, teknoloji, risk, eskalasyon ve karar ekleri',
   }),
   define({
     key: 'documentationLinkTypes',

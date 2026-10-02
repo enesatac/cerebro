@@ -1,4 +1,5 @@
 import { strToU8, zipSync } from 'fflate';
+import { downloadBlob } from './download';
 
 /**
  * A small Office Open XML (.xlsx) writer: one workbook, one or more sheets, real typed cells
@@ -293,15 +294,10 @@ export function workbookFileName(title: string, today: string): string {
 
 /** Saves the workbook through a temporary download link. */
 export function downloadWorkbook(bytes: Uint8Array, fileName: string): void {
-  const blob = new Blob([bytes as BlobPart], {
-    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-  });
-  const url = URL.createObjectURL(blob);
-  const anchor = document.createElement('a');
-  anchor.href = url;
-  anchor.download = fileName;
-  document.body.append(anchor);
-  anchor.click();
-  anchor.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  downloadBlob(
+    new Blob([bytes as BlobPart], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    }),
+    fileName,
+  );
 }

@@ -30,6 +30,12 @@ catalogue — kept simple.
 - **Person pages** — click any person (team members, owners, stakeholders) to see everything they
   are mapped to on one screen: applications and projects (own role or via team), escalations,
   risks, decisions, teams and upcoming leaves.
+- **Files on records** — applications, projects, teams, technologies, risks, escalations and
+  decisions hold documents (Takeoff `Upload`: drag & drop, several at once, progress, refusal
+  reasons). Applications and projects show a required-documents checklist (e.g. architecture,
+  security assessment, operations guide; charter, requirements, test report, go-live approval);
+  everything else is reference material with a type and description. PDFs and images open in a
+  new tab, other files download. Only document, image, diagram and archive types up to 20 MB.
 - **Excel export everywhere** — every table (lists, registers, detail tabs, reports, chart tables,
   master data) has "Excel'e aktar": a formatted .xlsx with a title and filter/context line,
   styled frozen header, auto-filter, fitted columns, real dates/numbers/percentages and clickable
@@ -84,7 +90,7 @@ picker only):
 ### Demo data
 
 Seed data lives in `src/services/mock/data/` and is entirely fictional. In development, changes
-are persisted to `localStorage` (`cerebro.demo-db.v8`, session in `cerebro.demo-session.v2`). Clear
+are persisted to `localStorage` (`cerebro.demo-db.v9`, session in `cerebro.demo-session.v2`). Clear
 those keys (or the site data) to reset to the seed.
 
 ## Scripts

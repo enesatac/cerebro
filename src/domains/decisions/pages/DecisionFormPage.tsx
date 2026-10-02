@@ -1,3 +1,4 @@
+import { AttachmentsSection } from '@/domains/attachments/components/AttachmentsSection';
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { EntityId } from '@/domains/shared/types';
 import { useForm } from 'react-hook-form';
@@ -60,6 +61,20 @@ function DecisionForm({ decision }: { decision?: Decision }) {
         { label: decision ? 'Kararı düzenle' : 'Yeni karar' },
       ]}
       cancelTo={returnTo}
+      after={
+        decision ? (
+          <AttachmentsSection
+            owner={{ type: 'decision', id: decision.id }}
+            ownerName={decision.title}
+            description="Raporlar, değerlendirmeler ve kanıtlar. Dosyalar hemen kaydedilir; formu kaydetmek gerekmez."
+          />
+        ) : (
+          <p className="c-muted">
+            Dosya eklemek için önce kaydı oluşturun; ardından düzenleme sayfasından
+            yükleyebilirsiniz.
+          </p>
+        )
+      }
       submitLabel={decision ? 'Değişiklikleri kaydet' : 'Karar kaydet'}
       onSubmit={async (values) => {
         await save.mutateAsync(toDecisionInput(values));

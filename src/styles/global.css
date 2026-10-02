@@ -3097,3 +3097,99 @@ code {
   justify-content: flex-end;
   margin-bottom: var(--spacing-m-base);
 }
+
+/* ---------- Attachments ---------- */
+
+/* A button that looks like a link (opens or downloads a file). */
+.c-link-button {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.c-record-dialog--wide {
+  width: min(960px, calc(100vw - 32px));
+  max-width: 960px;
+}
+
+.c-uploader {
+  display: grid;
+  gap: var(--spacing-l);
+}
+
+.c-uploader__prompt {
+  color: var(--text-darkest);
+  font-weight: 600;
+}
+
+.c-uploader__hint {
+  color: var(--text-base);
+  font-size: var(--size-xs);
+  text-align: center;
+}
+
+.c-required-docs {
+  display: grid;
+  gap: var(--spacing-s);
+}
+
+.c-required-docs__summary {
+  margin: 0;
+  color: var(--text-darkest);
+}
+
+.c-required-docs__list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--spacing-s);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.c-required-doc {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    'text badge'
+    'text upload';
+  align-items: start;
+  gap: var(--spacing-xs) var(--spacing-m-base);
+  padding: var(--spacing-l);
+  border: 1px solid var(--border-light);
+  border-left: 4px solid var(--green-500);
+  border-radius: var(--radius-m-base);
+  background: var(--background-lightest);
+}
+
+.c-required-doc--missing {
+  border-left-color: var(--yellow-500);
+}
+
+.c-required-doc__text {
+  grid-area: text;
+  display: grid;
+  gap: var(--spacing-xxs);
+  min-width: 0;
+}
+
+.c-required-doc__text strong {
+  color: var(--text-darkest);
+}
+
+.c-required-doc__file {
+  overflow-wrap: anywhere;
+}
+
+.c-required-doc__badge {
+  grid-area: badge;
+  justify-self: end;
+}
+
+.c-required-doc__upload {
+  grid-area: upload;
+  justify-self: end;
+}
