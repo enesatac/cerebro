@@ -17,7 +17,8 @@ export type SeedChildTable =
   | 'runbookLinks'
   | 'runbookContacts'
   | 'runbookScenarios'
-  | 'demandEvents';
+  | 'demandEvents'
+  | 'contractPayments';
 
 const counters = new Map<SeedChildTable, number>();
 

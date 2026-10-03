@@ -64,6 +64,10 @@ export function applicationDeletionImpact(db: MockDatabase, id: EntityId): Delet
         label: 'talep (bağlantı kaldırılır)',
         count: db.demands.filter((d) => d.relatedApplicationIds.includes(id)).length,
       },
+      {
+        label: 'sözleşme (bağlantı kaldırılır)',
+        count: db.contracts.filter((c) => c.relatedApplicationIds.includes(id)).length,
+      },
       attachmentReference(db, { type: 'application', id }),
     ]),
   };
@@ -83,16 +87,21 @@ export function deleteApplicationCascade(db: MockDatabase, id: EntityId) {
   }
   unlinkRelated(db, 'relatedApplicationIds', id);
   db.runbooks = db.runbooks.filter((r) => r.applicationId !== id);
-  for (const demand of db.demands) {
-    demand.relatedApplicationIds = demand.relatedApplicationIds.filter((value) => value !== id);
+  for (const row of [...db.demands, ...db.contracts]) {
+    row.relatedApplicationIds = row.relatedApplicationIds.filter((value) => value !== id);
   }
   deleteAttachmentsOf(db, { type: 'application', id });
 }
 
 export function projectDeletionImpact(db: MockDatabase, id: EntityId): DeletionImpact {
   const related = relatedCount(db, 'relatedProjectIds', id);
+  const contracts = db.contracts.filter((c) => c.projectId === id).length;
   return {
-    blockedReason: null,
+    // Contracts are commercial records; they are never deleted as a side effect.
+    blockedReason:
+      contracts > 0
+        ? 'Bu projenin sözleşmeleri var. Önce sözleşmeleri başka bir projeye taşıyın veya silin.'
+        : null,
     references: nonZero([
       { label: 'risk', count: related.risks },
       { label: 'eskalasyon', count: related.escalations },
@@ -100,6 +109,10 @@ export function projectDeletionImpact(db: MockDatabase, id: EntityId): DeletionI
       {
         label: 'kaynak ataması (silinir)',
         count: db.allocations.filter((a) => a.projectId === id).length,
+      },
+      {
+        label: 'sözleşme',
+        count: contracts,
       },
       {
         label: 'kaynak talep (bağlantı kaldırılır)',
@@ -213,6 +226,8 @@ export function personDeletionImpact(db: MockDatabase, id: EntityId): DeletionIm
     ...db.integrations,
     ...db.teams,
     ...db.demands,
+    ...db.contracts,
+    ...db.vendors,
   ];
   const references = nonZero([
     {
@@ -237,6 +252,10 @@ export function personDeletionImpact(db: MockDatabase, id: EntityId): DeletionIm
     { label: 'kullanıcı hesabı', count: db.users.filter((u) => u.personId === id).length },
     { label: 'izin kaydı', count: db.leaves.filter((l) => l.personId === id).length },
     { label: 'kaynak ataması', count: db.allocations.filter((a) => a.personId === id).length },
+    {
+      label: 'sözleşme sorumluluğu',
+      count: db.contracts.filter((c) => c.ownerId === id).length,
+    },
     {
       label: 'talep (talep eden, sponsor veya değerlendiren)',
       count: db.demands.filter(

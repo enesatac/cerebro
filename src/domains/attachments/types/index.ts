@@ -12,6 +12,7 @@ export const ATTACHMENT_OWNER_TYPES = [
   'escalation',
   'decision',
   'demand',
+  'contract',
 ] as const;
 export type AttachmentOwnerType = (typeof ATTACHMENT_OWNER_TYPES)[number];
 
@@ -36,6 +37,9 @@ export const DOCUMENT_TYPES = [
   'meeting-notes',
   'incident-report',
   'business-case',
+  'offer',
+  'purchase-order',
+  'invoice',
   'other',
 ] as const;
 /** Code from the `documentTypes` master data list. */
@@ -49,6 +53,7 @@ export type DocumentType = string;
 export const REQUIRED_DOCUMENTS: Partial<Record<AttachmentOwnerType, readonly DocumentType[]>> = {
   application: ['architecture', 'security-assessment', 'operations-guide'],
   project: ['charter', 'requirements', 'test-report', 'go-live-approval'],
+  contract: ['contract'],
 };
 
 /**

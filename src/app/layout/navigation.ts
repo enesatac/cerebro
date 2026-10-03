@@ -9,6 +9,7 @@ import { FlagIconOutlinedRounded } from '@takeoff-icons/react/flag';
 import { FolderCopyIconOutlinedRounded } from '@takeoff-icons/react/folder-copy';
 import { GroupIconOutlinedRounded } from '@takeoff-icons/react/group';
 import { KeyIconOutlinedRounded } from '@takeoff-icons/react/key';
+import { ShoppingBagIconOutlinedRounded } from '@takeoff-icons/react/shopping-bag';
 import { StructureTreeIconOutlinedRounded } from '@takeoff-icons/react/structure-tree';
 import { UserSettingsIconOutlinedRounded } from '@takeoff-icons/react/user-settings';
 import { WarningIconOutlinedRounded } from '@takeoff-icons/react/warning';
@@ -52,6 +53,12 @@ export const PRIMARY_NAVIGATION: NavigationItem[] = [
     to: paths.projects.list(),
     icon: FolderCopyIconOutlinedRounded,
     privilege: 'projects:view',
+  },
+  {
+    label: 'Sözleşmeler',
+    to: paths.contracts.list(),
+    icon: ShoppingBagIconOutlinedRounded,
+    privilege: 'contracts:view',
   },
   {
     label: 'Uygulamalar',

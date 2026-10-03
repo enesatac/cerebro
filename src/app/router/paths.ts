@@ -45,6 +45,14 @@ export const paths = {
     create: () => '/projects/new',
     edit: (projectId: EntityId) => `/projects/${id(projectId)}/edit`,
   },
+  contracts: {
+    /** `tab`: `contracts` (default), `upcoming` or `vendors`. */
+    list: (tab?: 'upcoming' | 'vendors') => withQuery('/contracts', { tab }),
+    detail: (contractId: EntityId) => `/contracts/${id(contractId)}`,
+    /** `project` pre-fills the project when opened from a project's purchases tab. */
+    create: (project?: EntityId) => withQuery('/contracts/new', { project }),
+    edit: (contractId: EntityId) => `/contracts/${id(contractId)}/edit`,
+  },
   demands: {
     /** `tab`: `mine` (default) or `all`. */
     list: (tab?: 'all') => withQuery('/demands', { tab }),

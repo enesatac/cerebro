@@ -53,6 +53,11 @@ catalogue — kept simple.
 - **Resource plan** — `/resources`: who works on which project, when and at what share of their
   time. Parallel allocations stack into lanes, a daily load strip turns red above 100 %, leaves
   are shaded in. Zoom from a month to a year; admins plan allocations with a live load preview.
+- **Purchases and contracts** — `/contracts` and each project's "Satın alma" tab: what was
+  bought for a project, from which vendor, for how long and at what value; payment plan with
+  invoices and payment dates; notice deadlines, auto-renewal and overdue payments flagged; signed
+  contract as a required document; vendors register; Excel export. Visible only with the
+  `contracts` privilege.
 - **Demands** — `/demands`: business units raise project, application and change requests with
   every detail (need, benefits, urgency, date, budget, related systems, files) and follow them;
   `/demands/manage` (portfolio office): triage inbox, WSJF scoring with a suggested priority,

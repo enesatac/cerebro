@@ -31,6 +31,7 @@ const OWNER_LABELS: Record<AttachmentOwnerType, string> = {
   escalation: 'Eskalasyon',
   decision: 'Karar',
   demand: 'Talep',
+  contract: 'Sözleşme',
 };
 
 function ownerRows(db: MockDatabase, type: AttachmentOwnerType): readonly { id: number }[] {
@@ -51,6 +52,8 @@ function ownerRows(db: MockDatabase, type: AttachmentOwnerType): readonly { id: 
       return db.decisions;
     case 'demand':
       return db.demands;
+    case 'contract':
+      return db.contracts;
   }
 }
 

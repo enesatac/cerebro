@@ -14,6 +14,12 @@ import {
   INTEGRATION_FREQUENCIES,
   INTEGRATION_TYPES,
 } from '@/domains/connections/types';
+import {
+  BILLING_FREQUENCIES,
+  CONTRACT_STATUSES,
+  CONTRACT_TYPES,
+  PAYMENT_STATUSES,
+} from '@/domains/contracts/types';
 import { DECISION_STATUSES } from '@/domains/decisions/types';
 import {
   DEMAND_BENEFIT_TYPES,
@@ -48,6 +54,7 @@ export const MASTER_DATA_GROUPS = [
   { id: 'technologies', label: 'Teknolojiler' },
   { id: 'demands', label: 'Talepler' },
   { id: 'projects', label: 'Projeler' },
+  { id: 'procurement', label: 'Satın alma' },
   { id: 'operations', label: 'Riskler ve kararlar' },
   { id: 'connections', label: 'Bağlantılar' },
   { id: 'people', label: 'İnsan kaynakları' },
@@ -378,7 +385,7 @@ export const MASTER_DATA_LISTS: readonly MasterDataListDefinition[] = [
     systemCodes: DOCUMENT_TYPES,
     extensible: true,
     colored: false,
-    usedIn: 'Uygulama, proje, ekip, teknoloji, risk, eskalasyon, karar ve talep ekleri',
+    usedIn: 'Uygulama, proje, ekip, teknoloji, risk, eskalasyon, karar, talep ve sözleşme ekleri',
   }),
   define({
     key: 'documentationLinkTypes',
@@ -431,6 +438,47 @@ export const MASTER_DATA_LISTS: readonly MasterDataListDefinition[] = [
     extensible: false,
     colored: true,
     usedIn: 'Değerlendirme penceresi, önceliklendirme listesi ve yol haritası',
+  }),
+  define({
+    key: 'contractTypes',
+    label: 'Sözleşme türleri',
+    description: 'Satın alınan şeyin türü: lisans, abonelik, hizmet, donanım…',
+    group: 'procurement',
+    systemCodes: CONTRACT_TYPES,
+    extensible: true,
+    colored: true,
+    usedIn: 'Sözleşme formu, sözleşme listeleri ve projenin Satın alma sekmesi',
+  }),
+  define({
+    key: 'contractStatuses',
+    label: 'Sözleşme durumları',
+    description:
+      'Hazırlıktan sona erene kadar sözleşmenin durumu. Yürürlükteki sözleşmelerin bitiş ve ihbar tarihleri izlenir.',
+    group: 'procurement',
+    systemCodes: CONTRACT_STATUSES,
+    extensible: false,
+    colored: true,
+    usedIn: 'Sözleşme formu, listeler ve yaklaşan tarihler',
+  }),
+  define({
+    key: 'billingFrequencies',
+    label: 'Faturalama sıklıkları',
+    description: 'Sözleşme bedelinin hangi sıklıkla faturalandığı.',
+    group: 'procurement',
+    systemCodes: BILLING_FREQUENCIES,
+    extensible: true,
+    colored: false,
+    usedIn: 'Sözleşme formu ve ayrıntısı',
+  }),
+  define({
+    key: 'paymentStatuses',
+    label: 'Ödeme durumları',
+    description: 'Ödeme planındaki her taksitin durumu. Ödendi için ödeme tarihi zorunludur.',
+    group: 'procurement',
+    systemCodes: PAYMENT_STATUSES,
+    extensible: false,
+    colored: true,
+    usedIn: 'Sözleşmenin ödeme planı',
   }),
 ];
 

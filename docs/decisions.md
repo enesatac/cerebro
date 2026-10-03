@@ -2,6 +2,15 @@
 
 Short records of decisions that shape the codebase. Newest first.
 
+## D-025 · Contracts belong to projects; vendors are records; money is never converted (2026-10-03)
+
+Purchases are tracked per project (one `projectId`), with related applications as links, because
+the project is where budget and responsibility sit. Vendors are their own table (not free text) so
+spend and contracts can be grouped per supplier. Amounts keep their contract currency; totals are
+shown per currency instead of converting with a rate Cerebro does not own. Commercial terms get a
+dedicated `contracts` privilege that also guards reads. Projects and vendors with contracts cannot
+be deleted (contracts are records to keep), and the payment plan may not exceed the contract value.
+
 ## D-024 · Per-screen privileges in code, roles as data (2026-10-03)
 
 Two fixed roles could not express business-unit users, managers or auditors. Privileges are now a

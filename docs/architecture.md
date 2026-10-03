@@ -232,6 +232,19 @@ teams and technologies.
 - Tables with row-level dialogs memoise their column definitions: Takeoff's table remounts a
   cell when its renderer changes, which would reset an open dialog.
 
+## Purchases and contracts
+
+- Domain `contracts`: `Contract` (+ `payments`), `Vendor`; `ContractRepository`
+  (`list({ projectId?, vendorId? })`, `getById`, writes) and `VendorRepository`. Reads need
+  `contracts:view` — commercial terms are not for every role — writes `contracts:edit`, deletes
+  `contracts:delete`; contract files follow the same privilege.
+- `utils/contractSchedule.ts`: notice deadline (end − notice days), alerts (active past its end,
+  ending within 90 days, notice within 30, overdue instalments), payment summary by stage and
+  totals per currency (never converted), upcoming events.
+- UI: `/contracts` (contracts, upcoming dates, vendors), contract detail and form (payment plan
+  editor with a running total), and the project's "Satın alma" tab (committed vs project budget in
+  the budget currency, paid, overdue). The tab is hidden without `contracts:view`.
+
 ## Demand management
 
 - `Demand` (requester part + `assessment` + `history: DemandEvent[]`), master data lists

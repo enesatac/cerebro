@@ -93,6 +93,15 @@ due date. Escalations carry severity, status, owner, responsible team, raiser, t
 resolution. Decisions are lightweight ADRs (context, decision, rationale, alternatives,
 consequences, deciders, status).
 
+### Contract, Vendor
+
+A purchase made for a project (`SZL-0007`): `vendorId`, type and status (master data), owner,
+purchase order number, signed/start/end dates, notice period and auto-renewal, value with currency
+and billing frequency, related applications and a payment plan (`ContractPayment`: due date,
+amount, status, invoice number, paid date). Files (signed contract — required —, offers, POs,
+invoices) are attachments. `Vendor` is a supplier with business contacts. Projects and vendors
+with contracts cannot be deleted.
+
 ### Demand
 
 A business unit's request for change (`TLP-0012`): what is needed (problem, proposed solution,

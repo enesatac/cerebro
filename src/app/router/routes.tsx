@@ -25,6 +25,9 @@ const DemandsPage = page(() => import('@/domains/demands/pages/DemandsPage'));
 const DemandDetailPage = page(() => import('@/domains/demands/pages/DemandDetailPage'));
 const DemandFormPage = page(() => import('@/domains/demands/pages/DemandFormPage'));
 const DemandManagementPage = page(() => import('@/domains/demands/pages/DemandManagementPage'));
+const ContractsPage = page(() => import('@/domains/contracts/pages/ContractsPage'));
+const ContractDetailPage = page(() => import('@/domains/contracts/pages/ContractDetailPage'));
+const ContractFormPage = page(() => import('@/domains/contracts/pages/ContractFormPage'));
 const ConnectionsPage = page(() => import('@/domains/connections/pages/ConnectionsPage'));
 const DependencyFormPage = page(() => import('@/domains/connections/pages/DependencyFormPage'));
 const IntegrationFormPage = page(() => import('@/domains/connections/pages/IntegrationFormPage'));
@@ -105,6 +108,16 @@ export const routes: RouteObject[] = [
       { path: 'projects/new', element: guarded(<ProjectFormPage />, 'projects:edit') },
       { path: 'projects/:projectId', element: guarded(<ProjectDetailPage />, 'projects:view') },
       { path: 'projects/:projectId/edit', element: guarded(<ProjectFormPage />, 'projects:edit') },
+      { path: 'contracts', element: guarded(<ContractsPage />, 'contracts:view') },
+      { path: 'contracts/new', element: guarded(<ContractFormPage />, 'contracts:edit') },
+      {
+        path: 'contracts/:contractId',
+        element: guarded(<ContractDetailPage />, 'contracts:view'),
+      },
+      {
+        path: 'contracts/:contractId/edit',
+        element: guarded(<ContractFormPage />, 'contracts:edit'),
+      },
       { path: 'demands', element: guarded(<DemandsPage />, 'demands:view') },
       { path: 'demands/new', element: guarded(<DemandFormPage />, 'demands:edit') },
       {

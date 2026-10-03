@@ -11,6 +11,7 @@ import {
   type ProjectSortField,
 } from '@/domains/projects/types';
 import { findPrimaryRoleHolder } from '@/domains/shared/utils/roles';
+import { ValidationError } from '@/lib/errors';
 import { deleteProjectCascade, projectDeletionImpact } from './cascade';
 import type { MockDatabase } from './database';
 import type { Lookup } from './lookup';
@@ -142,6 +143,8 @@ export class MockProjectRepository implements ProjectRepository {
   async remove(id: EntityId) {
     await this.kit.begin('projects:delete');
     findOrThrow(this.db.projects, id, 'Proje');
+    const { blockedReason } = projectDeletionImpact(this.db, id);
+    if (blockedReason) throw new ValidationError(blockedReason);
     deleteProjectCascade(this.db, id);
     removeRow(this.db.projects, id);
   }

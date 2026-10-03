@@ -241,3 +241,27 @@ export const ROLE = {
   employee: 5,
   auditor: 6,
 } as const;
+
+/** `vendors` */
+export const VENDOR = {
+  northwind: 1,
+  contosoCloud: 2,
+  fabrikam: 3,
+  atlasConsulting: 4,
+  kuzeySecurity: 5,
+  tailspinMessaging: 6,
+} as const;
+
+/** `contracts` */
+export const CON = {
+  identityVerification: 1,
+  uxResearch: 2,
+  paymentHsm: 3,
+  paymentLicense: 4,
+  bookingMigration: 5,
+  drSite: 6,
+  observability: 7,
+  biPlatform: 8,
+  mfaTokens: 9,
+  smsGateway: 10,
+} as const;

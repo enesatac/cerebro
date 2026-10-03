@@ -41,6 +41,10 @@ export const MASTER_DATA_LIST_KEYS = [
   'demandTypes',
   'demandBenefitTypes',
   'demandPriorities',
+  'contractTypes',
+  'contractStatuses',
+  'billingFrequencies',
+  'paymentStatuses',
 ] as const;
 export type MasterDataListKey = (typeof MASTER_DATA_LIST_KEYS)[number];
 

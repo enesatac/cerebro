@@ -1,7 +1,7 @@
 import type { Attachment, AttachmentOwnerType } from '@/domains/attachments/types';
 import { samplePdf } from '../samplePdf';
 import { auditOf } from './audit';
-import { APP, DEC, ESC, PERSON, PRJ, RISK, TEAM, TECH } from './ids';
+import { APP, CON, DEC, ESC, PERSON, PRJ, RISK, TEAM, TECH } from './ids';
 
 type AttachmentSeed = [
   ownerType: AttachmentOwnerType,
@@ -215,6 +215,78 @@ const seeds: AttachmentSeed[] = [
     'Kanalların taşınma sırası ve geri dönüş planı.',
     '2026-06-20',
     PERSON.zeynepCelik,
+  ],
+  [
+    'contract',
+    CON.identityVerification,
+    'contract',
+    'SZL-0001 — e-KYC hizmet sözleşmesi (imzalı).pdf',
+    'İmzalı sözleşme ve SLA eki.',
+    '2026-01-20',
+    PERSON.priyaRaman,
+  ],
+  [
+    'contract',
+    CON.identityVerification,
+    'invoice',
+    'KZY-2026-0814 — 3. çeyrek faturası.pdf',
+    'Ödeme bekliyor.',
+    '2026-08-16',
+    PERSON.priyaRaman,
+  ],
+  [
+    'contract',
+    CON.paymentHsm,
+    'contract',
+    'SZL-0003 — HSM satın alma sözleşmesi (imzalı).pdf',
+    'Teslimat, kurulum ve garanti koşulları.',
+    '2025-09-12',
+    PERSON.keremYildiz,
+  ],
+  [
+    'contract',
+    CON.paymentLicense,
+    'contract',
+    'SZL-0004 — Lisans ve destek sözleşmesi (imzalı).pdf',
+    'Yıllık lisans, destek seviyeleri.',
+    '2025-12-18',
+    PERSON.sofiaMarin,
+  ],
+  [
+    'contract',
+    CON.bookingMigration,
+    'offer',
+    'Northwind — Veri taşıma teklifi v2.pdf',
+    'Revize teklif; müzakere sürüyor.',
+    '2026-09-10',
+    PERSON.lucasMoreau,
+  ],
+  [
+    'contract',
+    CON.drSite,
+    'contract',
+    'SZL-0006 — Felaket kurtarma barındırma sözleşmesi (imzalı).pdf',
+    '3 yıllık hizmet sözleşmesi.',
+    '2026-03-01',
+    PERSON.aylinDemir,
+  ],
+  [
+    'contract',
+    CON.drSite,
+    'purchase-order',
+    'PO-2026-0201 — Satın alma siparişi.pdf',
+    '',
+    '2026-03-02',
+    PERSON.aylinDemir,
+  ],
+  [
+    'contract',
+    CON.mfaTokens,
+    'contract',
+    'SZL-0009 — MFA hizmet sözleşmesi (imzalı).pdf',
+    'Abonelik ve donanım anahtarı teslim koşulları.',
+    '2025-12-01',
+    PERSON.graceMensah,
   ],
 ];
 

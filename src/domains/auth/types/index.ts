@@ -71,6 +71,16 @@ export const PRIVILEGE_MODULES = [
     },
   },
   {
+    id: 'contracts',
+    label: 'Satın alma ve sözleşmeler',
+    group: 'portfolio',
+    levels: {
+      view: 'Sözleşmeleri, bedelleri, ödeme planlarını ve tedarikçileri görür.',
+      edit: 'Sözleşme ve tedarikçi kaydeder, ödemeleri günceller, sözleşme belgesi yükler.',
+      delete: 'Sözleşme, tedarikçi ve sözleşme belgelerini siler.',
+    },
+  },
+  {
     id: 'reports',
     label: 'Raporlar',
     group: 'portfolio',

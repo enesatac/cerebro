@@ -4,6 +4,8 @@ import { allocations } from './data/allocations';
 import { runbooks } from './data/runbooks';
 import { attachments } from './data/attachments';
 import { demands } from './data/demands';
+import { contracts } from './data/contracts';
+import { vendors } from './data/vendors';
 import { leaves } from './data/leaves';
 import { dependencies, integrations } from './data/connections';
 import { masterData } from './data/masterData';
@@ -37,6 +39,8 @@ export const seedTables = {
   runbooks,
   attachments,
   demands,
+  vendors,
+  contracts,
 };
 
 /**
@@ -77,6 +81,9 @@ export const SEQUENCES = [
   'attachments',
   'demands',
   'demandEvents',
+  'vendors',
+  'contracts',
+  'contractPayments',
 ] as const;
 export type SequenceName = (typeof SEQUENCES)[number];
 
@@ -127,6 +134,9 @@ export function sequencesOf(tables: typeof seedTables): Sequences {
     attachments: maxId(tables.attachments),
     demands: maxId(tables.demands),
     demandEvents: maxId(tables.demands.flatMap((d) => d.history)),
+    vendors: maxId(tables.vendors),
+    contracts: maxId(tables.contracts),
+    contractPayments: maxId(tables.contracts.flatMap((c) => c.payments)),
   };
 }
 

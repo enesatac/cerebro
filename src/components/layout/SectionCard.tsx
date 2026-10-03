@@ -32,7 +32,7 @@ export function SectionCard({
             </Card.Description>
           )}
         </div>
-        {actions}
+        {actions && <div className="c-section-card__actions">{actions}</div>}
       </Card.Header>
       <Card.Body className="c-section-card__body">{children}</Card.Body>
     </Card>

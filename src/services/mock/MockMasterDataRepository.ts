@@ -1,4 +1,5 @@
 import type { ApplicationInput } from '@/domains/applications/types';
+import type { ContractInput } from '@/domains/contracts/types';
 import type { DemandInput } from '@/domains/demands/types';
 import type { LeaveInput } from '@/domains/leaves/types';
 import type { AllocationInput } from '@/domains/resources/types';
@@ -60,6 +61,7 @@ function codesInUse(db: MockDatabase, key: MasterDataListKey): string[] {
       return [
         ...projects.flatMap((p) => (p.financials ? [p.financials.currency] : [])),
         ...db.demands.filter((d) => d.estimatedBudget !== null).map((d) => d.currency),
+        ...db.contracts.map((c) => c.currency),
       ];
     case 'criticalities':
       return [
@@ -107,6 +109,14 @@ function codesInUse(db: MockDatabase, key: MasterDataListKey): string[] {
       return db.demands.flatMap((d) => d.benefitTypes);
     case 'demandPriorities':
       return db.demands.flatMap((d) => (d.assessment.priority ? [d.assessment.priority] : []));
+    case 'contractTypes':
+      return db.contracts.map((c) => c.type);
+    case 'contractStatuses':
+      return db.contracts.map((c) => c.status);
+    case 'billingFrequencies':
+      return db.contracts.map((c) => c.billingFrequency);
+    case 'paymentStatuses':
+      return db.contracts.flatMap((c) => c.payments.map((p) => p.status));
   }
 }
 
@@ -338,6 +348,15 @@ export const codeChecks = {
       codes: d.estimatedBudget !== null ? [d.currency] : [],
       field: 'currency',
     },
+  ],
+  contract: (
+    c: Pick<ContractInput, 'type' | 'status' | 'currency' | 'billingFrequency' | 'payments'>,
+  ): CodeCheck[] => [
+    { list: 'contractTypes', codes: [c.type], field: 'type' },
+    { list: 'contractStatuses', codes: [c.status], field: 'status' },
+    { list: 'currencies', codes: [c.currency], field: 'currency' },
+    { list: 'billingFrequencies', codes: [c.billingFrequency], field: 'billingFrequency' },
+    { list: 'paymentStatuses', codes: c.payments.map((p) => p.status), field: 'payments' },
   ],
   integration: (i: Omit<MockDatabase['integrations'][number], 'id' | 'audit'>): CodeCheck[] => [
     { list: 'integrationTypes', codes: [i.type], field: 'type' },

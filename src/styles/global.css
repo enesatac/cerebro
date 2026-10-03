@@ -373,6 +373,14 @@ code {
   gap: var(--spacing-4xl);
 }
 
+.c-section-card__actions {
+  display: flex;
+  flex: none;
+  flex-wrap: wrap;
+  gap: var(--spacing-s);
+  align-items: center;
+}
+
 .c-section-card__title {
   margin: 0;
   font-size: var(--size-base);

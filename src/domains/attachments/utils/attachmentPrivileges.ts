@@ -11,6 +11,7 @@ const OWNER_MODULE: Record<AttachmentOwnerType, PrivilegeModule> = {
   escalation: 'risks',
   decision: 'risks',
   demand: 'demandManagement',
+  contract: 'contracts',
 };
 
 /**

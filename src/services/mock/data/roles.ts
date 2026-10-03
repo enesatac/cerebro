@@ -64,6 +64,7 @@ export const roles: Role[] = [
       resources: 'edit',
       demands: 'edit',
       demandManagement: 'delete',
+      contracts: 'delete',
       masterData: 'edit',
     },
   ),
