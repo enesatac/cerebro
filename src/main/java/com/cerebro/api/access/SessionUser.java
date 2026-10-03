@@ -1,12 +1,12 @@
 package com.cerebro.api.access;
 
-import java.time.OffsetDateTime;
+import com.cerebro.api.shared.Audit;
 import java.util.List;
-import java.util.Set;
 
 /**
  * The signed-in account with what its roles allow, resolved on every request so role changes apply
- * without signing in again. Same shape as the frontend's {@code SessionUser}.
+ * without signing in again. Same shape as the frontend's {@code SessionUser}; privileges are in
+ * catalogue order.
  */
 public record SessionUser(
     long id,
@@ -15,11 +15,21 @@ public record SessionUser(
     List<Long> roleIds,
     Long personId,
     boolean active,
-    OffsetDateTime lastSignInAt,
+    String lastSignInAt,
+    Audit audit,
     List<String> roleNames,
-    Set<String> privileges) {
+    List<String> privileges) {
 
   public boolean has(String privilege) {
     return active && privileges.contains(privilege);
+  }
+
+  public boolean hasAny(String... wanted) {
+    for (String privilege : wanted) {
+      if (has(privilege)) {
+        return true;
+      }
+    }
+    return false;
   }
 }

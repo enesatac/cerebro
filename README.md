@@ -4,10 +4,12 @@ Backend of [Cerebro](https://github.com/enesatac/cerebro), the internal portfoli
 (applications, projects, demands, contracts, people and their access). The frontend talks only
 to this API; the API owns the database, the integrations and every access decision.
 
-**Status: skeleton.** The foundations are in place — database schema, access control, sessions,
-error format, OpenAPI, Docker, CI — and the business modules (applications, projects, …) are
-added on top of them one by one. The frontend's in-memory repositories
-(`cerebro/src/services/mock`) are the behavioural specification for each module.
+Every screen of the app is served: a REST endpoint for each method of the frontend's repository
+contracts (`cerebro/src/domains/*/api/*Repository.ts`) — portfolio, connections, risks /
+escalations / decisions, demands, contracts and vendors, people and teams, technologies, leaves,
+resource allocations, runbooks, attachments (with file storage), master data, users and roles,
+the dashboard and report aggregates, and global search. The frontend's contract test runs the
+same reads and writes against this API and its in-memory mock and checks they agree.
 
 ## Stack
 
@@ -23,13 +25,19 @@ docker compose up -d          # PostgreSQL on localhost:5432
 ./mvnw spring-boot:run -Dspring-boot.run.profiles=local
 ```
 
-- API: <http://localhost:8080/api/session>
+Then start the frontend against it (in the cerebro repo): `npm run dev:api` →
+<http://localhost:5173>.
+
 - OpenAPI: <http://localhost:8080/v3/api-docs> · Swagger UI: <http://localhost:8080/swagger-ui.html>
 - Health: <http://localhost:8080/actuator/health>
 
-The `local` profile has no identity provider: every request runs as `gelistirici@cerebro.local`,
-which is created with the system administrator role on first start. The profile refuses to start
-together with `prod`.
+The `local` profile has no identity provider. It fills an **empty** database with the demo
+organisation (`cerebro.demo-data`, the same fictional data as the frontend's demo) and turns on the
+**demo sign-in**: the sign-in screen lists the active accounts and you continue as one of them
+(`cerebro.security.demo-sign-in`). `gelistirici@cerebro.local` gets the system administrator role
+if nobody holds it. The demo sign-in refuses to start together with `prod`.
+
+To start over, drop the database volume (`docker compose down -v`).
 
 ## Configuration (production)
 
@@ -43,24 +51,32 @@ Profile `prod`; all values from the environment or the secrets manager — never
 | `CEREBRO_OIDC_CLIENT_ID`         | OIDC client                                                |
 | `CEREBRO_OIDC_CLIENT_SECRET`     | OIDC client secret                                         |
 | `CEREBRO_BOOTSTRAP_ADMIN_EMAIL`  | First deployment: gets the system role if nobody has it    |
+| `CEREBRO_TIME_ZONE`              | The organisation's "today" (default `Europe/Istanbul`)     |
 
 ## Commands
 
 ```bash
-./mvnw verify                  # compile + tests (the PostgreSQL test needs Docker)
+./mvnw verify                  # compile + tests (the API integration test needs Docker)
 ./mvnw package                 # target/cerebro-api-*.jar
 docker build -t cerebro-api .  # container image (runs with the prod profile)
 ```
 
-## Connecting the frontend
+Without Docker, the integration test can use an already migrated PostgreSQL:
+`CEREBRO_TEST_DB_URL=jdbc:postgresql://localhost:5432/cerebro_test ./mvnw verify` (empty
+database; the demo data is loaded on start).
 
-1. Serve both under one origin (reverse proxy, or Vite's dev proxy `"/api" → http://localhost:8080`),
-   so the session cookie and CSRF token work without CORS.
-2. Implement `Http*Repository` classes for the repository interfaces and return them from
-   `createRepositories()` (`cerebro/src/services/repositories.ts`). Pages do not change.
-3. Errors: the API answers with problem details whose `code` is `validation`, `not-found`,
-   `forbidden` or `unauthenticated` (and `field` for validation) — map them to the frontend's
-   `ValidationError`, `NotFoundError`, `ForbiddenError`, `UnauthenticatedError`.
-4. Writes send the `XSRF-TOKEN` cookie value back in the `X-XSRF-TOKEN` header.
+## API conventions
 
-See [`docs/architecture.md`](docs/architecture.md) for the design and how to add a module.
+- Resources follow the repository contracts: `/api/<resource>` (`GET` list, `POST` create),
+  `/api/<resource>/{id}` (`GET`, `PUT`, `DELETE`), `/api/<resource>/{id}/deletion-impact`, and read
+  models at their own paths (`/api/applications/{id}/dependencies`,
+  `/api/people/{id}/workload?today=`, `/api/governance/trends`, `/api/demands/{id}/assessment`…).
+- JSON matches the frontend types field for field; dates are `yyyy-MM-dd`, timestamps UTC with
+  milliseconds (`2026-03-14T09:30:00.000Z`).
+- Errors are problem details whose `code` is `validation`, `not-found`, `forbidden` or
+  `unauthenticated`, with `field` for validation — the frontend maps them to its error classes.
+  Messages are Turkish and user-facing.
+- Same origin as the SPA (reverse proxy, or Vite's dev proxy): httpOnly session cookie, and writes
+  send the `XSRF-TOKEN` cookie value back in the `X-XSRF-TOKEN` header.
+
+See [`docs/architecture.md`](docs/architecture.md) for the design and how to change a module.

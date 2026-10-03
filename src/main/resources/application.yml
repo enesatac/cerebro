@@ -11,6 +11,11 @@ spring:
   mvc:
     problemdetails:
       enabled: true
+  servlet:
+    multipart:
+      # Attachments are at most 20 MB (checked again by the service).
+      max-file-size: 20MB
+      max-request-size: 21MB
   jackson:
     default-property-inclusion: always
 
@@ -41,5 +46,9 @@ springdoc:
     path: /swagger-ui.html
 
 cerebro:
+  # "Today" for overdue milestones, review intervals and upcoming leaves.
+  time-zone: ${CEREBRO_TIME_ZONE:Europe/Istanbul}
+  demo-data: false
   security:
+    demo-sign-in: false
     bootstrap-admin-email: ${CEREBRO_BOOTSTRAP_ADMIN_EMAIL:}

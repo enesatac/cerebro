@@ -15,5 +15,5 @@ jobs:
           distribution: temurin
           java-version: '21'
           cache: maven
-      # Docker is available on the runner, so the Testcontainers migration test runs here.
+      # Docker is available on the runner, so the API integration test (Testcontainers) runs here.
       - run: ./mvnw -B verify

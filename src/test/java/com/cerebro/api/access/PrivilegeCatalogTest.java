@@ -36,7 +36,14 @@ class PrivilegeCatalogTest {
   void inactiveAccountsHoldNothing() {
     SessionUser user =
         new SessionUser(
-            1, "A", "a@x", List.of(), null, false, null, List.of(), java.util.Set.of("projects:view"));
+            1, "A", "a@x", List.of(), null, false, null, null, List.of(), List.of("projects:view"));
     assertThat(user.has("projects:view")).isFalse();
+  }
+
+  @Test
+  void normalisesPrivilegesWithImpliedLevelsInCatalogueOrder() {
+    assertThat(Privileges.normalize(List.of("roles:edit", "projects:delete", "nope:view")))
+        .containsExactly(
+            "projects:view", "projects:edit", "projects:delete", "roles:view", "roles:edit");
   }
 }
