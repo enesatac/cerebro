@@ -37,6 +37,10 @@ export const MASTER_DATA_LIST_KEYS = [
   'leaveTypes',
   'runbookLinkTypes',
   'documentTypes',
+  'demandStatuses',
+  'demandTypes',
+  'demandBenefitTypes',
+  'demandPriorities',
 ] as const;
 export type MasterDataListKey = (typeof MASTER_DATA_LIST_KEYS)[number];
 

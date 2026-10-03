@@ -2,14 +2,16 @@ import type { AttachmentRepository } from '@/domains/attachments/api/AttachmentR
 import {
   MAX_ATTACHMENT_BYTES,
   type Attachment,
+  type AttachmentOwner,
   type AttachmentOwnerType,
 } from '@/domains/attachments/types';
+import { canAttachToDemand } from '@/domains/demands/utils/demandAccess';
 import {
   isAllowedFileName,
   MAX_SIZE_LABEL,
   sanitizeFileName,
 } from '@/domains/attachments/utils/attachmentFiles';
-import { NotFoundError, ValidationError } from '@/lib/errors';
+import { ForbiddenError, NotFoundError, ValidationError } from '@/lib/errors';
 import { looksLikeSecret, NO_SECRETS_MESSAGE } from '@/lib/validation';
 import type { BlobStore } from './blobStore';
 import { NO_IMPACT, sameOwner } from './cascade';
@@ -27,6 +29,7 @@ const OWNER_LABELS: Record<AttachmentOwnerType, string> = {
   risk: 'Risk',
   escalation: 'Eskalasyon',
   decision: 'Karar',
+  demand: 'Talep',
 };
 
 function ownerRows(db: MockDatabase, type: AttachmentOwnerType): readonly { id: number }[] {
@@ -45,6 +48,8 @@ function ownerRows(db: MockDatabase, type: AttachmentOwnerType): readonly { id: 
       return db.escalations;
     case 'decision':
       return db.decisions;
+    case 'demand':
+      return db.demands;
   }
 }
 
@@ -63,6 +68,19 @@ export function createMockAttachmentRepository(
       [{ list: 'documentTypes', codes: [code], field: 'documentType' }],
       [{ list: 'documentTypes', codes: previous, field: 'documentType' }],
     );
+  /**
+   * Files on most records follow the portfolio permissions; a demand's requester may also manage
+   * the files of their own open demand (business cases, screenshots…).
+   */
+  const authorize = async (owner: AttachmentOwner, action: 'write' | 'remove') => {
+    if (owner.type !== 'demand') {
+      return kit.begin(action === 'write' ? 'portfolio:edit' : 'portfolio:delete');
+    }
+    const user = await kit.begin('demands:submit');
+    const demand = db.demands.find((row) => row.id === owner.id);
+    if (demand && !canAttachToDemand(user, demand)) throw new ForbiddenError();
+    return user;
+  };
   const assertDescription = (description: string) => {
     if (description.length > 300) {
       throw new ValidationError('Açıklama en fazla 300 karakter olabilir.', 'description');
@@ -90,7 +108,7 @@ export function createMockAttachmentRepository(
     },
 
     async upload({ owner, documentType, description, file, fileName }) {
-      const user = await kit.begin('portfolio:edit');
+      const user = await authorize(owner, 'write');
       if (!ownerRows(db, owner.type).some((row) => row.id === owner.id)) {
         throw new NotFoundError(OWNER_LABELS[owner.type], owner.id);
       }
@@ -127,8 +145,8 @@ export function createMockAttachmentRepository(
     },
 
     async update(id, { documentType, description }) {
-      const user = await kit.begin('portfolio:edit');
       const current = findOrThrow(db.attachments, id, 'Ek');
+      const user = await authorize(current.owner, 'write');
       assertDocumentType(documentType, [current.documentType]);
       assertDescription(description.trim());
       return copy(
@@ -142,8 +160,7 @@ export function createMockAttachmentRepository(
     },
 
     async remove(id) {
-      await kit.begin('portfolio:delete');
-      findOrThrow(db.attachments, id, 'Ek');
+      await authorize(findOrThrow(db.attachments, id, 'Ek').owner, 'remove');
       removeRow(db.attachments, id);
       await blobs.delete(id);
     },

@@ -10,7 +10,8 @@ export const ROLE_PRESENTATION: Record<UserRole, StatusPresentation & { descript
   user: {
     label: 'Kullanıcı',
     variant: 'neutral',
-    description: 'Her şeyi görüntüleyebilir. Değişiklik yapamaz.',
+    description:
+      'Her şeyi görüntüleyebilir ve talep açabilir; kendi taleplerini karar verilene kadar düzenleyebilir. Diğer kayıtları değiştiremez.',
   },
 };
 

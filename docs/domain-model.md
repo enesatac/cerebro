@@ -19,6 +19,11 @@ ApplicationDependency: source Application ── depends on ──► target App
 Integration:           from Application ── calls/produces ──► to Application | external party (type, frequency)
 
 Risk / Escalation / Decision ── relatedApplicationIds[], relatedProjectIds[] ──► Application, Project
+
+Demand ── businessUnitId ──► BusinessUnit;  requesterId, sponsorId, assessorId ──► Person
+   ├── relatedApplicationIds[] ──► Application
+   ├── assessment.projectId ──► Project   (the project it became)
+   └── history[]: DemandEvent (status changes)
 ```
 
 ## Core rules
@@ -87,6 +92,17 @@ impact, severity, status (open, monitoring, mitigated, accepted, closed), owner,
 due date. Escalations carry severity, status, owner, responsible team, raiser, target date and
 resolution. Decisions are lightweight ADRs (context, decision, rationale, alternatives,
 consequences, deciders, status).
+
+### Demand
+
+A business unit's request for change (`TLP-0012`): what is needed (problem, proposed solution,
+expected benefits and benefit types, urgency, desired date and why, regulatory flag, affected
+users, rough budget, related applications) and the portfolio office's `assessment` — WSJF scores
+(business value, strategic fit, time criticality, risk reduction ÷ effort, each 1–5), decided
+`priority`, assessor, planned start/end, decision note and, once delivered as a project,
+`projectId`. Status follows `demandStatuses` (submitted → in review / needs info → approved →
+scheduled → converted, or rejected / withdrawn); every change is a `DemandEvent`. Requesters may
+change and withdraw their own demand until it is decided; the portfolio office decides.
 
 ### Not (yet) separate entities
 

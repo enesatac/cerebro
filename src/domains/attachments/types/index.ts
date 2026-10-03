@@ -11,6 +11,7 @@ export const ATTACHMENT_OWNER_TYPES = [
   'risk',
   'escalation',
   'decision',
+  'demand',
 ] as const;
 export type AttachmentOwnerType = (typeof ATTACHMENT_OWNER_TYPES)[number];
 
@@ -34,6 +35,7 @@ export const DOCUMENT_TYPES = [
   'license',
   'meeting-notes',
   'incident-report',
+  'business-case',
   'other',
 ] as const;
 /** Code from the `documentTypes` master data list. */

@@ -5,7 +5,7 @@ import type { MockDatabase } from './database';
  * reload. Bump the key when the seed data or its shape changes. Storage can be unavailable
  * (private mode, blocked site data) — every access is guarded and falls back to seed data.
  */
-const STORAGE_KEY = 'cerebro.demo-db.v9';
+const STORAGE_KEY = 'cerebro.demo-db.v10';
 
 export interface DatabaseStore {
   load(): MockDatabase | null;
@@ -32,7 +32,15 @@ export function createBrowserDatabaseStore(): DatabaseStore {
   };
 }
 
-const WRITE_METHODS = new Set(['create', 'update', 'remove', 'upload', 'signIn']);
+const WRITE_METHODS = new Set([
+  'create',
+  'update',
+  'remove',
+  'upload',
+  'signIn',
+  'assess',
+  'withdraw',
+]);
 
 /**
  * Wraps repository objects so that every successful write is followed by `onWrite()`. Nested

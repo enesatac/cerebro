@@ -198,7 +198,8 @@ teams and technologies.
 - `Attachment` (owner `{ type, id }`, `documentType` from master data `documentTypes`, file
   name, content type, size, description, uploader). `AttachmentRepository`: `list(owner)`,
   `countByOwner(type)`, `upload`, `update`, `remove`, `download`. Uploading needs
-  `portfolio:edit`, deleting `portfolio:delete`; reading is open to everyone.
+  `portfolio:edit`, deleting `portfolio:delete` (demand files follow the demand's own rule, see
+  Demand management); reading is open to everyone.
 - Bytes are not in the mock database: `BlobStore` (IndexedDB in the browser, memory in tests)
   keeps them under the attachment id, like object storage would. Seed files are metadata only;
   their bytes are valid PDFs generated from the metadata (`samplePdf`). Bytes of files whose
@@ -215,6 +216,27 @@ teams and technologies.
   dialog from register rows and decisions.
 - Tables with row-level dialogs memoise their column definitions: Takeoff's table remounts a
   cell when its renderer changes, which would reset an open dialog.
+
+## Demand management
+
+- `Demand` (requester part + `assessment` + `history: DemandEvent[]`), master data lists
+  `demandStatuses` (workflow, system codes), `demandTypes`, `demandBenefitTypes`,
+  `demandPriorities`; urgency reuses `criticalities`. `DemandRepository`: `list`, `getById`,
+  `create`, `update`, `assess`, `withdraw`, `remove`, `getDeletionImpact`.
+- Permissions: `demands:submit` (both roles) and `demands:manage` (admins). The ownership rule
+  ("own demand, not yet decided") is one pure module, `domains/demands/utils/demandAccess.ts`,
+  used by the repository to enforce it and by the UI to hide what would be refused. A requester
+  editing a demand in `needs-info` puts it back to `submitted`. Status rules (reason to reject or
+  ask, priority to approve, dates to schedule, project to convert) are checked by the repository,
+  mirrored in the assessment form schema and in database `CHECK`s.
+- Demand files use the attachments module with an `access` override: the requester manages the
+  files of their own open demand, the repository authorises the same way.
+- Scoring is WSJF (`utils/demandScoring.ts`): (value + fit + time criticality + risk reduction)
+  ÷ effort, with thresholds suggesting P1–P4; the backlog is ordered by decided priority, score,
+  regulatory flag and age. `utils/roadmap.ts` buckets approved/scheduled demands into quarters.
+- Pages: `DemandsPage` (Taleplerim / Tüm talepler), `DemandFormPage`, `DemandDetailPage`,
+  `DemandManagementPage` (Gelen kutusu, Önceliklendirme, Yol haritası, Kapananlar) with
+  `DemandAssessmentDialog` (Takeoff `Radio` score rows, quarter shortcuts).
 
 ## Excel export
 

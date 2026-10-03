@@ -10,8 +10,10 @@ export const ROLE_PERMISSIONS: Record<UserRole, readonly Permission[]> = {
     'masterData:manage',
     'leaves:manage',
     'resources:manage',
+    'demands:submit',
+    'demands:manage',
   ],
-  user: ['portfolio:view'],
+  user: ['portfolio:view', 'demands:submit'],
 };
 
 export function hasPermission(

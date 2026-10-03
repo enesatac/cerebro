@@ -45,6 +45,15 @@ export const paths = {
     create: () => '/projects/new',
     edit: (projectId: EntityId) => `/projects/${id(projectId)}/edit`,
   },
+  demands: {
+    /** `tab`: `mine` (default) or `all`. */
+    list: (tab?: 'all') => withQuery('/demands', { tab }),
+    detail: (demandId: EntityId) => `/demands/${id(demandId)}`,
+    create: () => '/demands/new',
+    edit: (demandId: EntityId) => `/demands/${id(demandId)}/edit`,
+    /** The portfolio office's screen; `tab`: `inbox` (default), `backlog` or `roadmap`. */
+    manage: (tab?: 'backlog' | 'roadmap') => withQuery('/demands/manage', { tab }),
+  },
   architecture: (applicationId?: EntityId) => withQuery('/architecture', { app: applicationId }),
   dependencies: {
     create: (sourceApplicationId?: EntityId) =>

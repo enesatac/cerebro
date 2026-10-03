@@ -3193,3 +3193,255 @@ code {
   grid-area: upload;
   justify-self: end;
 }
+
+/* ---------------------------------------------------------------- Demands */
+
+/* "How it works" strip on the demands page. */
+.c-process {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--spacing-m-base);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.c-process__step {
+  display: flex;
+  gap: var(--spacing-m-base);
+  align-items: flex-start;
+  padding: var(--spacing-l);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-m-base);
+  background: var(--static-light);
+  color: var(--text-darkest);
+}
+
+.c-process__number {
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--primary-base);
+  color: var(--static-light);
+  font-weight: var(--weight-semibold);
+  font-variant-numeric: tabular-nums;
+}
+
+.c-process__text {
+  display: block;
+  margin-top: var(--spacing-xxs);
+  font-size: var(--size-sm);
+}
+
+/* Grouped fields inside a long dialog form. */
+.c-fieldset {
+  display: grid;
+  gap: var(--spacing-m-base);
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.c-fieldset + .c-fieldset {
+  padding-top: var(--spacing-xl);
+  border-top: 1px solid var(--border-light);
+}
+
+.c-fieldset__legend {
+  margin-bottom: var(--spacing-s);
+  padding: 0;
+  color: var(--text-darkest);
+  font-weight: var(--weight-semibold);
+}
+
+.c-score-field {
+  flex-wrap: wrap;
+  gap: var(--spacing-l);
+}
+
+/* Score: the number on the left, its explanation on the right. */
+.c-score-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-l) var(--spacing-xl);
+  align-items: center;
+  padding: var(--spacing-l);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-m-base);
+  background: var(--background-lightest);
+}
+
+.c-score-summary__value {
+  display: flex;
+  flex-direction: column;
+  min-width: 96px;
+}
+
+.c-score-summary__label {
+  color: var(--text-dark);
+  font-size: var(--size-xs);
+  font-weight: var(--weight-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.c-score-summary__number {
+  color: var(--text-darkest);
+  font-family: var(--family-title);
+  font-size: var(--size-3xl);
+  font-weight: var(--weight-semibold);
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.c-score-summary__detail {
+  display: flex;
+  flex: 1 1 260px;
+  flex-wrap: wrap;
+  gap: var(--spacing-s) var(--spacing-m-base);
+  align-items: center;
+}
+
+.c-score-summary__hint {
+  flex-basis: 100%;
+  font-size: var(--size-xs);
+}
+
+.c-score-breakdown {
+  display: flex;
+  flex: 1 1 260px;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs) var(--spacing-l);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-variant-numeric: tabular-nums;
+}
+
+.c-quarter-shortcuts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-s);
+  align-items: center;
+}
+
+.c-rank {
+  color: var(--text-dark);
+  font-weight: var(--weight-semibold);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Status history: a vertical rule with one entry per change. */
+.c-demand-history {
+  display: grid;
+  gap: var(--spacing-l);
+  margin: 0;
+  padding: 0 0 0 var(--spacing-l);
+  border-left: 2px solid var(--border-light);
+  list-style: none;
+}
+
+.c-demand-history__head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-s);
+  align-items: center;
+  font-size: var(--size-sm);
+}
+
+.c-demand-history__note {
+  margin: var(--spacing-xs) 0 0;
+  color: var(--text-darkest);
+}
+
+/* Roadmap: one column per quarter, scrolling sideways when they do not fit. */
+.c-roadmap {
+  display: grid;
+  grid-auto-columns: minmax(240px, 1fr);
+  grid-auto-flow: column;
+  gap: var(--spacing-m-base);
+  overflow-x: auto;
+  padding-bottom: var(--spacing-s);
+}
+
+.c-roadmap__lane {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-m-base);
+  min-width: 0;
+  padding: var(--spacing-m-base);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-m-base);
+  background: var(--background-lightest);
+}
+
+.c-roadmap__lane--muted {
+  border-style: dashed;
+}
+
+.c-roadmap__header {
+  display: grid;
+  gap: var(--spacing-xxs);
+}
+
+.c-roadmap__title {
+  margin: 0;
+  color: var(--text-darkest);
+  font-size: var(--size-base);
+  font-weight: var(--weight-semibold);
+}
+
+.c-roadmap__description,
+.c-roadmap__effort {
+  font-size: var(--size-xs);
+}
+
+.c-roadmap__effort {
+  color: var(--text-dark);
+  font-variant-numeric: tabular-nums;
+}
+
+.c-roadmap__empty {
+  margin: 0;
+  font-size: var(--size-sm);
+}
+
+.c-roadmap__cards {
+  display: grid;
+  gap: var(--spacing-s);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.c-roadmap-card {
+  display: grid;
+  gap: var(--spacing-xs);
+  justify-items: start;
+  padding: var(--spacing-m-base);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-s);
+  background: var(--static-light);
+  color: var(--text-darkest);
+}
+
+.c-roadmap-card__badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-s);
+  align-items: center;
+  font-size: var(--size-xs);
+}
+
+.c-roadmap-card__meta,
+.c-roadmap-card__dates {
+  font-size: var(--size-xs);
+}
+
+.c-roadmap-card__dates {
+  font-variant-numeric: tabular-nums;
+}

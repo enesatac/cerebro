@@ -211,3 +211,22 @@ export const USER = {
   tomBrennan: 4,
   nadiaPetrova: 5,
 } as const;
+
+/** `demands` */
+export const DEM = {
+  loyaltyMobile: 1,
+  workforceMfa: 2,
+  walletBoardingPass: 3,
+  eInvoiceRegulation: 4,
+  expenseOcr: 5,
+  crewFatigueDashboard: 6,
+  maintenancePlanning: 7,
+  logConsolidation: 8,
+  realtimeRevenue: 9,
+  supplierPortal: 10,
+  hrLeaveMobile: 11,
+  serviceChatbot: 12,
+  notificationPreferences: 13,
+  zeroTrustAccess: 14,
+  cargoTracking: 15,
+} as const;

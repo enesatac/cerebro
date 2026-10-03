@@ -2,6 +2,19 @@
 
 Short records of decisions that shape the codebase. Newest first.
 
+## D-023 · Demands: one aggregate, WSJF scoring, requester rights by ownership (2026-10-03)
+
+Business units need to raise requests themselves, so `user` accounts gain `demands:submit` — the
+first write a non-admin may do. Rather than a third role, rights follow ownership: requesters
+change, withdraw and attach files to their own demand until the portfolio office decides; only
+`demands:manage` assesses, schedules and deletes. The rule lives in one pure module shared by the
+repository and the UI. Request and assessment stay on one `demands` row (they share a lifecycle;
+no separate assessment table), with status history in `demand_events`. Prioritisation uses WSJF
+because it is explainable to requesters and needs only five 1–5 scores; the score suggests a
+priority but the decided `priority` is a separate field. Scheduling is by quarter (shortcuts set
+the dates), matching how the portfolio is planned; converting to a project links an existing
+project instead of creating one.
+
 ## D-022 · Attachments: metadata in the database, bytes in object storage (2026-10-03)
 
 Records need their documents, not just links: required ones (an application's architecture and

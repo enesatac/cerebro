@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
 import { createMockRepositories } from '@/services/mock';
 import { renderRoute, TEST_VIEWER } from '@/test/renderWithProviders';
-import { APP, DEC, DEP, ESC, INT, PRJ, RISK, TEAM, USER } from '@/services/mock/data/ids';
+import { APP, DEC, DEM, DEP, ESC, INT, PRJ, RISK, TEAM, USER } from '@/services/mock/data/ids';
 
 describe('role-based access', () => {
   it('shows create and edit actions to admins', async () => {
@@ -67,6 +67,7 @@ describe('create flow', () => {
     `/architecture/dependencies/${DEP.omsPay}/edit`,
     `/architecture/integrations/${INT.omsPayAuth}/edit`,
     `/admin/users/${USER.elifKaya}/edit`,
+    `/demands/${DEM.walletBoardingPass}/edit`,
   ])('renders the edit form at %s without errors', async (path) => {
     renderRoute(path);
     expect(

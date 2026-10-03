@@ -3,6 +3,7 @@ import { businessUnits } from './data/businessUnits';
 import { allocations } from './data/allocations';
 import { runbooks } from './data/runbooks';
 import { attachments } from './data/attachments';
+import { demands } from './data/demands';
 import { leaves } from './data/leaves';
 import { dependencies, integrations } from './data/connections';
 import { masterData } from './data/masterData';
@@ -33,6 +34,7 @@ export const seedTables = {
   allocations,
   runbooks,
   attachments,
+  demands,
 };
 
 /**
@@ -70,6 +72,8 @@ export const SEQUENCES = [
   'runbookContacts',
   'runbookScenarios',
   'attachments',
+  'demands',
+  'demandEvents',
 ] as const;
 export type SequenceName = (typeof SEQUENCES)[number];
 
@@ -117,6 +121,8 @@ export function sequencesOf(tables: typeof seedTables): Sequences {
     runbookContacts: maxId(tables.runbooks.flatMap((r) => r.contacts)),
     runbookScenarios: maxId(tables.runbooks.flatMap((r) => r.scenarios)),
     attachments: maxId(tables.attachments),
+    demands: maxId(tables.demands),
+    demandEvents: maxId(tables.demands.flatMap((d) => d.history)),
   };
 }
 

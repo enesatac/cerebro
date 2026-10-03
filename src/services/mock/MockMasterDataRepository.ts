@@ -1,4 +1,5 @@
 import type { ApplicationInput } from '@/domains/applications/types';
+import type { DemandInput } from '@/domains/demands/types';
 import type { LeaveInput } from '@/domains/leaves/types';
 import type { AllocationInput } from '@/domains/resources/types';
 import type { ProjectInput } from '@/domains/projects/types';
@@ -56,7 +57,10 @@ function codesInUse(db: MockDatabase, key: MasterDataListKey): string[] {
     case 'confidentialityLevels':
       return projects.map((p) => p.confidentiality);
     case 'currencies':
-      return projects.flatMap((p) => (p.financials ? [p.financials.currency] : []));
+      return [
+        ...projects.flatMap((p) => (p.financials ? [p.financials.currency] : [])),
+        ...db.demands.filter((d) => d.estimatedBudget !== null).map((d) => d.currency),
+      ];
     case 'criticalities':
       return [
         ...apps.map((a) => a.criticality),
@@ -64,6 +68,7 @@ function codesInUse(db: MockDatabase, key: MasterDataListKey): string[] {
         ...db.risks.flatMap((r) => [r.severity, r.probability, r.impact]),
         ...db.escalations.map((e) => e.severity),
         ...db.dependencies.map((d) => d.criticality),
+        ...db.demands.map((d) => d.urgency),
       ];
     case 'stakeholderRoles':
       return [
@@ -94,6 +99,14 @@ function codesInUse(db: MockDatabase, key: MasterDataListKey): string[] {
       return db.runbooks.flatMap((r) => r.links.map((l) => l.type));
     case 'leaveTypes':
       return db.leaves.map((l) => l.type);
+    case 'demandStatuses':
+      return db.demands.map((d) => d.status);
+    case 'demandTypes':
+      return db.demands.map((d) => d.type);
+    case 'demandBenefitTypes':
+      return db.demands.flatMap((d) => d.benefitTypes);
+    case 'demandPriorities':
+      return db.demands.flatMap((d) => (d.assessment.priority ? [d.assessment.priority] : []));
   }
 }
 
@@ -313,6 +326,18 @@ export const codeChecks = {
   ],
   leave: (l: Pick<LeaveInput, 'type'>): CodeCheck[] => [
     { list: 'leaveTypes', codes: [l.type], field: 'type' },
+  ],
+  demand: (
+    d: Pick<DemandInput, 'type' | 'urgency' | 'benefitTypes' | 'currency' | 'estimatedBudget'>,
+  ): CodeCheck[] => [
+    { list: 'demandTypes', codes: [d.type], field: 'type' },
+    { list: 'criticalities', codes: [d.urgency], field: 'urgency' },
+    { list: 'demandBenefitTypes', codes: d.benefitTypes, field: 'benefitTypes' },
+    {
+      list: 'currencies',
+      codes: d.estimatedBudget !== null ? [d.currency] : [],
+      field: 'currency',
+    },
   ],
   integration: (i: Omit<MockDatabase['integrations'][number], 'id' | 'audit'>): CodeCheck[] => [
     { list: 'integrationTypes', codes: [i.type], field: 'type' },

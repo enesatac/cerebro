@@ -60,6 +60,10 @@ export function applicationDeletionImpact(db: MockDatabase, id: EntityId): Delet
         label: 'müdahale rehberi (silinir)',
         count: db.runbooks.filter((r) => r.applicationId === id).length,
       },
+      {
+        label: 'talep (bağlantı kaldırılır)',
+        count: db.demands.filter((d) => d.relatedApplicationIds.includes(id)).length,
+      },
       attachmentReference(db, { type: 'application', id }),
     ]),
   };
@@ -79,6 +83,9 @@ export function deleteApplicationCascade(db: MockDatabase, id: EntityId) {
   }
   unlinkRelated(db, 'relatedApplicationIds', id);
   db.runbooks = db.runbooks.filter((r) => r.applicationId !== id);
+  for (const demand of db.demands) {
+    demand.relatedApplicationIds = demand.relatedApplicationIds.filter((value) => value !== id);
+  }
   deleteAttachmentsOf(db, { type: 'application', id });
 }
 
@@ -94,6 +101,10 @@ export function projectDeletionImpact(db: MockDatabase, id: EntityId): DeletionI
         label: 'kaynak ataması (silinir)',
         count: db.allocations.filter((a) => a.projectId === id).length,
       },
+      {
+        label: 'kaynak talep (bağlantı kaldırılır)',
+        count: db.demands.filter((d) => d.assessment.projectId === id).length,
+      },
       attachmentReference(db, { type: 'project', id }),
     ]),
   };
@@ -102,6 +113,9 @@ export function projectDeletionImpact(db: MockDatabase, id: EntityId): DeletionI
 export function deleteProjectCascade(db: MockDatabase, id: EntityId) {
   unlinkRelated(db, 'relatedProjectIds', id);
   db.allocations = db.allocations.filter((a) => a.projectId !== id);
+  for (const demand of db.demands) {
+    if (demand.assessment.projectId === id) demand.assessment.projectId = null;
+  }
   deleteAttachmentsOf(db, { type: 'project', id });
 }
 
@@ -198,6 +212,7 @@ export function personDeletionImpact(db: MockDatabase, id: EntityId): DeletionIm
     ...db.dependencies,
     ...db.integrations,
     ...db.teams,
+    ...db.demands,
   ];
   const references = nonZero([
     {
@@ -223,6 +238,12 @@ export function personDeletionImpact(db: MockDatabase, id: EntityId): DeletionIm
     { label: 'izin kaydı', count: db.leaves.filter((l) => l.personId === id).length },
     { label: 'kaynak ataması', count: db.allocations.filter((a) => a.personId === id).length },
     {
+      label: 'talep (talep eden, sponsor veya değerlendiren)',
+      count: db.demands.filter(
+        (d) => d.requesterId === id || d.sponsorId === id || d.assessment.assessorId === id,
+      ).length,
+    },
+    {
       label: 'müdahale rehberi kişisi',
       count: db.runbooks.flatMap((r) => r.contacts).filter((c) => c.personId === id).length,
     },
@@ -247,15 +268,17 @@ export function personDeletionImpact(db: MockDatabase, id: EntityId): DeletionIm
 export function businessUnitDeletionImpact(db: MockDatabase, id: EntityId): DeletionImpact {
   const applications = db.applications.filter((a) => a.businessUnitId === id).length;
   const projects = db.projects.filter((p) => p.businessUnitId === id).length;
+  const demands = db.demands.filter((d) => d.businessUnitId === id).length;
   return {
     references: nonZero([
       { label: 'uygulama', count: applications },
       { label: 'proje', count: projects },
+      { label: 'talep', count: demands },
       { label: 'kişi', count: db.people.filter((p) => p.businessUnitId === id).length },
     ]),
     blockedReason:
-      applications + projects > 0
-        ? 'Bu iş birimi uygulama veya projelerde kullanılıyor. Önce bu kayıtları başka bir birime taşıyın.'
+      applications + projects + demands > 0
+        ? 'Bu iş birimi uygulama, proje veya taleplerde kullanılıyor. Önce bu kayıtları başka bir birime taşıyın.'
         : null,
   };
 }

@@ -4,13 +4,13 @@ import { EditIconOutlinedRounded } from '@takeoff-icons/react/edit';
 import { useMemo, useState } from 'react';
 import { TableExportBar } from '@/components/actions/TableExportBar';
 import { EmptyState } from '@/components/feedback/EmptyState';
-import { usePermission } from '@/domains/auth/api/queries';
 import { useMasterData } from '@/domains/master-data/context';
 import { usePeopleById } from '@/domains/people/api/queries';
 import { formatDate } from '@/lib/dates';
 import { sheet } from '@/lib/xlsxTypes';
 import type { Attachment } from '../types';
 import { formatFileSize, isPreviewable } from '../utils/attachmentFiles';
+import type { AttachmentAccess } from './attachmentAccess';
 import { AttachmentDeleteAction } from './AttachmentDeleteAction';
 import { AttachmentEditDialog } from './AttachmentEditDialog';
 import { useAttachmentFile } from './useAttachmentFile';
@@ -19,13 +19,14 @@ interface AttachmentTableProps {
   attachments: readonly Attachment[];
   /** Workbook title for the Excel export, e.g. "Ödeme Geçidi — ekler". */
   exportTitle: string;
+  access: AttachmentAccess;
 }
 
 /** Files of a record: open or download, and (for editors) retype, describe or delete them. */
-export function AttachmentTable({ attachments, exportTitle }: AttachmentTableProps) {
+export function AttachmentTable({ attachments, exportTitle, access }: AttachmentTableProps) {
   const masterData = useMasterData();
   const people = usePeopleById();
-  const canEdit = usePermission('portfolio:edit');
+  const { edit: canEdit, remove: canRemove } = access;
   const file = useAttachmentFile();
   const [editing, setEditing] = useState<Attachment | null>(null);
   const uploader = (a: Attachment) =>
@@ -84,7 +85,7 @@ export function AttachmentTable({ attachments, exportTitle }: AttachmentTablePro
         id: 'actions',
         header: <span className="c-visually-hidden">İşlemler</span>,
         align: 'end',
-        width: canEdit ? 130 : 60,
+        width: canEdit || canRemove ? 130 : 60,
         cell: ({ row }) => (
           <span className="c-row-actions">
             <Button
@@ -106,13 +107,13 @@ export function AttachmentTable({ attachments, exportTitle }: AttachmentTablePro
                 onClick={() => setEditing(row.original)}
               />
             )}
-            <AttachmentDeleteAction record={row.original} />
+            {canRemove && <AttachmentDeleteAction record={row.original} />}
           </span>
         ),
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps -- `file` and `uploader` read state captured below
-    [masterData, people.data, canEdit, file.pendingId],
+    [masterData, people.data, canEdit, canRemove, file.pendingId],
   );
 
   return (

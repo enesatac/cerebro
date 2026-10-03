@@ -20,6 +20,10 @@ const ApplicationFormPage = page(() => import('@/domains/applications/pages/Appl
 const ProjectsListPage = page(() => import('@/domains/projects/pages/ProjectsListPage'));
 const ProjectDetailPage = page(() => import('@/domains/projects/pages/ProjectDetailPage'));
 const ProjectFormPage = page(() => import('@/domains/projects/pages/ProjectFormPage'));
+const DemandsPage = page(() => import('@/domains/demands/pages/DemandsPage'));
+const DemandDetailPage = page(() => import('@/domains/demands/pages/DemandDetailPage'));
+const DemandFormPage = page(() => import('@/domains/demands/pages/DemandFormPage'));
+const DemandManagementPage = page(() => import('@/domains/demands/pages/DemandManagementPage'));
 const ConnectionsPage = page(() => import('@/domains/connections/pages/ConnectionsPage'));
 const DependencyFormPage = page(() => import('@/domains/connections/pages/DependencyFormPage'));
 const IntegrationFormPage = page(() => import('@/domains/connections/pages/IntegrationFormPage'));
@@ -85,6 +89,20 @@ export const routes: RouteObject[] = [
       { path: 'projects/new', element: guarded(<ProjectFormPage />) },
       { path: 'projects/:projectId', element: <ProjectDetailPage /> },
       { path: 'projects/:projectId/edit', element: guarded(<ProjectFormPage />) },
+      { path: 'demands', element: <DemandsPage /> },
+      {
+        path: 'demands/new',
+        element: guarded(<DemandFormPage />, 'demands:submit', 'talep açma'),
+      },
+      {
+        path: 'demands/manage',
+        element: guarded(<DemandManagementPage />, 'demands:manage', 'talep yönetimi'),
+      },
+      { path: 'demands/:demandId', element: <DemandDetailPage /> },
+      {
+        path: 'demands/:demandId/edit',
+        element: guarded(<DemandFormPage />, 'demands:submit', 'talep düzenleme'),
+      },
       { path: 'architecture', element: <ConnectionsPage /> },
       { path: 'architecture/dependencies/new', element: guarded(<DependencyFormPage />) },
       {

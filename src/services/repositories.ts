@@ -3,6 +3,7 @@ import type { ApplicationRepository } from '@/domains/applications/api/Applicati
 import type { BusinessUnitRepository } from '@/domains/business-units/api/BusinessUnitRepository';
 import type { ConnectionRepository } from '@/domains/connections/api/ConnectionRepository';
 import type { DecisionRepository } from '@/domains/decisions/api/DecisionRepository';
+import type { DemandRepository } from '@/domains/demands/api/DemandRepository';
 import type { LeaveRepository } from '@/domains/leaves/api/LeaveRepository';
 import type { AttachmentRepository } from '@/domains/attachments/api/AttachmentRepository';
 import type { RunbookRepository } from '@/domains/runbooks/api/RunbookRepository';
@@ -42,6 +43,7 @@ export interface Repositories {
   allocations: AllocationRepository;
   runbooks: RunbookRepository;
   attachments: AttachmentRepository;
+  demands: DemandRepository;
 }
 
 /**

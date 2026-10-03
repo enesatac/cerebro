@@ -1,6 +1,5 @@
 import { Upload } from '@takeoff-ui/react-spar';
 import { StatusBadge } from '@/components/data-display/StatusBadge';
-import { usePermission } from '@/domains/auth/api/queries';
 import { useMasterData } from '@/domains/master-data/context';
 import { getErrorMessage } from '@/lib/errors';
 import { toaster } from '@/lib/toaster';
@@ -14,15 +13,20 @@ interface RequiredDocumentsProps {
   owner: AttachmentOwner;
   required: readonly string[];
   attachments: readonly Attachment[];
+  canEdit: boolean;
 }
 
 /**
  * The documents every record of this type should carry: each shows whether it is there (with the
  * latest file) and, for editors, uploads straight into that type.
  */
-export function RequiredDocuments({ owner, required, attachments }: RequiredDocumentsProps) {
+export function RequiredDocuments({
+  owner,
+  required,
+  attachments,
+  canEdit,
+}: RequiredDocumentsProps) {
   const masterData = useMasterData();
-  const canEdit = usePermission('portfolio:edit');
   const upload = useUploadAttachment();
   const file = useAttachmentFile();
   const present = required.filter((type) => attachments.some((a) => a.documentType === type));

@@ -1,4 +1,6 @@
 import { AlignLeftIconOutlinedRounded } from '@takeoff-icons/react/align-left';
+import { BulbIconOutlinedRounded } from '@takeoff-icons/react/bulb';
+import { FlagIconOutlinedRounded } from '@takeoff-icons/react/flag';
 import { CalendarIconOutlinedRounded } from '@takeoff-icons/react/calendar';
 import { CategoryIconOutlinedRounded } from '@takeoff-icons/react/category';
 import { ChartBarIconOutlinedRounded } from '@takeoff-icons/react/chart-bar';
@@ -19,6 +21,13 @@ export interface NavigationItem {
   end?: boolean;
 }
 
+/** The portfolio office's demand screen; listed after "Talepler" for roles that may manage. */
+export const DEMAND_MANAGEMENT_NAVIGATION: NavigationItem = {
+  label: 'Talep yönetimi',
+  to: paths.demands.manage(),
+  icon: FlagIconOutlinedRounded,
+};
+
 export const PRIMARY_NAVIGATION: NavigationItem[] = [
   {
     label: 'Gösterge paneli',
@@ -26,6 +35,7 @@ export const PRIMARY_NAVIGATION: NavigationItem[] = [
     icon: DashboardIconOutlinedRounded,
     end: true,
   },
+  { label: 'Talepler', to: paths.demands.list(), icon: BulbIconOutlinedRounded, end: true },
   { label: 'Projeler', to: paths.projects.list(), icon: FolderCopyIconOutlinedRounded },
   { label: 'Uygulamalar', to: paths.applications.list(), icon: CategoryIconOutlinedRounded },
   { label: 'Bağlantılar', to: paths.architecture(), icon: StructureTreeIconOutlinedRounded },

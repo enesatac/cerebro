@@ -14,6 +14,8 @@ interface RecordDialogProps<T extends FieldValues> {
   onSubmit: (values: T) => Promise<unknown>;
   submitLabel: string;
   children: ReactNode;
+  /** A wider panel for longer forms (two-column grids, score rows). */
+  wide?: boolean;
 }
 
 /**
@@ -29,6 +31,7 @@ export function RecordDialog<T extends FieldValues>({
   onSubmit,
   submitLabel,
   children,
+  wide = false,
 }: RecordDialogProps<T>) {
   const pending = form.formState.isSubmitting;
   const rootError = form.formState.errors.root?.server?.message;
@@ -57,7 +60,10 @@ export function RecordDialog<T extends FieldValues>({
       dismissible={!pending}
     >
       <Dialog.Overlay />
-      <Dialog.Panel className="c-record-dialog" onInteractOutside={keepOpenForFloatingLayers}>
+      <Dialog.Panel
+        className={wide ? 'c-record-dialog c-record-dialog--wide' : 'c-record-dialog'}
+        onInteractOutside={keepOpenForFloatingLayers}
+      >
         <form onSubmit={(event) => void submit(event)} noValidate>
           <Dialog.Header headerType="divided">
             <Dialog.Title level={2}>{title}</Dialog.Title>

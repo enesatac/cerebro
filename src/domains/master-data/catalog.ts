@@ -15,6 +15,12 @@ import {
   INTEGRATION_TYPES,
 } from '@/domains/connections/types';
 import { DECISION_STATUSES } from '@/domains/decisions/types';
+import {
+  DEMAND_BENEFIT_TYPES,
+  DEMAND_PRIORITIES,
+  DEMAND_STATUSES,
+  DEMAND_TYPES,
+} from '@/domains/demands/types';
 import { LEAVE_TYPES } from '@/domains/leaves/types';
 import { ESCALATION_STATUSES } from '@/domains/escalations/types';
 import {
@@ -40,6 +46,7 @@ import type { MasterDataListKey } from './types';
 export const MASTER_DATA_GROUPS = [
   { id: 'applications', label: 'Uygulamalar' },
   { id: 'technologies', label: 'Teknolojiler' },
+  { id: 'demands', label: 'Talepler' },
   { id: 'projects', label: 'Projeler' },
   { id: 'operations', label: 'Riskler ve kararlar' },
   { id: 'connections', label: 'Bağlantılar' },
@@ -371,7 +378,7 @@ export const MASTER_DATA_LISTS: readonly MasterDataListDefinition[] = [
     systemCodes: DOCUMENT_TYPES,
     extensible: true,
     colored: false,
-    usedIn: 'Uygulama, proje, ekip, teknoloji, risk, eskalasyon ve karar ekleri',
+    usedIn: 'Uygulama, proje, ekip, teknoloji, risk, eskalasyon, karar ve talep ekleri',
   }),
   define({
     key: 'documentationLinkTypes',
@@ -382,6 +389,48 @@ export const MASTER_DATA_LISTS: readonly MasterDataListDefinition[] = [
     extensible: true,
     colored: false,
     usedIn: 'Uygulama ve proje formları (Dokümantasyon), dokümantasyon sekmeleri',
+  }),
+  define({
+    key: 'demandStatuses',
+    label: 'Talep durumları',
+    description:
+      'Bir talebin gönderimden karara kadar geçtiği adımlar. Takvime alınan talebin tarihleri, reddedilenin gerekçesi zorunludur.',
+    group: 'demands',
+    systemCodes: DEMAND_STATUSES,
+    extensible: false,
+    colored: true,
+    usedIn: 'Talepler, talep yönetimi ve değerlendirme penceresi',
+  }),
+  define({
+    key: 'demandTypes',
+    label: 'Talep türleri',
+    description: 'İş birimlerinin açtığı taleplerin türü (yeni proje, geliştirme, entegrasyon…).',
+    group: 'demands',
+    systemCodes: DEMAND_TYPES,
+    extensible: true,
+    colored: true,
+    usedIn: 'Talep formu, talep listeleri ve filtreler',
+  }),
+  define({
+    key: 'demandBenefitTypes',
+    label: 'Fayda türleri',
+    description: 'Talebin sağlayacağı faydanın türü; bir talepte birden çok seçilebilir.',
+    group: 'demands',
+    systemCodes: DEMAND_BENEFIT_TYPES,
+    extensible: true,
+    colored: false,
+    usedIn: 'Talep formu ve talep ayrıntısı',
+  }),
+  define({
+    key: 'demandPriorities',
+    label: 'Talep öncelikleri',
+    description:
+      'Portföy ofisinin verdiği öncelik. Puan (WSJF) bir öneri sunar; karar bu listeden seçilir.',
+    group: 'demands',
+    systemCodes: DEMAND_PRIORITIES,
+    extensible: false,
+    colored: true,
+    usedIn: 'Değerlendirme penceresi, önceliklendirme listesi ve yol haritası',
   }),
 ];
 

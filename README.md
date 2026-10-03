@@ -53,10 +53,16 @@ catalogue — kept simple.
 - **Resource plan** — `/resources`: who works on which project, when and at what share of their
   time. Parallel allocations stack into lanes, a daily load strip turns red above 100 %, leaves
   are shaded in. Zoom from a month to a year; admins plan allocations with a live load preview.
+- **Demands** — `/demands`: business units raise project, application and change requests with
+  every detail (need, benefits, urgency, date, budget, related systems, files) and follow them;
+  `/demands/manage` (portfolio office): triage inbox, WSJF scoring with a suggested priority,
+  a ranked backlog and a quarter roadmap to schedule approved demands. Decisions, questions to
+  the requester and every status change are visible on the demand.
 - **Leave calendar** — `/leaves`: people down the side, days across the top, each leave a bar in
   its type's colour (2 weeks / month / 3 months, filters, list view). Admins add, edit and delete
   leaves; overlapping leaves for the same person are rejected.
-- **Roles** — `admin` (full access, user and master data management) and `user` (read-only). Permissions are
+- **Roles** — `admin` (full access, user and master data management) and `user` (read-only, plus
+  raising and following their own demands). Permissions are
   enforced in the repository layer and mirrored in the UI.
 
 ## Tech stack

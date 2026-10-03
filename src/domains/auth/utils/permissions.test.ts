@@ -9,8 +9,9 @@ describe('permissions', () => {
     }
   });
 
-  it('gives users view access only', () => {
-    expect(ROLE_PERMISSIONS.user).toEqual(['portfolio:view']);
+  it('gives users view access and demand submission only', () => {
+    expect(ROLE_PERMISSIONS.user).toEqual(['portfolio:view', 'demands:submit']);
+    expect(hasPermission({ role: 'user', active: true }, 'demands:manage')).toBe(false);
     expect(hasPermission({ role: 'user', active: true }, 'portfolio:edit')).toBe(false);
     expect(hasPermission({ role: 'user', active: true }, 'users:manage')).toBe(false);
   });

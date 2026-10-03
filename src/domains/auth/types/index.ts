@@ -5,7 +5,8 @@ export type UserAccountId = EntityId;
 export const USER_ROLES = ['admin', 'user'] as const;
 /**
  * `admin` — full access: create, edit and delete any record and manage user accounts.
- * `user` — read-only access to everything.
+ * `user` — read-only access to everything, plus raising demands (`demands:submit`) and changing or
+ *   withdrawing their own demands until the portfolio office decides on them.
  */
 export type UserRole = (typeof USER_ROLES)[number];
 
@@ -17,6 +18,8 @@ export const PERMISSIONS = [
   'masterData:manage',
   'leaves:manage',
   'resources:manage',
+  'demands:submit',
+  'demands:manage',
 ] as const;
 export type Permission = (typeof PERMISSIONS)[number];
 

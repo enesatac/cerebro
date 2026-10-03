@@ -1,7 +1,7 @@
 import { screen, waitFor } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { renderRoute } from '@/test/renderWithProviders';
-import { APP, PRJ, TEAM, TECH } from '@/services/mock/data/ids';
+import { APP, DEM, PRJ, TEAM, TECH } from '@/services/mock/data/ids';
 
 /** Every navigation target renders a real page (no placeholders) with a single h1. */
 describe('routes', () => {
@@ -16,6 +16,12 @@ describe('routes', () => {
     [`/technologies/${TECH.kafka}`, 'Apache Kafka'],
     ['/risks', 'Riskler ve Eskalasyonlar'],
     ['/reports', 'Raporlar'],
+    ['/demands', 'Talepler'],
+    ['/demands/manage', 'Talep yönetimi'],
+    [
+      `/demands/${DEM.walletBoardingPass}`,
+      'Biniş kartlarının Apple Wallet ve Google Wallet’a eklenmesi',
+    ],
   ])('%s renders "%s"', async (path, heading) => {
     renderRoute(path);
     expect(await screen.findByRole('heading', { level: 1, name: heading })).toBeInTheDocument();
