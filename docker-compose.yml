@@ -1,0 +1,16 @@
+# Local development database. Start with: docker compose up -d
+services:
+  postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: cerebro
+      POSTGRES_USER: cerebro
+      # Local-only throwaway password; production credentials come from the secrets manager.
+      POSTGRES_PASSWORD: cerebro-local
+    ports:
+      - "5432:5432"
+    volumes:
+      - cerebro-db:/var/lib/postgresql/data
+
+volumes:
+  cerebro-db:

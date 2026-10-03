@@ -1,0 +1,18 @@
+# Local development: database from docker compose, no identity provider. Every request runs as
+# the dev account, which is created with the system role on first start.
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/cerebro
+    username: cerebro
+    password: cerebro-local
+
+server:
+  servlet:
+    session:
+      cookie:
+        secure: false
+
+cerebro:
+  security:
+    dev-account-email: gelistirici@cerebro.local
+    bootstrap-admin-email: gelistirici@cerebro.local
