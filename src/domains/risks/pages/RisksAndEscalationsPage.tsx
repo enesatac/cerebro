@@ -184,9 +184,17 @@ export default function RisksAndEscalationsPage() {
         subtitle="Portföy genelindeki operasyonel sorunlar. Aktif ve en ciddi kayıtlar önce listelenir."
         actions={
           activeTab === 'risks' ? (
-            <CreateAction to={paths.riskForms.create()} label="Risk kaydet" />
+            <CreateAction
+              to={paths.riskForms.create()}
+              label="Risk kaydet"
+              privilege="risks:edit"
+            />
           ) : (
-            <CreateAction to={paths.escalationForms.create()} label="Eskalasyon aç" />
+            <CreateAction
+              to={paths.escalationForms.create()}
+              label="Eskalasyon aç"
+              privilege="risks:edit"
+            />
           )
         }
       />

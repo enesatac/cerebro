@@ -14,6 +14,7 @@ import { projects } from './data/projects';
 import { teams } from './data/teams';
 import { technologies } from './data/technologies';
 import { users } from './data/users';
+import { roles } from './data/roles';
 
 /** Raw seed tables. Treated as immutable; repositories work on a per-instance deep copy. */
 export const seedTables = {
@@ -29,6 +30,7 @@ export const seedTables = {
   escalations: [...escalations, ...escalationHistory],
   decisions: [...decisions, ...decisionHistory],
   users,
+  roles,
   masterData,
   leaves,
   allocations,
@@ -54,6 +56,7 @@ export const SEQUENCES = [
   'escalations',
   'decisions',
   'users',
+  'roles',
   'masterDataItems',
   'roleAssignments',
   'teamAssignments',
@@ -101,6 +104,7 @@ export function sequencesOf(tables: typeof seedTables): Sequences {
     escalations: maxId(tables.escalations),
     decisions: maxId(tables.decisions),
     users: maxId(tables.users),
+    roles: maxId(tables.roles),
     masterDataItems: maxId(tables.masterData.flatMap((list) => list.items)),
     roleAssignments: maxId(portfolio.flatMap((row) => row.roles)),
     teamAssignments: maxId(portfolio.flatMap((row) => row.teams)),

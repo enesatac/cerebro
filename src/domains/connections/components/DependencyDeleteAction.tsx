@@ -20,7 +20,7 @@ export function DependencyDeleteAction({
   const { connections } = useRepositories();
   const remove = useDeleteDependency();
   return (
-    <Can permission="portfolio:delete">
+    <Can privilege="connections:delete">
       <DeleteAction
         entityLabel="bağımlılık"
         entityName={'bu bağımlılık'}

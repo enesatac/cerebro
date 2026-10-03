@@ -16,7 +16,7 @@ import type { TeamListItem } from '../types';
 import { filterTeams } from '../utils/teamFilters';
 import { CreateAction } from '@/domains/auth/components/RecordActions';
 import { editColumn } from '@/components/data-display/editColumn';
-import { usePermission } from '@/domains/auth/api/queries';
+import { usePrivilege } from '@/domains/auth/api/queries';
 import { TeamDeleteAction } from '../components/TeamDeleteAction';
 
 const columns: TableColumnDef<TeamListItem>[] = [
@@ -79,7 +79,7 @@ const actionsColumn = editColumn<TeamListItem>(
 );
 
 export default function TeamsListPage() {
-  const canEdit = usePermission('portfolio:edit');
+  const canEdit = usePrivilege('teams:edit');
   const [searchParams, setSearchParams] = useSearchParams();
   const search = searchParams.get('q')?.trim() ?? '';
   const query = useTeamSummaries();
@@ -117,7 +117,7 @@ export default function TeamsListPage() {
               build={exportSheets}
               disabled={visibleTeams.length === 0}
             />
-            <CreateAction to={paths.teams.create()} label="Ekip oluştur" />
+            <CreateAction to={paths.teams.create()} label="Ekip oluştur" privilege="teams:edit" />
           </>
         }
       />

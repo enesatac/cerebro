@@ -1,3 +1,4 @@
+import { Link } from 'react-router';
 import { ExcelExportButton } from '@/components/actions/ExcelExportButton';
 import { sheet } from '@/lib/xlsxTypes';
 import { Table, type TableColumnDef } from '@takeoff-ui/react-spar';
@@ -9,18 +10,22 @@ import { StatusBadge } from '@/components/data-display/StatusBadge';
 import { EmptyState } from '@/components/feedback/EmptyState';
 import { QueryView } from '@/components/feedback/QueryView';
 import { PageHeader } from '@/components/layout/PageHeader';
-import { SectionCard } from '@/components/layout/SectionCard';
 import { usePeopleById } from '@/domains/people/api/queries';
 import { formatRelative } from '@/lib/dates';
-import { useCurrentUser, useUserAccounts } from '../api/queries';
-import { USER_ROLES, type UserAccount } from '../types';
-import { ACCOUNT_STATUS_PRESENTATION, ROLE_PRESENTATION } from '../utils/rolePresentation';
+import { useCurrentUser, useRoles, useUserAccounts } from '../api/queries';
+import type { UserAccount } from '../types';
+import { ACCOUNT_STATUS_PRESENTATION } from '../utils/rolePresentation';
+import { Can } from '../components/Can';
+import { RoleBadges } from '../components/RoleBadges';
 import { UserDeleteAction } from '../components/UserDeleteAction';
 
 export default function UsersListPage() {
   const query = useUserAccounts();
   const people = usePeopleById();
   const me = useCurrentUser();
+  const roles = useRoles();
+  const roleNames = (user: UserAccount) =>
+    user.roleIds.map((id) => roles.data?.find((role) => role.id === id)?.name ?? `#${id}`);
 
   const columns: TableColumnDef<UserAccount>[] = [
     {
@@ -40,12 +45,10 @@ export default function UsersListPage() {
       ),
     },
     {
-      id: 'role',
-      header: 'Rol',
-      accessor: 'role',
-      sortable: true,
-      width: 110,
-      cell: ({ row }) => <StatusBadge {...ROLE_PRESENTATION[row.original.role]} />,
+      id: 'roles',
+      header: 'Roller',
+      width: 280,
+      cell: ({ row }) => <RoleBadges names={roleNames(row.original)} />,
     },
     {
       id: 'status',
@@ -88,25 +91,34 @@ export default function UsersListPage() {
   return (
     <div className="c-stack">
       <PageHeader
-        breadcrumbs={[{ label: 'Yönetim' }, { label: 'Kullanıcılar ve roller' }]}
-        title="Kullanıcılar ve roller"
-        subtitle="Cerebro'ya kimlerin giriş yapabileceği ve neler yapabileceği."
+        breadcrumbs={[{ label: 'Yönetim' }, { label: 'Kullanıcılar' }]}
+        title="Kullanıcılar"
+        subtitle={
+          <>
+            Cerebro'ya kimlerin giriş yapabileceği ve hangi rollere sahip olduğu. Rollerin hangi
+            ekranlarda ne yapabildiği{' '}
+            <Link className="c-link" to={paths.admin.roles()}>
+              Roller ve yetkiler
+            </Link>{' '}
+            sayfasında.
+          </>
+        }
         actions={
           <>
             <ExcelExportButton
-              title="Kullanıcılar ve roller"
+              title="Kullanıcılar"
               disabled={!query.data?.length}
               build={() => [
                 sheet<UserAccount>({
                   name: 'Kullanıcılar',
-                  title: 'Kullanıcılar ve roller',
+                  title: 'Kullanıcılar',
                   rows: [...(query.data ?? [])].sort((a, b) =>
                     a.displayName.localeCompare(b.displayName, 'tr'),
                   ),
                   columns: [
                     { header: 'Ad', value: (u) => u.displayName },
                     { header: 'E-posta', value: (u) => u.email },
-                    { header: 'Rol', value: (u) => ROLE_PRESENTATION[u.role].label },
+                    { header: 'Roller', value: (u) => roleNames(u).join('\n') },
                     {
                       header: 'Bağlı kişi',
                       value: (u) => (u.personId ? people.data?.get(u.personId)?.fullName : null),
@@ -117,27 +129,17 @@ export default function UsersListPage() {
                 }),
               ]}
             />
-            <ButtonLink
-              to={paths.admin.createUser()}
-              startContent={<AddIconOutlinedRounded aria-hidden="true" />}
-            >
-              Kullanıcı ekle
-            </ButtonLink>
+            <Can privilege="users:edit">
+              <ButtonLink
+                to={paths.admin.createUser()}
+                startContent={<AddIconOutlinedRounded aria-hidden="true" />}
+              >
+                Kullanıcı ekle
+              </ButtonLink>
+            </Can>
           </>
         }
       />
-      <SectionCard title="Roller">
-        <dl className="c-role-legend">
-          {USER_ROLES.map((role) => (
-            <div key={role} className="c-role-legend__item">
-              <dt>
-                <StatusBadge {...ROLE_PRESENTATION[role]} />
-              </dt>
-              <dd>{ROLE_PRESENTATION[role].description}</dd>
-            </div>
-          ))}
-        </dl>
-      </SectionCard>
       <QueryView
         query={query}
         loadingLabel="Kullanıcılar yükleniyor"

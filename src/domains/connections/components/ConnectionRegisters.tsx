@@ -17,7 +17,7 @@ import { useAllDependencies, useAllIntegrations } from '../api/queries';
 import type { ApplicationDependency, Integration } from '../types';
 import { paths } from '@/app/router/paths';
 import { editColumn } from '@/components/data-display/editColumn';
-import { usePermission } from '@/domains/auth/api/queries';
+import { usePrivilege } from '@/domains/auth/api/queries';
 import { SmallCreateAction } from '@/domains/auth/components/RecordActions';
 import { MasterBadge } from '@/domains/master-data/components/MasterBadge';
 import { MasterLabel } from '@/domains/master-data/components/MasterLabel';
@@ -72,7 +72,7 @@ const dependencyColumns: TableColumnDef<ApplicationDependency>[] = [
 export function DependencyRegister() {
   const masterData = useMasterData();
   const query = useAllDependencies();
-  const canEdit = usePermission('portfolio:edit');
+  const canEdit = usePrivilege('connections:edit');
   const [type, setType] = useParamFilter('type', codesOf(masterData.items('dependencyTypes')));
   const [criticality, setCriticality] = useParamFilter('criticality', CRITICALITIES);
   const repositories = useRepositories();
@@ -94,7 +94,13 @@ export function DependencyRegister() {
           <>
             <Toolbar
               label="Bağımlılıkları filtrele"
-              add={<SmallCreateAction to={paths.dependencies.create()} label="Bağımlılık kaydet" />}
+              add={
+                <SmallCreateAction
+                  to={paths.dependencies.create()}
+                  label="Bağımlılık kaydet"
+                  privilege="connections:edit"
+                />
+              }
               end={
                 <>
                   <FilterSummary
@@ -232,7 +238,7 @@ const integrationColumns: TableColumnDef<Integration>[] = [
 export function IntegrationRegister() {
   const masterData = useMasterData();
   const query = useAllIntegrations();
-  const canEdit = usePermission('portfolio:edit');
+  const canEdit = usePrivilege('connections:edit');
   const [type, setType] = useParamFilter('itype', codesOf(masterData.items('integrationTypes')));
   const repositories = useRepositories();
   return (
@@ -248,7 +254,11 @@ export function IntegrationRegister() {
             <Toolbar
               label="Entegrasyonları filtrele"
               add={
-                <SmallCreateAction to={paths.integrations.create()} label="Entegrasyon kaydet" />
+                <SmallCreateAction
+                  to={paths.integrations.create()}
+                  label="Entegrasyon kaydet"
+                  privilege="connections:edit"
+                />
               }
               end={
                 <>

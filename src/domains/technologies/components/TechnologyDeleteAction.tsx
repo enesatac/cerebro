@@ -21,7 +21,7 @@ export function TechnologyDeleteAction({
   const { technologies } = useRepositories();
   const remove = useDeleteTechnology();
   return (
-    <Can permission="portfolio:delete">
+    <Can privilege="technologies:delete">
       <DeleteAction
         entityLabel="teknoloji"
         entityName={record.name}

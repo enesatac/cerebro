@@ -240,7 +240,7 @@ export default function TeamDetailPage() {
         subtitle={team.description}
         actions={
           <>
-            <EditAction to={paths.teams.edit(team.id)} />
+            <EditAction to={paths.teams.edit(team.id)} privilege="teams:edit" />
             <TeamDeleteAction record={team} onDeleted={() => void navigate(paths.teams.list())} />
             <CopyLinkButton />
           </>

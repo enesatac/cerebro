@@ -7,7 +7,7 @@ import { formatDate } from '@/lib/dates';
 import type { Decision } from '../types';
 import { Link } from 'react-router';
 import { paths } from '@/app/router/paths';
-import { usePermission } from '@/domains/auth/api/queries';
+import { usePrivilege } from '@/domains/auth/api/queries';
 import { MasterBadge } from '@/domains/master-data/components/MasterBadge';
 import { DecisionDeleteAction } from './DecisionDeleteAction';
 
@@ -19,7 +19,7 @@ interface DecisionListProps {
 /** Lightweight ADRs: the headline is always visible, the full record expands. */
 export function DecisionList({ decisions, emptyTitle }: DecisionListProps) {
   const people = usePeopleById();
-  const canEdit = usePermission('portfolio:edit');
+  const canEdit = usePrivilege('risks:edit');
   if (decisions.length === 0) {
     return (
       <EmptyState

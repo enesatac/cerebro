@@ -2,8 +2,8 @@ import type { DeletionImpact, EntityId } from '@/domains/shared/types';
 import type { Demand, DemandAssessmentInput, DemandId, DemandInput } from '../types';
 
 /**
- * Demands are visible to every signed-in user. Anyone with `demands:submit` may raise one and
- * change or withdraw their own until it is decided; `demands:manage` (the portfolio office)
+ * Demands are visible to every signed-in user. Anyone with `demands:edit` may raise one and
+ * change or withdraw their own until it is decided; `demandManagement:edit` (the portfolio office)
  * assesses, schedules, edits and deletes any demand.
  */
 export interface DemandRepository {

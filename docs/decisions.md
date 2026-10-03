@@ -2,6 +2,18 @@
 
 Short records of decisions that shape the codebase. Newest first.
 
+## D-024 · Per-screen privileges in code, roles as data (2026-10-03)
+
+Two fixed roles could not express business-unit users, managers or auditors. Privileges are now a
+fixed, typed catalogue — one module per screen with `view`/`edit`/`delete` (each implying the lower)
+— because code checks them and a typo must not compile; roles are administrable records that bundle
+privileges, and users hold several roles (access = union). A screen-level matrix (no access /
+read-only / edit / full) keeps role editing understandable instead of exposing a long checklist.
+The system administrator role is locked and must stay with at least one active user so the system
+is always administrable. The server resolves privileges into the session on every request. Row-level
+rules (a requester's own demand) stay in domain modules on top of screen privileges. Read filtering
+of portfolio data by `view` is enforced at route level in the mock and is a backend requirement.
+
 ## D-023 · Demands: one aggregate, WSJF scoring, requester rights by ownership (2026-10-03)
 
 Business units need to raise requests themselves, so `user` accounts gain `demands:submit` — the

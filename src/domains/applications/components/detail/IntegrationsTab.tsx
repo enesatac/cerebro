@@ -13,7 +13,7 @@ import type { Application } from '../../types';
 import { ApplicationRefLink } from '../ApplicationRefLink';
 import { paths } from '@/app/router/paths';
 import { editColumn } from '@/components/data-display/editColumn';
-import { usePermission } from '@/domains/auth/api/queries';
+import { usePrivilege } from '@/domains/auth/api/queries';
 import { SmallCreateAction } from '@/domains/auth/components/RecordActions';
 import { MasterLabel } from '@/domains/master-data/components/MasterLabel';
 import { IntegrationDeleteAction } from '@/domains/connections/components/IntegrationDeleteAction';
@@ -80,7 +80,7 @@ function columns(direction: IntegrationDirection, canEdit: boolean): TableColumn
 
 export function IntegrationsTab({ application }: { application: Application }) {
   const query = useApplicationIntegrations(application.id);
-  const canEdit = usePermission('portfolio:edit');
+  const canEdit = usePrivilege('connections:edit');
   const masterData = useMasterData();
   const repositories = useRepositories();
   const integrationSheet = (
@@ -150,6 +150,7 @@ export function IntegrationsTab({ application }: { application: Application }) {
               <SmallCreateAction
                 to={paths.integrations.create(application.id)}
                 label="Entegrasyon ekle"
+                privilege="connections:edit"
               />
             }
           >

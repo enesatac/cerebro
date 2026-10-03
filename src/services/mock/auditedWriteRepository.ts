@@ -1,4 +1,4 @@
-import type { Permission } from '@/domains/auth/types';
+import type { Privilege } from '@/domains/auth/types';
 import type {
   AuditMetadata,
   DeletionImpact,
@@ -28,8 +28,8 @@ interface AuditedWriteOptions<T extends AuditedEntity, I> {
   validate?: (input: I, excludeId: EntityId | null) => void;
   impact?: (id: EntityId) => DeletionImpact;
   cascade?: (id: EntityId) => void;
-  /** Defaults: `portfolio:edit` to write, `portfolio:delete` to delete. */
-  permissions?: { write: Permission; remove: Permission };
+  /** The screen's privileges, e.g. `{ write: 'risks:edit', remove: 'risks:delete' }`. */
+  permissions: { write: Privilege; remove: Privilege };
 }
 
 /** create / update / remove / getDeletionImpact for an audited aggregate, with permission checks. */
@@ -37,10 +37,7 @@ export function createAuditedWriteRepository<T extends AuditedEntity, I>(
   options: AuditedWriteOptions<T, I>,
 ): WriteRepository<T, I> {
   const { kit, rows, entityLabel } = options;
-  const permissions = options.permissions ?? {
-    write: 'portfolio:edit',
-    remove: 'portfolio:delete',
-  };
+  const { permissions } = options;
   return {
     async create(input) {
       const user = await kit.begin(permissions.write);

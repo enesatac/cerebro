@@ -81,7 +81,7 @@ export default function DemandsPage() {
                 title="Henüz talep açmadınız"
                 description="Yeni bir proje, uygulama veya geliştirme ihtiyacınız varsa talep açın."
                 action={
-                  <Can permission="demands:submit">
+                  <Can privilege="demands:edit">
                     <ButtonLink to={paths.demands.create()}>Yeni talep</ButtonLink>
                   </Can>
                 }
@@ -102,7 +102,7 @@ export default function DemandsPage() {
         subtitle="Proje, uygulama ve geliştirme ihtiyaçlarınızı buradan iletin; değerlendirme ve takvim kararlarını buradan izleyin."
         actions={
           <>
-            <Can permission="demands:manage">
+            <Can privilege="demandManagement:edit">
               <ButtonLink
                 to={paths.demands.manage()}
                 variant="neutral"
@@ -112,7 +112,7 @@ export default function DemandsPage() {
                 Talep yönetimi
               </ButtonLink>
             </Can>
-            <Can permission="demands:submit">
+            <Can privilege="demands:edit">
               <ButtonLink
                 to={paths.demands.create()}
                 startContent={<AddIconOutlinedRounded aria-hidden="true" />}

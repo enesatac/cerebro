@@ -77,6 +77,7 @@ describe('Applications list → detail', () => {
   it('gives every primary navigation link an accessible name', async () => {
     renderRoute('/applications');
     const nav = await screen.findByRole('navigation', { name: 'Ana menü' });
+    await within(nav).findByRole('link', { name: 'Gösterge paneli' });
     for (const name of ['Gösterge paneli', 'Projeler', 'Uygulamalar', 'Bağlantılar', 'Ekipler']) {
       expect(within(nav).getByRole('link', { name })).toBeInTheDocument();
     }

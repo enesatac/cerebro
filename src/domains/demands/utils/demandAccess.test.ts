@@ -1,12 +1,21 @@
 import { describe, expect, it } from 'vitest';
 import { demands } from '@/services/mock/data/demands';
 import { DEM, PERSON } from '@/services/mock/data/ids';
+import { PRIVILEGES } from '@/domains/auth/types';
 import type { Demand } from '../types';
 import { canAttachToDemand, canEditDemand, canWithdrawDemand } from './demandAccess';
 
 const seed = (id: number) => demands.find((d) => d.id === id) as Demand;
-const elif = { role: 'user', active: true, personId: PERSON.elifKaya } as const;
-const admin = { role: 'admin', active: true, personId: PERSON.canOzturk } as const;
+const elif = {
+  active: true,
+  personId: PERSON.elifKaya,
+  privileges: ['demands:view', 'demands:edit'],
+} satisfies Parameters<typeof canEditDemand>[0];
+const admin = {
+  active: true,
+  personId: PERSON.canOzturk,
+  privileges: PRIVILEGES,
+} satisfies Parameters<typeof canEditDemand>[0];
 
 describe('demand access', () => {
   it('lets requesters change their demand only before a decision', () => {

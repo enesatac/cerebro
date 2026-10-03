@@ -16,7 +16,7 @@ export function UserDeleteAction({ record, compact, onDeleted }: UserDeleteActio
   const { users } = useRepositories();
   const remove = useDeleteUser();
   return (
-    <Can permission="users:manage">
+    <Can privilege="users:edit">
       <DeleteAction
         entityLabel="kullanıcı hesabı"
         entityName={record.displayName}

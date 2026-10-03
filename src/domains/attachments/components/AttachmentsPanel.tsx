@@ -29,7 +29,7 @@ export function AttachmentsPanel({
   defaultType,
 }: AttachmentsPanelProps) {
   const query = useAttachments(owner);
-  const access = useAttachmentAccess(override);
+  const access = useAttachmentAccess(owner.type, override);
   const required = REQUIRED_DOCUMENTS[owner.type] ?? [];
 
   if (query.isPending) return <LoadingState label="Ekler yükleniyor" rows={3} />;

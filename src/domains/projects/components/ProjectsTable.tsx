@@ -10,7 +10,7 @@ import { PercentMeter } from '@/components/data-display/PercentMeter';
 import { MasterBadge } from '@/domains/master-data/components/MasterBadge';
 import { MasterLabel } from '@/domains/master-data/components/MasterLabel';
 import { editColumn } from '@/components/data-display/editColumn';
-import { usePermission } from '@/domains/auth/api/queries';
+import { usePrivilege } from '@/domains/auth/api/queries';
 import { ProjectDeleteAction } from './ProjectDeleteAction';
 
 const isSortField = (id: string): id is ProjectSortField =>
@@ -118,7 +118,7 @@ export function ProjectsTable({
   loading,
   emptyState,
 }: ProjectsTableProps) {
-  const canEdit = usePermission('portfolio:edit');
+  const canEdit = usePrivilege('projects:edit');
   return (
     <Table
       data={result?.items ?? []}

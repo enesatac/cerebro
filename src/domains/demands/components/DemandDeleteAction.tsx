@@ -15,7 +15,7 @@ export function DemandDeleteAction({ record, compact, onDeleted }: DemandDeleteA
   const { demands } = useRepositories();
   const remove = useDeleteDemand();
   return (
-    <Can permission="demands:manage">
+    <Can privilege="demandManagement:delete">
       <DeleteAction
         entityLabel="talep"
         entityName={`${record.code} ${record.title}`}

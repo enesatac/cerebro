@@ -30,8 +30,7 @@ import {
   type ApplicationDetailTab,
 } from '../utils/applicationTabs';
 import { EditAction } from '@/domains/auth/components/RecordActions';
-import { Can } from '@/domains/auth/components/Can';
-import { ActionMenu } from '@/components/actions/ActionMenu';
+import { GuardedActionMenu } from '@/domains/auth/components/GuardedActionMenu';
 import { MasterBadge } from '@/domains/master-data/components/MasterBadge';
 import { MasterLabel } from '@/domains/master-data/components/MasterLabel';
 import { ApplicationDeleteAction } from '../components/ApplicationDeleteAction';
@@ -123,31 +122,43 @@ export default function ApplicationDetailPage() {
         }
         actions={
           <>
-            <EditAction to={paths.applications.edit(application.id)} />
+            <EditAction
+              to={paths.applications.edit(application.id)}
+              privilege="applications:edit"
+            />
             <ApplicationDeleteAction
               record={application}
               onDeleted={() => void navigate(paths.applications.list())}
             />
-            <Can permission="portfolio:edit">
-              <ActionMenu
-                items={[
-                  { label: 'Bağımlılık ekle', to: paths.dependencies.create(application.id) },
-                  { label: 'Entegrasyon ekle', to: paths.integrations.create(application.id) },
-                  {
-                    label: 'Risk kaydet',
-                    to: paths.riskForms.create({ application: application.id }),
-                  },
-                  {
-                    label: 'Eskalasyon aç',
-                    to: paths.escalationForms.create({ application: application.id }),
-                  },
-                  {
-                    label: 'Karar kaydet',
-                    to: paths.decisionForms.create({ application: application.id }),
-                  },
-                ]}
-              />
-            </Can>
+            <GuardedActionMenu
+              items={[
+                {
+                  label: 'Bağımlılık ekle',
+                  to: paths.dependencies.create(application.id),
+                  privilege: 'connections:edit',
+                },
+                {
+                  label: 'Entegrasyon ekle',
+                  to: paths.integrations.create(application.id),
+                  privilege: 'connections:edit',
+                },
+                {
+                  label: 'Risk kaydet',
+                  to: paths.riskForms.create({ application: application.id }),
+                  privilege: 'risks:edit',
+                },
+                {
+                  label: 'Eskalasyon aç',
+                  to: paths.escalationForms.create({ application: application.id }),
+                  privilege: 'risks:edit',
+                },
+                {
+                  label: 'Karar kaydet',
+                  to: paths.decisionForms.create({ application: application.id }),
+                  privilege: 'risks:edit',
+                },
+              ]}
+            />
             <CopyLinkButton />
           </>
         }

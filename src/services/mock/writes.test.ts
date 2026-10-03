@@ -6,7 +6,7 @@ import {
 import { ForbiddenError, UnauthenticatedError, ValidationError } from '@/lib/errors';
 import { createMockRepositories } from './index';
 import { afterWrites } from './persistence';
-import { APP, PERSON, PRJ, RISK, TECH, USER } from '@/services/mock/data/ids';
+import { APP, PERSON, PRJ, RISK, ROLE, TECH, USER } from '@/services/mock/data/ids';
 
 const ADMIN = USER.canOzturk;
 const VIEWER = USER.elifKaya;
@@ -208,19 +208,23 @@ describe('business rules', () => {
     const asInput = (u: typeof me) => ({
       displayName: u.displayName,
       email: u.email,
-      role: u.role,
+      roleIds: u.roleIds,
       personId: u.personId,
       active: u.active,
     });
     await expect(repos.users.update(ADMIN, { ...asInput(me), active: false })).rejects.toThrow(
       /devre dışı bırakamazsınız/,
     );
-    await expect(repos.users.update(ADMIN, { ...asInput(me), role: 'user' })).rejects.toThrow(
-      /yönetici rolünüzü/,
+    await expect(
+      repos.users.update(ADMIN, { ...asInput(me), roleIds: [ROLE.employee] }),
+    ).rejects.toThrow(/sistem yöneticisi rolünüzü/);
+    await expect(repos.users.update(ADMIN, { ...asInput(me), roleIds: [] })).rejects.toThrow(
+      /En az bir rol/,
     );
     const other = await repos.users.getById(USER.selinAydin);
-    await repos.users.update(other.id, { ...asInput(other), role: 'user' });
-    // Can is now the only admin; nobody else can remove that role from them either.
+    await repos.users.update(other.id, { ...asInput(other), roleIds: [ROLE.employee] });
+    // Can is now the only system administrator: their account cannot be deleted.
+    expect((await repos.users.getDeletionImpact(ADMIN)).blockedReason).toBeTruthy();
     await expect(
       repos.users.create({ ...asInput(me), email: 'can.ozturk@corp.example' }),
     ).rejects.toThrow(/zaten var/);

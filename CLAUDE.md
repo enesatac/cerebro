@@ -68,13 +68,16 @@ A task is not complete until `npm run validate` passes.
 
 ## Roles & forms
 
-- Roles: `admin` (everything) and `user` (read-only). Enforce in the repository (`WriteKit.begin`)
-  and mirror in the UI with `Can`, `CreateAction`/`EditAction`, `RequirePermission`.
+- Access: per-screen privileges `<module>:<view|edit|delete>` (`PRIVILEGE_MODULES` in
+  `domains/auth/types`), bundled into administrable roles; users hold several roles. Enforce in the
+  repository (`WriteKit.begin('<module>:edit')`), guard routes with `guarded(page, privilege)` and
+  mirror in the UI with `Can`, `CreateAction`/`EditAction` (`privilege` prop), `RequirePrivilege`.
+  A new screen gets its own module in the catalogue.
 - Forms: `FormPage` + fields from `components/forms`; schema and mappers in
   `domains/<d>/schemas/*Form.ts`; mutations via `useRepositoryMutation`.
 - Deletion: every editable record has a `domains/<d>/components/<Entity>DeleteAction` (permission
   guard + impact confirmation). Offer it on the edit form, the detail page header and list rows
-  (`editColumn(to, describe, renderDelete)`, `compact`). Users cannot delete themselves or the last admin.
+  (`editColumn(to, describe, renderDelete)`, `compact`). Users cannot delete themselves or the last system administrator.
 
 ## Conventions
 

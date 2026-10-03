@@ -61,8 +61,11 @@ catalogue — kept simple.
 - **Leave calendar** — `/leaves`: people down the side, days across the top, each leave a bar in
   its type's colour (2 weeks / month / 3 months, filters, list view). Admins add, edit and delete
   leaves; overlapping leaves for the same person are rejected.
-- **Roles** — `admin` (full access, user and master data management) and `user` (read-only, plus
-  raising and following their own demands). Permissions are
+- **Roles and privileges** — `/admin/roles`: every screen has view, edit and delete privileges;
+  roles bundle them (screen-by-screen matrix editor) and users hold one or more roles. A privilege
+  matrix (screens × roles) and catalogue show who may do what. Seed roles: Sistem yöneticisi,
+  Portföy ofisi, Birim / ekip yöneticisi, İş birimi kullanıcısı, Çalışan, Denetçi. Enforced in the
+  repository layer and mirrored in navigation, routes and buttons. Permissions are
   enforced in the repository layer and mirrored in the UI.
 
 ## Tech stack
@@ -85,13 +88,14 @@ npm run dev
 Open <http://localhost:5173> and sign in with one of the demo accounts (no password — account
 picker only):
 
-| Account       | Role                         |
-| ------------- | ---------------------------- |
-| Can Öztürk    | Admin                        |
-| Selin Aydın   | Admin                        |
-| Elif Kaya     | User (read-only)             |
-| Tom Brennan   | User (read-only)             |
-| Nadia Petrova | Deactivated (cannot sign in) |
+| Account       | Roles                                  |
+| ------------- | -------------------------------------- |
+| Can Öztürk    | Sistem yöneticisi                      |
+| Selin Aydın   | Sistem yöneticisi                      |
+| Zeynep Çelik  | Portföy ofisi                          |
+| Tom Brennan   | Birim / ekip yöneticisi                |
+| Elif Kaya     | İş birimi kullanıcısı, Çalışan         |
+| Nadia Petrova | Çalışan — deactivated (cannot sign in) |
 
 ### Demo data
 

@@ -1,11 +1,12 @@
-import { Alert, Badge, Button } from '@takeoff-ui/react-spar';
+import { Alert, Button } from '@takeoff-ui/react-spar';
 import { Navigate, useNavigate, useSearchParams } from 'react-router';
 import { paths } from '@/app/router/paths';
 import { ErrorState } from '@/components/feedback/ErrorState';
 import { LoadingState } from '@/components/feedback/LoadingState';
 import { getErrorMessage } from '@/lib/errors';
 import { useSession, useSignIn, useSignInAccounts } from '../api/queries';
-import { ROLE_PRESENTATION } from '../utils/rolePresentation';
+import { RoleBadges } from '../components/RoleBadges';
+import { accessSummary } from '../utils/rolePresentation';
 
 /** Only same-app paths are accepted as redirect targets (prevents open redirects). */
 function safeRedirect(value: string | null): string {
@@ -55,18 +56,10 @@ export default function SignInPage() {
             {accounts.data.map((account) => (
               <li key={account.id} className="c-account-list__item">
                 <span className="c-cell-stack">
-                  <span className="c-account-list__name">
-                    {account.displayName}{' '}
-                    <Badge
-                      variant={ROLE_PRESENTATION[account.role].variant}
-                      appearance="filledLight"
-                      size="small"
-                    >
-                      {ROLE_PRESENTATION[account.role].label}
-                    </Badge>
-                  </span>
+                  <span className="c-account-list__name">{account.displayName}</span>
+                  <RoleBadges names={account.roleNames} />
                   <span className="c-muted c-cell-stack__secondary">
-                    {ROLE_PRESENTATION[account.role].description}
+                    {accessSummary(account.privileges)}
                   </span>
                 </span>
                 <Button

@@ -115,7 +115,7 @@ export class MockProjectRepository implements ProjectRepository {
   }
 
   async create(input: ProjectInput) {
-    const user = await this.kit.begin();
+    const user = await this.kit.begin('projects:edit');
     this.validate(input, null);
     const project: Project = {
       ...this.withChildIds(input),
@@ -127,7 +127,7 @@ export class MockProjectRepository implements ProjectRepository {
   }
 
   async update(id: EntityId, input: ProjectInput) {
-    const user = await this.kit.begin();
+    const user = await this.kit.begin('projects:edit');
     const current = findOrThrow(this.db.projects, id, 'Proje');
     this.validate(input, id);
     return copy(
@@ -140,7 +140,7 @@ export class MockProjectRepository implements ProjectRepository {
   }
 
   async remove(id: EntityId) {
-    await this.kit.begin('portfolio:delete');
+    await this.kit.begin('projects:delete');
     findOrThrow(this.db.projects, id, 'Proje');
     deleteProjectCascade(this.db, id);
     removeRow(this.db.projects, id);

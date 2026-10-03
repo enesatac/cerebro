@@ -38,7 +38,11 @@ export function RelatedRisksAndEscalations({
           <SectionCard
             title={`Eskalasyonlar (${list.filter((e) => isActiveEscalation(e.status)).length} aktif)`}
             actions={
-              <SmallCreateAction to={paths.escalationForms.create(prefill)} label="Eskalasyon aç" />
+              <SmallCreateAction
+                to={paths.escalationForms.create(prefill)}
+                label="Eskalasyon aç"
+                privilege="risks:edit"
+              />
             }
           >
             <EscalationTable
@@ -55,7 +59,13 @@ export function RelatedRisksAndEscalations({
         {(list) => (
           <SectionCard
             title={`Riskler (${list.filter((r) => isActiveRisk(r.status)).length} aktif)`}
-            actions={<SmallCreateAction to={paths.riskForms.create(prefill)} label="Risk kaydet" />}
+            actions={
+              <SmallCreateAction
+                to={paths.riskForms.create(prefill)}
+                label="Risk kaydet"
+                privilege="risks:edit"
+              />
+            }
           >
             <RiskTable
               exportTitle={`${subjectName} — riskler`}

@@ -1,20 +1,35 @@
 import type { SearchRepository } from '@/domains/search/api/SearchRepository';
-import type { SearchQuery, SearchResult } from '@/domains/search/types';
+import type { Privilege } from '@/domains/auth/types';
+import { hasPrivilege } from '@/domains/auth/utils/permissions';
+import type { SearchQuery, SearchResult, SearchableKind } from '@/domains/search/types';
 import type { MockDatabase } from './database';
+import type { MockAuthority } from './session';
 import { delay, matchesSearch } from './query';
 
 const DEFAULT_LIMIT = 20;
+
+/** Results only come from screens the user may view. */
+const KIND_PRIVILEGE: Record<SearchableKind, Privilege> = {
+  application: 'applications:view',
+  project: 'projects:view',
+  team: 'teams:view',
+  person: 'people:view',
+  technology: 'technologies:view',
+};
 
 export class MockSearchRepository implements SearchRepository {
   constructor(
     private readonly db: MockDatabase,
     private readonly latencyMs: number,
+    private readonly authority: MockAuthority,
   ) {}
 
   async search({ term, kinds, limit = DEFAULT_LIMIT }: SearchQuery): Promise<SearchResult[]> {
     await delay(this.latencyMs);
     if (!term.trim()) return [];
-    const wants = (kind: SearchResult['kind']) => !kinds?.length || kinds.includes(kind);
+    const user = this.authority.currentUser();
+    const wants = (kind: SearchResult['kind']) =>
+      (!kinds?.length || kinds.includes(kind)) && hasPrivilege(user, KIND_PRIVILEGE[kind]);
     const results: SearchResult[] = [];
 
     if (wants('application')) {

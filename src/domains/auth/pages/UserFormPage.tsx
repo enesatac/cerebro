@@ -1,14 +1,14 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { EntityId } from '@/domains/shared/types';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch, type Control } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router';
 import { paths } from '@/app/router/paths';
-import { SelectField, SwitchField, TextField } from '@/components/forms/fields';
+import { MultiSelectField, SelectField, SwitchField, TextField } from '@/components/forms/fields';
 import { FormPage } from '@/components/forms/FormPage';
 import { QueryView } from '@/components/feedback/QueryView';
 import { SectionCard } from '@/components/layout/SectionCard';
 import { usePeopleById } from '@/domains/people/api/queries';
-import { useCurrentUser, useUserAccount } from '../api/queries';
+import { useCurrentUser, useRoles, useUserAccount } from '../api/queries';
 import { useSaveUser } from '../api/mutations';
 import {
   toUserFormValues,
@@ -16,17 +16,27 @@ import {
   userFormSchema,
   type UserFormValues,
 } from '../schemas/userForm';
-import { USER_ROLES, type UserAccount } from '../types';
-import { ROLE_PRESENTATION } from '../utils/rolePresentation';
+import type { Role, UserAccount } from '../types';
+import { AccessPreview } from '../components/AccessPreview';
+import { privilegesOfRoles } from '../utils/permissions';
 import { UserDeleteAction } from '../components/UserDeleteAction';
 import { parseId } from '@/lib/urlParams';
 
-const ROLE_OPTIONS = USER_ROLES.map((role) => ({
-  value: role,
-  label: ROLE_PRESENTATION[role].label,
-}));
+/** The union of the selected roles, updated as roles are added or removed. */
+function EffectiveAccess({ control, roles }: { control: Control<UserFormValues>; roles: Role[] }) {
+  const selected = useWatch({ control, name: 'roleIds' });
+  return (
+    <AccessPreview
+      privileges={privilegesOfRoles(roles.filter((role) => selected.includes(String(role.id))))}
+    />
+  );
+}
 
-function UserForm({ user }: { user?: UserAccount }) {
+/** The role new accounts start with: the one granting the fewest privileges. */
+const leastPrivileged = (roles: Role[]) =>
+  [...roles].filter((r) => !r.system).sort((a, b) => a.privileges.length - b.privileges.length)[0];
+
+function UserForm({ user, roles }: { user?: UserAccount; roles: Role[] }) {
   const save = useSaveUser(user?.id);
   const people = usePeopleById();
   const me = useCurrentUser();
@@ -34,7 +44,10 @@ function UserForm({ user }: { user?: UserAccount }) {
   const isSelf = user?.id === me?.id;
   const form = useForm<UserFormValues>({
     resolver: zodResolver(userFormSchema),
-    defaultValues: toUserFormValues(user),
+    defaultValues: toUserFormValues(
+      user,
+      [leastPrivileged(roles)?.id].filter((id): id is number => id !== undefined),
+    ),
     mode: 'onTouched',
   });
   const { control } = form;
@@ -50,7 +63,7 @@ function UserForm({ user }: { user?: UserAccount }) {
       form={form}
       title={user ? `Düzenle: ${user.displayName}` : 'Kullanıcı ekle'}
       breadcrumbs={[
-        { label: 'Kullanıcılar ve roller', to: paths.admin.users() },
+        { label: 'Kullanıcılar', to: paths.admin.users() },
         { label: user ? user.displayName : 'Yeni kullanıcı' },
       ]}
       cancelTo={paths.admin.users()}
@@ -90,18 +103,14 @@ function UserForm({ user }: { user?: UserAccount }) {
       </SectionCard>
       <SectionCard title="Erişim">
         <div className="c-form-grid">
-          <SelectField
+          <MultiSelectField
             control={control}
-            name="role"
-            label="Rol"
-            options={ROLE_OPTIONS}
+            name="roleIds"
+            label="Roller"
             required
-            disabled={isSelf}
-            description={
-              isSelf
-                ? 'Kendi rolünüzü değiştiremezsiniz.'
-                : 'Yöneticiler her şeyi değiştirebilir; kullanıcılar yalnızca görüntüleyebilir.'
-            }
+            options={roles.map((role) => ({ value: String(role.id), label: role.name }))}
+            addLabel="Rol ekle"
+            description="Kullanıcı, rollerinin yetkilerinin birleşimine sahip olur."
           />
           <SwitchField
             control={control}
@@ -116,16 +125,29 @@ function UserForm({ user }: { user?: UserAccount }) {
           />
         </div>
       </SectionCard>
+      <SectionCard
+        title="Etkin yetkiler"
+        description="Seçili rollerle bu kullanıcının her ekranda yapabilecekleri."
+      >
+        <EffectiveAccess control={control} roles={roles} />
+      </SectionCard>
     </FormPage>
   );
 }
 
 export default function UserFormPage() {
   const { userId } = useParams();
-  return userId ? <EditUser id={parseId(userId) ?? 0} /> : <UserForm />;
+  const roles = useRoles();
+  return (
+    <QueryView query={roles} loadingLabel="Roller yükleniyor" errorTitle="Roller yüklenemedi">
+      {(list) =>
+        userId ? <EditUser id={parseId(userId) ?? 0} roles={list} /> : <UserForm roles={list} />
+      }
+    </QueryView>
+  );
 }
 
-function EditUser({ id }: { id: EntityId }) {
+function EditUser({ id, roles }: { id: EntityId; roles: Role[] }) {
   const query = useUserAccount(id);
   return (
     <QueryView
@@ -133,7 +155,7 @@ function EditUser({ id }: { id: EntityId }) {
       loadingLabel="Kullanıcı yükleniyor"
       errorTitle="Bu kullanıcı yüklenemedi"
     >
-      {(user) => <UserForm user={user} />}
+      {(user) => <UserForm user={user} roles={roles} />}
     </QueryView>
   );
 }

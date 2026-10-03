@@ -5,6 +5,7 @@ import {
   type AttachmentOwner,
   type AttachmentOwnerType,
 } from '@/domains/attachments/types';
+import { attachmentPrivilege } from '@/domains/attachments/utils/attachmentPrivileges';
 import { canAttachToDemand } from '@/domains/demands/utils/demandAccess';
 import {
   isAllowedFileName,
@@ -74,9 +75,9 @@ export function createMockAttachmentRepository(
    */
   const authorize = async (owner: AttachmentOwner, action: 'write' | 'remove') => {
     if (owner.type !== 'demand') {
-      return kit.begin(action === 'write' ? 'portfolio:edit' : 'portfolio:delete');
+      return kit.begin(attachmentPrivilege(owner.type, action === 'write' ? 'edit' : 'delete'));
     }
-    const user = await kit.begin('demands:submit');
+    const user = await kit.beginAny(['demands:edit', 'demandManagement:edit']);
     const demand = db.demands.find((row) => row.id === owner.id);
     if (demand && !canAttachToDemand(user, demand)) throw new ForbiddenError();
     return user;

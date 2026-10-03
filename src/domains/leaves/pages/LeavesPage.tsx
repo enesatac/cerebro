@@ -19,7 +19,7 @@ import { FilterSummary } from '@/components/layout/FilterSummary';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { SectionCard } from '@/components/layout/SectionCard';
 import { Toolbar } from '@/components/layout/Toolbar';
-import { usePermission } from '@/domains/auth/api/queries';
+import { usePrivilege } from '@/domains/auth/api/queries';
 import { useBusinessUnits } from '@/domains/business-units/api/queries';
 import { useMasterData } from '@/domains/master-data/context';
 import { usePeopleById } from '@/domains/people/api/queries';
@@ -89,7 +89,7 @@ export default function LeavesPage() {
       },
     );
 
-  const canEdit = usePermission('leaves:manage');
+  const canEdit = usePrivilege('leaves:edit');
   const masterData = useMasterData();
   const people = usePeopleById();
   const teams = useTeams();

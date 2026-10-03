@@ -25,7 +25,7 @@ import { MasterBadge } from '@/domains/master-data/components/MasterBadge';
 import { MasterLabel } from '@/domains/master-data/components/MasterLabel';
 import { useMasterData } from '@/domains/master-data/context';
 import { editColumn } from '@/components/data-display/editColumn';
-import { usePermission } from '@/domains/auth/api/queries';
+import { usePrivilege } from '@/domains/auth/api/queries';
 import { TechnologyDeleteAction } from '../components/TechnologyDeleteAction';
 
 const columns: TableColumnDef<TechnologyListItem>[] = [
@@ -74,7 +74,7 @@ const actionsColumn = editColumn<TechnologyListItem>(
 );
 
 export default function TechnologiesListPage() {
-  const canEdit = usePermission('portfolio:edit');
+  const canEdit = usePrivilege('technologies:edit');
   const masterData = useMasterData();
   const [searchParams, setSearchParams] = useSearchParams();
   const filters = parseTechnologyFilters(searchParams);
@@ -123,7 +123,11 @@ export default function TechnologiesListPage() {
               build={exportSheets}
               disabled={visibleTechnologies.length === 0}
             />
-            <CreateAction to={paths.technologies.create()} label="Teknoloji ekle" />
+            <CreateAction
+              to={paths.technologies.create()}
+              label="Teknoloji ekle"
+              privilege="technologies:edit"
+            />
           </>
         }
       />

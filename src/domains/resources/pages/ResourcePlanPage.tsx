@@ -19,7 +19,7 @@ import { FilterSummary } from '@/components/layout/FilterSummary';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { SectionCard } from '@/components/layout/SectionCard';
 import { Toolbar } from '@/components/layout/Toolbar';
-import { usePermission } from '@/domains/auth/api/queries';
+import { usePrivilege } from '@/domains/auth/api/queries';
 import { useBusinessUnits } from '@/domains/business-units/api/queries';
 import { useLeaves } from '@/domains/leaves/api/queries';
 import type { LeaveRecord } from '@/domains/leaves/types';
@@ -88,7 +88,7 @@ export default function ResourcePlanPage() {
       { replace: true },
     );
 
-  const canEdit = usePermission('resources:manage');
+  const canEdit = usePrivilege('resources:edit');
   const masterData = useMasterData();
   const people = usePeopleById();
   const teams = useTeams();

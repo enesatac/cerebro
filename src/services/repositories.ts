@@ -1,4 +1,8 @@
-import type { AuthRepository, UserRepository } from '@/domains/auth/api/AuthRepository';
+import type {
+  AuthRepository,
+  RoleRepository,
+  UserRepository,
+} from '@/domains/auth/api/AuthRepository';
 import type { ApplicationRepository } from '@/domains/applications/api/ApplicationRepository';
 import type { BusinessUnitRepository } from '@/domains/business-units/api/BusinessUnitRepository';
 import type { ConnectionRepository } from '@/domains/connections/api/ConnectionRepository';
@@ -38,6 +42,7 @@ export interface Repositories {
   governance: GovernanceRepository;
   auth: AuthRepository;
   users: UserRepository;
+  roles: RoleRepository;
   masterData: MasterDataRepository;
   leaves: LeaveRepository;
   allocations: AllocationRepository;

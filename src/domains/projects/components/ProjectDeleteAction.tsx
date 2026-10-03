@@ -17,7 +17,7 @@ export function ProjectDeleteAction({ record, compact, onDeleted }: ProjectDelet
   const { projects } = useRepositories();
   const remove = useDeleteProject();
   return (
-    <Can permission="portfolio:delete">
+    <Can privilege="projects:delete">
       <DeleteAction
         entityLabel="proje"
         entityName={record.name}

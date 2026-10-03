@@ -83,7 +83,11 @@ export default function ApplicationsListPage() {
         actions={
           <>
             <ExcelExportButton title="Uygulamalar" build={exportSheets} disabled={!total} />
-            <CreateAction to={paths.applications.create()} label="Uygulama kaydet" />
+            <CreateAction
+              to={paths.applications.create()}
+              label="Uygulama kaydet"
+              privilege="applications:edit"
+            />
           </>
         }
       />

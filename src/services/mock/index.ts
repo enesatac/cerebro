@@ -46,7 +46,7 @@ export function createMockRepositories({
   const repositories: Repositories = {
     applications: new MockApplicationRepository(db, lookup, latencyMs, kit),
     projects: new MockProjectRepository(db, lookup, latencyMs, kit),
-    search: new MockSearchRepository(db, latencyMs),
+    search: new MockSearchRepository(db, latencyMs, authority),
     masterData: createMockMasterDataRepository(db, latencyMs, kit),
     leaves: createMockLeaveRepository(db, latencyMs, kit),
     allocations: createMockAllocationRepository(db, latencyMs, kit),

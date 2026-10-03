@@ -41,7 +41,7 @@ export function createMockReferenceRepositories(
 ) {
   const wait = () => delay(latencyMs);
 
-  // People and business units are master data: not audited, managed by administrators.
+  // People and business units are reference data, not audited (people: `people:*`, units: master data).
   const validatePerson = (input: PersonInput, excludeId: EntityId | null) => {
     kit.assertUnique(
       db.people,
@@ -59,20 +59,20 @@ export function createMockReferenceRepositories(
     getById: async (id) => (await wait(), copy(findOrThrow(db.people, id, 'Kişi'))),
     getWorkload: async (id, today) => (await wait(), buildPersonWorkload(db, lookup, id, today)),
     async create(input) {
-      await kit.begin('masterData:manage');
+      await kit.begin('people:edit');
       validatePerson(input, null);
       const person = { ...copy(input), id: kit.nextId('people') };
       db.people.push(person);
       return copy(person);
     },
     async update(id, input) {
-      await kit.begin('masterData:manage');
+      await kit.begin('people:edit');
       findOrThrow(db.people, id, 'Kişi');
       validatePerson(input, id);
       return copy(replaceRow(db.people, { ...copy(input), id }));
     },
     async remove(id) {
-      await kit.begin('masterData:manage');
+      await kit.begin('people:delete');
       findOrThrow(db.people, id, 'Kişi');
       const impact = personDeletionImpact(db, id);
       if (impact.blockedReason) throw new ValidationError(impact.blockedReason);
@@ -108,20 +108,20 @@ export function createMockReferenceRepositories(
   const businessUnits: BusinessUnitRepository = {
     list: async () => (await wait(), copy(db.businessUnits)),
     async create(input) {
-      await kit.begin('masterData:manage');
+      await kit.begin('masterData:edit');
       validateBusinessUnit(input, null);
       const unit = { ...copy(input), id: kit.nextId('businessUnits') };
       db.businessUnits.push(unit);
       return copy(unit);
     },
     async update(id, input) {
-      await kit.begin('masterData:manage');
+      await kit.begin('masterData:edit');
       findOrThrow(db.businessUnits, id, 'İş birimi');
       validateBusinessUnit(input, id);
       return copy(replaceRow(db.businessUnits, { ...copy(input), id }));
     },
     async remove(id) {
-      await kit.begin('masterData:manage');
+      await kit.begin('masterData:edit');
       findOrThrow(db.businessUnits, id, 'İş birimi');
       const impact = businessUnitDeletionImpact(db, id);
       if (impact.blockedReason) throw new ValidationError(impact.blockedReason);
@@ -164,6 +164,7 @@ export function createMockReferenceRepositories(
       rows: () => db.teams,
       entityLabel: 'Ekip',
       sequence: 'teams',
+      permissions: { write: 'teams:edit', remove: 'teams:delete' },
       build: (input, id, audit) => ({ ...input, id, audit }),
       validate(input, excludeId) {
         kit.assertUnique(
@@ -201,7 +202,7 @@ export function createMockReferenceRepositories(
     },
     // The catalogue is not audited, so it does not use the audited helper.
     async create(input) {
-      await kit.begin();
+      await kit.begin('technologies:edit');
       assertCodeChecks(db, codeChecks.technology(input));
       kit.assertUnique(
         db.technologies,
@@ -216,7 +217,7 @@ export function createMockReferenceRepositories(
       return copy(technology);
     },
     async update(id, input) {
-      await kit.begin();
+      await kit.begin('technologies:edit');
       const current = findOrThrow(db.technologies, id, 'Teknoloji');
       assertCodeChecks(db, codeChecks.technology(input), codeChecks.technology(current));
       kit.assertUnique(
@@ -230,7 +231,7 @@ export function createMockReferenceRepositories(
       return copy(replaceRow(db.technologies, { ...copy(input), id }));
     },
     async remove(id) {
-      await kit.begin('portfolio:delete');
+      await kit.begin('technologies:delete');
       findOrThrow(db.technologies, id, 'Teknoloji');
       const impact = technologyDeletionImpact(db, id);
       if (impact.blockedReason) throw new ValidationError(impact.blockedReason);

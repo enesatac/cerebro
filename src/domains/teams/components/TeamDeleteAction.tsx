@@ -17,7 +17,7 @@ export function TeamDeleteAction({ record, compact, onDeleted }: TeamDeleteActio
   const { teams } = useRepositories();
   const remove = useDeleteTeam();
   return (
-    <Can permission="portfolio:delete">
+    <Can privilege="teams:delete">
       <DeleteAction
         entityLabel="ekip"
         entityName={record.name}

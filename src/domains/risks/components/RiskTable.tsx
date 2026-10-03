@@ -13,7 +13,7 @@ import type { Risk } from '../types';
 import { RelatedEntityLinks } from './RelatedEntityLinks';
 import { paths } from '@/app/router/paths';
 import { editColumn } from '@/components/data-display/editColumn';
-import { usePermission } from '@/domains/auth/api/queries';
+import { usePrivilege } from '@/domains/auth/api/queries';
 import { MasterBadge } from '@/domains/master-data/components/MasterBadge';
 import { MasterLabel } from '@/domains/master-data/components/MasterLabel';
 import { RiskDeleteAction } from './RiskDeleteAction';
@@ -38,7 +38,7 @@ export function RiskTable({
   const people = usePeopleById();
   const masterData = useMasterData();
   const repositories = useRepositories();
-  const canEdit = usePermission('portfolio:edit');
+  const canEdit = usePrivilege('risks:edit');
   // Stable column definitions: Takeoff's table remounts cells when their renderers change, which
   // would reset row-level state (an open attachments or delete dialog) on every re-render.
   const columns = useMemo<TableColumnDef<Risk>[]>(

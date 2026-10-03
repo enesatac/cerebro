@@ -3,8 +3,7 @@ import { ChevronBottomIconOutlinedRounded } from '@takeoff-icons/react/chevron-b
 import { useNavigate } from 'react-router';
 import { paths } from '@/app/router/paths';
 import { useCurrentUser, useSignOut } from '../api/queries';
-import { hasPermission } from '../utils/permissions';
-import { ROLE_PRESENTATION } from '../utils/rolePresentation';
+import { hasPrivilege } from '../utils/permissions';
 
 export function UserMenu() {
   const user = useCurrentUser();
@@ -20,19 +19,29 @@ export function UserMenu() {
         appearance="text"
         size="small"
         endContent={<ChevronBottomIconOutlinedRounded aria-hidden="true" />}
-        aria-label={`Hesap menüsü: ${user.displayName}, ${ROLE_PRESENTATION[user.role].label}`}
+        aria-label={`Hesap menüsü: ${user.displayName}, ${user.roleNames.join(', ')}`}
       >
         <span className="c-user-menu__name">{user.displayName}</span>
-        <Badge variant={ROLE_PRESENTATION[user.role].variant} appearance="filledLight" size="small">
-          {ROLE_PRESENTATION[user.role].label}
-        </Badge>
+        {user.roleNames[0] && (
+          <Badge variant="neutral" appearance="filledLight" size="small">
+            {user.roleNames[0]}
+            {user.roleNames.length > 1 && ` +${user.roleNames.length - 1}`}
+          </Badge>
+        )}
       </Dropdown.Trigger>
       <Dropdown.Content align="end">
         <Dropdown.Label>{user.email}</Dropdown.Label>
         <Dropdown.Separator />
-        {hasPermission(user, 'users:manage') && (
+        <Dropdown.Label>{user.roleNames.join(', ')}</Dropdown.Label>
+        <Dropdown.Separator />
+        {hasPrivilege(user, 'users:view') && (
           <Dropdown.Item onSelect={() => void navigate(paths.admin.users())}>
-            Kullanıcıları yönet
+            Kullanıcılar
+          </Dropdown.Item>
+        )}
+        {hasPrivilege(user, 'roles:view') && (
+          <Dropdown.Item onSelect={() => void navigate(paths.admin.roles())}>
+            Roller ve yetkiler
           </Dropdown.Item>
         )}
         <Dropdown.Item

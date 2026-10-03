@@ -18,7 +18,7 @@ export function RunbookDeleteAction({
   const { runbooks } = useRepositories();
   const remove = useDeleteRunbook();
   return (
-    <Can permission="portfolio:delete">
+    <Can privilege="applications:delete">
       <DeleteAction
         entityLabel="rehber"
         entityName={`${applicationName} müdahale rehberi`}

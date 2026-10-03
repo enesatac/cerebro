@@ -135,6 +135,7 @@ export function createMockRunbookRepository(
       rows: () => db.runbooks,
       entityLabel: 'Müdahale rehberi',
       sequence: 'runbooks',
+      permissions: { write: 'applications:edit', remove: 'applications:delete' },
       build,
       validate,
     }),

@@ -14,7 +14,7 @@ import type { Application } from '../../types';
 import { ApplicationRefLink } from '../ApplicationRefLink';
 import { paths } from '@/app/router/paths';
 import { editColumn } from '@/components/data-display/editColumn';
-import { usePermission } from '@/domains/auth/api/queries';
+import { usePrivilege } from '@/domains/auth/api/queries';
 import { SmallCreateAction } from '@/domains/auth/components/RecordActions';
 import { MasterBadge } from '@/domains/master-data/components/MasterBadge';
 import { MasterLabel } from '@/domains/master-data/components/MasterLabel';
@@ -67,7 +67,7 @@ function columns(
 
 export function DependenciesTab({ application }: { application: Application }) {
   const query = useApplicationDependencies(application.id);
-  const canEdit = usePermission('portfolio:edit');
+  const canEdit = usePrivilege('connections:edit');
   const masterData = useMasterData();
   const repositories = useRepositories();
   const dependencySheet = (
@@ -133,6 +133,7 @@ export function DependenciesTab({ application }: { application: Application }) {
               <SmallCreateAction
                 to={paths.dependencies.create(application.id)}
                 label="Bağımlılık ekle"
+                privilege="connections:edit"
               />
             }
           >

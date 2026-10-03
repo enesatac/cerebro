@@ -56,6 +56,7 @@ export function createMockOperationalRepositories(
       rows: () => db.risks,
       entityLabel: 'Risk',
       sequence: 'risks',
+      permissions: { write: 'risks:edit', remove: 'risks:delete' },
       impact: (id) => attachmentsOnlyImpact(db, { type: 'risk', id }),
       cascade: (id) => deleteAttachmentsOf(db, { type: 'risk', id }),
       build: (input, id, audit) => ({ ...input, id, audit }),
@@ -80,6 +81,7 @@ export function createMockOperationalRepositories(
       rows: () => db.escalations,
       entityLabel: 'Eskalasyon',
       sequence: 'escalations',
+      permissions: { write: 'risks:edit', remove: 'risks:delete' },
       impact: (id) => attachmentsOnlyImpact(db, { type: 'escalation', id }),
       cascade: (id) => deleteAttachmentsOf(db, { type: 'escalation', id }),
       build: (input, id, audit) => ({ ...input, id, audit }),
@@ -109,6 +111,7 @@ export function createMockOperationalRepositories(
       rows: () => db.decisions,
       entityLabel: 'Karar',
       sequence: 'decisions',
+      permissions: { write: 'risks:edit', remove: 'risks:delete' },
       impact: (id) => attachmentsOnlyImpact(db, { type: 'decision', id }),
       cascade: (id) => deleteAttachmentsOf(db, { type: 'decision', id }),
       build: (input, id, audit) => ({ ...input, id, audit }),
@@ -153,6 +156,7 @@ export function createMockOperationalRepositories(
         rows: () => db.dependencies,
         entityLabel: 'Bağımlılık',
         sequence: 'dependencies',
+        permissions: { write: 'connections:edit', remove: 'connections:delete' },
         build: (input, id, audit) => ({ ...input, id, audit }),
         validate(input, excludeId) {
           const previous = excludeId
@@ -195,6 +199,7 @@ export function createMockOperationalRepositories(
         rows: () => db.integrations,
         entityLabel: 'Entegrasyon',
         sequence: 'integrations',
+        permissions: { write: 'connections:edit', remove: 'connections:delete' },
         build: (input, id, audit) => ({ ...input, id, audit }),
         validate(input, excludeId) {
           const previous = excludeId

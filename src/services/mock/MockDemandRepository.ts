@@ -1,5 +1,5 @@
 import type { UserAccount } from '@/domains/auth/types';
-import { hasPermission } from '@/domains/auth/utils/permissions';
+import { hasPrivilege } from '@/domains/auth/utils/permissions';
 import type { DemandRepository } from '@/domains/demands/api/DemandRepository';
 import {
   DEMAND_SCORES,
@@ -182,7 +182,7 @@ export function createMockDemandRepository(
     getById: async (id) => (await delay(latencyMs), copy(findOrThrow(db.demands, id, 'Talep'))),
 
     async create(input) {
-      const user = await kit.begin('demands:submit');
+      const user = await kit.begin('demands:edit');
       validateRequest(input);
       const audit = kit.newAudit(user);
       const id = kit.nextId('demands');
@@ -213,7 +213,7 @@ export function createMockDemandRepository(
     },
 
     async update(id, input) {
-      const user = await kit.begin('demands:submit');
+      const user = await kit.begin('demands:edit');
       const current = findOrThrow(db.demands, id, 'Talep');
       if (!canEditDemand(user, current)) {
         throw new ForbiddenError(
@@ -222,7 +222,8 @@ export function createMockDemandRepository(
       }
       validateRequest(input, current);
       // A requester answering a question puts the demand back in the queue.
-      const answered = current.status === 'needs-info' && !hasPermission(user, 'demands:manage');
+      const answered =
+        current.status === 'needs-info' && !hasPrivilege(user, 'demandManagement:edit');
       const next: Demand = {
         ...current,
         ...clean(input),
@@ -236,7 +237,7 @@ export function createMockDemandRepository(
     },
 
     async assess(id, input) {
-      const user = await kit.begin('demands:manage');
+      const user = await kit.begin('demandManagement:edit');
       const current = findOrThrow(db.demands, id, 'Talep');
       validateAssessment(input, current);
       const { status, ...assessment } = input;
@@ -254,7 +255,7 @@ export function createMockDemandRepository(
     },
 
     async withdraw(id, note) {
-      const user = await kit.begin('demands:submit');
+      const user = await kit.begin('demands:edit');
       const current = findOrThrow(db.demands, id, 'Talep');
       if (!canWithdrawDemand(user, current)) {
         throw new ForbiddenError('Bu talebi geri çekemezsiniz.');
@@ -270,7 +271,7 @@ export function createMockDemandRepository(
     },
 
     async remove(id) {
-      await kit.begin('demands:manage');
+      await kit.begin('demandManagement:delete');
       findOrThrow(db.demands, id, 'Talep');
       deleteAttachmentsOf(db, { type: 'demand', id });
       removeRow(db.demands, id);

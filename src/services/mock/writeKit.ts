@@ -1,4 +1,4 @@
-import type { Permission, UserAccount } from '@/domains/auth/types';
+import type { Privilege, SessionUser, UserAccount } from '@/domains/auth/types';
 import type { AuditMetadata, Draft, EntityId } from '@/domains/shared/types';
 import { ValidationError } from '@/lib/errors';
 import type { SequenceName, Sequences } from './database';
@@ -15,9 +15,15 @@ export class WriteKit {
   ) {}
 
   /** Simulated round trip, then the server-side permission check. */
-  async begin(permission: Permission = 'portfolio:edit'): Promise<UserAccount> {
+  async begin(privilege: Privilege): Promise<SessionUser> {
     await delay(this.latencyMs);
-    return this.authority.require(permission);
+    return this.authority.require(privilege);
+  }
+
+  /** Like `begin`, for operations open to holders of any of `privileges`. */
+  async beginAny(privileges: readonly Privilege[]): Promise<SessionUser> {
+    await delay(this.latencyMs);
+    return this.authority.requireAny(privileges);
   }
 
   newAudit(user: UserAccount): AuditMetadata {
@@ -82,7 +88,7 @@ export class WriteKit {
     }
   }
 
-  /** Case-insensitive uniqueness check on a text field. */
+  /** Case-insensitive uniqueness check on a text field (Turkish I/İ/ı/i compare equal). */
   assertUnique<T extends { id: EntityId }>(
     rows: readonly T[],
     value: string,
@@ -91,8 +97,9 @@ export class WriteKit {
     message: string,
     field: string,
   ) {
-    const needle = value.trim().toLowerCase();
-    if (rows.some((row) => row.id !== excludeId && read(row).trim().toLowerCase() === needle)) {
+    const fold = (text: string) => text.trim().toLocaleLowerCase('tr-TR').replace(/ı/g, 'i');
+    const needle = fold(value);
+    if (rows.some((row) => row.id !== excludeId && fold(read(row)) === needle)) {
       throw new ValidationError(message, field);
     }
   }

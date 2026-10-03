@@ -20,7 +20,7 @@ export function LeaveDeleteAction({
   const { leaves } = useRepositories();
   const remove = useDeleteLeave();
   return (
-    <Can permission="leaves:manage">
+    <Can privilege="leaves:edit">
       <DeleteAction
         entityLabel="izin"
         entityName={`${personName} izni`}

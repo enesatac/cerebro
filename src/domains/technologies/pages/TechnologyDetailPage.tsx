@@ -134,7 +134,7 @@ export default function TechnologyDetailPage() {
         title={technology.name}
         actions={
           <>
-            <EditAction to={paths.technologies.edit(technology.id)} />
+            <EditAction to={paths.technologies.edit(technology.id)} privilege="technologies:edit" />
             <TechnologyDeleteAction
               record={technology}
               onDeleted={() => void navigate(paths.technologies.list())}

@@ -21,7 +21,7 @@ export function ApplicationDeleteAction({
   const { applications } = useRepositories();
   const remove = useDeleteApplication();
   return (
-    <Can permission="portfolio:delete">
+    <Can privilege="applications:delete">
       <DeleteAction
         entityLabel="uygulama"
         entityName={record.name}

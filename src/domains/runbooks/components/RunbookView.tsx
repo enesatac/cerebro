@@ -279,7 +279,11 @@ export function RunbookView({
             </span>
           </p>
         </div>
-        <EditAction to={paths.applications.editRunbook(application.id)} label="Rehberi düzenle" />
+        <EditAction
+          to={paths.applications.editRunbook(application.id)}
+          label="Rehberi düzenle"
+          privilege="applications:edit"
+        />
       </section>
       <div className="c-two-column c-two-column--even">
         <FirstResponse steps={runbook.firstResponse} />

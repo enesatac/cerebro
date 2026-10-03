@@ -23,6 +23,7 @@ export function RunbookTab({ application }: { application: Application }) {
           <CreateAction
             to={paths.applications.editRunbook(application.id)}
             label="Rehber oluştur"
+            privilege="applications:edit"
           />
         }
       />

@@ -88,7 +88,7 @@ export function createMockAllocationRepository(
       rows: () => db.allocations,
       entityLabel: 'Atama',
       sequence: 'allocations',
-      permissions: { write: 'resources:manage', remove: 'resources:manage' },
+      permissions: { write: 'resources:edit', remove: 'resources:edit' },
       build: (input, id, audit) => ({ ...input, note: input.note.trim(), id, audit }),
       validate,
     }),

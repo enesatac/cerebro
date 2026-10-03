@@ -16,7 +16,7 @@ export function RiskDeleteAction({ record, compact, onDeleted }: RiskDeleteActio
   const { risks } = useRepositories();
   const remove = useDeleteRisk();
   return (
-    <Can permission="portfolio:delete">
+    <Can privilege="risks:delete">
       <DeleteAction
         entityLabel="risk"
         entityName={record.title}

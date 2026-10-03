@@ -161,7 +161,7 @@ export class MockApplicationRepository implements ApplicationRepository {
   }
 
   async create(input: ApplicationInput) {
-    const user = await this.kit.begin();
+    const user = await this.kit.begin('applications:edit');
     this.validate(input, null);
     const application: Application = {
       ...this.withChildIds(input),
@@ -173,7 +173,7 @@ export class MockApplicationRepository implements ApplicationRepository {
   }
 
   async update(id: ApplicationId, input: ApplicationInput) {
-    const user = await this.kit.begin();
+    const user = await this.kit.begin('applications:edit');
     const current = findOrThrow(this.db.applications, id, 'Uygulama');
     this.validate(input, id);
     return copy(
@@ -186,7 +186,7 @@ export class MockApplicationRepository implements ApplicationRepository {
   }
 
   async remove(id: ApplicationId) {
-    await this.kit.begin('portfolio:delete');
+    await this.kit.begin('applications:delete');
     findOrThrow(this.db.applications, id, 'Uygulama');
     deleteApplicationCascade(this.db, id);
     removeRow(this.db.applications, id);

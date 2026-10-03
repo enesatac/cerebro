@@ -1,24 +1,7 @@
-import { DataObjectIconOutlinedRounded } from '@takeoff-icons/react/data-object';
-import { UserSettingsIconOutlinedRounded } from '@takeoff-icons/react/user-settings';
 import { NavLink } from 'react-router';
-import { usePermission } from '@/domains/auth/api/queries';
-import { paths } from '../router/paths';
-import {
-  DEMAND_MANAGEMENT_NAVIGATION,
-  PRIMARY_NAVIGATION,
-  type NavigationItem,
-} from './navigation';
-
-const MASTER_DATA_NAVIGATION: NavigationItem = {
-  label: 'Ana veriler',
-  to: paths.admin.masterData(),
-  icon: DataObjectIconOutlinedRounded,
-};
-const USERS_NAVIGATION: NavigationItem = {
-  label: 'Kullanıcılar ve roller',
-  to: paths.admin.users(),
-  icon: UserSettingsIconOutlinedRounded,
-};
+import { useCurrentUser } from '@/domains/auth/api/queries';
+import { hasPrivilege } from '@/domains/auth/utils/permissions';
+import { ADMIN_NAVIGATION, PRIMARY_NAVIGATION, type NavigationItem } from './navigation';
 
 function NavList({ items, onNavigate }: { items: NavigationItem[]; onNavigate?: () => void }) {
   return (
@@ -35,23 +18,15 @@ function NavList({ items, onNavigate }: { items: NavigationItem[]; onNavigate?: 
   );
 }
 
-/** Primary and (for admins) administration links; shared by the sidebar and the mobile drawer. */
+/** The screens the signed-in user's roles can view; shared by the sidebar and the mobile drawer. */
 export function NavigationLinks({ onNavigate }: { onNavigate?: () => void }) {
-  const canManageUsers = usePermission('users:manage');
-  const canManageMasterData = usePermission('masterData:manage');
-  const canManageDemands = usePermission('demands:manage');
-  const primaryItems = canManageDemands
-    ? PRIMARY_NAVIGATION.flatMap((item) =>
-        item.to === paths.demands.list() ? [item, DEMAND_MANAGEMENT_NAVIGATION] : [item],
-      )
-    : PRIMARY_NAVIGATION;
-  const adminItems = [
-    ...(canManageMasterData ? [MASTER_DATA_NAVIGATION] : []),
-    ...(canManageUsers ? [USERS_NAVIGATION] : []),
-  ];
+  const user = useCurrentUser();
+  const allowed = (items: NavigationItem[]) =>
+    items.filter((item) => hasPrivilege(user, item.privilege));
+  const adminItems = allowed(ADMIN_NAVIGATION);
   return (
     <>
-      <NavList items={primaryItems} onNavigate={onNavigate} />
+      <NavList items={allowed(PRIMARY_NAVIGATION)} onNavigate={onNavigate} />
       {adminItems.length > 0 && (
         <div className="c-sidebar__section">
           <p className="c-sidebar__heading">Yönetim</p>

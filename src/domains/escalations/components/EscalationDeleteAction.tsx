@@ -20,7 +20,7 @@ export function EscalationDeleteAction({
   const { escalations } = useRepositories();
   const remove = useDeleteEscalation();
   return (
-    <Can permission="portfolio:delete">
+    <Can privilege="risks:delete">
       <DeleteAction
         entityLabel="eskalasyon"
         entityName={record.title}

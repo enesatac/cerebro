@@ -11,7 +11,7 @@ export interface PersonRepository {
    * `today` bounds the leaves. @throws NotFoundError
    */
   getWorkload(id: PersonId, today: IsoDate): Promise<PersonWorkload>;
-  /** Requires `masterData:manage`. @throws ValidationError on a duplicate email. */
+  /** Requires `masterData:edit`. @throws ValidationError on a duplicate email. */
   create(input: PersonInput): Promise<Person>;
   update(id: PersonId, input: PersonInput): Promise<Person>;
   /** @throws ValidationError when the person is still referenced (see `getDeletionImpact`). */

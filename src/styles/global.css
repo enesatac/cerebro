@@ -994,24 +994,6 @@ code {
   font-weight: var(--weight-semibold);
 }
 
-.c-role-legend {
-  display: grid;
-  gap: var(--spacing-m-base);
-  margin: 0;
-}
-
-.c-role-legend__item {
-  display: grid;
-  grid-template-columns: 80px minmax(0, 1fr);
-  align-items: center;
-  gap: var(--spacing-xl);
-}
-
-.c-role-legend__item dd {
-  margin: 0;
-  color: var(--text-dark);
-}
-
 .c-decision-list__edit {
   display: flex;
   align-items: center;
@@ -3444,4 +3426,104 @@ code {
 
 .c-roadmap-card__dates {
   font-variant-numeric: tabular-nums;
+}
+
+/* ---------------------------------------------------------------- Roles and privileges */
+
+/* Role editor: one row per screen with its access level and what that level allows. */
+.c-privilege-table {
+  width: 100%;
+  border-collapse: collapse;
+  color: var(--text-darkest);
+}
+
+.c-privilege-table th,
+.c-privilege-table td {
+  padding: var(--spacing-s) var(--spacing-m-base);
+  border-bottom: 1px solid var(--border-light);
+  text-align: left;
+  vertical-align: middle;
+}
+
+.c-privilege-table thead th {
+  color: var(--text-dark);
+  font-size: var(--size-xs);
+  font-weight: var(--weight-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.c-privilege-table tbody th[scope='row'] {
+  width: 220px;
+  font-weight: var(--weight-medium);
+}
+
+.c-privilege-table__group th {
+  padding-top: var(--spacing-xl);
+  background: var(--background-lightest);
+  color: var(--text-dark);
+  font-size: var(--size-sm);
+  font-weight: var(--weight-semibold);
+}
+
+.c-privilege-table__levels {
+  flex-wrap: wrap;
+  gap: var(--spacing-l);
+}
+
+.c-privilege-table__hint {
+  color: var(--text-dark);
+  font-size: var(--size-sm);
+}
+
+@media (max-width: 900px) {
+  .c-privilege-table thead {
+    display: none;
+  }
+
+  .c-privilege-table tr,
+  .c-privilege-table th,
+  .c-privilege-table td {
+    display: block;
+    width: auto;
+  }
+
+  .c-privilege-table tbody th[scope='row'] {
+    width: auto;
+    border-bottom: 0;
+  }
+}
+
+/* Effective access: screens grouped, each with its level. */
+.c-access-preview {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: var(--spacing-xl);
+}
+
+.c-access-preview__heading {
+  margin: 0 0 var(--spacing-s);
+  color: var(--text-dark);
+  font-size: var(--size-xs);
+  font-weight: var(--weight-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.c-access-preview__list {
+  display: grid;
+  gap: var(--spacing-xs);
+  margin: 0;
+}
+
+.c-access-preview__item {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--spacing-m-base);
+  align-items: center;
+  color: var(--text-darkest);
+}
+
+.c-access-preview__item dd {
+  margin: 0;
 }

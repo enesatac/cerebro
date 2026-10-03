@@ -104,6 +104,10 @@ export const paths = {
     users: () => '/admin/users',
     createUser: () => '/admin/users/new',
     editUser: (userId: EntityId) => `/admin/users/${id(userId)}/edit`,
+    /** `tab`: `roles` (default), `matrix` or `catalog`. */
+    roles: (tab?: 'matrix' | 'catalog') => withQuery('/admin/roles', { tab }),
+    createRole: () => '/admin/roles/new',
+    editRole: (roleId: EntityId) => `/admin/roles/${id(roleId)}/edit`,
   },
   search: (term?: string) => withQuery('/search', { q: term }),
 } as const;

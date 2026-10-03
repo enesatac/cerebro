@@ -1,6 +1,6 @@
-import type { Permission, UserAccount, UserAccountId } from '@/domains/auth/types';
+import type { Privilege, SessionUser, UserAccount, UserAccountId } from '@/domains/auth/types';
 import type { PersonId } from '@/domains/shared/types';
-import { hasPermission } from '@/domains/auth/utils/permissions';
+import { hasPrivilege, privilegesOfRoles } from '@/domains/auth/utils/permissions';
 import { ForbiddenError, UnauthenticatedError } from '@/lib/errors';
 import type { MockDatabase } from './database';
 
@@ -42,8 +42,8 @@ export function createBrowserSessionStore(): SessionStore {
 }
 
 /**
- * Server-side authorisation for the mock backend. Every write goes through `require`, so a
- * read-only user is refused even if the UI were bypassed.
+ * Server-side authorisation for the mock backend. Every write goes through `require` with the
+ * screen's privilege, so a role without it is refused even if the UI were bypassed.
  */
 export class MockAuthority {
   constructor(
@@ -51,16 +51,32 @@ export class MockAuthority {
     readonly store: SessionStore,
   ) {}
 
-  currentUser(): UserAccount | null {
-    const id = this.store.get();
-    const user = id !== null ? this.db.users.find((candidate) => candidate.id === id) : undefined;
-    return user?.active ? user : null;
+  /** An account with its role names and the union of its roles' privileges. */
+  resolve(user: UserAccount): SessionUser {
+    const roles = this.db.roles.filter((role) => user.roleIds.includes(role.id));
+    return {
+      ...user,
+      roleNames: roles.map((role) => role.name),
+      privileges: privilegesOfRoles(roles),
+    };
   }
 
-  require(permission: Permission): UserAccount {
+  /** Resolved on every call, so role changes apply to the next request without signing in again. */
+  currentUser(): SessionUser | null {
+    const id = this.store.get();
+    const user = id !== null ? this.db.users.find((candidate) => candidate.id === id) : undefined;
+    return user?.active ? this.resolve(user) : null;
+  }
+
+  require(privilege: Privilege): SessionUser {
+    return this.requireAny([privilege]);
+  }
+
+  /** Passes when the user holds at least one of `privileges`. */
+  requireAny(privileges: readonly Privilege[]): SessionUser {
     const user = this.currentUser();
     if (!user) throw new UnauthenticatedError();
-    if (!hasPermission(user, permission)) throw new ForbiddenError();
+    if (!privileges.some((privilege) => hasPrivilege(user, privilege))) throw new ForbiddenError();
     return user;
   }
 

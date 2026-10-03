@@ -63,7 +63,7 @@ export function createMockLeaveRepository(
       rows: () => db.leaves,
       entityLabel: 'İzin',
       sequence: 'leaves',
-      permissions: { write: 'leaves:manage', remove: 'leaves:manage' },
+      permissions: { write: 'leaves:edit', remove: 'leaves:edit' },
       build: (input, id, audit) => ({ ...input, note: input.note.trim(), id, audit }),
       validate,
     }),

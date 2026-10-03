@@ -26,8 +26,7 @@ import { ProjectMilestonesTab } from '../components/detail/ProjectMilestonesTab'
 import { ProjectOverviewTab } from '../components/detail/ProjectOverviewTab';
 import type { Project } from '../types';
 import { EditAction } from '@/domains/auth/components/RecordActions';
-import { Can } from '@/domains/auth/components/Can';
-import { ActionMenu } from '@/components/actions/ActionMenu';
+import { GuardedActionMenu } from '@/domains/auth/components/GuardedActionMenu';
 import { SmallCreateAction } from '@/domains/auth/components/RecordActions';
 import { MasterBadge } from '@/domains/master-data/components/MasterBadge';
 import { ProjectDeleteAction } from '../components/ProjectDeleteAction';
@@ -58,6 +57,7 @@ function ProjectDecisions({ project }: { project: Project }) {
             <SmallCreateAction
               to={paths.decisionForms.create({ project: project.id })}
               label="Karar kaydet"
+              privilege="risks:edit"
             />
           }
         >
@@ -151,26 +151,30 @@ export default function ProjectDetailPage() {
         }
         actions={
           <>
-            <EditAction to={paths.projects.edit(project.id)} />
+            <EditAction to={paths.projects.edit(project.id)} privilege="projects:edit" />
             <ProjectDeleteAction
               record={project}
               onDeleted={() => void navigate(paths.projects.list())}
             />
-            <Can permission="portfolio:edit">
-              <ActionMenu
-                items={[
-                  { label: 'Risk kaydet', to: paths.riskForms.create({ project: project.id }) },
-                  {
-                    label: 'Eskalasyon aç',
-                    to: paths.escalationForms.create({ project: project.id }),
-                  },
-                  {
-                    label: 'Karar kaydet',
-                    to: paths.decisionForms.create({ project: project.id }),
-                  },
-                ]}
-              />
-            </Can>
+            <GuardedActionMenu
+              items={[
+                {
+                  label: 'Risk kaydet',
+                  to: paths.riskForms.create({ project: project.id }),
+                  privilege: 'risks:edit',
+                },
+                {
+                  label: 'Eskalasyon aç',
+                  to: paths.escalationForms.create({ project: project.id }),
+                  privilege: 'risks:edit',
+                },
+                {
+                  label: 'Karar kaydet',
+                  to: paths.decisionForms.create({ project: project.id }),
+                  privilege: 'risks:edit',
+                },
+              ]}
+            />
             <CopyLinkButton />
           </>
         }

@@ -7,7 +7,7 @@ export interface MasterDataRepository {
   /** How many records use each code of `key` (drives "in use" hints and delete protection). */
   getUsage(key: MasterDataListKey): Promise<MasterDataUsage>;
   /**
-   * Replaces the items of one list (order included). Requires `masterData:manage`.
+   * Replaces the items of one list (order included). Requires `masterData:edit`.
    * @throws ValidationError when a system value is missing or deactivated, a code or label is
    *   duplicated, or a removed value is still used by records.
    */

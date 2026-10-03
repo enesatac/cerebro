@@ -16,7 +16,7 @@ import { PageHeader } from '@/components/layout/PageHeader';
 import { SectionCard } from '@/components/layout/SectionCard';
 import { useApplicationRefs } from '@/domains/applications/api/queries';
 import { AttachmentsSection } from '@/domains/attachments/components/AttachmentsSection';
-import { useCurrentUser, usePermission } from '@/domains/auth/api/queries';
+import { useCurrentUser, usePrivilege } from '@/domains/auth/api/queries';
 import { useBusinessUnitsById } from '@/domains/business-units/api/queries';
 import { MasterBadge } from '@/domains/master-data/components/MasterBadge';
 import { MasterLabel } from '@/domains/master-data/components/MasterLabel';
@@ -70,7 +70,7 @@ function DecisionNotice({ demand, mine }: { demand: Demand; mine: boolean }) {
 function DemandView({ demand }: { demand: Demand }) {
   const navigate = useNavigate();
   const user = useCurrentUser();
-  const canManage = usePermission('demands:manage');
+  const canManage = usePrivilege('demandManagement:edit');
   const people = usePeopleById();
   const units = useBusinessUnitsById();
   const applications = useApplicationRefs();

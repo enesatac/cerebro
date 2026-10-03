@@ -20,7 +20,7 @@ export function IntegrationDeleteAction({
   const { connections } = useRepositories();
   const remove = useDeleteIntegration();
   return (
-    <Can permission="portfolio:delete">
+    <Can privilege="connections:delete">
       <DeleteAction
         entityLabel="entegrasyon"
         entityName={record.name}

@@ -1,9 +1,10 @@
 import { lazy, type ReactNode } from 'react';
 import { createBrowserRouter, type RouteObject } from 'react-router';
-import { RequirePermission } from '@/domains/auth/components/RequirePermission';
-import type { Permission } from '@/domains/auth/types';
+import { RequirePrivilege } from '@/domains/auth/components/RequirePrivilege';
+import { PRIVILEGE_MODULES, type Privilege } from '@/domains/auth/types';
 import { AppShell } from '../layout/AppShell';
 import { paths } from './paths';
+import { HomeRoute } from './HomeRoute';
 import { RouteErrorPage } from './RouteErrorPage';
 
 const page = (loader: Parameters<typeof lazy>[0]) => lazy(loader);
@@ -52,21 +53,30 @@ const UserFormPage = page(() => import('@/domains/auth/pages/UserFormPage'));
 const SearchPage = page(() => import('@/domains/search/pages/SearchPage'));
 const NotFoundPage = page(() => import('./NotFoundPage'));
 
-/** Wraps a create/edit page so only roles with `portfolio:edit` can open it. */
-function guarded(
-  element: ReactNode,
-  permission: Permission = 'portfolio:edit',
-  action = 'kayıt oluşturma veya düzenleme',
-) {
+const RolesPage = page(() => import('@/domains/auth/pages/RolesPage'));
+const RoleFormPage = page(() => import('@/domains/auth/pages/RoleFormPage'));
+
+const MODULE_LABELS = new Map<string, string>(PRIVILEGE_MODULES.map((m) => [m.id, m.label]));
+
+/**
+ * Wraps a page so only roles holding `privilege` (or any of several) can open it. The repository
+ * enforces the same privilege on every write.
+ */
+function guarded(element: ReactNode, privilege: Privilege | readonly Privilege[]) {
+  const first = typeof privilege === 'string' ? privilege : (privilege[0] as Privilege);
+  const [module, level] = first.split(':');
+  const screen = MODULE_LABELS.get(module ?? '') ?? '';
   return (
-    <RequirePermission
-      permission={permission}
-      action={action}
+    <RequirePrivilege
+      privilege={privilege}
+      action={
+        level === 'view' ? `${screen} ekranını görüntüleme` : `${screen} ekranında değişiklik`
+      }
       backTo={paths.dashboard()}
-      backLabel="Gösterge paneline git"
+      backLabel="Ana sayfaya git"
     >
       {element}
-    </RequirePermission>
+    </RequirePrivilege>
   );
 }
 
@@ -76,79 +86,91 @@ export const routes: RouteObject[] = [
     element: <AppShell />,
     errorElement: <RouteErrorPage />,
     children: [
-      { index: true, element: <DashboardPage /> },
-      { path: 'applications', element: <ApplicationsListPage /> },
-      { path: 'applications/new', element: guarded(<ApplicationFormPage />) },
-      { path: 'applications/:applicationId', element: <ApplicationDetailPage /> },
-      { path: 'applications/:applicationId/edit', element: guarded(<ApplicationFormPage />) },
+      { index: true, element: <HomeRoute dashboard={<DashboardPage />} /> },
+      { path: 'applications', element: guarded(<ApplicationsListPage />, 'applications:view') },
+      { path: 'applications/new', element: guarded(<ApplicationFormPage />, 'applications:edit') },
+      {
+        path: 'applications/:applicationId',
+        element: guarded(<ApplicationDetailPage />, 'applications:view'),
+      },
+      {
+        path: 'applications/:applicationId/edit',
+        element: guarded(<ApplicationFormPage />, 'applications:edit'),
+      },
       {
         path: 'applications/:applicationId/runbook/edit',
-        element: guarded(<RunbookFormPage />),
+        element: guarded(<RunbookFormPage />, 'applications:edit'),
       },
-      { path: 'projects', element: <ProjectsListPage /> },
-      { path: 'projects/new', element: guarded(<ProjectFormPage />) },
-      { path: 'projects/:projectId', element: <ProjectDetailPage /> },
-      { path: 'projects/:projectId/edit', element: guarded(<ProjectFormPage />) },
-      { path: 'demands', element: <DemandsPage /> },
-      {
-        path: 'demands/new',
-        element: guarded(<DemandFormPage />, 'demands:submit', 'talep açma'),
-      },
+      { path: 'projects', element: guarded(<ProjectsListPage />, 'projects:view') },
+      { path: 'projects/new', element: guarded(<ProjectFormPage />, 'projects:edit') },
+      { path: 'projects/:projectId', element: guarded(<ProjectDetailPage />, 'projects:view') },
+      { path: 'projects/:projectId/edit', element: guarded(<ProjectFormPage />, 'projects:edit') },
+      { path: 'demands', element: guarded(<DemandsPage />, 'demands:view') },
+      { path: 'demands/new', element: guarded(<DemandFormPage />, 'demands:edit') },
       {
         path: 'demands/manage',
-        element: guarded(<DemandManagementPage />, 'demands:manage', 'talep yönetimi'),
+        element: guarded(<DemandManagementPage />, 'demandManagement:view'),
       },
-      { path: 'demands/:demandId', element: <DemandDetailPage /> },
+      { path: 'demands/:demandId', element: guarded(<DemandDetailPage />, 'demands:view') },
       {
         path: 'demands/:demandId/edit',
-        element: guarded(<DemandFormPage />, 'demands:submit', 'talep düzenleme'),
+        element: guarded(<DemandFormPage />, ['demands:edit', 'demandManagement:edit']),
       },
-      { path: 'architecture', element: <ConnectionsPage /> },
-      { path: 'architecture/dependencies/new', element: guarded(<DependencyFormPage />) },
+      { path: 'architecture', element: guarded(<ConnectionsPage />, 'connections:view') },
+      {
+        path: 'architecture/dependencies/new',
+        element: guarded(<DependencyFormPage />, 'connections:edit'),
+      },
       {
         path: 'architecture/dependencies/:dependencyId/edit',
-        element: guarded(<DependencyFormPage />),
+        element: guarded(<DependencyFormPage />, 'connections:edit'),
       },
-      { path: 'architecture/integrations/new', element: guarded(<IntegrationFormPage />) },
+      {
+        path: 'architecture/integrations/new',
+        element: guarded(<IntegrationFormPage />, 'connections:edit'),
+      },
       {
         path: 'architecture/integrations/:integrationId/edit',
-        element: guarded(<IntegrationFormPage />),
+        element: guarded(<IntegrationFormPage />, 'connections:edit'),
       },
-      { path: 'people/:personId', element: <PersonDetailPage /> },
-      { path: 'teams', element: <TeamsListPage /> },
-      { path: 'teams/new', element: guarded(<TeamFormPage />) },
-      { path: 'teams/:teamId', element: <TeamDetailPage /> },
-      { path: 'teams/:teamId/edit', element: guarded(<TeamFormPage />) },
-      { path: 'technologies', element: <TechnologiesListPage /> },
-      { path: 'technologies/new', element: guarded(<TechnologyFormPage />) },
-      { path: 'technologies/:technologyId', element: <TechnologyDetailPage /> },
-      { path: 'technologies/:technologyId/edit', element: guarded(<TechnologyFormPage />) },
-      { path: 'risks', element: <RisksAndEscalationsPage /> },
-      { path: 'risks/new', element: guarded(<RiskFormPage />) },
-      { path: 'risks/:riskId/edit', element: guarded(<RiskFormPage />) },
-      { path: 'escalations/new', element: guarded(<EscalationFormPage />) },
-      { path: 'escalations/:escalationId/edit', element: guarded(<EscalationFormPage />) },
-      { path: 'decisions/new', element: guarded(<DecisionFormPage />) },
-      { path: 'decisions/:decisionId/edit', element: guarded(<DecisionFormPage />) },
-      { path: 'reports', element: <ReportsPage /> },
-      { path: 'leaves', element: <LeavesPage /> },
-      { path: 'resources', element: <ResourcePlanPage /> },
+      { path: 'people/:personId', element: guarded(<PersonDetailPage />, 'people:view') },
+      { path: 'teams', element: guarded(<TeamsListPage />, 'teams:view') },
+      { path: 'teams/new', element: guarded(<TeamFormPage />, 'teams:edit') },
+      { path: 'teams/:teamId', element: guarded(<TeamDetailPage />, 'teams:view') },
+      { path: 'teams/:teamId/edit', element: guarded(<TeamFormPage />, 'teams:edit') },
+      { path: 'technologies', element: guarded(<TechnologiesListPage />, 'technologies:view') },
       {
-        path: 'admin/master-data',
-        element: guarded(<MasterDataPage />, 'masterData:manage', 'ana veri yönetimi'),
+        path: 'technologies/new',
+        element: guarded(<TechnologyFormPage />, 'technologies:edit'),
       },
       {
-        path: 'admin/users',
-        element: guarded(<UsersListPage />, 'users:manage', 'kullanıcı yönetimi'),
+        path: 'technologies/:technologyId',
+        element: guarded(<TechnologyDetailPage />, 'technologies:view'),
       },
       {
-        path: 'admin/users/new',
-        element: guarded(<UserFormPage />, 'users:manage', 'kullanıcı yönetimi'),
+        path: 'technologies/:technologyId/edit',
+        element: guarded(<TechnologyFormPage />, 'technologies:edit'),
       },
+      { path: 'risks', element: guarded(<RisksAndEscalationsPage />, 'risks:view') },
+      { path: 'risks/new', element: guarded(<RiskFormPage />, 'risks:edit') },
+      { path: 'risks/:riskId/edit', element: guarded(<RiskFormPage />, 'risks:edit') },
+      { path: 'escalations/new', element: guarded(<EscalationFormPage />, 'risks:edit') },
       {
-        path: 'admin/users/:userId/edit',
-        element: guarded(<UserFormPage />, 'users:manage', 'kullanıcı yönetimi'),
+        path: 'escalations/:escalationId/edit',
+        element: guarded(<EscalationFormPage />, 'risks:edit'),
       },
+      { path: 'decisions/new', element: guarded(<DecisionFormPage />, 'risks:edit') },
+      { path: 'decisions/:decisionId/edit', element: guarded(<DecisionFormPage />, 'risks:edit') },
+      { path: 'reports', element: guarded(<ReportsPage />, 'reports:view') },
+      { path: 'leaves', element: guarded(<LeavesPage />, 'leaves:view') },
+      { path: 'resources', element: guarded(<ResourcePlanPage />, 'resources:view') },
+      { path: 'admin/master-data', element: guarded(<MasterDataPage />, 'masterData:view') },
+      { path: 'admin/users', element: guarded(<UsersListPage />, 'users:view') },
+      { path: 'admin/users/new', element: guarded(<UserFormPage />, 'users:edit') },
+      { path: 'admin/users/:userId/edit', element: guarded(<UserFormPage />, 'users:edit') },
+      { path: 'admin/roles', element: guarded(<RolesPage />, 'roles:view') },
+      { path: 'admin/roles/new', element: guarded(<RoleFormPage />, 'roles:edit') },
+      { path: 'admin/roles/:roleId/edit', element: guarded(<RoleFormPage />, 'roles:edit') },
       { path: 'search', element: <SearchPage /> },
       { path: '*', element: <NotFoundPage /> },
     ],

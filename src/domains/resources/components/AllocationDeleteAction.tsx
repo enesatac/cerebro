@@ -19,7 +19,7 @@ export function AllocationDeleteAction({
   const { allocations } = useRepositories();
   const remove = useDeleteAllocation();
   return (
-    <Can permission="resources:manage">
+    <Can privilege="resources:edit">
       <DeleteAction
         entityLabel="atama"
         entityName={`${description} ataması`}

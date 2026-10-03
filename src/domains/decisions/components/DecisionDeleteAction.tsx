@@ -16,7 +16,7 @@ export function DecisionDeleteAction({ record, compact, onDeleted }: DecisionDel
   const { decisions } = useRepositories();
   const remove = useDeleteDecision();
   return (
-    <Can permission="portfolio:delete">
+    <Can privilege="risks:delete">
       <DeleteAction
         entityLabel="karar"
         entityName={record.title}

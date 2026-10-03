@@ -1,13 +1,15 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRepositories } from '@/services/RepositoryContext';
-import type { Permission, UserAccountId } from '../types';
-import { hasPermission } from '../utils/permissions';
+import type { Privilege, RoleId, UserAccountId } from '../types';
+import { hasPrivilege } from '../utils/permissions';
 
 export const authKeys = {
   session: ['auth', 'session'] as const,
   signInAccounts: ['auth', 'sign-in-accounts'] as const,
   users: ['users'] as const,
   user: (id: UserAccountId) => ['users', id] as const,
+  roles: ['roles'] as const,
+  role: (id: RoleId) => ['roles', id] as const,
 };
 
 export function useSession() {
@@ -19,14 +21,14 @@ export function useSession() {
   });
 }
 
-/** The signed-in account (undefined while loading, null when signed out). */
+/** The signed-in account with its privileges (undefined while loading, null when signed out). */
 export function useCurrentUser() {
   return useSession().data;
 }
 
 /** UI affordance only — the repository (backend) enforces the same rule on every write. */
-export function usePermission(permission: Permission): boolean {
-  return hasPermission(useCurrentUser(), permission);
+export function usePrivilege(privilege: Privilege): boolean {
+  return hasPrivilege(useCurrentUser(), privilege);
 }
 
 export function useSignInAccounts() {
@@ -67,4 +69,14 @@ export function useUserAccounts() {
 export function useUserAccount(id: UserAccountId) {
   const { users } = useRepositories();
   return useQuery({ queryKey: authKeys.user(id), queryFn: () => users.getById(id) });
+}
+
+export function useRoles() {
+  const { roles } = useRepositories();
+  return useQuery({ queryKey: authKeys.roles, queryFn: () => roles.list() });
+}
+
+export function useRole(id: RoleId) {
+  const { roles } = useRepositories();
+  return useQuery({ queryKey: authKeys.role(id), queryFn: () => roles.getById(id) });
 }

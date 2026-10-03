@@ -210,6 +210,7 @@ export const USER = {
   elifKaya: 3,
   tomBrennan: 4,
   nadiaPetrova: 5,
+  zeynepCelik: 6,
 } as const;
 
 /** `demands` */
@@ -229,4 +230,14 @@ export const DEM = {
   notificationPreferences: 13,
   zeroTrustAccess: 14,
   cargoTracking: 15,
+} as const;
+
+/** `roles` */
+export const ROLE = {
+  systemAdmin: 1,
+  portfolioOffice: 2,
+  manager: 3,
+  businessUnit: 4,
+  employee: 5,
+  auditor: 6,
 } as const;

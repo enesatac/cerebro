@@ -13,7 +13,7 @@ import { APPLICATION_PAGE_SIZES } from '../utils/applicationListParams';
 import { getPrimaryTeams } from '../utils/applicationTeams';
 import { MasterBadge } from '@/domains/master-data/components/MasterBadge';
 import { editColumn } from '@/components/data-display/editColumn';
-import { usePermission } from '@/domains/auth/api/queries';
+import { usePrivilege } from '@/domains/auth/api/queries';
 import { ApplicationDeleteAction } from './ApplicationDeleteAction';
 
 interface ApplicationsTableProps {
@@ -121,7 +121,7 @@ export function ApplicationsTable({
   loading,
   emptyState,
 }: ApplicationsTableProps) {
-  const canEdit = usePermission('portfolio:edit');
+  const canEdit = usePrivilege('applications:edit');
   const columns = useMemo(
     () => [
       ...buildColumns(new Date()),

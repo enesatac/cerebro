@@ -131,17 +131,32 @@ teams and technologies.
 
 ## Authentication & roles
 
-- Two roles (`domains/auth`): **admin** — create, edit, delete everything and manage users;
-  **user** — read-only. The single permission table is `ROLE_PERMISSIONS`
-  (`portfolio:view`, `portfolio:edit`, `portfolio:delete`, `users:manage`).
-- **Enforcement is server-side**: every repository write calls `MockAuthority.require(...)` and
-  throws `ForbiddenError` / `UnauthenticatedError`. The UI only mirrors the rules:
-  `RequireAuth` (shell), `RequirePermission` (form and admin routes), `<Can>` / `CreateAction` /
-  `EditAction` (buttons).
+- **Privileges** are a fixed catalogue in code (`PRIVILEGE_MODULES` in `domains/auth/types`): one
+  module per screen (dashboard, projects, applications, connections, risks, reports, teams, people,
+  technologies, resources, leaves, demands, demandManagement, masterData, users, roles) with the
+  levels it supports — `view` (read-only), `edit`, `delete`; each level implies the lower ones.
+  Privilege codes are `<module>:<level>` and typed (`Privilege`), so a misspelt check fails to
+  compile.
+- **Roles** are records (`Role`: name, description, privileges, `system`), administered at
+  `/admin/roles` (roles, the screen × role matrix and the privilege catalogue). The system role
+  holds everything and is locked. **Users** hold one or more roles (`roleIds`); their access is the
+  union. The server resolves it into the session (`SessionUser.privileges`, `roleNames`) on every
+  request, so role changes apply without signing in again. Seed roles: Sistem yöneticisi, Portföy
+  ofisi, Birim / ekip yöneticisi, İş birimi kullanıcısı, Çalışan, Denetçi (salt okunur).
+- **Enforcement is server-side**: every repository write calls `WriteKit.begin(<module>:<level>)`
+  (`MockAuthority.require`) and throws `ForbiddenError` / `UnauthenticatedError`; user and role
+  reads need `users:view` / `roles:view`, and global search returns only kinds the user may view.
+  The UI mirrors the rules: every route is wrapped by `guarded(page, privilege)`
+  (`RequirePrivilege`), navigation lists only viewable screens, `<Can>` / `CreateAction` /
+  `EditAction` / `GuardedActionMenu` take the screen's privilege. A user without the dashboard
+  lands on their first viewable screen (`HomeRoute`).
+- Reads of portfolio data are not yet filtered by `view` in the mock (screens are guarded in the
+  UI); the HTTP backend must check `view` per endpoint.
 - Sign-in is a demo account picker (`/sign-in`); corporate SSO (OIDC) replaces `AuthRepository`
   later. Cerebro never stores passwords. Redirect targets are restricted to same-app paths.
-- User administration keeps the system administrable: no self-deactivation, no removing your own
-  admin role, at least one active admin, unique emails. Accounts are deactivated, never deleted.
+- User administration keeps the system administrable: at least one role per user, no
+  self-deactivation, no removing your own system role, at least one active system administrator,
+  unique emails. Roles held by users cannot be deleted.
 
 ## Forms
 
@@ -198,7 +213,7 @@ teams and technologies.
 - `Attachment` (owner `{ type, id }`, `documentType` from master data `documentTypes`, file
   name, content type, size, description, uploader). `AttachmentRepository`: `list(owner)`,
   `countByOwner(type)`, `upload`, `update`, `remove`, `download`. Uploading needs
-  `portfolio:edit`, deleting `portfolio:delete` (demand files follow the demand's own rule, see
+  the owning screen's `edit`, deleting its `delete` privilege (demand files follow the demand's own rule, see
   Demand management); reading is open to everyone.
 - Bytes are not in the mock database: `BlobStore` (IndexedDB in the browser, memory in tests)
   keeps them under the attachment id, like object storage would. Seed files are metadata only;
@@ -223,7 +238,7 @@ teams and technologies.
   `demandStatuses` (workflow, system codes), `demandTypes`, `demandBenefitTypes`,
   `demandPriorities`; urgency reuses `criticalities`. `DemandRepository`: `list`, `getById`,
   `create`, `update`, `assess`, `withdraw`, `remove`, `getDeletionImpact`.
-- Permissions: `demands:submit` (both roles) and `demands:manage` (admins). The ownership rule
+- Privileges: `demands:edit` (raise and manage your own) and `demandManagement:edit`/`delete` (the portfolio office). The ownership rule
   ("own demand, not yet decided") is one pure module, `domains/demands/utils/demandAccess.ts`,
   used by the repository to enforce it and by the UI to hide what would be refused. A requester
   editing a demand in `needs-info` puts it back to `submitted`. Status rules (reason to reject or
@@ -296,7 +311,7 @@ teams and technologies.
   constraint against booking one person twice onto one project for overlapping days).
   Allocations on _different_ projects may overlap — that is the parallel work being managed.
 - `AllocationRepository.list({ from, to, personIds?, projectIds? })`; writes need
-  `resources:manage` (admin). Deleting a project deletes its allocations.
+  `resources:edit`. Deleting a project deletes its allocations.
 - Page `/resources`: URL state in `utils/planParams.ts`; pure planning maths in
   `utils/resourcePlan.ts` (periods, scale, clipping, greedy lane assignment = max parallel work,
   daily load runs, peak) — tested. Load bands (`free/partial/full/over`) are presented from
@@ -317,7 +332,7 @@ teams and technologies.
   `startDate`/`endDate`, short `note`); table `leave_records` with a check on the dates and an
   exclusion constraint so one person has at most one leave per day.
 - Repository `LeaveRepository.list({ from, to, personIds? })` returns leaves overlapping a period;
-  writes need `leaves:manage` (admin). The mock rejects overlaps with a field error on `startDate`.
+  writes need `leaves:edit`. The mock rejects overlaps with a field error on `startDate`.
 - Page `/leaves` (everyone can read): URL state in `utils/leaveParams.ts`; calendar maths (periods,
   days, month headers, bar segments, working days) in `utils/leaveCalendar.ts` — pure and tested.
 - `LeaveTimeline` is a real `<table>` (row headers = people, column headers = days) with sticky

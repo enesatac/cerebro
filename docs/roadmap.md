@@ -17,7 +17,7 @@ implementation, realistic connected seed data, app shell, routing, base page pat
 | Dashboard (key figures, needs attention, recently updated, lifecycle distribution, upcoming milestones) | ✅     |
 | Global search (links to applications, projects, teams, technologies)                                    | ✅     |
 | Create / Edit for every entity (React Hook Form + Zod, unsaved-changes guard, deletion impact)          | ✅     |
-| Roles: admin (full access) / user (read-only), enforced in the repository                               | ✅     |
+| Roles and per-screen privileges (view/edit/delete), administrable roles, enforced in the repository     | ✅     |
 | Master data administration (28 value lists, business units, people)                                     | ✅     |
 | Turkish user interface and demo data                                                                    | ✅     |
 

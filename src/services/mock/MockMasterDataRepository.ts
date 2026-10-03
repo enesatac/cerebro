@@ -213,7 +213,7 @@ export function createMockMasterDataRepository(
     listAll: async () => (await delay(latencyMs), copy(db.masterData)),
     getUsage: async (key) => (await delay(latencyMs), masterDataUsage(db, key)),
     async update(key, items) {
-      await kit.begin('masterData:manage');
+      await kit.begin('masterData:edit');
       const owned = new Set(
         (db.masterData.find((list) => list.key === key)?.items ?? []).map((item) => item.id),
       );

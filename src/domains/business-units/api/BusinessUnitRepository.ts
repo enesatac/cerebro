@@ -3,7 +3,7 @@ import type { BusinessUnit, BusinessUnitId, BusinessUnitInput } from '../types';
 
 export interface BusinessUnitRepository {
   list(): Promise<BusinessUnit[]>;
-  /** Requires `masterData:manage`. @throws ValidationError on a duplicate code or name. */
+  /** Requires `masterData:edit`. @throws ValidationError on a duplicate code or name. */
   create(input: BusinessUnitInput): Promise<BusinessUnit>;
   update(id: BusinessUnitId, input: BusinessUnitInput): Promise<BusinessUnit>;
   /** @throws ValidationError while applications or projects belong to the unit. */

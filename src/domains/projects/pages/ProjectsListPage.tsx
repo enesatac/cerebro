@@ -72,7 +72,11 @@ export default function ProjectsListPage() {
         actions={
           <>
             <ExcelExportButton title="Projeler" build={exportSheets} disabled={!total} />
-            <CreateAction to={paths.projects.create()} label="Proje oluştur" />
+            <CreateAction
+              to={paths.projects.create()}
+              label="Proje oluştur"
+              privilege="projects:edit"
+            />
           </>
         }
       />
