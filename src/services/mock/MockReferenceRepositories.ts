@@ -30,7 +30,7 @@ import { assertCodeChecks, codeChecks } from './MockMasterDataRepository';
 import { copy, delay, findOrThrow } from './query';
 import { removeRow, replaceRow, type WriteKit } from './writeKit';
 
-const byName = <T extends { name: string }>(a: T, b: T) => a.name.localeCompare(b.name);
+const byName = <T extends { name: string }>(a: T, b: T) => a.name.localeCompare(b.name, 'tr');
 
 /** People, business units, teams, technologies and portfolio aggregates. */
 export function createMockReferenceRepositories(

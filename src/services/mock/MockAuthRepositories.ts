@@ -29,6 +29,7 @@ export function createMockAuthRepositories(
       await wait(),
       copy(db.users.filter((user) => user.active).map((u) => authority.resolve(u)))
     ),
+    getSingleSignOnUrl: async () => null,
     async signIn(accountId) {
       await wait();
       const user = db.users.find((candidate) => candidate.id === accountId);
@@ -89,7 +90,7 @@ export function createMockAuthRepositories(
   const users: UserRepository = {
     async list() {
       await kit.begin('users:view');
-      return copy([...db.users].sort((a, b) => a.displayName.localeCompare(b.displayName)));
+      return copy([...db.users].sort((a, b) => a.displayName.localeCompare(b.displayName, 'tr')));
     },
     async getById(id) {
       await kit.begin('users:view');

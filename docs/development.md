@@ -21,6 +21,21 @@ npm run format       # prettier --write
 
 `npm run validate` must pass before any change is considered complete.
 
+## Working against the API
+
+`npm run dev:api` uses the HTTP repositories (`.env.api`) and proxies `/api` to cerebro-api on
+port 8080. Changing a repository contract means changing four places together: the contract
+(`domains/<d>/api`), the mock (`services/mock`), the HTTP implementation (`services/http`) and the
+API. Prove they agree with the contract test against a freshly started API (empty database, demo
+data loaded on start):
+
+```bash
+CEREBRO_API_URL=http://localhost:8080 npx vitest run src/services/http/apiContract.test.ts
+```
+
+It runs every read and a write scenario on both implementations and compares the results, so run
+it on a fresh database (it writes).
+
 ## Takeoff UI
 
 - Package: `@takeoff-ui/react-spar` **0.6.0** (Takeoff v2, React 19 only) with

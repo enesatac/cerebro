@@ -4,7 +4,7 @@ import { paths } from '@/app/router/paths';
 import { ErrorState } from '@/components/feedback/ErrorState';
 import { LoadingState } from '@/components/feedback/LoadingState';
 import { getErrorMessage } from '@/lib/errors';
-import { useSession, useSignIn, useSignInAccounts } from '../api/queries';
+import { useSession, useSignIn, useSignInAccounts, useSingleSignOnUrl } from '../api/queries';
 import { RoleBadges } from '../components/RoleBadges';
 import { accessSummary } from '../utils/rolePresentation';
 
@@ -17,11 +17,32 @@ export default function SignInPage() {
   const [params] = useSearchParams();
   const redirectTo = safeRedirect(params.get('redirect'));
   const session = useSession();
+  const singleSignOn = useSingleSignOnUrl();
   const accounts = useSignInAccounts();
   const signIn = useSignIn();
   const navigate = useNavigate();
 
   if (session.data) return <Navigate to={redirectTo} replace />;
+
+  // Corporate SSO: the identity provider signs the person in and sends them back to the app.
+  if (singleSignOn.data) {
+    const url = singleSignOn.data;
+    return (
+      <main className="c-sign-in">
+        <div className="c-sign-in__panel">
+          <div className="c-sign-in__brand">
+            <span className="c-topbar__logo" aria-hidden="true" />
+            Cerebro
+          </div>
+          <h1 className="c-page-header__title">Giriş yap</h1>
+          <p className="c-muted">
+            Kurumsal hesabınızla giriş yapın. Cerebro şifrenizi görmez ve saklamaz.
+          </p>
+          <Button onClick={() => window.location.assign(url)}>Kurumsal hesapla giriş yap</Button>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="c-sign-in">
@@ -47,7 +68,7 @@ export default function SignInPage() {
             </Alert.Content>
           </Alert>
         )}
-        {accounts.isPending ? (
+        {accounts.isPending || singleSignOn.isPending ? (
           <LoadingState label="Hesaplar yükleniyor" rows={3} />
         ) : accounts.isError ? (
           <ErrorState onRetry={() => void accounts.refetch()} />

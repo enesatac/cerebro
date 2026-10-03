@@ -62,7 +62,7 @@ function compareAttention(a: AttentionItem, b: AttentionItem): number {
   return (
     rank(b.severity) - rank(a.severity) ||
     (a.date ?? '￿').localeCompare(b.date ?? '￿') ||
-    a.subject.name.localeCompare(b.subject.name)
+    a.subject.name.localeCompare(b.subject.name, 'tr')
   );
 }
 

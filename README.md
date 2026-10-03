@@ -102,6 +102,19 @@ picker only):
 | Elif Kaya     | İş birimi kullanıcısı, Çalışan         |
 | Nadia Petrova | Çalışan — deactivated (cannot sign in) |
 
+### Running against the API
+
+The same app runs on the real backend (repository **cerebro-api**: Spring Boot + PostgreSQL). Start
+the API with its local profile (see its README — it loads the same demo organisation into an empty
+database), then:
+
+```bash
+npm run dev:api      # http://localhost:5173, /api proxied to http://localhost:8080
+```
+
+`.env.api` sets `VITE_DATA_SOURCE=http`; `CEREBRO_API_TARGET` points the proxy elsewhere. A
+production build for the API is `vite build --mode api`, served from the same origin as `/api`.
+
 ### Demo data
 
 Seed data lives in `src/services/mock/data/` and is entirely fictional. In development, changes
@@ -112,7 +125,8 @@ those keys (or the site data) to reset to the seed.
 
 | Command             | Description                         |
 | ------------------- | ----------------------------------- |
-| `npm run dev`       | Start the dev server                |
+| `npm run dev`       | Start the dev server (demo data)    |
+| `npm run dev:api`   | Start the dev server on the API     |
 | `npm run build`     | Type-check and build for production |
 | `npm run preview`   | Preview the production build        |
 | `npm run typecheck` | TypeScript project check            |

@@ -6,6 +6,7 @@ import { hasPrivilege } from '../utils/permissions';
 export const authKeys = {
   session: ['auth', 'session'] as const,
   signInAccounts: ['auth', 'sign-in-accounts'] as const,
+  singleSignOn: ['auth', 'single-sign-on'] as const,
   users: ['users'] as const,
   user: (id: UserAccountId) => ['users', id] as const,
   roles: ['roles'] as const,
@@ -34,6 +35,15 @@ export function usePrivilege(privilege: Privilege): boolean {
 export function useSignInAccounts() {
   const { auth } = useRepositories();
   return useQuery({ queryKey: authKeys.signInAccounts, queryFn: () => auth.listSignInAccounts() });
+}
+
+export function useSingleSignOnUrl() {
+  const { auth } = useRepositories();
+  return useQuery({
+    queryKey: authKeys.singleSignOn,
+    queryFn: () => auth.getSingleSignOnUrl(),
+    staleTime: Infinity,
+  });
 }
 
 /** Signing in or out drops every cached query so no data from the previous session leaks. */

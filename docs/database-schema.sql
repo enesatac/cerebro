@@ -14,6 +14,8 @@
 --     against the right list (`<column>_list`).
 --   * Audit columns reference `people` (NULL when the acting account is not linked to a person).
 --
+-- The API (cerebro-api) creates it with Flyway migrations (V1 = this file as first released, V2…
+-- the changes since); this file always shows the current shape.
 -- The in-memory mock (src/services/mock) mirrors this: `database.ts` keeps one sequence per table
 -- (`SEQUENCES`) and `WriteKit.nextId` / `withIds` hand out keys the way `nextval` would.
 -- =====================================================================================================
@@ -112,6 +114,7 @@ CREATE TABLE role_privileges (
 CREATE TABLE user_roles (
   user_account_id BIGINT NOT NULL REFERENCES user_accounts (id) ON DELETE CASCADE,
   role_id         BIGINT NOT NULL REFERENCES roles (id) ON DELETE RESTRICT,
+  position        INTEGER NOT NULL DEFAULT 0,      -- order the roles were given in
   PRIMARY KEY (user_account_id, role_id)
 );
 CREATE INDEX ON user_roles (role_id);
@@ -709,14 +712,15 @@ CREATE TABLE demands (                            -- Demand
   -- The workflow rules the repository enforces (system codes of `demandStatuses`).
   CHECK (status NOT IN ('rejected', 'needs-info') OR decision_note <> ''),
   CHECK (status NOT IN ('approved', 'scheduled', 'converted') OR priority IS NOT NULL),
-  CHECK (status NOT IN ('scheduled', 'converted') OR (planned_start IS NOT NULL AND planned_end IS NOT NULL)),
-  CHECK (status <> 'converted' OR project_id IS NOT NULL)
+  CHECK (status NOT IN ('scheduled', 'converted') OR (planned_start IS NOT NULL AND planned_end IS NOT NULL))
+  -- A converted demand names its project when assessed; deleting the project later unlinks it.
 );
 
 CREATE TABLE demand_benefit_types (
   demand_id  BIGINT NOT NULL REFERENCES demands (id) ON DELETE CASCADE,
   code       TEXT   NOT NULL,
   code_list  TEXT   NOT NULL GENERATED ALWAYS AS ('demandBenefitTypes') STORED,
+  position   INTEGER NOT NULL DEFAULT 0,
   PRIMARY KEY (demand_id, code),
   FOREIGN KEY (code_list, code) REFERENCES master_data_items (list_key, code)
 );
@@ -724,6 +728,7 @@ CREATE TABLE demand_benefit_types (
 CREATE TABLE demand_applications (
   demand_id      BIGINT NOT NULL REFERENCES demands (id) ON DELETE CASCADE,
   application_id BIGINT NOT NULL REFERENCES applications (id) ON DELETE CASCADE,
+  position       INTEGER NOT NULL DEFAULT 0,
   PRIMARY KEY (demand_id, application_id)
 );
 
@@ -805,6 +810,7 @@ CREATE TABLE contracts (                          -- Contract
 CREATE TABLE contract_applications (
   contract_id    BIGINT NOT NULL REFERENCES contracts (id) ON DELETE CASCADE,
   application_id BIGINT NOT NULL REFERENCES applications (id) ON DELETE CASCADE,
+  position       INTEGER NOT NULL DEFAULT 0,
   PRIMARY KEY (contract_id, application_id)
 );
 
@@ -860,6 +866,12 @@ CREATE TABLE attachments (                        -- Attachment
   -- Executables, scripts, HTML and SVG are refused (the application validates the same list).
   CHECK (lower(file_name) ~ '\.(pdf|docx?|odt|rtf|txt|md|xlsx?|ods|csv|pptx?|odp|png|jpe?g|gif|webp|vsdx|drawio|zip)$'),
   FOREIGN KEY (document_type_list, document_type) REFERENCES master_data_items (list_key, code)
+);
+
+-- File bytes, kept in the database behind `AttachmentContentStore` (an object store can replace it).
+CREATE TABLE attachment_contents (
+  attachment_id BIGINT PRIMARY KEY REFERENCES attachments (id) ON DELETE CASCADE,
+  content       BYTEA  NOT NULL
 );
 
 -- -----------------------------------------------------------------------------------------------------

@@ -18,6 +18,11 @@ export interface AuthRepository {
   getSession(): Promise<SessionUser | null>;
   /** Active accounts offered on the demo sign-in screen, with their role names. */
   listSignInAccounts(): Promise<SessionUser[]>;
+  /**
+   * Where the browser starts the corporate SSO login, or `null` where accounts are picked on the
+   * sign-in screen (the demo and local development).
+   */
+  getSingleSignOnUrl(): Promise<string | null>;
   /** @throws ValidationError for unknown or deactivated accounts */
   signIn(accountId: UserAccountId): Promise<SessionUser>;
   signOut(): Promise<void>;

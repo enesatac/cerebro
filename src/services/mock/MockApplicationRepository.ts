@@ -207,7 +207,7 @@ export class MockApplicationRepository implements ApplicationRepository {
       .sort(
         (a, b) =>
           compareValues(sortValueOf[sort.field](a), sortValueOf[sort.field](b), sort.direction) ||
-          a.name.localeCompare(b.name),
+          a.name.localeCompare(b.name, 'tr'),
       );
     return copy(paginate(rows, query.page, query.pageSize));
   }

@@ -21,7 +21,7 @@ Design system: **Takeoff UI v2** — `@takeoff-ui/react-spar` (compound React AP
 | `src/components/`       | Cross-domain presentational building blocks (layout, feedback, data display)                                  |
 | `src/domains/<domain>/` | Domain modules: `types`, `api` (repository contract + query hooks), `components`, `pages`, `utils`, `schemas` |
 | `src/domains/shared/`   | Shared domain primitives (ids, audit metadata, refs, documentation links, paging)                             |
-| `src/services/`         | Repository registry + implementations (`mock/` today, `http/` later)                                          |
+| `src/services/`         | Repository registry + implementations: `http/` (Cerebro API) and `mock/` (demo, tests)                        |
 | `src/lib/`              | Framework-agnostic helpers (dates, errors, query client)                                                      |
 | `src/test/`             | Test setup and `renderRoute` (real routes + in-memory repositories)                                           |
 | `docs/`                 | `architecture.md`, `domain-model.md`, `development.md`, `roadmap.md`, `decisions.md`                          |
@@ -32,7 +32,10 @@ Design system: **Takeoff UI v2** — `@takeoff-ui/react-spar` (compound React AP
 - **Dependency direction:** `app → domains → components/lib`, and `domains → services` only via
   the repository context. UI never imports mock data; ESLint enforces this.
 - **Repository boundary:** every entity is read/written through a typed repository interface
-  (`domains/*/api/*Repository.ts`). `Mock*Repository` today, `Http*Repository` later.
+  (`domains/*/api/*Repository.ts`), implemented twice: `services/http` over the Cerebro API (the
+  separate **cerebro-api** repo, Spring Boot) and `services/mock` (demo, tests). A contract change
+  updates the interface, both implementations and the API together; prove parity with
+  `src/services/http/apiContract.test.ts` (`CEREBRO_API_URL`, fresh API).
 - **Server state = TanStack Query.** Local state first; narrow React Context second; no Redux.
 - **Explicit relationships:** reference entities by id (`teamId`, `personId`), never by name strings.
   Roles are contextual (`RoleAssignment` on an application/project), not global person attributes.

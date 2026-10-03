@@ -1,8 +1,9 @@
 # Cerebro — Architecture
 
-Cerebro is a React single-page application. There is no backend yet; all data flows through
-typed repository interfaces backed by an in-memory implementation, so an HTTP backend can be
-introduced without rewriting the UI.
+Cerebro is a React single-page application. All data flows through typed repository interfaces
+with two implementations: the Cerebro API (separate repository **cerebro-api**, Spring Boot +
+PostgreSQL) over HTTP, and an in-memory mock used for the demo, development without a backend and
+tests. Both satisfy the same contracts; a contract test proves they behave the same.
 
 ## Layers
 
@@ -20,6 +21,7 @@ introduced without rewriting the UI.
 │ lib/          framework-agnostic helpers (dates, errors, …)  │
 ├──────────────────────────────────────────────────────────────┤
 │ services/     Repositories aggregate + RepositoryContext     │
+│ services/http REST implementation over the Cerebro API       │
 │ services/mock in-memory implementation + seed data           │
 └──────────────────────────────────────────────────────────────┘
 ```
@@ -31,7 +33,7 @@ app ──► domains ──► components, lib
           │
           └──► services/RepositoryContext ──(interface)──► Repositories
                                                           ▲
-                              services/mock ──implements──┘
+              services/http, services/mock ──implement──┘
 ```
 
 - UI code never imports `services/mock` — enforced by ESLint `no-restricted-imports`.
@@ -45,6 +47,7 @@ app ──► domains ──► components, lib
 | Contract  | `domains/<d>/api/<D>Repository.ts` | Methods and return types the UI relies on                      |
 | Aggregate | `services/repositories.ts`         | `Repositories` interface + `createRepositories()`              |
 | DI        | `services/RepositoryContext.tsx`   | `RepositoryProvider`, `useRepositories()`                      |
+| HTTP      | `services/http/*`                  | REST client (`client.ts`) + one implementation per contract    |
 | Mock      | `services/mock/*`                  | In-memory tables (deep-copied per instance), simulated latency |
 | Hooks     | `domains/<d>/api/queries.ts`       | Query keys + TanStack Query hooks                              |
 
@@ -56,9 +59,24 @@ reference catalogues (`usePeopleById`, `useTeamsById`, …).
 Repositories throw `NotFoundError` / `AppError` (`lib/errors.ts`); the query client does not
 retry not-found errors.
 
-**Introducing a backend:** implement each repository interface over HTTP in
-`services/http/`, return it from `createRepositories()`, and keep the same query keys. No page or
-component changes are required.
+**Choosing the implementation:** `createRepositories()` returns the HTTP repositories when
+`VITE_DATA_SOURCE=http` (`npm run dev:api`, production builds), otherwise the mock. In development
+Vite proxies `/api` (and the SSO round trip) to the API, so the browser sees one origin.
+
+**REST mapping.** Every repository method is one endpoint: collections at `/api/<resource>`
+(`GET` list, `POST` create), records at `/api/<resource>/{id}` (`GET`, `PUT`, `DELETE`), the
+confirmation data at `/api/<resource>/{id}/deletion-impact`, and read models at their own paths
+(`/api/applications/{id}/dependencies`, `/api/people/{id}/workload?today=`,
+`/api/governance/trends?from=&months=&today=`, `/api/demands/{id}/assessment`…). List filters are
+query parameters (arrays repeat the key; optional id lists are comma-separated, empty meaning "none").
+Errors are RFC 9457 problem details whose `code` (`validation`, `not-found`, `forbidden`,
+`unauthenticated`) and `field` become the same error classes the mock throws; a lost session
+(401) clears the cached session so the route guard returns to sign-in. Writes send the CSRF token
+from the `XSRF-TOKEN` cookie. The OpenAPI description is served by the API at `/v3/api-docs`.
+
+**Keeping them equal.** A repository change touches the contract, the mock, the HTTP
+implementation and the API together. `services/http/apiContract.test.ts` (opt-in,
+`CEREBRO_API_URL`) compares both on the demo data; `client.test.ts` covers the HTTP mapping.
 
 ## State management
 
@@ -150,10 +168,14 @@ teams and technologies.
   (`RequirePrivilege`), navigation lists only viewable screens, `<Can>` / `CreateAction` /
   `EditAction` / `GuardedActionMenu` take the screen's privilege. A user without the dashboard
   lands on their first viewable screen (`HomeRoute`).
-- Reads of portfolio data are not yet filtered by `view` in the mock (screens are guarded in the
-  UI); the HTTP backend must check `view` per endpoint.
-- Sign-in is a demo account picker (`/sign-in`); corporate SSO (OIDC) replaces `AuthRepository`
-  later. Cerebro never stores passwords. Redirect targets are restricted to same-app paths.
+- Reads of portfolio data are open to every signed-in account (forms pick people, teams and
+  applications from every screen); contracts and vendors need `contracts:view`, users and roles
+  `users:view` / `roles:view`, files the `view` privilege of their record's screen. Screens are
+  guarded in the UI as well. Mock and API apply the same rules.
+- Sign-in: locally and in the demo, an account picker (`/sign-in`); in production the API's
+  corporate SSO (OIDC) — `AuthRepository.getSingleSignOnUrl()` tells the sign-in screen where to
+  send the browser. Cerebro never stores passwords. Redirect targets are restricted to same-app
+  paths.
 - User administration keeps the system administrable: at least one role per user, no
   self-deactivation, no removing your own system role, at least one active system administrator,
   unique emails. Roles held by users cannot be deleted.

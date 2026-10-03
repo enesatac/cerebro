@@ -22,6 +22,8 @@ pnpm-debug.log*
 .env
 .env.*
 !.env.example
+# Mode file for `npm run dev:api` (no secrets: only selects the API data source).
+!.env.api
 *.local
 
 # Editors

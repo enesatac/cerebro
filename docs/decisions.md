@@ -2,6 +2,19 @@
 
 Short records of decisions that shape the codebase. Newest first.
 
+## D-026 · One repository contract, two implementations, proven equal (2026-10-03)
+
+The backend (cerebro-api, Spring Boot) serves a REST resource for every repository method, and
+`services/http/` implements every repository over it; `VITE_DATA_SOURCE=http` selects it, otherwise
+the in-browser mock stays the demo and test backend. The REST shape follows the contracts
+one-to-one (same JSON, same error codes and field names, same Turkish messages) so no page,
+hook or test changed. Parity is not assumed but checked: `apiContract.test.ts` runs every read and a
+write scenario against both implementations on the same demo data and compares the results. Reads
+of portfolio data stay open to every signed-in account — pickers and cross-screen references need
+them, and it is internal knowledge — while commercial data, user and role administration and files
+follow their screen's `view` privilege; writes are always checked. Sessions are httpOnly cookies on
+the same origin with CSRF protection, never tokens in the browser.
+
 ## D-025 · Contracts belong to projects; vendors are records; money is never converted (2026-10-03)
 
 Purchases are tracked per project (one `projectId`), with related applications as links, because

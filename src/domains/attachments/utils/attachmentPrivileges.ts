@@ -20,3 +20,12 @@ const OWNER_MODULE: Record<AttachmentOwnerType, PrivilegeModule> = {
  */
 export const attachmentPrivilege = (owner: AttachmentOwnerType, level: 'edit' | 'delete') =>
   `${OWNER_MODULE[owner]}:${level}` as Privilege;
+
+/**
+ * Who may read the files of a record: whoever may view its screen. Demands are read by requesters
+ * (`demands:view`) as well as the portfolio office.
+ */
+export const attachmentViewPrivileges = (owner: AttachmentOwnerType): Privilege[] =>
+  owner === 'demand'
+    ? ['demands:view', 'demandManagement:view']
+    : [`${OWNER_MODULE[owner]}:view` as Privilege];

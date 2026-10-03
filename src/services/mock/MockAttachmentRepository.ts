@@ -5,7 +5,10 @@ import {
   type AttachmentOwner,
   type AttachmentOwnerType,
 } from '@/domains/attachments/types';
-import { attachmentPrivilege } from '@/domains/attachments/utils/attachmentPrivileges';
+import {
+  attachmentPrivilege,
+  attachmentViewPrivileges,
+} from '@/domains/attachments/utils/attachmentPrivileges';
 import { canAttachToDemand } from '@/domains/demands/utils/demandAccess';
 import {
   isAllowedFileName,
@@ -19,7 +22,7 @@ import { NO_IMPACT, sameOwner } from './cascade';
 import { SEED_ATTACHMENT_COUNT, seedAttachmentContent } from './data/attachments';
 import type { MockDatabase } from './database';
 import { assertCodeChecks } from './MockMasterDataRepository';
-import { copy, delay, findOrThrow } from './query';
+import { copy, findOrThrow } from './query';
 import { removeRow, replaceRow, type WriteKit } from './writeKit';
 
 const OWNER_LABELS: Record<AttachmentOwnerType, string> = {
@@ -60,7 +63,6 @@ function ownerRows(db: MockDatabase, type: AttachmentOwnerType): readonly { id: 
 export function createMockAttachmentRepository(
   db: MockDatabase,
   blobs: BlobStore,
-  latencyMs: number,
   kit: WriteKit,
 ): AttachmentRepository {
   // Bytes of files whose record was deleted are cleaned up when the backend starts.
@@ -94,7 +96,7 @@ export function createMockAttachmentRepository(
 
   return {
     async list(owner) {
-      await delay(latencyMs);
+      await kit.beginAny(attachmentViewPrivileges(owner.type));
       return copy(
         db.attachments
           .filter((a) => sameOwner(a.owner, owner))
@@ -103,7 +105,7 @@ export function createMockAttachmentRepository(
     },
 
     async countByOwner(type) {
-      await delay(latencyMs);
+      await kit.beginAny(attachmentViewPrivileges(type));
       const counts = new Map<number, number>();
       for (const a of db.attachments) {
         if (a.owner.type === type) counts.set(a.owner.id, (counts.get(a.owner.id) ?? 0) + 1);
@@ -170,14 +172,14 @@ export function createMockAttachmentRepository(
     },
 
     async getDeletionImpact(id) {
-      await delay(latencyMs);
-      findOrThrow(db.attachments, id, 'Ek');
+      const attachment = findOrThrow(db.attachments, id, 'Ek');
+      await kit.beginAny(attachmentViewPrivileges(attachment.owner.type));
       return NO_IMPACT;
     },
 
     async download(id) {
-      await delay(latencyMs);
       const attachment = findOrThrow(db.attachments, id, 'Ek');
+      await kit.beginAny(attachmentViewPrivileges(attachment.owner.type));
       const blob = await blobs.get(id);
       if (blob) return blob;
       if (id <= SEED_ATTACHMENT_COUNT) return seedAttachmentContent(attachment);

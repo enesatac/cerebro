@@ -26,7 +26,9 @@ export function compareValues(a: SortValue, b: SortValue, direction: SortDirecti
   if (a === null) return 1;
   if (b === null) return -1;
   const result =
-    typeof a === 'number' && typeof b === 'number' ? a - b : String(a).localeCompare(String(b));
+    typeof a === 'number' && typeof b === 'number'
+      ? a - b
+      : String(a).localeCompare(String(b), 'tr');
   return direction === 'asc' ? result : -result;
 }
 

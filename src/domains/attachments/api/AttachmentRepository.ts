@@ -9,8 +9,9 @@ import type {
 } from '../types';
 
 /**
- * Files attached to records. Reading (list and download) is open to every signed-in user;
- * uploading and editing need `portfolio:edit`, deleting `portfolio:delete`.
+ * Files attached to records. Reading (list, counts, download) needs the view privilege of the
+ * record's screen (`attachmentViewPrivileges`); uploading and editing its `edit`, deleting its
+ * `delete` privilege. A demand's requester also manages the files of their own open demand.
  */
 export interface AttachmentRepository {
   list(owner: AttachmentOwner): Promise<Attachment[]>;

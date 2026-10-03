@@ -25,6 +25,8 @@ import type { RiskRepository } from '@/domains/risks/api/RiskRepository';
 import type { SearchRepository } from '@/domains/search/api/SearchRepository';
 import type { TeamRepository } from '@/domains/teams/api/TeamRepository';
 import type { TechnologyRepository } from '@/domains/technologies/api/TechnologyRepository';
+import { createHttpClient } from './http/client';
+import { createHttpRepositories } from './http/httpRepositories';
 import { createMockRepositories } from './mock';
 import { createIndexedDbBlobStore } from './mock/blobStore';
 import { createBrowserDatabaseStore } from './mock/persistence';
@@ -58,10 +60,15 @@ export interface Repositories {
 }
 
 /**
- * Builds the repositories for the running app. There is no backend yet, so this returns the
- * in-memory implementation; an `createHttpRepositories(baseUrl)` will slot in here.
+ * Builds the repositories for the running app: the Cerebro API when `VITE_DATA_SOURCE=http`
+ * (development against cerebro-api, and production), otherwise the in-browser demo data.
  */
 export function createRepositories(): Repositories {
+  if (import.meta.env.VITE_DATA_SOURCE === 'http') {
+    return createHttpRepositories(
+      createHttpClient({ baseUrl: import.meta.env.VITE_API_BASE_URL ?? '' }),
+    );
+  }
   return createMockRepositories({
     latencyMs: import.meta.env.MODE === 'test' ? 0 : 250,
     session: createBrowserSessionStore(),

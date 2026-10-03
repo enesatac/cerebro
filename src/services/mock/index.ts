@@ -54,12 +54,7 @@ export function createMockRepositories({
     runbooks: createMockRunbookRepository(db, latencyMs, kit),
     demands: createMockDemandRepository(db, latencyMs, kit),
     ...createMockContractRepositories(db, kit),
-    attachments: createMockAttachmentRepository(
-      db,
-      blobs ?? createMemoryBlobStore(),
-      latencyMs,
-      kit,
-    ),
+    attachments: createMockAttachmentRepository(db, blobs ?? createMemoryBlobStore(), kit),
     ...createMockReferenceRepositories(db, lookup, latencyMs, kit),
     ...createMockOperationalRepositories(db, latencyMs, kit),
     ...createMockAuthRepositories(db, authority, kit, latencyMs),
