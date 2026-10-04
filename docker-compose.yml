@@ -1,0 +1,23 @@
+# Local Oracle for development (profile `local`): Oracle Database Free with an application user.
+#   docker compose up -d       → jdbc:oracle:thin:@//localhost:1521/FREEPDB1  (cerebro / cerebro-local)
+# The password is a throwaway for this local container only; real environments get theirs from
+# OpenShift secrets. Production runs Oracle 19c+; the schema avoids features newer than 19c.
+services:
+  oracle:
+    image: gvenzl/oracle-free:23-slim-faststart
+    environment:
+      ORACLE_RANDOM_PASSWORD: "true"
+      APP_USER: cerebro
+      APP_USER_PASSWORD: cerebro-local
+    ports:
+      - "1521:1521"
+    volumes:
+      - oracle-data:/opt/oracle/oradata
+    healthcheck:
+      test: ["CMD", "healthcheck.sh"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+
+volumes:
+  oracle-data:

@@ -1,0 +1,15 @@
+# Development namespace. Fill in the hosts and the Oracle service of this environment.
+replicaCount: 1
+route:
+  host: cerebro-dev.apps.example.com
+config:
+  databaseUrl: jdbc:oracle:thin:@//oracle-dev.example.com:1521/CEREBRO_DEV
+  oidcIssuerUri: https://oam-test.example.com/oauth2/default
+podDisruptionBudget:
+  enabled: false
+resources:
+  requests:
+    cpu: 100m
+    memory: 512Mi
+  limits:
+    memory: 1Gi

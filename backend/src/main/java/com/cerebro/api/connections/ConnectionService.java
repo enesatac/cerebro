@@ -70,6 +70,7 @@ public class ConnectionService {
     validate(input, null);
     Audit audit = stamp.created(user);
     long id =
+        Sql.insert(
         Sql.audit(
                 jdbc.sql(
                     "INSERT INTO dependencies (source_application_id, target_application_id,"
@@ -77,11 +78,9 @@ public class ConnectionService {
                         + Sql.AUDIT_COLUMNS
                         + ") VALUES (:source, :target, :type, :criticality, :description, "
                         + Sql.AUDIT_VALUES
-                        + ") RETURNING id"),
+                        + ")"),
                 audit)
-            .params(columns(input))
-            .query(Long.class)
-            .single();
+            .params(columns(input)));
     return findDependency(id);
   }
 
@@ -131,8 +130,8 @@ public class ConnectionService {
     }
     boolean duplicate =
         jdbc.sql(
-                "SELECT EXISTS (SELECT 1 FROM dependencies WHERE source_application_id = :source"
-                    + " AND target_application_id = :target AND type = :type AND id <> :id)")
+                "SELECT CASE WHEN EXISTS (SELECT 1 FROM dependencies WHERE source_application_id = :source"
+                    + " AND target_application_id = :target AND type = :type AND id <> :id) THEN 1 ELSE 0 END FROM dual")
             .param("source", input.sourceApplicationId())
             .param("target", input.targetApplicationId())
             .param("type", input.type())
@@ -176,7 +175,7 @@ public class ConnectionService {
                     rs.getLong("target_application_id"),
                     rs.getString("type"),
                     rs.getString("criticality"),
-                    rs.getString("description"),
+                    Sql.text(rs, "description"),
                     Sql.audit(rs)))
         .list();
   }
@@ -210,6 +209,7 @@ public class ConnectionService {
     validate(input, null);
     Audit audit = stamp.created(user);
     long id =
+        Sql.insert(
         Sql.audit(
                 jdbc.sql(
                     "INSERT INTO integrations (name, type, from_application_id,"
@@ -219,11 +219,9 @@ public class ConnectionService {
                         + ") VALUES (:name, :type, :from, :to, :external, :frequency, :data,"
                         + " :description, "
                         + Sql.AUDIT_VALUES
-                        + ") RETURNING id"),
+                        + ")"),
                 audit)
-            .params(columns(input))
-            .query(Long.class)
-            .single();
+            .params(columns(input)));
     return findIntegration(id);
   }
 
@@ -311,8 +309,8 @@ public class ConnectionService {
                     Sql.longOrNull(rs, "to_application_id"),
                     rs.getString("external_party_name"),
                     rs.getString("frequency"),
-                    rs.getString("description"),
-                    rs.getString("data_exchanged"),
+                    Sql.text(rs, "description"),
+                    Sql.text(rs, "data_exchanged"),
                     Sql.audit(rs)))
         .list();
   }

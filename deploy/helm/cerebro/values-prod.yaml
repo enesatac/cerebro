@@ -1,0 +1,16 @@
+# Production namespace.
+replicaCount: 2
+route:
+  host: cerebro.apps.example.com
+config:
+  databaseUrl: jdbc:oracle:thin:@//oracle-prod.example.com:1521/CEREBRO
+  databasePoolSize: "20"
+  oidcIssuerUri: https://oam.example.com/oauth2/default
+resources:
+  requests:
+    cpu: 500m
+    memory: 1Gi
+  limits:
+    memory: 1536Mi
+autoscaling:
+  enabled: true

@@ -90,7 +90,7 @@ ownership or lifecycle — record the decision in `docs/decisions.md`.
 - Numeric primary keys 1..n per table in declaration order, named in `data/ids.ts`
   (`APP.paymentGateway`, `PERSON.canOzturk`); child rows take ids from `seedId(table)` via the
   builders. Every new table needs a sequence in `database.ts` and a table in
-  `docs/database-schema.sql`.
+  `backend/src/main/resources/db/migration/` (Oracle; add a new `V<n>__…sql` for every change).
 - Every reference must resolve — `src/services/mock/data/integrity.test.ts` enforces this.
 - Include deliberate data-quality gaps (a missing owner, a stale review) so governance features
   have something to show.

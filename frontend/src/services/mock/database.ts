@@ -44,7 +44,7 @@ export const seedTables = {
 };
 
 /**
- * One sequence per table, as in the database (`docs/database-schema.sql`). Child rows that live
+ * One sequence per table, as in the database (`backend/src/main/resources/db/migration/`). Child rows that live
  * inside an aggregate here (environments, milestones…) are separate tables there.
  */
 export const SEQUENCES = [

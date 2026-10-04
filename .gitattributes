@@ -4,7 +4,12 @@
 *.jpg binary
 *.gif binary
 *.ico binary
+*.jar binary
+*.pdf binary
 *.woff binary
 *.woff2 binary
 
-package-lock.json linguist-generated=true -diff
+frontend/package-lock.json linguist-generated=true -diff
+backend/src/main/resources/demo/demo-data.json linguist-generated=true -diff
+mvnw text eol=lf
+*.cmd text eol=crlf

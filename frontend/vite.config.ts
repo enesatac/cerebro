@@ -5,7 +5,7 @@ import { defineConfig, loadEnv } from 'vite';
 
 export default defineConfig(({ mode }) => {
   // With VITE_DATA_SOURCE=http the dev server forwards the API (and the SSO round trip) to
-  // cerebro-api, so the browser sees one origin and the session cookie just works.
+  // the API (../backend), so the browser sees one origin and the session cookie just works.
   const target =
     loadEnv(mode, process.cwd(), 'CEREBRO_').CEREBRO_API_TARGET ?? 'http://localhost:8080';
   const proxy = { target, changeOrigin: false };

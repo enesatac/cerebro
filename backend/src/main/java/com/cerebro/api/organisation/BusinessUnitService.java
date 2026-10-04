@@ -1,5 +1,6 @@
 package com.cerebro.api.organisation;
 
+import com.cerebro.api.shared.Sql;
 import static com.cerebro.api.shared.DeletionImpact.ref;
 
 import com.cerebro.api.access.Access;
@@ -40,15 +41,14 @@ public class BusinessUnitService {
     access.require("masterData:edit");
     validate(input, null);
     long id =
+        Sql.insert(
         jdbc.sql(
                 "INSERT INTO business_units (code, name, description, head_person_id)"
-                    + " VALUES (:code, :name, :description, :head) RETURNING id")
+                    + " VALUES (:code, :name, :description, :head)")
             .param("code", input.code())
             .param("name", input.name())
             .param("description", input.description())
-            .param("head", input.headId())
-            .query(Long.class)
-            .single();
+            .param("head", input.headId()));
     return find(id);
   }
 
@@ -139,7 +139,7 @@ public class BusinessUnitService {
         rs.getLong("id"),
         rs.getString("code"),
         rs.getString("name"),
-        rs.getString("description"),
+        Sql.text(rs, "description"),
         com.cerebro.api.shared.Sql.longOrNull(rs, "head_person_id"));
   }
 }

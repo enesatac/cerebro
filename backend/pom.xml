@@ -12,10 +12,10 @@
   </parent>
 
   <groupId>com.cerebro</groupId>
-  <artifactId>cerebro-api</artifactId>
+  <artifactId>cerebro</artifactId>
   <version>0.1.0-SNAPSHOT</version>
-  <name>cerebro-api</name>
-  <description>Cerebro backend: REST API, access control and persistence for the Cerebro portfolio app</description>
+  <name>cerebro</name>
+  <description>Cerebro: the REST API and the web app (built by ../frontend) in one deployable</description>
 
   <properties>
     <java.version>21</java.version>
@@ -49,12 +49,29 @@
     </dependency>
     <dependency>
       <groupId>org.flywaydb</groupId>
-      <artifactId>flyway-database-postgresql</artifactId>
+      <artifactId>flyway-database-oracle</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.postgresql</groupId>
-      <artifactId>postgresql</artifactId>
+      <groupId>com.oracle.database.jdbc</groupId>
+      <artifactId>ojdbc11</artifactId>
       <scope>runtime</scope>
+    </dependency>
+    <!-- Character sets other than UTF-8 / ISO-8859-1 on the database side. -->
+    <dependency>
+      <groupId>com.oracle.database.nls</groupId>
+      <artifactId>orai18n</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <!-- Local runs without a database server and the tests: H2 in Oracle compatibility mode. -->
+    <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <!-- Sessions in the database, so any pod can serve any user (rolling deploys, >1 replica). -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-session-jdbc</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -83,7 +100,7 @@
     </dependency>
     <dependency>
       <groupId>org.testcontainers</groupId>
-      <artifactId>testcontainers-postgresql</artifactId>
+      <artifactId>testcontainers-oracle-xe</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -94,6 +111,18 @@
   </dependencies>
 
   <build>
+    <!-- target/cerebro.jar: the one deployable (API + web app), copied into the container image. -->
+    <finalName>cerebro</finalName>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+      </resource>
+      <!-- The web app, when built (npm run build:api in ../frontend): served from the same origin. -->
+      <resource>
+        <directory>${project.basedir}/../frontend/dist</directory>
+        <targetPath>static</targetPath>
+      </resource>
+    </resources>
     <plugins>
       <plugin>
         <groupId>org.springframework.boot</groupId>

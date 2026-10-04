@@ -41,6 +41,7 @@ public class ApplicationStore {
 
   public long insert(Application.Input input, Audit audit) {
     long id =
+        Sql.insert(
         bind(
                 Sql.audit(
                     jdbc.sql(
@@ -56,11 +57,9 @@ public class ApplicationStore {
                             + " :userGroups, :estimatedUserCount, :hostingModel, :cloudProvider,"
                             + " :hostingNotes, "
                             + Sql.AUDIT_VALUES
-                            + ") RETURNING id"),
+                            + ")"),
                     audit),
-                input)
-            .query(Long.class)
-            .single();
+                input));
     saveChildren(id, input);
     return id;
   }
@@ -102,10 +101,10 @@ public class ApplicationStore {
         .param("lifecycle", input.lifecycle())
         .param("criticality", input.criticality())
         .param("operationalStatus", input.operationalStatus())
-        .param("tags", Sql.texts(input.tags()))
+        .param("tags", Sql.json(input.tags()))
         .param("businessUnitId", input.businessUnitId())
-        .param("businessProcesses", Sql.texts(input.businessProcesses()))
-        .param("userGroups", Sql.texts(input.userGroups()))
+        .param("businessProcesses", Sql.json(input.businessProcesses()))
+        .param("userGroups", Sql.json(input.userGroups()))
         .param("estimatedUserCount", input.estimatedUserCount())
         .param("hostingModel", input.hosting().model())
         .param("cloudProvider", input.hosting().cloudProvider())
@@ -140,7 +139,7 @@ public class ApplicationStore {
             s.param("name", row.name())
                 .param("technology", row.technologyId())
                 .param("purpose", orEmpty(row.purpose()))
-                .param("personal", row.containsPersonalData()));
+                .param("personal", Sql.flag(row.containsPersonalData())));
     ChildRows.replace(
         jdbc,
         "source_repositories",
@@ -204,7 +203,7 @@ public class ApplicationStore {
                                 rs.getLong("id"),
                                 rs.getString("name"),
                                 rs.getLong("technology_id"),
-                                rs.getString("purpose"),
+                                Sql.text(rs, "purpose"),
                                 rs.getBoolean("contains_personal_data"))))
                 .list());
     Map<Long, List<SourceRepository>> repositories =
@@ -249,17 +248,17 @@ public class ApplicationStore {
                   id,
                   rs.getString("code"),
                   rs.getString("name"),
-                  rs.getString("short_description"),
-                  rs.getString("detailed_description"),
-                  rs.getString("business_purpose"),
+                  Sql.text(rs, "short_description"),
+                  Sql.text(rs, "detailed_description"),
+                  Sql.text(rs, "business_purpose"),
                   rs.getString("type"),
                   rs.getString("lifecycle"),
                   rs.getString("criticality"),
                   rs.getString("operational_status"),
-                  Sql.textArray(rs, "tags"),
+                  Sql.jsonList(rs, "tags"),
                   Sql.longOrNull(rs, "business_unit_id"),
-                  Sql.textArray(rs, "business_processes"),
-                  Sql.textArray(rs, "user_groups"),
+                  Sql.jsonList(rs, "business_processes"),
+                  Sql.jsonList(rs, "user_groups"),
                   Sql.longOrNull(rs, "estimated_user_count"),
                   shared.roles().getOrDefault(id, List.of()),
                   shared.teams().getOrDefault(id, List.of()),

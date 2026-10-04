@@ -7,7 +7,7 @@ import org.springframework.jdbc.core.simple.JdbcClient.StatementSpec;
 
 /**
  * Child rows edited as part of an aggregate (environments, milestones, payments…). Stored rows
- * keep their id, new rows ({@code id = null}) take the next value of the table's sequence, rows
+ * keep their id, new rows ({@code id = null}) take the next value of the table's identity, rows
  * left out are deleted. Ids the parent does not own are refused.
  */
 public final class ChildRows {
@@ -37,21 +37,23 @@ public final class ChildRows {
     jdbc.sql("DELETE FROM " + table + " WHERE " + parentColumn + " = :parent")
         .param("parent", parentId)
         .update();
-    String insert =
-        "INSERT INTO "
-            + table
-            + " (id, "
-            + columns
-            + ") VALUES (COALESCE(CAST(:id AS BIGINT), nextval(pg_get_serial_sequence('"
-            + table
-            + "', 'id'))), "
-            + values
-            + ")";
     for (int index = 0; index < rows.size(); index++) {
       T row = rows.get(index);
-      bind.bind(jdbc.sql(insert).param("id", idOf.apply(row)).param("parent", parentId), row, index)
+      bind.bind(insert(jdbc, table, columns, values, idOf.apply(row)).param("parent", parentId), row, index)
           .update();
     }
+  }
+
+  /**
+   * An INSERT that keeps {@code id} when the row has one and leaves it to the identity otherwise.
+   */
+  public static StatementSpec insert(
+      JdbcClient jdbc, String table, String columns, String values, Long id) {
+    return id == null
+        ? jdbc.sql("INSERT INTO " + table + " (" + columns + ") VALUES (" + values + ")")
+        : jdbc.sql(
+                "INSERT INTO " + table + " (id, " + columns + ") VALUES (:id, " + values + ")")
+            .param("id", id);
   }
 
   /** Binds one row's values; {@code index} is its position (for order columns). */

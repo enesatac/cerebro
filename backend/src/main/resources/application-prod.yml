@@ -1,4 +1,5 @@
-# Corporate SSO (OIDC). Values come from the environment / secrets manager, never from the repo.
+# Production (and test environments on OpenShift): Oracle and corporate SSO through Oracle Access
+# Manager (OIDC). Every value comes from the environment / OpenShift secrets.
 spring:
   security:
     oauth2:
@@ -8,10 +9,16 @@ spring:
             provider: corporate
             client-id: ${CEREBRO_OIDC_CLIENT_ID}
             client-secret: ${CEREBRO_OIDC_CLIENT_SECRET}
+            client-authentication-method: client_secret_basic
+            authorization-grant-type: authorization_code
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
             scope: openid,profile,email
         provider:
           corporate:
+            # OAM's OpenID configuration is discovered from the issuer
+            # (<issuer>/.well-known/openid-configuration).
             issuer-uri: ${CEREBRO_OIDC_ISSUER_URI}
+            user-name-attribute: ${CEREBRO_OIDC_USER_CLAIM:email}
 
 springdoc:
   swagger-ui:

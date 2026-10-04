@@ -59,7 +59,7 @@ function writes<T, I>(http: HttpClient, base: string) {
   };
 }
 
-/** Every repository backed by the Cerebro API (cerebro-api). Same contracts as the mock. */
+/** Every repository backed by the Cerebro API (../backend). Same contracts as the mock. */
 export function createHttpRepositories(http: HttpClient): Repositories {
   return {
     auth: {

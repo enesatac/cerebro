@@ -1,9 +1,11 @@
 # Cerebro — Architecture
 
-Cerebro is a React single-page application. All data flows through typed repository interfaces
-with two implementations: the Cerebro API (separate repository **cerebro-api**, Spring Boot +
-PostgreSQL) over HTTP, and an in-memory mock used for the demo, development without a backend and
-tests. Both satisfy the same contracts; a contract test proves they behave the same.
+Cerebro is a React single-page application (`frontend/`) served by its own API (`backend/`,
+Spring Boot on Oracle — see [Backend](backend.md)): one jar, one origin, one OpenShift deployment
+([Deployment](deployment.md)). In the web app all data flows through typed repository interfaces
+with two implementations: the API over HTTP, and an in-memory mock used for the demo, development
+without a backend and tests. Both satisfy the same contracts; a contract test proves they behave
+the same. Paths below are relative to `frontend/`.
 
 ## Layers
 
@@ -204,7 +206,7 @@ teams and technologies.
   new ones and rejects foreign ones.
 - Forms hold ids as text (select values) and convert at the boundary (`idText`, `toId`,
   `toIdOrNull` in `lib/validation.ts`); route params go through `parseId` (`lib/urlParams.ts`).
-- Relational schema with sequences, foreign keys and link tables: `docs/database-schema.sql`.
+- Relational schema (Oracle) with identities, foreign keys and link tables: `backend/src/main/resources/db/migration/`.
 
 ## Master data
 

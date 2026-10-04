@@ -1,10 +1,72 @@
 # Cerebro — Decision Log
 
-Short records of decisions that shape the codebase. Newest first.
+Short records of decisions that shape the codebase. Newest first. Entries `B-…` were taken over
+from the separate backend repository when it was merged into this one.
+
+## D-029 · Sessions in the database (2026-10-04)
+
+OpenShift runs two or more pods and replaces them one by one on every deploy. In-memory sessions
+would sign users out on each rollout or need sticky routing. Spring Session keeps them in Oracle
+(`SPRING_SESSION*`, migration V4); the cookie stays httpOnly, Secure and SameSite=Lax, set
+explicitly rather than inherited from the container.
+
+## D-028 · Oracle, written for 19c and tested on H2's Oracle mode (2026-10-04)
+
+The organisation runs Oracle, so PostgreSQL was dropped before the first release and the schema
+restarted at V1 in Oracle SQL. It targets 19c (the oldest likely version): identity columns,
+NUMBER(1) booleans, JSON in CLOB for string lists, no 23ai-only syntax, and Oracle's '' = NULL is
+handled when reading. PostgreSQL-only guarantees became application rules: range exclusion
+(overlapping leaves/allocations) is checked under a row lock on the person; master data codes are
+checked by the services rather than composite foreign keys. Tests run on H2 in Oracle
+compatibility mode by default (no database server needed, including '' = NULL), and on a real
+Oracle when CI provides a schema or Docker. Local development can use Oracle Free in Docker.
+
+## D-027 · One repository, one deployable on OpenShift (2026-10-04)
+
+Every repository change touches the web app and the API together, so they live in one repository
+and ship as one artifact: the Spring Boot jar carries the built web app and serves it next to
+`/api` from the same origin. One image, one Helm release, one route — no CORS, no cross-site
+cookies, no version drift between web app and API — built by one Jenkins pipeline that runs both
+test suites and the contract test, pushes the image to Nexus and promotes the same image through
+dev, test and prod. The web app is static and small, so serving it from the JVM (with long-lived
+caching for hashed assets) costs nothing worth a separate web server; if the platform later
+requires one, the same pipeline can build two images with one tag behind one host.
+
+## B-004 · Demo sign-in and demo data only in the demo profiles (2026-10-03)
+
+Development and demos need the same organisation and account picker as the frontend's demo, but
+production must never have a login without the identity provider. Both are switched on by the
+`local` and `h2` profiles only, demo data loads only into an empty database, and the application
+refuses to start when the demo sign-in or a demo profile is combined with `prod`.
+
+## B-003 · Attachment bytes in the database behind an interface (2026-10-03)
+
+Files (≤ 20 MB) are stored in `attachment_contents` (a BLOB) so the API runs with nothing but the
+database; `AttachmentContentStore` lets an object store take over without changing the API.
+Downloads are always served as attachments with `nosniff`, and executables, scripts, HTML and SVG
+are refused on upload.
+
+## B-002 · REST resources mirror the frontend repositories one to one (2026-10-03)
+
+The API is shaped after the frontend's repository contracts — same JSON, same error codes, fields
+and Turkish messages — so the frontend switches from its mock to the API without touching a page.
+The mock's rules were ported, and a contract test in the frontend runs every read and a write
+scenario against both and compares them; that test, not reading the code, is how parity is kept.
+Read models are built in Java from full tables (fine for hundreds of applications and projects);
+moving a hot one to SQL is an optimisation behind the same endpoint.
+
+## B-001 · Spring Boot backend, same-origin sessions (2026-10-03)
+
+The frontend must not reach the database or integrations directly (credentials, server-side
+authorisation, transactions, background jobs, file storage). A Java 21 / Spring Boot modular
+monolith follows the organisation's backend standard. The browser keeps no tokens: the API holds
+the OIDC session behind an httpOnly cookie on the same origin as the SPA, with cookie-based CSRF.
+Privileges are a code-level catalogue mirrored from the frontend; roles and user–role assignments
+are data.
 
 ## D-026 · One repository contract, two implementations, proven equal (2026-10-03)
 
-The backend (cerebro-api, Spring Boot) serves a REST resource for every repository method, and
+The backend (Spring Boot, `backend/`) serves a REST resource for every repository method, and
 `services/http/` implements every repository over it; `VITE_DATA_SOURCE=http` selects it, otherwise
 the in-browser mock stays the demo and test backend. The REST shape follows the contracts
 one-to-one (same JSON, same error codes and field names, same Turkish messages) so no page,
@@ -140,7 +202,8 @@ have ids too; records keep referencing their stable `code`, checked by composite
 Ids are unique per table, so code must never mix ids of different tables in one map or key.
 URLs use the numeric id; malformed ids resolve to "not found". The mock database keeps one
 sequence per table (`SEQUENCES`); seed rows are named in `services/mock/data/ids.ts`. The full
-PostgreSQL schema is `docs/database-schema.sql` (verified with an embedded PostgreSQL). Dev
+PostgreSQL schema is `docs/database-schema.sql` (verified with an embedded PostgreSQL; superseded by
+D-028 — Oracle migrations in `backend/`, master data codes checked by the services). Dev
 storage keys moved to `cerebro.demo-db.v4` and `cerebro.demo-session.v2`.
 
 ## D-014 · Enumerated values are administrable master data (2026-09-26)

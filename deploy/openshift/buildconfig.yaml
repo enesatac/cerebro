@@ -1,0 +1,37 @@
+# One-time setup in the CI namespace (oc apply -f deploy/openshift/buildconfig.yaml):
+# OpenShift builds the image from the Dockerfile and a context the pipeline uploads (Dockerfile +
+# cerebro.jar), and pushes it to Nexus. Jenkins sets the output tag before each build.
+#
+# Prerequisites in the namespace:
+#   - Secret `nexus-push` (kubernetes.io/dockerconfigjson) with push rights on the Nexus registry
+#   - Secret `nexus-pull` if the base image comes through the Nexus proxy
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+  name: cerebro
+  labels:
+    app.kubernetes.io/name: cerebro
+spec:
+  runPolicy: Serial
+  source:
+    type: Binary
+    binary: {}
+  strategy:
+    type: Docker
+    dockerStrategy:
+      dockerfilePath: Dockerfile
+      # Uncomment to pull the UBI base image through the Nexus proxy registry:
+      # buildArgs:
+      #   - name: BASE_IMAGE
+      #     value: nexus.example.com:8443/ubi9/openjdk-21-runtime:latest
+      # pullSecret:
+      #   name: nexus-pull
+  output:
+    to:
+      kind: DockerImage
+      name: nexus.example.com:8443/cerebro/cerebro:latest
+    pushSecret:
+      name: nexus-push
+  resources:
+    limits:
+      memory: 1Gi

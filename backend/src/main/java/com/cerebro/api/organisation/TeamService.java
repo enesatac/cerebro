@@ -83,6 +83,7 @@ public class TeamService {
     validate(input, null);
     Audit audit = stamp.created(user);
     long id =
+        Sql.insert(
         Sql.audit(
                 jdbc.sql(
                     "INSERT INTO teams (name, description, manager_person_id, contact_email,"
@@ -91,11 +92,9 @@ public class TeamService {
                         + ") VALUES (:name, :description, :manager, :email, :channel,"
                         + " :responsibilities, "
                         + Sql.AUDIT_VALUES
-                        + ") RETURNING id"),
+                        + ")"),
                 audit)
-            .params(columns(input))
-            .query(Long.class)
-            .single();
+            .params(columns(input)));
     saveMembers(id, input.memberIds());
     return find(id);
   }
@@ -153,7 +152,7 @@ public class TeamService {
     jdbc.sql(
             "SELECT team_id, count(DISTINCT "
                 + ownerColumn
-                + ")::int AS n FROM team_assignments WHERE "
+                + ") AS n FROM team_assignments WHERE "
                 + ownerColumn
                 + " IS NOT NULL GROUP BY team_id")
         .query(
@@ -186,7 +185,7 @@ public class TeamService {
     columns.put("channel", input.chatChannel());
     columns.put(
         "responsibilities",
-        Sql.texts(input.responsibilities() == null ? List.of() : input.responsibilities()));
+        Sql.json(input.responsibilities()));
     return columns;
   }
 
@@ -219,12 +218,12 @@ public class TeamService {
                 new Team(
                     rs.getLong("id"),
                     rs.getString("name"),
-                    rs.getString("description"),
+                    Sql.text(rs, "description"),
                     Sql.longOrNull(rs, "manager_person_id"),
                     members.getOrDefault(rs.getLong("id"), List.of()),
                     rs.getString("contact_email"),
                     rs.getString("chat_channel"),
-                    Sql.textArray(rs, "responsibilities"),
+                    Sql.jsonList(rs, "responsibilities"),
                     Sql.audit(rs)))
         .list();
   }

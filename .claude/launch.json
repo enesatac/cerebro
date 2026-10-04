@@ -5,6 +5,8 @@
       "name": "cerebro-dev",
       "runtimeExecutable": "npm",
       "runtimeArgs": [
+        "--prefix",
+        "frontend",
         "run",
         "dev",
         "--",
@@ -18,6 +20,8 @@
       "name": "cerebro-dev-api",
       "runtimeExecutable": "npm",
       "runtimeArgs": [
+        "--prefix",
+        "frontend",
         "run",
         "dev:api",
         "--",

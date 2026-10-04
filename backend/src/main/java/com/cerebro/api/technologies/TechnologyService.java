@@ -1,5 +1,6 @@
 package com.cerebro.api.technologies;
 
+import com.cerebro.api.shared.Sql;
 import static com.cerebro.api.shared.DeletionImpact.ref;
 
 import com.cerebro.api.access.Access;
@@ -56,10 +57,10 @@ public class TechnologyService {
             """
             SELECT t.*,
               (SELECT count(DISTINCT u.application_id) FROM technology_usages u
-                WHERE u.technology_id = t.id)::int AS used,
+                WHERE u.technology_id = t.id) AS used,
               (SELECT count(DISTINCT u.application_id) FROM technology_usages u
                 JOIN applications a ON a.id = u.application_id
-                WHERE u.technology_id = t.id AND a.lifecycle <> 'retired')::int AS active
+                WHERE u.technology_id = t.id AND a.lifecycle <> 'retired') AS active_count
             FROM technologies t ORDER BY t.id
             """)
         .query(
@@ -68,10 +69,10 @@ public class TechnologyService {
                     rs.getLong("id"),
                     rs.getString("name"),
                     rs.getString("category"),
-                    rs.getString("description"),
+                    Sql.text(rs, "description"),
                     rs.getString("status"),
                     rs.getInt("used"),
-                    rs.getInt("active")))
+                    rs.getInt("active_count")))
         .list()
         .stream()
         .sorted(Collation.by(Technology.ListItem::name))
@@ -83,15 +84,14 @@ public class TechnologyService {
     codes.assertAll(checks(input), List.of());
     unique(input, null);
     long id =
+        Sql.insert(
         jdbc.sql(
                 "INSERT INTO technologies (name, category, description, status)"
-                    + " VALUES (:name, :category, :description, :status) RETURNING id")
+                    + " VALUES (:name, :category, :description, :status)")
             .param("name", input.name())
             .param("category", input.category())
             .param("description", input.description() == null ? "" : input.description())
-            .param("status", input.status())
-            .query(Long.class)
-            .single();
+            .param("status", input.status()));
     return find(id);
   }
 
@@ -190,7 +190,7 @@ public class TechnologyService {
         rs.getLong("id"),
         rs.getString("name"),
         rs.getString("category"),
-        rs.getString("description"),
+        Sql.text(rs, "description"),
         rs.getString("status"));
   }
 }

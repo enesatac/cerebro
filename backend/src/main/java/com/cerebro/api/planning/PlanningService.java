@@ -53,10 +53,7 @@ public class PlanningService {
     access.current();
     Map<String, Object> params = new HashMap<>(Map.of("from", from, "to", to));
     String where = "WHERE start_date <= :to AND :from <= end_date";
-    if (personIds != null) {
-      where += " AND person_id = ANY(:people)";
-      params.put("people", Sql.longs(personIds));
-    }
+    where += idFilter("person_id", "people", personIds, params);
     return loadLeaves(where, params);
   }
 
@@ -75,17 +72,16 @@ public class PlanningService {
     SessionUser user = access.require("leaves:edit");
     validateLeave(input, null);
     long id =
+        Sql.insert(
         Sql.audit(
                 jdbc.sql(
                     "INSERT INTO leave_records (person_id, type, start_date, end_date, note, "
                         + Sql.AUDIT_COLUMNS
                         + ") VALUES (:person, :type, :start, :end, :note, "
                         + Sql.AUDIT_VALUES
-                        + ") RETURNING id"),
+                        + ")"),
                 stamp.created(user))
-            .params(leaveColumns(input))
-            .query(Long.class)
-            .single();
+            .params(leaveColumns(input)));
     return findLeave(id);
   }
 
@@ -125,10 +121,13 @@ public class PlanningService {
         List.of(Check.of("leaveTypes", input.type(), "type")),
         current == null ? List.of() : List.of(Check.of("leaveTypes", current.type(), "type")));
     assertPeriod(input.startDate(), input.endDate());
-    // One person cannot be on two leaves at once (an exclusion constraint in the database too).
+    // One person cannot be on two leaves at once. Writes for the person queue on their row, so
+    // two requests cannot both pass this check.
+    lockPerson(input.personId());
     jdbc.sql(
             "SELECT start_date, end_date FROM leave_records WHERE person_id = :person AND id <>"
-                + " :id AND start_date <= :end AND :start <= end_date ORDER BY start_date LIMIT 1")
+                + " :id AND start_date <= :end AND :start <= end_date ORDER BY start_date"
+                + " FETCH FIRST 1 ROWS ONLY")
         .param("person", input.personId())
         .param("id", current == null ? -1L : current.id())
         .param("start", LocalDate.parse(input.startDate()))
@@ -176,7 +175,7 @@ public class PlanningService {
                     rs.getString("type"),
                     Sql.date(rs, "start_date"),
                     Sql.date(rs, "end_date"),
-                    rs.getString("note"),
+                    Sql.text(rs, "note"),
                     Sql.audit(rs)))
         .list();
   }
@@ -192,14 +191,8 @@ public class PlanningService {
     access.current();
     Map<String, Object> params = new HashMap<>(Map.of("from", from, "to", to));
     String where = "WHERE start_date <= :to AND :from <= end_date";
-    if (personIds != null) {
-      where += " AND person_id = ANY(:people)";
-      params.put("people", Sql.longs(personIds));
-    }
-    if (projectIds != null) {
-      where += " AND project_id = ANY(:projects)";
-      params.put("projects", Sql.longs(projectIds));
-    }
+    where += idFilter("person_id", "people", personIds, params);
+    where += idFilter("project_id", "projects", projectIds, params);
     return loadAllocations(where, params);
   }
 
@@ -218,6 +211,7 @@ public class PlanningService {
     SessionUser user = access.require("resources:edit");
     validateAllocation(input, null);
     long id =
+        Sql.insert(
         Sql.audit(
                 jdbc.sql(
                     "INSERT INTO resource_allocations (person_id, project_id, role, start_date,"
@@ -225,11 +219,9 @@ public class PlanningService {
                         + Sql.AUDIT_COLUMNS
                         + ") VALUES (:person, :project, :role, :start, :end, :percent, :note, "
                         + Sql.AUDIT_VALUES
-                        + ") RETURNING id"),
+                        + ")"),
                 stamp.created(user))
-            .params(allocationColumns(input))
-            .query(Long.class)
-            .single();
+            .params(allocationColumns(input)));
     return findAllocation(id);
   }
 
@@ -278,11 +270,12 @@ public class PlanningService {
     if (input.percent() < 5 || input.percent() > 100 || input.percent() % 5 != 0) {
       throw new ValidationException("Doluluk %5–%100 arasında, 5'in katı olmalı.", "percent");
     }
+    lockPerson(input.personId());
     boolean duplicate =
         jdbc.sql(
-                "SELECT EXISTS (SELECT 1 FROM resource_allocations WHERE person_id = :person AND"
+                "SELECT CASE WHEN EXISTS (SELECT 1 FROM resource_allocations WHERE person_id = :person AND"
                     + " project_id = :project AND id <> :id AND start_date <= :end AND :start <="
-                    + " end_date)")
+                    + " end_date) THEN 1 ELSE 0 END FROM dual")
             .param("person", input.personId())
             .param("project", input.projectId())
             .param("id", current == null ? -1L : current.id())
@@ -295,6 +288,27 @@ public class PlanningService {
           "Bu kişi bu tarihlerde zaten bu projeye atanmış. Mevcut atamayı düzenleyin.",
           "projectId");
     }
+  }
+
+  /** Serialises overlap checks per person (the database has no range-exclusion constraint). */
+  private void lockPerson(long personId) {
+    jdbc.sql("SELECT id FROM people WHERE id = :id FOR UPDATE")
+        .param("id", personId)
+        .query(Long.class)
+        .list();
+  }
+
+  /** {@code AND column IN (…)} for an optional id filter; an empty list matches nothing. */
+  private static String idFilter(
+      String column, String name, List<Long> ids, Map<String, Object> params) {
+    if (ids == null) {
+      return "";
+    }
+    if (ids.isEmpty()) {
+      return " AND 1 = 0";
+    }
+    params.put(name, ids);
+    return " AND " + column + " IN (:" + name + ")";
   }
 
   private static Map<String, Object> allocationColumns(Allocation.Input input) {
@@ -332,7 +346,7 @@ public class PlanningService {
                     Sql.date(rs, "start_date"),
                     Sql.date(rs, "end_date"),
                     rs.getInt("percent"),
-                    rs.getString("note"),
+                    Sql.text(rs, "note"),
                     Sql.audit(rs)))
         .list();
   }

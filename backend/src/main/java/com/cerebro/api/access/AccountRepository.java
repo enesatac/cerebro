@@ -25,7 +25,7 @@ public class AccountRepository {
 
   /** The active account for a sign-in email (case-insensitive), with its resolved privileges. */
   public Optional<SessionUser> findActiveByEmail(String email) {
-    return jdbc.sql(SELECT + "WHERE lower(email) = lower(:email) AND active")
+    return jdbc.sql(SELECT + "WHERE lower(email) = lower(:email) AND active = 1")
         .param("email", email)
         .query(this::account)
         .optional()
@@ -42,7 +42,7 @@ public class AccountRepository {
 
   /** Active accounts with their roles (the demo sign-in list). */
   public List<SessionUser> listActive() {
-    return jdbc.sql(SELECT + "WHERE active ORDER BY id")
+    return jdbc.sql(SELECT + "WHERE active = 1 ORDER BY id")
         .query(this::account)
         .list()
         .stream()
@@ -73,7 +73,7 @@ public class AccountRepository {
         jdbc.sql(
                 """
                 SELECT r.id, r.name FROM user_roles ur JOIN roles r ON r.id = ur.role_id
-                WHERE ur.user_account_id = :id ORDER BY ur.position, r.id
+                WHERE ur.user_account_id = :id ORDER BY ur.sort_order, r.id
                 """)
             .param("id", account.id())
             .query((rs, row) -> new RoleRow(rs.getLong("id"), rs.getString("name")))

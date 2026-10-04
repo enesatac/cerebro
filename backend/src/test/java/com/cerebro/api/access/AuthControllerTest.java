@@ -41,7 +41,7 @@ class AuthControllerTest {
             new AuthController(
                 currentUser,
                 accounts,
-                new SecurityProperties(demoSignIn, null, null),
+                new SecurityProperties(demoSignIn, null, null, null),
                 new HttpSessionSecurityContextRepository(),
                 Clock.systemUTC()))
         .setControllerAdvice(new ApiExceptionHandler())

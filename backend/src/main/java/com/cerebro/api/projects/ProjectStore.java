@@ -53,6 +53,7 @@ public class ProjectStore {
 
   public long insert(Project.Input input, Audit audit) {
     long id =
+        Sql.insert(
         bind(
                 Sql.audit(
                     jdbc.sql(
@@ -64,11 +65,9 @@ public class ProjectStore {
                             + VALUES
                             + ", "
                             + Sql.AUDIT_VALUES
-                            + ") RETURNING id"),
+                            + ")"),
                     audit),
-                input)
-            .query(Long.class)
-            .single();
+                input));
     saveChildren(id, input);
     return id;
   }
@@ -110,7 +109,7 @@ public class ProjectStore {
         .param("status", input.status())
         .param("health", input.health())
         .param("confidentiality", input.confidentiality())
-        .param("tags", Sql.texts(input.tags()))
+        .param("tags", Sql.json(input.tags()))
         .param("businessUnitId", input.businessUnitId())
         .param("plannedStart", Times.parseDate(timeline.plannedStartDate()))
         .param("actualStart", Times.parseDate(timeline.actualStartDate()))
@@ -172,7 +171,7 @@ public class ProjectStore {
                                 rs.getLong("id"),
                                 rs.getLong("application_id"),
                                 rs.getString("impact_type"),
-                                rs.getString("description"))))
+                                Sql.text(rs, "description"))))
                 .list());
     Map<Long, List<Milestone>> milestones =
         Sql.group(
@@ -199,17 +198,17 @@ public class ProjectStore {
                   id,
                   rs.getString("code"),
                   rs.getString("name"),
-                  rs.getString("short_name"),
-                  rs.getString("description"),
-                  rs.getString("objective"),
-                  rs.getString("scope"),
-                  rs.getString("out_of_scope"),
+                  Sql.text(rs, "short_name"),
+                  Sql.text(rs, "description"),
+                  Sql.text(rs, "objective"),
+                  Sql.text(rs, "scope"),
+                  Sql.text(rs, "out_of_scope"),
                   rs.getString("type"),
                   rs.getString("priority"),
                   rs.getString("status"),
                   rs.getString("health"),
                   rs.getString("confidentiality"),
-                  Sql.textArray(rs, "tags"),
+                  Sql.jsonList(rs, "tags"),
                   Sql.longOrNull(rs, "business_unit_id"),
                   shared.roles().getOrDefault(id, List.of()),
                   shared.teams().getOrDefault(id, List.of()),
@@ -220,8 +219,8 @@ public class ProjectStore {
                       Sql.date(rs, "actual_end_date")),
                   rs.getInt("progress_percentage"),
                   rs.getString("current_phase"),
-                  rs.getString("latest_status_summary"),
-                  rs.getString("next_steps"),
+                  Sql.text(rs, "latest_status_summary"),
+                  Sql.text(rs, "next_steps"),
                   currency == null
                       ? null
                       : new Financials(

@@ -61,7 +61,7 @@ export interface Repositories {
 
 /**
  * Builds the repositories for the running app: the Cerebro API when `VITE_DATA_SOURCE=http`
- * (development against cerebro-api, and production), otherwise the in-browser demo data.
+ * (development against the API in ../backend, and production), otherwise the in-browser demo data.
  */
 export function createRepositories(): Repositories {
   if (import.meta.env.VITE_DATA_SOURCE === 'http') {

@@ -75,6 +75,7 @@ public class OperationsService {
     SessionUser user = access.require("risks:edit");
     validateRisk(input, null);
     long id =
+        Sql.insert(
         bindRisk(
                 Sql.audit(
                     jdbc.sql(
@@ -84,11 +85,9 @@ public class OperationsService {
                             + ") VALUES (:title, :description, :category, :probability, :impact,"
                             + " :severity, :status, :owner, :mitigation, :due, "
                             + Sql.AUDIT_VALUES
-                            + ") RETURNING id"),
+                            + ")"),
                     stamp.created(user)),
-                input)
-            .query(Long.class)
-            .single();
+                input));
     links.save(Kind.RISK, id, input);
     return findRisk(id);
   }
@@ -184,14 +183,14 @@ public class OperationsService {
               return new Risk(
                   id,
                   rs.getString("title"),
-                  rs.getString("description"),
+                  Sql.text(rs, "description"),
                   rs.getString("category"),
                   rs.getString("probability"),
                   rs.getString("impact"),
                   rs.getString("severity"),
                   rs.getString("status"),
                   Sql.longOrNull(rs, "owner_person_id"),
-                  rs.getString("mitigation_plan"),
+                  Sql.text(rs, "mitigation_plan"),
                   Sql.date(rs, "due_date"),
                   related.projectsOf(id),
                   related.applicationsOf(id),
@@ -222,6 +221,7 @@ public class OperationsService {
     SessionUser user = access.require("risks:edit");
     validateEscalation(input, null);
     long id =
+        Sql.insert(
         bindEscalation(
                 Sql.audit(
                     jdbc.sql(
@@ -232,11 +232,9 @@ public class OperationsService {
                             + ") VALUES (:title, :description, :severity, :status, :owner, :team,"
                             + " :raisedBy, :raisedAt, :target, :resolution, :resolvedOn, "
                             + Sql.AUDIT_VALUES
-                            + ") RETURNING id"),
+                            + ")"),
                     stamp.created(user)),
-                input)
-            .query(Long.class)
-            .single();
+                input));
     links.save(Kind.ESCALATION, id, input);
     return findEscalation(id);
   }
@@ -327,7 +325,7 @@ public class OperationsService {
               return new Escalation(
                   id,
                   rs.getString("title"),
-                  rs.getString("description"),
+                  Sql.text(rs, "description"),
                   rs.getString("severity"),
                   rs.getString("status"),
                   Sql.longOrNull(rs, "owner_person_id"),
@@ -366,6 +364,7 @@ public class OperationsService {
     SessionUser user = access.require("risks:edit");
     validateDecision(input, null);
     long id =
+        Sql.insert(
         bindDecision(
                 Sql.audit(
                     jdbc.sql(
@@ -375,11 +374,9 @@ public class OperationsService {
                             + ") VALUES (:title, :context, :decision, :rationale, :alternatives,"
                             + " :consequences, :date, :status, "
                             + Sql.AUDIT_VALUES
-                            + ") RETURNING id"),
+                            + ")"),
                     stamp.created(user)),
-                input)
-            .query(Long.class)
-            .single();
+                input));
     saveDeciders(id, input.decidedByIds());
     links.save(Kind.DECISION, id, input);
     return findDecision(id);
@@ -436,7 +433,7 @@ public class OperationsService {
         .param("context", input.context())
         .param("decision", input.decision())
         .param("rationale", orEmpty(input.rationale()))
-        .param("alternatives", Sql.texts(input.alternatives()))
+        .param("alternatives", Sql.json(input.alternatives()))
         .param("consequences", orEmpty(input.consequences()))
         .param("date", Times.parseDate(input.decisionDate()))
         .param("status", input.status());
@@ -478,11 +475,11 @@ public class OperationsService {
               return new Decision(
                   id,
                   rs.getString("title"),
-                  rs.getString("context"),
-                  rs.getString("decision"),
-                  rs.getString("rationale"),
-                  Sql.textArray(rs, "alternatives"),
-                  rs.getString("consequences"),
+                  Sql.text(rs, "context"),
+                  Sql.text(rs, "decision"),
+                  Sql.text(rs, "rationale"),
+                  Sql.jsonList(rs, "alternatives"),
+                  Sql.text(rs, "consequences"),
                   Sql.date(rs, "decision_date"),
                   deciders.getOrDefault(id, List.of()),
                   rs.getString("status"),

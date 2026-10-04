@@ -9,24 +9,31 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
+import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter.ReferrerPolicy;
 import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 
 /**
- * Sessions live server-side behind an httpOnly cookie on the same origin as the frontend (no
- * tokens in the browser). Corporate SSO (OIDC) in every environment except {@code local}, where
- * the demo sign-in picks an account. Authorisation is by screen privilege, checked in the API
- * ({@code Access}), never only in the frontend.
+ * One origin serves the web app and the API. Sessions live server-side (in the database, Spring
+ * Session) behind an httpOnly cookie — no tokens in the browser. Corporate SSO (OIDC, Oracle Access
+ * Manager) in every environment except the demo profiles ({@code local}, {@code h2}), where the
+ * demo sign-in picks an account. The web app's files are public; every {@code /api} call except
+ * sign-in needs a session, and screen privileges are checked in the services ({@code Access}).
  */
 @Configuration
 public class SecurityConfig {
 
-  private static final String[] PUBLIC = {
-    "/actuator/health/**",
-    "/v3/api-docs/**",
-    "/swagger-ui/**",
-    "/swagger-ui.html",
-    "/api/auth/**"
+  private static final String[] PUBLIC_API = {
+    "/api/auth/**", "/actuator/health/**", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html"
   };
+
+  /**
+   * The SPA loads only its own files; styles may be inline (the design system sets some), images
+   * may be data URLs, nothing may frame the app.
+   */
+  private static final String CONTENT_SECURITY_POLICY =
+      "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline';"
+          + " img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self';"
+          + " object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'";
 
   @Bean
   SecurityContextRepository securityContextRepository() {
@@ -34,7 +41,7 @@ public class SecurityConfig {
   }
 
   @Bean
-  @Profile("!local")
+  @Profile("!local & !h2")
   SecurityFilterChain ssoChain(HttpSecurity http, SecurityContextRepository contexts)
       throws Exception {
     return common(http, contexts)
@@ -43,8 +50,8 @@ public class SecurityConfig {
   }
 
   @Bean
-  @Profile("local")
-  SecurityFilterChain localChain(HttpSecurity http, SecurityContextRepository contexts)
+  @Profile("local | h2")
+  SecurityFilterChain demoChain(HttpSecurity http, SecurityContextRepository contexts)
       throws Exception {
     return common(http, contexts).build();
   }
@@ -52,10 +59,22 @@ public class SecurityConfig {
   private static HttpSecurity common(HttpSecurity http, SecurityContextRepository contexts)
       throws Exception {
     return http.authorizeHttpRequests(
-            auth -> auth.requestMatchers(PUBLIC).permitAll().anyRequest().authenticated())
+            auth ->
+                auth.requestMatchers(PUBLIC_API)
+                    .permitAll()
+                    .requestMatchers("/api/**", "/actuator/**")
+                    .authenticated()
+                    // The web app (index.html, assets, client-side routes) is public; its data is not.
+                    .anyRequest()
+                    .permitAll())
         .securityContext(context -> context.securityContextRepository(contexts))
         // The SPA reads the XSRF-TOKEN cookie and sends it back as a header on writes.
         .csrf(csrf -> csrf.spa())
+        .headers(
+            headers ->
+                headers
+                    .contentSecurityPolicy(csp -> csp.policyDirectives(CONTENT_SECURITY_POLICY))
+                    .referrerPolicy(referrer -> referrer.policy(ReferrerPolicy.SAME_ORIGIN)))
         // API calls get 401 instead of a redirect to the identity provider.
         .exceptionHandling(
             errors ->

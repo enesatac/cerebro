@@ -11,6 +11,7 @@ import com.cerebro.api.runbooks.Runbook.Step;
 import com.cerebro.api.shared.Audit;
 import com.cerebro.api.shared.AuditStamp;
 import com.cerebro.api.shared.Checks;
+import com.cerebro.api.shared.ChildRows;
 import com.cerebro.api.shared.DeletionImpact;
 import com.cerebro.api.shared.Sql;
 import com.cerebro.api.shared.Texts;
@@ -64,19 +65,18 @@ public class RunbookService {
     validate(input, null);
     Audit audit = stamp.created(user);
     long id =
+        Sql.insert(
         Sql.audit(
                 jdbc.sql(
                     "INSERT INTO application_runbooks (application_id, summary, last_verified_on, "
                         + Sql.AUDIT_COLUMNS
                         + ") VALUES (:application, :summary, :verified, "
                         + Sql.AUDIT_VALUES
-                        + ") RETURNING id"),
+                        + ")"),
                 audit)
             .param("application", input.applicationId())
             .param("summary", input.summary().trim())
-            .param("verified", Times.parseDate(input.lastVerifiedOn()))
-            .query(Long.class)
-            .single();
+            .param("verified", Times.parseDate(input.lastVerifiedOn())));
     saveChildren(id, input);
     return find(id);
   }
@@ -118,8 +118,8 @@ public class RunbookService {
     checks.assertRefs(List.of(input.applicationId()), "applications", "uygulama", "applicationId");
     boolean taken =
         jdbc.sql(
-                "SELECT EXISTS (SELECT 1 FROM application_runbooks WHERE application_id = :app"
-                    + " AND id <> :id)")
+                "SELECT CASE WHEN EXISTS (SELECT 1 FROM application_runbooks WHERE application_id = :app"
+                    + " AND id <> :id) THEN 1 ELSE 0 END FROM dual")
             .param("app", input.applicationId())
             .param("id", current == null ? -1L : current.id())
             .query(Boolean.class)
@@ -210,30 +210,35 @@ public class RunbookService {
     insertSteps(runbookId, null, firstResponse);
     for (int index = 0; index < input.scenarios().size(); index++) {
       Scenario scenario = input.scenarios().get(index);
-      long scenarioId =
-          jdbc.sql(
-                  "INSERT INTO runbook_scenarios (id, runbook_id, position, title, symptoms)"
-                      + " VALUES (COALESCE(CAST(:sid AS BIGINT),"
-                      + " nextval(pg_get_serial_sequence('runbook_scenarios', 'id'))), :id,"
-                      + " :position, :title, :symptoms) RETURNING id")
-              .param("sid", scenario.id())
-              .param("id", runbookId)
+      var insert =
+          ChildRows.insert(
+                  jdbc,
+                  "runbook_scenarios",
+                  "runbook_id, sort_order, title, symptoms",
+                  ":runbook, :position, :title, :symptoms",
+                  scenario.id())
+              .param("runbook", runbookId)
               .param("position", index)
               .param("title", n(scenario.title()).trim())
-              .param("symptoms", n(scenario.symptoms()).trim())
-              .query(Long.class)
-              .single();
+              .param("symptoms", n(scenario.symptoms()).trim());
+      long scenarioId;
+      if (scenario.id() == null) {
+        scenarioId = Sql.insert(insert);
+      } else {
+        insert.update();
+        scenarioId = scenario.id();
+      }
       insertSteps(runbookId, scenarioId, scenarioSteps.get(index));
     }
     for (int index = 0; index < input.links().size(); index++) {
       Link link = input.links().get(index);
-      jdbc.sql(
-              "INSERT INTO runbook_links (id, runbook_id, position, type, label, url, note)"
-                  + " VALUES (COALESCE(CAST(:lid AS BIGINT),"
-                  + " nextval(pg_get_serial_sequence('runbook_links', 'id'))), :id, :position,"
-                  + " :type, :label, :url, :note)")
-          .param("lid", link.id())
-          .param("id", runbookId)
+      ChildRows.insert(
+              jdbc,
+              "runbook_links",
+              "runbook_id, sort_order, type, label, url, note",
+              ":runbook, :position, :type, :label, :url, :note",
+              link.id())
+          .param("runbook", runbookId)
           .param("position", index)
           .param("type", link.type())
           .param("label", n(link.label()).trim())
@@ -243,19 +248,19 @@ public class RunbookService {
     }
     for (int index = 0; index < input.contacts().size(); index++) {
       Contact contact = input.contacts().get(index);
-      jdbc.sql(
-              "INSERT INTO runbook_contacts (id, runbook_id, position, label, person_id, team_id,"
-                  + " channel, \"when\") VALUES (COALESCE(CAST(:cid AS BIGINT),"
-                  + " nextval(pg_get_serial_sequence('runbook_contacts', 'id'))), :id, :position,"
-                  + " :label, :person, :team, :channel, :when)")
-          .param("cid", contact.id())
-          .param("id", runbookId)
+      ChildRows.insert(
+              jdbc,
+              "runbook_contacts",
+              "runbook_id, sort_order, label, person_id, team_id, channel, when_to_call",
+              ":runbook, :position, :label, :person, :team, :channel, :whenToCall",
+              contact.id())
+          .param("runbook", runbookId)
           .param("position", index)
           .param("label", n(contact.label()).trim())
           .param("person", contact.personId())
           .param("team", contact.teamId())
           .param("channel", n(contact.channel()).trim())
-          .param("when", n(contact.when()).trim())
+          .param("whenToCall", n(contact.when()).trim())
           .update();
     }
   }
@@ -270,12 +275,13 @@ public class RunbookService {
   private void insertSteps(long runbookId, Long scenarioId, List<Step> steps) {
     for (int index = 0; index < steps.size(); index++) {
       Step step = steps.get(index);
-      jdbc.sql(
-              "INSERT INTO runbook_steps (id, runbook_id, scenario_id, position, text) VALUES"
-                  + " (COALESCE(CAST(:sid AS BIGINT), nextval(pg_get_serial_sequence('runbook_steps',"
-                  + " 'id'))), :id, :scenario, :position, :text)")
-          .param("sid", step.id())
-          .param("id", runbookId)
+      ChildRows.insert(
+              jdbc,
+              "runbook_steps",
+              "runbook_id, scenario_id, sort_order, step_text",
+              ":runbook, :scenario, :position, :text",
+              step.id())
+          .param("runbook", runbookId)
           .param("scenario", scenarioId)
           .param("position", index)
           .param("text", step.text())
@@ -300,11 +306,11 @@ public class RunbookService {
     String filter = " WHERE runbook_id IN (SELECT id FROM application_runbooks " + where + ")";
     Map<Long, List<Step>> firstResponse = new HashMap<>();
     Map<Long, List<Step>> scenarioSteps = new HashMap<>();
-    jdbc.sql("SELECT * FROM runbook_steps" + filter + " ORDER BY position, id")
+    jdbc.sql("SELECT * FROM runbook_steps" + filter + " ORDER BY sort_order, id")
         .params(params)
         .query(
             rs -> {
-              Step step = new Step(rs.getLong("id"), rs.getString("text"));
+              Step step = new Step(rs.getLong("id"), Sql.text(rs, "step_text"));
               Long scenario = Sql.longOrNull(rs, "scenario_id");
               if (scenario == null) {
                 firstResponse.computeIfAbsent(rs.getLong("runbook_id"), k -> new ArrayList<>()).add(step);
@@ -313,7 +319,7 @@ public class RunbookService {
               }
             });
     Map<Long, List<Scenario>> scenarios = new HashMap<>();
-    jdbc.sql("SELECT * FROM runbook_scenarios" + filter + " ORDER BY position, id")
+    jdbc.sql("SELECT * FROM runbook_scenarios" + filter + " ORDER BY sort_order, id")
         .params(params)
         .query(
             rs -> {
@@ -324,11 +330,11 @@ public class RunbookService {
                       new Scenario(
                           id,
                           rs.getString("title"),
-                          rs.getString("symptoms"),
+                          Sql.text(rs, "symptoms"),
                           scenarioSteps.getOrDefault(id, List.of())));
             });
     Map<Long, List<Link>> links = new HashMap<>();
-    jdbc.sql("SELECT * FROM runbook_links" + filter + " ORDER BY position, id")
+    jdbc.sql("SELECT * FROM runbook_links" + filter + " ORDER BY sort_order, id")
         .params(params)
         .query(
             rs -> {
@@ -340,10 +346,10 @@ public class RunbookService {
                           rs.getString("type"),
                           rs.getString("label"),
                           rs.getString("url"),
-                          rs.getString("note")));
+                          Sql.text(rs, "note")));
             });
     Map<Long, List<Contact>> contacts = new HashMap<>();
-    jdbc.sql("SELECT * FROM runbook_contacts" + filter + " ORDER BY position, id")
+    jdbc.sql("SELECT * FROM runbook_contacts" + filter + " ORDER BY sort_order, id")
         .params(params)
         .query(
             rs -> {
@@ -355,8 +361,8 @@ public class RunbookService {
                           rs.getString("label"),
                           Sql.longOrNull(rs, "person_id"),
                           Sql.longOrNull(rs, "team_id"),
-                          rs.getString("channel"),
-                          rs.getString("when")));
+                          Sql.text(rs, "channel"),
+                          Sql.text(rs, "when_to_call")));
             });
     return jdbc.sql("SELECT * FROM application_runbooks " + where + " ORDER BY id")
         .params(params)
@@ -366,7 +372,7 @@ public class RunbookService {
               return new Runbook(
                   id,
                   rs.getLong("application_id"),
-                  rs.getString("summary"),
+                  Sql.text(rs, "summary"),
                   firstResponse.getOrDefault(id, List.of()),
                   links.getOrDefault(id, List.of()),
                   contacts.getOrDefault(id, List.of()),

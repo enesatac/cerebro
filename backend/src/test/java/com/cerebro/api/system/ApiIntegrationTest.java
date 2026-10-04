@@ -10,36 +10,49 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.cerebro.api.access.PrivilegeModule;
+import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIf;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.simple.JdbcClient;
-import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ActiveProfilesResolver;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.testcontainers.DockerClientFactory;
-import org.testcontainers.postgresql.PostgreSQLContainer;
+import org.testcontainers.containers.OracleContainer;
 
 /**
- * The API end to end on a real PostgreSQL with the demo data: migrations, sign-in, privileges,
- * CSRF, validation and a write round trip. Runs on PostgreSQL in Docker (CI), or against an
- * already migrated database given in {@code CEREBRO_TEST_DB_URL}; skipped without either.
+ * The API end to end with the demo data: migrations, sign-in, privileges, CSRF, validation and a
+ * write round trip. The database, in order of preference:
+ *
+ * <ul>
+ *   <li>an Oracle schema given in {@code CEREBRO_TEST_DB_URL} (+ {@code _USER}, {@code _PASSWORD})
+ *       — e.g. a CI schema on the corporate database; it must be empty;
+ *   <li>Oracle Database XE 21 in Docker (Testcontainers) when Docker is available;
+ *   <li>otherwise H2 in Oracle compatibility mode (profile {@code h2}), so the test always runs.
+ * </ul>
  */
 @SpringBootTest
 @AutoConfigureMockMvc
-@ActiveProfiles("local")
-@EnabledIf("databaseAvailable")
+@ActiveProfiles(resolver = ApiIntegrationTest.Database.class)
 class ApiIntegrationTest {
 
   private static final String EXTERNAL = System.getenv("CEREBRO_TEST_DB_URL");
-  private static PostgreSQLContainer postgres;
+  private static OracleContainer oracle;
 
-  static boolean databaseAvailable() {
+  /** {@code local} (demo data and sign-in) on Oracle, {@code h2} without one. */
+  static class Database implements ActiveProfilesResolver {
+    @Override
+    public String[] resolve(Class<?> testClass) {
+      return new String[] {onOracle() ? "local" : "h2"};
+    }
+  }
+
+  static boolean onOracle() {
     return EXTERNAL != null || DockerClientFactory.instance().isDockerAvailable();
   }
 
@@ -47,39 +60,50 @@ class ApiIntegrationTest {
   static void database(DynamicPropertyRegistry registry) {
     if (EXTERNAL != null) {
       registry.add("spring.datasource.url", () -> EXTERNAL);
-      registry.add("spring.datasource.username", () -> "postgres");
-      registry.add("spring.datasource.password", () -> "postgres");
-      registry.add("spring.datasource.hikari.maximum-pool-size", () -> "1");
-      registry.add("spring.flyway.enabled", () -> "false");
+      registry.add("spring.datasource.username", () -> System.getenv("CEREBRO_TEST_DB_USER"));
+      registry.add("spring.datasource.password", () -> System.getenv("CEREBRO_TEST_DB_PASSWORD"));
       return;
     }
-    if (postgres == null) {
-      postgres = new PostgreSQLContainer("postgres:17");
-      postgres.start();
+    if (!onOracle()) {
+      // A database of its own, so other test contexts cannot leave data behind.
+      registry.add(
+          "spring.datasource.url",
+          () -> "jdbc:h2:mem:api-test;MODE=Oracle;DEFAULT_NULL_ORDERING=HIGH;DB_CLOSE_DELAY=-1");
+      return;
     }
-    registry.add("spring.datasource.url", postgres::getJdbcUrl);
-    registry.add("spring.datasource.username", postgres::getUsername);
-    registry.add("spring.datasource.password", postgres::getPassword);
+    if (oracle == null) {
+      oracle = new OracleContainer("gvenzl/oracle-xe:21-slim-faststart");
+      oracle.start();
+    }
+    registry.add("spring.datasource.url", oracle::getJdbcUrl);
+    registry.add("spring.datasource.username", oracle::getUsername);
+    registry.add("spring.datasource.password", oracle::getPassword);
   }
 
   @Autowired JdbcClient jdbc;
   @Autowired MockMvc mvc;
 
-  private MockHttpSession signIn(long accountId) throws Exception {
-    MockHttpSession session = new MockHttpSession();
-    mvc.perform(
-            post("/api/auth/sign-in")
-                .session(session)
-                .with(csrf())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"accountId\":" + accountId + "}"))
-        .andExpect(status().isOk());
+  /** Signs in like the browser does and returns the session cookie (sessions live in the DB). */
+  private Cookie signIn(long accountId) throws Exception {
+    var response =
+        mvc.perform(
+                post("/api/auth/sign-in")
+                    .with(csrf())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("{\"accountId\":" + accountId + "}"))
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse();
+    Cookie session = response.getCookie("SESSION");
+    assertThat(session).isNotNull();
+    assertThat(response.getHeaders("Set-Cookie"))
+        .anySatisfy(header -> assertThat(header).startsWith("SESSION=").contains("HttpOnly"));
     return session;
   }
 
   @Test
   void migratesAndSeeds() {
-    assertThat(jdbc.sql("SELECT count(*) FROM privileges").query(Integer.class).single())
+    assertThat(jdbc.sql("SELECT count(*) FROM access_privileges").query(Integer.class).single())
         .isEqualTo(PrivilegeModule.allPrivileges().size());
     assertThat(jdbc.sql("SELECT count(*) FROM applications").query(Integer.class).single())
         .isGreaterThan(10);
@@ -95,31 +119,31 @@ class ApiIntegrationTest {
 
   @Test
   void signsInAndReadsWithTheRolesPrivileges() throws Exception {
-    MockHttpSession admin = signIn(1);
-    mvc.perform(get("/api/auth/session").session(admin))
+    Cookie admin = signIn(1);
+    mvc.perform(get("/api/auth/session").cookie(admin))
         .andExpect(jsonPath("$.roleNames[0]").value("Sistem yöneticisi"))
         .andExpect(jsonPath("$.privileges.length()").value(PrivilegeModule.allPrivileges().size()));
-    mvc.perform(get("/api/applications?page=0&pageSize=5&sort=name").session(admin))
+    mvc.perform(get("/api/applications?page=0&pageSize=5&sort=name").cookie(admin))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.items.length()").value(5))
         .andExpect(jsonPath("$.pageSize").value(5));
-    mvc.perform(get("/api/governance/overview").session(admin)).andExpect(status().isOk());
+    mvc.perform(get("/api/governance/overview").cookie(admin)).andExpect(status().isOk());
 
     // Elif (business unit + employee roles) has no contract privileges and cannot edit projects.
-    MockHttpSession elif = signIn(3);
-    mvc.perform(get("/api/contracts").session(elif))
+    Cookie elif = signIn(3);
+    mvc.perform(get("/api/contracts").cookie(elif))
         .andExpect(status().isForbidden())
         .andExpect(jsonPath("$.code").value("forbidden"));
-    mvc.perform(delete("/api/projects/1").session(elif).with(csrf()))
+    mvc.perform(delete("/api/projects/1").cookie(elif).with(csrf()))
         .andExpect(status().isForbidden());
   }
 
   @Test
   void refusesWritesWithoutTheCsrfToken() throws Exception {
-    MockHttpSession admin = signIn(1);
+    Cookie admin = signIn(1);
     mvc.perform(
             post("/api/business-units")
-                .session(admin)
+                .cookie(admin)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"code\":\"X\",\"name\":\"X\",\"description\":\"\"}"))
         .andExpect(status().isForbidden());
@@ -127,7 +151,7 @@ class ApiIntegrationTest {
 
   @Test
   void writesAndValidates() throws Exception {
-    MockHttpSession admin = signIn(1);
+    Cookie admin = signIn(1);
     String body =
         "{\"name\":\"Entegrasyon Test Ekibi\",\"description\":\"\",\"managerId\":1,"
             + "\"memberIds\":[1,2],\"contactEmail\":null,\"chatChannel\":null,"
@@ -135,7 +159,7 @@ class ApiIntegrationTest {
     String created =
         mvc.perform(
                 post("/api/teams")
-                    .session(admin)
+                    .cookie(admin)
                     .with(csrf())
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(body))
@@ -149,7 +173,7 @@ class ApiIntegrationTest {
 
     mvc.perform(
             post("/api/teams")
-                .session(admin)
+                .cookie(admin)
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(body.replace("Entegrasyon Test Ekibi", "ENTEGRASYON TEST EKİBİ")))
@@ -158,16 +182,16 @@ class ApiIntegrationTest {
 
     mvc.perform(
             put("/api/teams/" + id)
-                .session(admin)
+                .cookie(admin)
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(body.replace("[1,2]", "[3]")))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.memberIds[0]").value(3));
 
-    mvc.perform(delete("/api/teams/" + id).session(admin).with(csrf()))
+    mvc.perform(delete("/api/teams/" + id).cookie(admin).with(csrf()))
         .andExpect(status().isNoContent());
-    mvc.perform(get("/api/teams/" + id).session(admin))
+    mvc.perform(get("/api/teams/" + id).cookie(admin))
         .andExpect(status().isNotFound())
         .andExpect(jsonPath("$.code").value("not-found"));
   }

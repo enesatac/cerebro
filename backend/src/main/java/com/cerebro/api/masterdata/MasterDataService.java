@@ -32,64 +32,64 @@ public class MasterDataService {
   private static final Map<String, List<String>> USES = new LinkedHashMap<>();
 
   static {
-    use("applicationLifecycles", "SELECT lifecycle FROM applications");
-    use("applicationTypes", "SELECT type FROM applications");
-    use("operationalStatuses", "SELECT operational_status FROM applications");
-    use("hostingModels", "SELECT hosting_model FROM applications");
-    use("environmentTypes", "SELECT type FROM environments");
-    use("environmentStatuses", "SELECT status FROM environments");
-    use("sourceRepositoryTypes", "SELECT type FROM source_repositories");
+    use("applicationLifecycles", "SELECT lifecycle AS code FROM applications");
+    use("applicationTypes", "SELECT type AS code FROM applications");
+    use("operationalStatuses", "SELECT operational_status AS code FROM applications");
+    use("hostingModels", "SELECT hosting_model AS code FROM applications");
+    use("environmentTypes", "SELECT type AS code FROM environments");
+    use("environmentStatuses", "SELECT status AS code FROM environments");
+    use("sourceRepositoryTypes", "SELECT type AS code FROM source_repositories");
     use(
         "technologyCategories",
-        "SELECT category FROM technologies",
-        "SELECT layer FROM technology_usages");
-    use("technologyStatuses", "SELECT status FROM technologies");
-    use("projectStatuses", "SELECT status FROM projects");
-    use("projectHealths", "SELECT health FROM projects");
-    use("projectTypes", "SELECT type FROM projects");
-    use("projectPhases", "SELECT current_phase FROM projects");
-    use("milestoneStatuses", "SELECT status FROM milestones");
-    use("applicationImpactTypes", "SELECT impact_type FROM application_impacts");
-    use("confidentialityLevels", "SELECT confidentiality FROM projects");
+        "SELECT category AS code FROM technologies",
+        "SELECT layer AS code FROM technology_usages");
+    use("technologyStatuses", "SELECT status AS code FROM technologies");
+    use("projectStatuses", "SELECT status AS code FROM projects");
+    use("projectHealths", "SELECT health AS code FROM projects");
+    use("projectTypes", "SELECT type AS code FROM projects");
+    use("projectPhases", "SELECT current_phase AS code FROM projects");
+    use("milestoneStatuses", "SELECT status AS code FROM milestones");
+    use("applicationImpactTypes", "SELECT impact_type AS code FROM application_impacts");
+    use("confidentialityLevels", "SELECT confidentiality AS code FROM projects");
     use(
         "currencies",
-        "SELECT currency FROM projects WHERE currency IS NOT NULL",
-        "SELECT currency FROM demands WHERE estimated_budget IS NOT NULL",
-        "SELECT currency FROM contracts");
+        "SELECT currency AS code FROM projects WHERE currency IS NOT NULL",
+        "SELECT currency AS code FROM demands WHERE estimated_budget IS NOT NULL",
+        "SELECT currency AS code FROM contracts");
     use(
         "criticalities",
-        "SELECT criticality FROM applications",
-        "SELECT priority FROM projects",
-        "SELECT severity FROM risks",
-        "SELECT probability FROM risks",
-        "SELECT impact FROM risks",
-        "SELECT severity FROM escalations",
-        "SELECT criticality FROM dependencies",
-        "SELECT urgency FROM demands");
+        "SELECT criticality AS code FROM applications",
+        "SELECT priority AS code FROM projects",
+        "SELECT severity AS code FROM risks",
+        "SELECT probability AS code FROM risks",
+        "SELECT impact AS code FROM risks",
+        "SELECT severity AS code FROM escalations",
+        "SELECT criticality AS code FROM dependencies",
+        "SELECT urgency AS code FROM demands");
     use(
         "stakeholderRoles",
-        "SELECT role FROM role_assignments",
-        "SELECT role FROM resource_allocations");
-    use("teamResponsibilities", "SELECT responsibility FROM team_assignments");
-    use("documentationLinkTypes", "SELECT type FROM documentation_links");
-    use("riskCategories", "SELECT category FROM risks");
-    use("riskStatuses", "SELECT status FROM risks");
-    use("escalationStatuses", "SELECT status FROM escalations");
-    use("decisionStatuses", "SELECT status FROM decisions");
-    use("dependencyTypes", "SELECT type FROM dependencies");
-    use("integrationTypes", "SELECT type FROM integrations");
-    use("integrationFrequencies", "SELECT frequency FROM integrations");
-    use("documentTypes", "SELECT document_type FROM attachments");
-    use("runbookLinkTypes", "SELECT type FROM runbook_links");
-    use("leaveTypes", "SELECT type FROM leave_records");
-    use("demandStatuses", "SELECT status FROM demands");
-    use("demandTypes", "SELECT type FROM demands");
-    use("demandBenefitTypes", "SELECT code FROM demand_benefit_types");
-    use("demandPriorities", "SELECT priority FROM demands WHERE priority IS NOT NULL");
-    use("contractTypes", "SELECT type FROM contracts");
-    use("contractStatuses", "SELECT status FROM contracts");
-    use("billingFrequencies", "SELECT billing_frequency FROM contracts");
-    use("paymentStatuses", "SELECT status FROM contract_payments");
+        "SELECT role AS code FROM role_assignments",
+        "SELECT role AS code FROM resource_allocations");
+    use("teamResponsibilities", "SELECT responsibility AS code FROM team_assignments");
+    use("documentationLinkTypes", "SELECT type AS code FROM documentation_links");
+    use("riskCategories", "SELECT category AS code FROM risks");
+    use("riskStatuses", "SELECT status AS code FROM risks");
+    use("escalationStatuses", "SELECT status AS code FROM escalations");
+    use("decisionStatuses", "SELECT status AS code FROM decisions");
+    use("dependencyTypes", "SELECT type AS code FROM dependencies");
+    use("integrationTypes", "SELECT type AS code FROM integrations");
+    use("integrationFrequencies", "SELECT frequency AS code FROM integrations");
+    use("documentTypes", "SELECT document_type AS code FROM attachments");
+    use("runbookLinkTypes", "SELECT type AS code FROM runbook_links");
+    use("leaveTypes", "SELECT type AS code FROM leave_records");
+    use("demandStatuses", "SELECT status AS code FROM demands");
+    use("demandTypes", "SELECT type AS code FROM demands");
+    use("demandBenefitTypes", "SELECT code AS code FROM demand_benefit_types");
+    use("demandPriorities", "SELECT priority AS code FROM demands WHERE priority IS NOT NULL");
+    use("contractTypes", "SELECT type AS code FROM contracts");
+    use("contractStatuses", "SELECT status AS code FROM contracts");
+    use("billingFrequencies", "SELECT billing_frequency AS code FROM contracts");
+    use("paymentStatuses", "SELECT status AS code FROM contract_payments");
   }
 
   private static void use(String list, String... selects) {
@@ -229,13 +229,17 @@ public class MasterDataService {
 
   private void save(String key, List<MasterDataItem> items) {
     List<Long> kept = items.stream().map(MasterDataItem::id).filter(id -> id != null).toList();
-    jdbc.sql("DELETE FROM master_data_items WHERE list_key = :key AND NOT (id = ANY(:kept))")
-        .param("key", key)
-        .param("kept", Sql.longs(kept))
-        .update();
+    if (kept.isEmpty()) {
+      jdbc.sql("DELETE FROM master_data_items WHERE list_key = :key").param("key", key).update();
+    } else {
+      jdbc.sql("DELETE FROM master_data_items WHERE list_key = :key AND id NOT IN (:kept)")
+          .param("key", key)
+          .param("kept", kept)
+          .update();
+    }
     // Labels are unique per list: park the kept ones so values can swap labels in one save.
     jdbc.sql(
-            "UPDATE master_data_items SET label = '#parked-' || id::text, sort_order = -id::int"
+            "UPDATE master_data_items SET label = '#parked-' || id, sort_order = -id"
                 + " WHERE list_key = :key")
         .param("key", key)
         .update();
@@ -256,7 +260,7 @@ public class MasterDataService {
           .param("label", item.label())
           .param("description", item.description())
           .param("variant", item.variant())
-          .param("active", item.active())
+          .param("active", Sql.flag(item.active()))
           .param("order", index + 1)
           .update();
     }
@@ -271,7 +275,7 @@ public class MasterDataService {
     jdbc.sql(
             "SELECT code, count(*) AS uses FROM ("
                 + String.join(" UNION ALL ", selects)
-                + ") AS used(code) GROUP BY code ORDER BY code")
+                + ") used GROUP BY code ORDER BY code")
         .query(
             rs -> {
               usage.put(rs.getString("code"), rs.getInt("uses"));
@@ -291,7 +295,7 @@ public class MasterDataService {
         rs.getLong("id"),
         rs.getString("code"),
         rs.getString("label"),
-        rs.getString("description"),
+        Sql.text(rs, "description"),
         rs.getString("variant"),
         rs.getBoolean("active"));
   }

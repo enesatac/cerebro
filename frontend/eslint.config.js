@@ -48,7 +48,13 @@ export default tseslint.config(
       'src/services/mock/**',
       '**/*.test.{ts,tsx}',
       'src/test/**',
+      'scripts/**',
     ],
     rules: { 'no-restricted-imports': 'off' },
+  },
+  {
+    // Build-time generators run in Node.
+    files: ['scripts/**'],
+    languageOptions: { globals: globals.node },
   },
 );

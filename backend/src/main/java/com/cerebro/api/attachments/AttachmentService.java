@@ -94,7 +94,7 @@ public class AttachmentService {
     jdbc.sql(
             "SELECT "
                 + type.column()
-                + " AS owner, count(*)::int AS files FROM attachments WHERE "
+                + " AS owner, count(*) AS files FROM attachments WHERE "
                 + type.column()
                 + " IS NOT NULL GROUP BY "
                 + type.column()
@@ -133,6 +133,7 @@ public class AttachmentService {
     assertDescription(text);
     Audit audit = stamp.created(user);
     long id =
+        Sql.insert(
         Sql.audit(
                 jdbc.sql(
                     "INSERT INTO attachments ("
@@ -143,7 +144,7 @@ public class AttachmentService {
                         + ") VALUES (:owner, :type, :name, :contentType, :size, :description,"
                         + " :uploadedAt, :uploadedBy, "
                         + Sql.AUDIT_VALUES
-                        + ") RETURNING id"),
+                        + ")"),
                 audit)
             .param("owner", ownerId)
             .param("type", documentType)
@@ -156,9 +157,7 @@ public class AttachmentService {
             .param("size", (long) content.length)
             .param("description", text)
             .param("uploadedAt", Times.parseTimestamp(audit.createdAt()))
-            .param("uploadedBy", user.personId())
-            .query(Long.class)
-            .single();
+            .param("uploadedBy", user.personId()));
     contents.put(id, content);
     return find(id);
   }
@@ -300,7 +299,7 @@ public class AttachmentService {
                   rs.getString("file_name"),
                   rs.getString("content_type"),
                   rs.getLong("size_bytes"),
-                  rs.getString("description"),
+                  Sql.text(rs, "description"),
                   Sql.timestamp(rs, "uploaded_at"),
                   Sql.longOrNull(rs, "uploaded_by_person_id"),
                   Sql.audit(rs));

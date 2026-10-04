@@ -65,5 +65,7 @@ npm run test
 npm run build
 ```
 
-(`npm run validate` runs all four.) Fix every issue introduced by the change. Report the results
+(`npm run validate` runs all four, in `frontend/`.) When `backend/` or a repository contract
+changed, also run `./mvnw verify` in `backend/` and the mock↔API contract test (see CLAUDE.md).
+Fix every issue introduced by the change. Report the results
 honestly in the task summary — including anything skipped and why.

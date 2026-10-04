@@ -110,7 +110,7 @@ class RelatedLinks {
 
   /** SQL condition on the owner alias {@code o} for the list filters. */
   static String filter(Kind kind, Long applicationId, Long projectId) {
-    StringBuilder where = new StringBuilder("WHERE true");
+    StringBuilder where = new StringBuilder("WHERE 1 = 1");
     if (applicationId != null) {
       where
           .append(" AND EXISTS (SELECT 1 FROM ")

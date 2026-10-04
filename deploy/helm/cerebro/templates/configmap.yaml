@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "cerebro.fullname" . }}
+  labels:
+    {{- include "cerebro.labels" . | nindent 4 }}
+data:
+  SPRING_PROFILES_ACTIVE: prod
+  CEREBRO_DB_URL: {{ required "config.databaseUrl is required" .Values.config.databaseUrl | quote }}
+  CEREBRO_DB_POOL_SIZE: {{ .Values.config.databasePoolSize | quote }}
+  CEREBRO_OIDC_ISSUER_URI: {{ required "config.oidcIssuerUri is required" .Values.config.oidcIssuerUri | quote }}
+  CEREBRO_OIDC_USER_CLAIM: {{ .Values.config.oidcUserClaim | quote }}
+  CEREBRO_BOOTSTRAP_ADMIN_EMAIL: {{ .Values.config.bootstrapAdminEmail | quote }}
+  CEREBRO_TIME_ZONE: {{ .Values.config.timeZone | quote }}

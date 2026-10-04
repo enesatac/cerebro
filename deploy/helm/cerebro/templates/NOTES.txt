@@ -1,0 +1,5 @@
+Cerebro {{ .Values.image.tag }} is deployed as {{ include "cerebro.fullname" . }}.
+{{- if .Values.route.enabled }}
+URL: https://{{ .Values.route.host | default "<generated route host>" }}
+{{- end }}
+Health: /actuator/health/readiness · Logs: oc logs deploy/{{ include "cerebro.fullname" . }}

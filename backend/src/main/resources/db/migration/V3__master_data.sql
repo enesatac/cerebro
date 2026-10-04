@@ -1,248 +1,247 @@
 -- Master data values (labels, colours, order) as shipped. Generated from the frontend seed
--- (cerebro: src/services/mock/data/masterData.ts). Administrators edit them in the app afterwards;
+-- (frontend/src/services/mock/data/masterData.ts). Administrators edit them in the app afterwards,
 -- system codes (the ones the logic relies on) must not be deleted.
 
-INSERT INTO master_data_items (list_key, code, label, description, variant, sort_order) VALUES
-  ('applicationLifecycles', 'planned', 'Planlandı', 'Onaylandı, geliştirme henüz başlamadı.', 'neutral', 1),
-  ('applicationLifecycles', 'development', 'Geliştirmede', 'İlk sürüm geliştiriliyor.', 'info', 2),
-  ('applicationLifecycles', 'active', 'Aktif', 'Canlıda ve aktif olarak geliştiriliyor.', 'success', 3),
-  ('applicationLifecycles', 'maintenance', 'Bakımda', 'Canlıda; yalnızca hata düzeltme ve küçük değişiklikler.', 'secondary', 4),
-  ('applicationLifecycles', 'deprecated', 'Kullanımdan kalkıyor', 'Yerine başka bir çözüm planlandı.', 'warning', 5),
-  ('applicationLifecycles', 'retired', 'Emekli', 'Devreden çıkarıldı; kayıt yalnızca geçmiş için tutuluyor.', 'dark', 6),
-  ('applicationTypes', 'web-application', 'Web uygulaması', '', NULL, 1),
-  ('applicationTypes', 'api-service', 'API servisi', '', NULL, 2),
-  ('applicationTypes', 'integration-platform', 'Entegrasyon platformu', '', NULL, 3),
-  ('applicationTypes', 'data-platform', 'Veri platformu', '', NULL, 4),
-  ('applicationTypes', 'batch-processing', 'Toplu işleme', '', NULL, 5),
-  ('applicationTypes', 'mobile-backend', 'Mobil backend', '', NULL, 6),
-  ('applicationTypes', 'saas-product', 'SaaS ürünü', 'Tedarikçi tarafından barındırılan hazır ürün.', NULL, 7),
-  ('operationalStatuses', 'operational', 'Çalışıyor', '', 'success', 1),
-  ('operationalStatuses', 'degraded', 'Kısmi kesinti', '', 'warning', 2),
-  ('operationalStatuses', 'outage', 'Kesinti', '', 'danger', 3),
-  ('operationalStatuses', 'not-deployed', 'Kurulu değil', '', 'neutral', 4),
-  ('hostingModels', 'on-premises', 'Şirket içi', '', NULL, 1),
-  ('hostingModels', 'private-cloud', 'Özel bulut', '', NULL, 2),
-  ('hostingModels', 'public-cloud', 'Genel bulut', 'Bulut sağlayıcı alanı zorunludur.', NULL, 3),
-  ('hostingModels', 'hybrid', 'Hibrit', 'Bulut sağlayıcı alanı zorunludur.', NULL, 4),
-  ('hostingModels', 'saas', 'SaaS (tedarikçi barındırmalı)', 'Kaynak kodu ve teknoloji yığını beklenmez.', NULL, 5),
-  ('environmentTypes', 'development', 'Geliştirme', '', NULL, 1),
-  ('environmentTypes', 'test', 'Test', '', NULL, 2),
-  ('environmentTypes', 'uat', 'UAT', 'Kullanıcı kabul testi.', NULL, 3),
-  ('environmentTypes', 'pre-production', 'Canlı öncesi', '', NULL, 4),
-  ('environmentTypes', 'production', 'Canlı', 'Tamlık kurallarında aranan ortam.', NULL, 5),
-  ('environmentTypes', 'disaster-recovery', 'Felaket kurtarma', '', NULL, 6),
-  ('environmentStatuses', 'available', 'Erişilebilir', '', 'success', 1),
-  ('environmentStatuses', 'degraded', 'Kısmi kesinti', '', 'warning', 2),
-  ('environmentStatuses', 'unavailable', 'Erişilemiyor', '', 'danger', 3),
-  ('environmentStatuses', 'decommissioned', 'Devreden çıkarıldı', '', 'neutral', 4),
-  ('sourceRepositoryTypes', 'frontend', 'Frontend', '', NULL, 1),
-  ('sourceRepositoryTypes', 'backend', 'Backend', '', NULL, 2),
-  ('sourceRepositoryTypes', 'infrastructure', 'Altyapı', '', NULL, 3),
-  ('sourceRepositoryTypes', 'documentation', 'Dokümantasyon', '', NULL, 4),
-  ('sourceRepositoryTypes', 'library', 'Kütüphane', '', NULL, 5),
-  ('sourceRepositoryTypes', 'other', 'Diğer', '', NULL, 6),
-  ('technologyCategories', 'frontend', 'Frontend', '', NULL, 1),
-  ('technologyCategories', 'backend', 'Backend', '', NULL, 2),
-  ('technologyCategories', 'database', 'Veritabanı', '', NULL, 3),
-  ('technologyCategories', 'messaging', 'Mesajlaşma', '', NULL, 4),
-  ('technologyCategories', 'infrastructure', 'Altyapı', '', NULL, 5),
-  ('technologyCategories', 'devops', 'DevOps', '', NULL, 6),
-  ('technologyCategories', 'monitoring', 'İzleme', '', NULL, 7),
-  ('technologyCategories', 'testing', 'Test', '', NULL, 8),
-  ('technologyStatuses', 'preferred', 'Tercih edilen', 'Yeni işler için önerilen.', 'success', 1),
-  ('technologyStatuses', 'supported', 'Destekleniyor', 'Kullanılabilir ama ilk tercih değil.', 'info', 2),
-  ('technologyStatuses', 'deprecated', 'Kullanımdan kalkıyor', 'Yeni işlerde kullanılmamalı; geçiş planlanmalı.', 'warning', 3),
-  ('technologyStatuses', 'retired', 'Emekli', 'Artık desteklenmiyor.', 'danger', 4),
-  ('projectStatuses', 'proposed', 'Önerildi', '', 'neutral', 1),
-  ('projectStatuses', 'approved', 'Onaylandı', '', 'info', 2),
-  ('projectStatuses', 'in-progress', 'Devam ediyor', '', 'primary', 3),
-  ('projectStatuses', 'on-hold', 'Beklemede', '', 'warning', 4),
-  ('projectStatuses', 'completed', 'Tamamlandı', '', 'success', 5),
-  ('projectStatuses', 'cancelled', 'İptal edildi', '', 'dark', 6),
-  ('projectHealths', 'on-track', 'Yolunda', '', 'success', 1),
-  ('projectHealths', 'at-risk', 'Riskli', '', 'warning', 2),
-  ('projectHealths', 'critical', 'Kritik', '', 'danger', 3),
-  ('projectHealths', 'completed', 'Tamamlandı', '', 'neutral', 4),
-  ('projectTypes', 'new-product', 'Yeni ürün', '', NULL, 1),
-  ('projectTypes', 'modernisation', 'Modernizasyon', '', NULL, 2),
-  ('projectTypes', 'integration', 'Entegrasyon', '', NULL, 3),
-  ('projectTypes', 'regulatory', 'Mevzuat', '', NULL, 4),
-  ('projectTypes', 'infrastructure', 'Altyapı', '', NULL, 5),
-  ('projectTypes', 'decommissioning', 'Devreden çıkarma', '', NULL, 6),
-  ('projectPhases', 'initiation', 'Başlatma', '', NULL, 1),
-  ('projectPhases', 'analysis', 'Analiz', '', NULL, 2),
-  ('projectPhases', 'design', 'Tasarım', '', NULL, 3),
-  ('projectPhases', 'build', 'Geliştirme', '', NULL, 4),
-  ('projectPhases', 'test', 'Test', '', NULL, 5),
-  ('projectPhases', 'deployment', 'Dağıtım', '', NULL, 6),
-  ('projectPhases', 'hypercare', 'Yoğun destek', 'Canlıya geçiş sonrası yakın takip.', NULL, 7),
-  ('projectPhases', 'closure', 'Kapanış', '', NULL, 8),
-  ('milestoneStatuses', 'planned', 'Planlandı', '', 'neutral', 1),
-  ('milestoneStatuses', 'in-progress', 'Devam ediyor', '', 'info', 2),
-  ('milestoneStatuses', 'completed', 'Tamamlandı', '', 'success', 3),
-  ('milestoneStatuses', 'at-risk', 'Riskli', '', 'warning', 4),
-  ('milestoneStatuses', 'missed', 'Kaçırıldı', '', 'danger', 5),
-  ('applicationImpactTypes', 'creates', 'Oluşturur', '', NULL, 1),
-  ('applicationImpactTypes', 'modifies', 'Değiştirir', '', NULL, 2),
-  ('applicationImpactTypes', 'integrates-with', 'Entegre olur', '', NULL, 3),
-  ('applicationImpactTypes', 'decommissions', 'Devreden çıkarır', '', NULL, 4),
-  ('confidentialityLevels', 'public', 'Herkese açık', '', NULL, 1),
-  ('confidentialityLevels', 'internal', 'Kurum içi', '', NULL, 2),
-  ('confidentialityLevels', 'confidential', 'Gizli', '', NULL, 3),
-  ('confidentialityLevels', 'restricted', 'Kısıtlı', '', NULL, 4),
-  ('currencies', 'EUR', 'EUR — Euro', '', NULL, 1),
-  ('currencies', 'USD', 'USD — ABD doları', '', NULL, 2),
-  ('currencies', 'GBP', 'GBP — İngiliz sterlini', '', NULL, 3),
-  ('currencies', 'TRY', 'TRY — Türk lirası', '', NULL, 4),
-  ('criticalities', 'low', 'Düşük', '', 'neutral', 1),
-  ('criticalities', 'medium', 'Orta', '', 'info', 2),
-  ('criticalities', 'high', 'Yüksek', '', 'warning', 3),
-  ('criticalities', 'critical', 'Kritik', '', 'danger', 4),
-  ('stakeholderRoles', 'business-owner', 'İş sahibi', 'Tamlık kurallarında aranan rol.', NULL, 1),
-  ('stakeholderRoles', 'technical-owner', 'Teknik sahip', 'Tamlık ve sahiplik kurallarında aranan rol.', NULL, 2),
-  ('stakeholderRoles', 'product-owner', 'Ürün sahibi', '', NULL, 3),
-  ('stakeholderRoles', 'sponsor', 'Sponsor', '', NULL, 4),
-  ('stakeholderRoles', 'project-manager', 'Proje yöneticisi', 'Proje listesinde gösterilir.', NULL, 5),
-  ('stakeholderRoles', 'technical-lead', 'Teknik lider', '', NULL, 6),
-  ('stakeholderRoles', 'analyst-lead', 'Analist lideri', '', NULL, 7),
-  ('stakeholderRoles', 'analyst', 'Analist', '', NULL, 8),
-  ('stakeholderRoles', 'architect', 'Mimar', '', NULL, 9),
-  ('stakeholderRoles', 'developer', 'Geliştirici', '', NULL, 10),
-  ('stakeholderRoles', 'support', 'Destek', '', NULL, 11),
-  ('stakeholderRoles', 'stakeholder', 'Paydaş', '', NULL, 12),
-  ('teamResponsibilities', 'development', 'Geliştirme', '', NULL, 1),
-  ('teamResponsibilities', 'support', 'Destek', '', NULL, 2),
-  ('teamResponsibilities', 'operations', 'Operasyon', '', NULL, 3),
-  ('teamResponsibilities', 'delivery', 'Teslimat', '', NULL, 4),
-  ('documentationLinkTypes', 'confluence', 'Confluence', '', NULL, 1),
-  ('documentationLinkTypes', 'jira', 'Jira', '', NULL, 2),
-  ('documentationLinkTypes', 'repository', 'Kod deposu', '', NULL, 3),
-  ('documentationLinkTypes', 'architecture', 'Mimari', '', NULL, 4),
-  ('documentationLinkTypes', 'analysis', 'Analiz', '', NULL, 5),
-  ('documentationLinkTypes', 'design', 'Tasarım', '', NULL, 6),
-  ('documentationLinkTypes', 'testing', 'Test', '', NULL, 7),
-  ('documentationLinkTypes', 'deployment', 'Dağıtım', '', NULL, 8),
-  ('documentationLinkTypes', 'runbook', 'Runbook', '', NULL, 9),
-  ('documentationLinkTypes', 'monitoring', 'İzleme', '', NULL, 10),
-  ('documentationLinkTypes', 'dashboard', 'Gösterge paneli', '', NULL, 11),
-  ('documentationLinkTypes', 'other', 'Diğer', '', NULL, 12),
-  ('riskCategories', 'technical', 'Teknik', '', NULL, 1),
-  ('riskCategories', 'security', 'Güvenlik', '', NULL, 2),
-  ('riskCategories', 'operational', 'Operasyonel', '', NULL, 3),
-  ('riskCategories', 'compliance', 'Uyum', '', NULL, 4),
-  ('riskCategories', 'delivery', 'Teslimat', '', NULL, 5),
-  ('riskCategories', 'financial', 'Finansal', '', NULL, 6),
-  ('riskCategories', 'vendor', 'Tedarikçi', '', NULL, 7),
-  ('riskStatuses', 'open', 'Açık', '', 'danger', 1),
-  ('riskStatuses', 'monitoring', 'İzleniyor', '', 'warning', 2),
-  ('riskStatuses', 'mitigated', 'Azaltıldı', '', 'info', 3),
-  ('riskStatuses', 'accepted', 'Kabul edildi', '', 'neutral', 4),
-  ('riskStatuses', 'closed', 'Kapatıldı', '', 'success', 5),
-  ('escalationStatuses', 'open', 'Açık', '', 'danger', 1),
-  ('escalationStatuses', 'in-progress', 'Devam ediyor', '', 'warning', 2),
-  ('escalationStatuses', 'resolved', 'Çözüldü', '', 'success', 3),
-  ('escalationStatuses', 'closed', 'Kapatıldı', '', 'neutral', 4),
-  ('decisionStatuses', 'proposed', 'Önerildi', '', 'info', 1),
-  ('decisionStatuses', 'accepted', 'Kabul edildi', '', 'success', 2),
-  ('decisionStatuses', 'rejected', 'Reddedildi', '', 'neutral', 3),
-  ('decisionStatuses', 'superseded', 'Yerini yenisi aldı', '', 'warning', 4),
-  ('decisionStatuses', 'deprecated', 'Geçersiz', '', 'warning', 5),
-  ('dependencyTypes', 'runtime', 'Çalışma zamanı', '', NULL, 1),
-  ('dependencyTypes', 'authentication', 'Kimlik doğrulama', '', NULL, 2),
-  ('dependencyTypes', 'data', 'Veri', '', NULL, 3),
-  ('dependencyTypes', 'messaging', 'Mesajlaşma', '', NULL, 4),
-  ('dependencyTypes', 'batch', 'Toplu iş', '', NULL, 5),
-  ('dependencyTypes', 'build', 'Derleme', '', NULL, 6),
-  ('integrationTypes', 'rest-api', 'REST API', '', NULL, 1),
-  ('integrationTypes', 'soap', 'SOAP', '', NULL, 2),
-  ('integrationTypes', 'graphql', 'GraphQL', '', NULL, 3),
-  ('integrationTypes', 'kafka', 'Kafka', '', NULL, 4),
-  ('integrationTypes', 'rabbitmq', 'RabbitMQ', '', NULL, 5),
-  ('integrationTypes', 'database', 'Veritabanı', '', NULL, 6),
-  ('integrationTypes', 'file-transfer', 'Dosya aktarımı', '', NULL, 7),
-  ('integrationTypes', 'batch', 'Toplu iş', '', NULL, 8),
-  ('integrationTypes', 'event', 'Olay', '', NULL, 9),
-  ('integrationTypes', 'other', 'Diğer', '', NULL, 10),
-  ('leaveTypes', 'annual', 'Yıllık izin', 'Planlı yıllık ücretli izin.', 'teal', 1),
-  ('leaveTypes', 'sick', 'Hastalık izni', 'Sağlık nedeniyle izin. Tıbbi ayrıntı yazılmaz.', 'danger', 2),
-  ('leaveTypes', 'excuse', 'Mazeret izni', 'Evlilik, taşınma, vefat gibi mazeret izinleri.', 'warning', 3),
-  ('leaveTypes', 'training', 'Eğitim / konferans', 'Ofis dışında eğitim veya etkinlik.', 'purple', 4),
-  ('leaveTypes', 'unpaid', 'Ücretsiz izin', '', 'neutral', 5),
-  ('integrationFrequencies', 'real-time', 'Gerçek zamanlı', '', NULL, 1),
-  ('integrationFrequencies', 'near-real-time', 'Gerçek zamana yakın', '', NULL, 2),
-  ('integrationFrequencies', 'hourly', 'Saatlik', '', NULL, 3),
-  ('integrationFrequencies', 'daily', 'Günlük', '', NULL, 4),
-  ('integrationFrequencies', 'on-demand', 'İsteğe bağlı', '', NULL, 5),
-  ('runbookLinkTypes', 'monitoring', 'İzleme', '', NULL, 1),
-  ('runbookLinkTypes', 'logs', 'Loglar', '', NULL, 2),
-  ('runbookLinkTypes', 'health-check', 'Sağlık kontrolü', '', NULL, 3),
-  ('runbookLinkTypes', 'dashboard', 'Gösterge paneli', '', NULL, 4),
-  ('runbookLinkTypes', 'alerting', 'Alarmlar', '', NULL, 5),
-  ('runbookLinkTypes', 'status-page', 'Durum sayfası', '', NULL, 6),
-  ('runbookLinkTypes', 'console', 'Yönetim konsolu', '', NULL, 7),
-  ('runbookLinkTypes', 'documentation', 'Doküman', '', NULL, 8),
-  ('runbookLinkTypes', 'other', 'Diğer', '', NULL, 9),
-  ('documentTypes', 'architecture', 'Mimari doküman', 'Gerekli: uygulamalar.', NULL, 1),
-  ('documentTypes', 'security-assessment', 'Güvenlik değerlendirmesi', 'Gerekli: uygulamalar.', NULL, 2),
-  ('documentTypes', 'operations-guide', 'Operasyon kılavuzu', 'Gerekli: uygulamalar.', NULL, 3),
-  ('documentTypes', 'user-guide', 'Kullanım kılavuzu', '', NULL, 4),
-  ('documentTypes', 'charter', 'Proje beratı', 'Gerekli: projeler.', NULL, 5),
-  ('documentTypes', 'requirements', 'Analiz / gereksinimler', 'Gerekli: projeler.', NULL, 6),
-  ('documentTypes', 'design', 'Tasarım dokümanı', '', NULL, 7),
-  ('documentTypes', 'test-report', 'Test raporu', 'Gerekli: projeler.', NULL, 8),
-  ('documentTypes', 'go-live-approval', 'Canlıya geçiş onayı', 'Gerekli: projeler.', NULL, 9),
-  ('documentTypes', 'contract', 'Sözleşme', '', NULL, 10),
-  ('documentTypes', 'license', 'Lisans / destek sözleşmesi', '', NULL, 11),
-  ('documentTypes', 'meeting-notes', 'Toplantı notları', '', NULL, 12),
-  ('documentTypes', 'incident-report', 'Olay raporu', '', NULL, 13),
-  ('documentTypes', 'business-case', 'İş gerekçesi', 'Talebin fayda ve maliyet analizi.', NULL, 14),
-  ('documentTypes', 'offer', 'Teklif', '', NULL, 15),
-  ('documentTypes', 'purchase-order', 'Satın alma siparişi', '', NULL, 16),
-  ('documentTypes', 'invoice', 'Fatura', '', NULL, 17),
-  ('documentTypes', 'other', 'Diğer', '', NULL, 18),
-  ('demandStatuses', 'submitted', 'Gönderildi', 'Yeni talep; portföy ofisi henüz incelemedi.', 'info', 1),
-  ('demandStatuses', 'in-review', 'Değerlendirmede', 'Portföy ofisi puanlıyor ve kapsamı netleştiriyor.', 'purple', 2),
-  ('demandStatuses', 'needs-info', 'Bilgi bekleniyor', 'Talep sahibinden ek bilgi istendi; güncellendiğinde yeniden değerlendirilir.', 'warning', 3),
-  ('demandStatuses', 'approved', 'Onaylandı', 'Yapılmasına karar verildi, henüz takvime alınmadı.', 'teal', 4),
-  ('demandStatuses', 'scheduled', 'Takvime alındı', 'Planlanan başlangıç ve bitiş tarihleri belli.', 'success', 5),
-  ('demandStatuses', 'converted', 'Projeye dönüştü', 'Bir proje olarak yürütülüyor.', 'business', 6),
-  ('demandStatuses', 'rejected', 'Reddedildi', 'Yapılmayacak; gerekçe talep sahibiyle paylaşıldı.', 'neutral', 7),
-  ('demandStatuses', 'withdrawn', 'Geri çekildi', 'Talep sahibi talebi geri aldı.', 'dark', 8),
-  ('demandTypes', 'new-project', 'Yeni proje', '', 'primary', 1),
-  ('demandTypes', 'new-application', 'Yeni uygulama', '', 'cyan', 2),
-  ('demandTypes', 'enhancement', 'Geliştirme / iyileştirme', '', 'info', 3),
-  ('demandTypes', 'integration', 'Entegrasyon', '', 'teal', 4),
-  ('demandTypes', 'reporting', 'Raporlama / veri', '', 'purple', 5),
-  ('demandTypes', 'infrastructure', 'Altyapı', '', 'neutral', 6),
-  ('demandTypes', 'compliance', 'Yasal / uyum', '', 'warning', 7),
-  ('demandBenefitTypes', 'revenue', 'Gelir artışı', '', NULL, 1),
-  ('demandBenefitTypes', 'cost-saving', 'Maliyet tasarrufu', '', NULL, 2),
-  ('demandBenefitTypes', 'customer-experience', 'Müşteri deneyimi', '', NULL, 3),
-  ('demandBenefitTypes', 'efficiency', 'Operasyonel verimlilik', '', NULL, 4),
-  ('demandBenefitTypes', 'compliance', 'Yasal uyum', '', NULL, 5),
-  ('demandBenefitTypes', 'risk-reduction', 'Risk azaltma', '', NULL, 6),
-  ('demandPriorities', 'p1', 'P1 — Hemen', 'İlk fırsatta başlanmalı.', 'danger', 1),
-  ('demandPriorities', 'p2', 'P2 — Yüksek', 'Önümüzdeki çeyrekte planlanmalı.', 'warning', 2),
-  ('demandPriorities', 'p3', 'P3 — Orta', 'Kapasite oldukça planlanır.', 'info', 3),
-  ('demandPriorities', 'p4', 'P4 — Düşük', 'Fırsat buldukça; yeniden değerlendirilebilir.', 'neutral', 4),
-  ('contractTypes', 'license', 'Lisans', '', 'primary', 1),
-  ('contractTypes', 'subscription', 'Abonelik (SaaS)', '', 'cyan', 2),
-  ('contractTypes', 'professional-services', 'Profesyonel hizmet', '', 'purple', 3),
-  ('contractTypes', 'consulting', 'Danışmanlık', '', 'teal', 4),
-  ('contractTypes', 'outsourcing', 'Dış kaynak', '', 'business', 5),
-  ('contractTypes', 'hardware', 'Donanım', '', 'neutral', 6),
-  ('contractTypes', 'maintenance-support', 'Bakım ve destek', '', 'info', 7),
-  ('contractTypes', 'other', 'Diğer', '', 'neutral', 8),
-  ('contractStatuses', 'draft', 'Hazırlık', 'İhtiyaç ve kapsam netleşiyor.', 'neutral', 1),
-  ('contractStatuses', 'in-procurement', 'Satın alma sürecinde', 'Teklif, müzakere veya onay aşamasında.', 'info', 2),
-  ('contractStatuses', 'active', 'Yürürlükte', 'İmzalandı, hizmet veya ürün alınıyor.', 'success', 3),
-  ('contractStatuses', 'expired', 'Sona erdi', 'Süresi doldu.', 'dark', 4),
-  ('contractStatuses', 'terminated', 'Feshedildi', 'Süresinden önce sonlandırıldı.', 'danger', 5),
-  ('billingFrequencies', 'one-time', 'Tek seferlik', '', NULL, 1),
-  ('billingFrequencies', 'monthly', 'Aylık', '', NULL, 2),
-  ('billingFrequencies', 'quarterly', 'Üç aylık', '', NULL, 3),
-  ('billingFrequencies', 'yearly', 'Yıllık', '', NULL, 4),
-  ('paymentStatuses', 'planned', 'Planlandı', '', 'neutral', 1),
-  ('paymentStatuses', 'invoiced', 'Faturalandı', '', 'warning', 2),
-  ('paymentStatuses', 'paid', 'Ödendi', '', 'success', 3),
-  ('paymentStatuses', 'cancelled', 'İptal', '', 'dark', 4);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('applicationLifecycles', 'planned', 'Planlandı', 'Onaylandı, geliştirme henüz başlamadı.', 'neutral', 1, 1);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('applicationLifecycles', 'development', 'Geliştirmede', 'İlk sürüm geliştiriliyor.', 'info', 1, 2);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('applicationLifecycles', 'active', 'Aktif', 'Canlıda ve aktif olarak geliştiriliyor.', 'success', 1, 3);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('applicationLifecycles', 'maintenance', 'Bakımda', 'Canlıda; yalnızca hata düzeltme ve küçük değişiklikler.', 'secondary', 1, 4);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('applicationLifecycles', 'deprecated', 'Kullanımdan kalkıyor', 'Yerine başka bir çözüm planlandı.', 'warning', 1, 5);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('applicationLifecycles', 'retired', 'Emekli', 'Devreden çıkarıldı; kayıt yalnızca geçmiş için tutuluyor.', 'dark', 1, 6);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('applicationTypes', 'web-application', 'Web uygulaması', NULL, NULL, 1, 1);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('applicationTypes', 'api-service', 'API servisi', NULL, NULL, 1, 2);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('applicationTypes', 'integration-platform', 'Entegrasyon platformu', NULL, NULL, 1, 3);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('applicationTypes', 'data-platform', 'Veri platformu', NULL, NULL, 1, 4);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('applicationTypes', 'batch-processing', 'Toplu işleme', NULL, NULL, 1, 5);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('applicationTypes', 'mobile-backend', 'Mobil backend', NULL, NULL, 1, 6);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('applicationTypes', 'saas-product', 'SaaS ürünü', 'Tedarikçi tarafından barındırılan hazır ürün.', NULL, 1, 7);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('operationalStatuses', 'operational', 'Çalışıyor', NULL, 'success', 1, 1);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('operationalStatuses', 'degraded', 'Kısmi kesinti', NULL, 'warning', 1, 2);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('operationalStatuses', 'outage', 'Kesinti', NULL, 'danger', 1, 3);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('operationalStatuses', 'not-deployed', 'Kurulu değil', NULL, 'neutral', 1, 4);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('hostingModels', 'on-premises', 'Şirket içi', NULL, NULL, 1, 1);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('hostingModels', 'private-cloud', 'Özel bulut', NULL, NULL, 1, 2);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('hostingModels', 'public-cloud', 'Genel bulut', 'Bulut sağlayıcı alanı zorunludur.', NULL, 1, 3);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('hostingModels', 'hybrid', 'Hibrit', 'Bulut sağlayıcı alanı zorunludur.', NULL, 1, 4);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('hostingModels', 'saas', 'SaaS (tedarikçi barındırmalı)', 'Kaynak kodu ve teknoloji yığını beklenmez.', NULL, 1, 5);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('environmentTypes', 'development', 'Geliştirme', NULL, NULL, 1, 1);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('environmentTypes', 'test', 'Test', NULL, NULL, 1, 2);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('environmentTypes', 'uat', 'UAT', 'Kullanıcı kabul testi.', NULL, 1, 3);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('environmentTypes', 'pre-production', 'Canlı öncesi', NULL, NULL, 1, 4);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('environmentTypes', 'production', 'Canlı', 'Tamlık kurallarında aranan ortam.', NULL, 1, 5);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('environmentTypes', 'disaster-recovery', 'Felaket kurtarma', NULL, NULL, 1, 6);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('environmentStatuses', 'available', 'Erişilebilir', NULL, 'success', 1, 1);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('environmentStatuses', 'degraded', 'Kısmi kesinti', NULL, 'warning', 1, 2);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('environmentStatuses', 'unavailable', 'Erişilemiyor', NULL, 'danger', 1, 3);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('environmentStatuses', 'decommissioned', 'Devreden çıkarıldı', NULL, 'neutral', 1, 4);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('sourceRepositoryTypes', 'frontend', 'Frontend', NULL, NULL, 1, 1);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('sourceRepositoryTypes', 'backend', 'Backend', NULL, NULL, 1, 2);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('sourceRepositoryTypes', 'infrastructure', 'Altyapı', NULL, NULL, 1, 3);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('sourceRepositoryTypes', 'documentation', 'Dokümantasyon', NULL, NULL, 1, 4);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('sourceRepositoryTypes', 'library', 'Kütüphane', NULL, NULL, 1, 5);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('sourceRepositoryTypes', 'other', 'Diğer', NULL, NULL, 1, 6);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('technologyCategories', 'frontend', 'Frontend', NULL, NULL, 1, 1);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('technologyCategories', 'backend', 'Backend', NULL, NULL, 1, 2);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('technologyCategories', 'database', 'Veritabanı', NULL, NULL, 1, 3);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('technologyCategories', 'messaging', 'Mesajlaşma', NULL, NULL, 1, 4);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('technologyCategories', 'infrastructure', 'Altyapı', NULL, NULL, 1, 5);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('technologyCategories', 'devops', 'DevOps', NULL, NULL, 1, 6);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('technologyCategories', 'monitoring', 'İzleme', NULL, NULL, 1, 7);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('technologyCategories', 'testing', 'Test', NULL, NULL, 1, 8);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('technologyStatuses', 'preferred', 'Tercih edilen', 'Yeni işler için önerilen.', 'success', 1, 1);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('technologyStatuses', 'supported', 'Destekleniyor', 'Kullanılabilir ama ilk tercih değil.', 'info', 1, 2);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('technologyStatuses', 'deprecated', 'Kullanımdan kalkıyor', 'Yeni işlerde kullanılmamalı; geçiş planlanmalı.', 'warning', 1, 3);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('technologyStatuses', 'retired', 'Emekli', 'Artık desteklenmiyor.', 'danger', 1, 4);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('projectStatuses', 'proposed', 'Önerildi', NULL, 'neutral', 1, 1);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('projectStatuses', 'approved', 'Onaylandı', NULL, 'info', 1, 2);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('projectStatuses', 'in-progress', 'Devam ediyor', NULL, 'primary', 1, 3);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('projectStatuses', 'on-hold', 'Beklemede', NULL, 'warning', 1, 4);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('projectStatuses', 'completed', 'Tamamlandı', NULL, 'success', 1, 5);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('projectStatuses', 'cancelled', 'İptal edildi', NULL, 'dark', 1, 6);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('projectHealths', 'on-track', 'Yolunda', NULL, 'success', 1, 1);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('projectHealths', 'at-risk', 'Riskli', NULL, 'warning', 1, 2);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('projectHealths', 'critical', 'Kritik', NULL, 'danger', 1, 3);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('projectHealths', 'completed', 'Tamamlandı', NULL, 'neutral', 1, 4);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('projectTypes', 'new-product', 'Yeni ürün', NULL, NULL, 1, 1);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('projectTypes', 'modernisation', 'Modernizasyon', NULL, NULL, 1, 2);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('projectTypes', 'integration', 'Entegrasyon', NULL, NULL, 1, 3);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('projectTypes', 'regulatory', 'Mevzuat', NULL, NULL, 1, 4);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('projectTypes', 'infrastructure', 'Altyapı', NULL, NULL, 1, 5);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('projectTypes', 'decommissioning', 'Devreden çıkarma', NULL, NULL, 1, 6);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('projectPhases', 'initiation', 'Başlatma', NULL, NULL, 1, 1);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('projectPhases', 'analysis', 'Analiz', NULL, NULL, 1, 2);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('projectPhases', 'design', 'Tasarım', NULL, NULL, 1, 3);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('projectPhases', 'build', 'Geliştirme', NULL, NULL, 1, 4);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('projectPhases', 'test', 'Test', NULL, NULL, 1, 5);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('projectPhases', 'deployment', 'Dağıtım', NULL, NULL, 1, 6);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('projectPhases', 'hypercare', 'Yoğun destek', 'Canlıya geçiş sonrası yakın takip.', NULL, 1, 7);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('projectPhases', 'closure', 'Kapanış', NULL, NULL, 1, 8);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('milestoneStatuses', 'planned', 'Planlandı', NULL, 'neutral', 1, 1);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('milestoneStatuses', 'in-progress', 'Devam ediyor', NULL, 'info', 1, 2);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('milestoneStatuses', 'completed', 'Tamamlandı', NULL, 'success', 1, 3);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('milestoneStatuses', 'at-risk', 'Riskli', NULL, 'warning', 1, 4);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('milestoneStatuses', 'missed', 'Kaçırıldı', NULL, 'danger', 1, 5);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('applicationImpactTypes', 'creates', 'Oluşturur', NULL, NULL, 1, 1);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('applicationImpactTypes', 'modifies', 'Değiştirir', NULL, NULL, 1, 2);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('applicationImpactTypes', 'integrates-with', 'Entegre olur', NULL, NULL, 1, 3);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('applicationImpactTypes', 'decommissions', 'Devreden çıkarır', NULL, NULL, 1, 4);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('confidentialityLevels', 'public', 'Herkese açık', NULL, NULL, 1, 1);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('confidentialityLevels', 'internal', 'Kurum içi', NULL, NULL, 1, 2);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('confidentialityLevels', 'confidential', 'Gizli', NULL, NULL, 1, 3);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('confidentialityLevels', 'restricted', 'Kısıtlı', NULL, NULL, 1, 4);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('currencies', 'EUR', 'EUR — Euro', NULL, NULL, 1, 1);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('currencies', 'USD', 'USD — ABD doları', NULL, NULL, 1, 2);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('currencies', 'GBP', 'GBP — İngiliz sterlini', NULL, NULL, 1, 3);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('currencies', 'TRY', 'TRY — Türk lirası', NULL, NULL, 1, 4);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('criticalities', 'low', 'Düşük', NULL, 'neutral', 1, 1);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('criticalities', 'medium', 'Orta', NULL, 'info', 1, 2);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('criticalities', 'high', 'Yüksek', NULL, 'warning', 1, 3);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('criticalities', 'critical', 'Kritik', NULL, 'danger', 1, 4);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('stakeholderRoles', 'business-owner', 'İş sahibi', 'Tamlık kurallarında aranan rol.', NULL, 1, 1);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('stakeholderRoles', 'technical-owner', 'Teknik sahip', 'Tamlık ve sahiplik kurallarında aranan rol.', NULL, 1, 2);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('stakeholderRoles', 'product-owner', 'Ürün sahibi', NULL, NULL, 1, 3);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('stakeholderRoles', 'sponsor', 'Sponsor', NULL, NULL, 1, 4);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('stakeholderRoles', 'project-manager', 'Proje yöneticisi', 'Proje listesinde gösterilir.', NULL, 1, 5);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('stakeholderRoles', 'technical-lead', 'Teknik lider', NULL, NULL, 1, 6);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('stakeholderRoles', 'analyst-lead', 'Analist lideri', NULL, NULL, 1, 7);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('stakeholderRoles', 'analyst', 'Analist', NULL, NULL, 1, 8);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('stakeholderRoles', 'architect', 'Mimar', NULL, NULL, 1, 9);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('stakeholderRoles', 'developer', 'Geliştirici', NULL, NULL, 1, 10);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('stakeholderRoles', 'support', 'Destek', NULL, NULL, 1, 11);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('stakeholderRoles', 'stakeholder', 'Paydaş', NULL, NULL, 1, 12);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('teamResponsibilities', 'development', 'Geliştirme', NULL, NULL, 1, 1);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('teamResponsibilities', 'support', 'Destek', NULL, NULL, 1, 2);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('teamResponsibilities', 'operations', 'Operasyon', NULL, NULL, 1, 3);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('teamResponsibilities', 'delivery', 'Teslimat', NULL, NULL, 1, 4);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('documentationLinkTypes', 'confluence', 'Confluence', NULL, NULL, 1, 1);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('documentationLinkTypes', 'jira', 'Jira', NULL, NULL, 1, 2);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('documentationLinkTypes', 'repository', 'Kod deposu', NULL, NULL, 1, 3);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('documentationLinkTypes', 'architecture', 'Mimari', NULL, NULL, 1, 4);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('documentationLinkTypes', 'analysis', 'Analiz', NULL, NULL, 1, 5);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('documentationLinkTypes', 'design', 'Tasarım', NULL, NULL, 1, 6);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('documentationLinkTypes', 'testing', 'Test', NULL, NULL, 1, 7);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('documentationLinkTypes', 'deployment', 'Dağıtım', NULL, NULL, 1, 8);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('documentationLinkTypes', 'runbook', 'Runbook', NULL, NULL, 1, 9);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('documentationLinkTypes', 'monitoring', 'İzleme', NULL, NULL, 1, 10);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('documentationLinkTypes', 'dashboard', 'Gösterge paneli', NULL, NULL, 1, 11);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('documentationLinkTypes', 'other', 'Diğer', NULL, NULL, 1, 12);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('riskCategories', 'technical', 'Teknik', NULL, NULL, 1, 1);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('riskCategories', 'security', 'Güvenlik', NULL, NULL, 1, 2);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('riskCategories', 'operational', 'Operasyonel', NULL, NULL, 1, 3);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('riskCategories', 'compliance', 'Uyum', NULL, NULL, 1, 4);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('riskCategories', 'delivery', 'Teslimat', NULL, NULL, 1, 5);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('riskCategories', 'financial', 'Finansal', NULL, NULL, 1, 6);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('riskCategories', 'vendor', 'Tedarikçi', NULL, NULL, 1, 7);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('riskStatuses', 'open', 'Açık', NULL, 'danger', 1, 1);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('riskStatuses', 'monitoring', 'İzleniyor', NULL, 'warning', 1, 2);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('riskStatuses', 'mitigated', 'Azaltıldı', NULL, 'info', 1, 3);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('riskStatuses', 'accepted', 'Kabul edildi', NULL, 'neutral', 1, 4);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('riskStatuses', 'closed', 'Kapatıldı', NULL, 'success', 1, 5);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('escalationStatuses', 'open', 'Açık', NULL, 'danger', 1, 1);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('escalationStatuses', 'in-progress', 'Devam ediyor', NULL, 'warning', 1, 2);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('escalationStatuses', 'resolved', 'Çözüldü', NULL, 'success', 1, 3);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('escalationStatuses', 'closed', 'Kapatıldı', NULL, 'neutral', 1, 4);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('decisionStatuses', 'proposed', 'Önerildi', NULL, 'info', 1, 1);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('decisionStatuses', 'accepted', 'Kabul edildi', NULL, 'success', 1, 2);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('decisionStatuses', 'rejected', 'Reddedildi', NULL, 'neutral', 1, 3);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('decisionStatuses', 'superseded', 'Yerini yenisi aldı', NULL, 'warning', 1, 4);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('decisionStatuses', 'deprecated', 'Geçersiz', NULL, 'warning', 1, 5);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('dependencyTypes', 'runtime', 'Çalışma zamanı', NULL, NULL, 1, 1);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('dependencyTypes', 'authentication', 'Kimlik doğrulama', NULL, NULL, 1, 2);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('dependencyTypes', 'data', 'Veri', NULL, NULL, 1, 3);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('dependencyTypes', 'messaging', 'Mesajlaşma', NULL, NULL, 1, 4);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('dependencyTypes', 'batch', 'Toplu iş', NULL, NULL, 1, 5);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('dependencyTypes', 'build', 'Derleme', NULL, NULL, 1, 6);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('integrationTypes', 'rest-api', 'REST API', NULL, NULL, 1, 1);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('integrationTypes', 'soap', 'SOAP', NULL, NULL, 1, 2);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('integrationTypes', 'graphql', 'GraphQL', NULL, NULL, 1, 3);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('integrationTypes', 'kafka', 'Kafka', NULL, NULL, 1, 4);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('integrationTypes', 'rabbitmq', 'RabbitMQ', NULL, NULL, 1, 5);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('integrationTypes', 'database', 'Veritabanı', NULL, NULL, 1, 6);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('integrationTypes', 'file-transfer', 'Dosya aktarımı', NULL, NULL, 1, 7);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('integrationTypes', 'batch', 'Toplu iş', NULL, NULL, 1, 8);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('integrationTypes', 'event', 'Olay', NULL, NULL, 1, 9);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('integrationTypes', 'other', 'Diğer', NULL, NULL, 1, 10);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('leaveTypes', 'annual', 'Yıllık izin', 'Planlı yıllık ücretli izin.', 'teal', 1, 1);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('leaveTypes', 'sick', 'Hastalık izni', 'Sağlık nedeniyle izin. Tıbbi ayrıntı yazılmaz.', 'danger', 1, 2);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('leaveTypes', 'excuse', 'Mazeret izni', 'Evlilik, taşınma, vefat gibi mazeret izinleri.', 'warning', 1, 3);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('leaveTypes', 'training', 'Eğitim / konferans', 'Ofis dışında eğitim veya etkinlik.', 'purple', 1, 4);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('leaveTypes', 'unpaid', 'Ücretsiz izin', NULL, 'neutral', 1, 5);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('integrationFrequencies', 'real-time', 'Gerçek zamanlı', NULL, NULL, 1, 1);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('integrationFrequencies', 'near-real-time', 'Gerçek zamana yakın', NULL, NULL, 1, 2);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('integrationFrequencies', 'hourly', 'Saatlik', NULL, NULL, 1, 3);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('integrationFrequencies', 'daily', 'Günlük', NULL, NULL, 1, 4);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('integrationFrequencies', 'on-demand', 'İsteğe bağlı', NULL, NULL, 1, 5);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('runbookLinkTypes', 'monitoring', 'İzleme', NULL, NULL, 1, 1);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('runbookLinkTypes', 'logs', 'Loglar', NULL, NULL, 1, 2);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('runbookLinkTypes', 'health-check', 'Sağlık kontrolü', NULL, NULL, 1, 3);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('runbookLinkTypes', 'dashboard', 'Gösterge paneli', NULL, NULL, 1, 4);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('runbookLinkTypes', 'alerting', 'Alarmlar', NULL, NULL, 1, 5);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('runbookLinkTypes', 'status-page', 'Durum sayfası', NULL, NULL, 1, 6);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('runbookLinkTypes', 'console', 'Yönetim konsolu', NULL, NULL, 1, 7);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('runbookLinkTypes', 'documentation', 'Doküman', NULL, NULL, 1, 8);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('runbookLinkTypes', 'other', 'Diğer', NULL, NULL, 1, 9);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('documentTypes', 'architecture', 'Mimari doküman', 'Gerekli: uygulamalar.', NULL, 1, 1);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('documentTypes', 'security-assessment', 'Güvenlik değerlendirmesi', 'Gerekli: uygulamalar.', NULL, 1, 2);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('documentTypes', 'operations-guide', 'Operasyon kılavuzu', 'Gerekli: uygulamalar.', NULL, 1, 3);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('documentTypes', 'user-guide', 'Kullanım kılavuzu', NULL, NULL, 1, 4);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('documentTypes', 'charter', 'Proje beratı', 'Gerekli: projeler.', NULL, 1, 5);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('documentTypes', 'requirements', 'Analiz / gereksinimler', 'Gerekli: projeler.', NULL, 1, 6);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('documentTypes', 'design', 'Tasarım dokümanı', NULL, NULL, 1, 7);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('documentTypes', 'test-report', 'Test raporu', 'Gerekli: projeler.', NULL, 1, 8);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('documentTypes', 'go-live-approval', 'Canlıya geçiş onayı', 'Gerekli: projeler.', NULL, 1, 9);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('documentTypes', 'contract', 'Sözleşme', NULL, NULL, 1, 10);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('documentTypes', 'license', 'Lisans / destek sözleşmesi', NULL, NULL, 1, 11);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('documentTypes', 'meeting-notes', 'Toplantı notları', NULL, NULL, 1, 12);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('documentTypes', 'incident-report', 'Olay raporu', NULL, NULL, 1, 13);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('documentTypes', 'business-case', 'İş gerekçesi', 'Talebin fayda ve maliyet analizi.', NULL, 1, 14);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('documentTypes', 'offer', 'Teklif', NULL, NULL, 1, 15);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('documentTypes', 'purchase-order', 'Satın alma siparişi', NULL, NULL, 1, 16);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('documentTypes', 'invoice', 'Fatura', NULL, NULL, 1, 17);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('documentTypes', 'other', 'Diğer', NULL, NULL, 1, 18);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('demandStatuses', 'submitted', 'Gönderildi', 'Yeni talep; portföy ofisi henüz incelemedi.', 'info', 1, 1);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('demandStatuses', 'in-review', 'Değerlendirmede', 'Portföy ofisi puanlıyor ve kapsamı netleştiriyor.', 'purple', 1, 2);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('demandStatuses', 'needs-info', 'Bilgi bekleniyor', 'Talep sahibinden ek bilgi istendi; güncellendiğinde yeniden değerlendirilir.', 'warning', 1, 3);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('demandStatuses', 'approved', 'Onaylandı', 'Yapılmasına karar verildi, henüz takvime alınmadı.', 'teal', 1, 4);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('demandStatuses', 'scheduled', 'Takvime alındı', 'Planlanan başlangıç ve bitiş tarihleri belli.', 'success', 1, 5);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('demandStatuses', 'converted', 'Projeye dönüştü', 'Bir proje olarak yürütülüyor.', 'business', 1, 6);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('demandStatuses', 'rejected', 'Reddedildi', 'Yapılmayacak; gerekçe talep sahibiyle paylaşıldı.', 'neutral', 1, 7);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('demandStatuses', 'withdrawn', 'Geri çekildi', 'Talep sahibi talebi geri aldı.', 'dark', 1, 8);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('demandTypes', 'new-project', 'Yeni proje', NULL, 'primary', 1, 1);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('demandTypes', 'new-application', 'Yeni uygulama', NULL, 'cyan', 1, 2);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('demandTypes', 'enhancement', 'Geliştirme / iyileştirme', NULL, 'info', 1, 3);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('demandTypes', 'integration', 'Entegrasyon', NULL, 'teal', 1, 4);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('demandTypes', 'reporting', 'Raporlama / veri', NULL, 'purple', 1, 5);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('demandTypes', 'infrastructure', 'Altyapı', NULL, 'neutral', 1, 6);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('demandTypes', 'compliance', 'Yasal / uyum', NULL, 'warning', 1, 7);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('demandBenefitTypes', 'revenue', 'Gelir artışı', NULL, NULL, 1, 1);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('demandBenefitTypes', 'cost-saving', 'Maliyet tasarrufu', NULL, NULL, 1, 2);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('demandBenefitTypes', 'customer-experience', 'Müşteri deneyimi', NULL, NULL, 1, 3);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('demandBenefitTypes', 'efficiency', 'Operasyonel verimlilik', NULL, NULL, 1, 4);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('demandBenefitTypes', 'compliance', 'Yasal uyum', NULL, NULL, 1, 5);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('demandBenefitTypes', 'risk-reduction', 'Risk azaltma', NULL, NULL, 1, 6);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('demandPriorities', 'p1', 'P1 — Hemen', 'İlk fırsatta başlanmalı.', 'danger', 1, 1);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('demandPriorities', 'p2', 'P2 — Yüksek', 'Önümüzdeki çeyrekte planlanmalı.', 'warning', 1, 2);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('demandPriorities', 'p3', 'P3 — Orta', 'Kapasite oldukça planlanır.', 'info', 1, 3);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('demandPriorities', 'p4', 'P4 — Düşük', 'Fırsat buldukça; yeniden değerlendirilebilir.', 'neutral', 1, 4);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('contractTypes', 'license', 'Lisans', NULL, 'primary', 1, 1);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('contractTypes', 'subscription', 'Abonelik (SaaS)', NULL, 'cyan', 1, 2);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('contractTypes', 'professional-services', 'Profesyonel hizmet', NULL, 'purple', 1, 3);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('contractTypes', 'consulting', 'Danışmanlık', NULL, 'teal', 1, 4);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('contractTypes', 'outsourcing', 'Dış kaynak', NULL, 'business', 1, 5);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('contractTypes', 'hardware', 'Donanım', NULL, 'neutral', 1, 6);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('contractTypes', 'maintenance-support', 'Bakım ve destek', NULL, 'info', 1, 7);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('contractTypes', 'other', 'Diğer', NULL, 'neutral', 1, 8);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('contractStatuses', 'draft', 'Hazırlık', 'İhtiyaç ve kapsam netleşiyor.', 'neutral', 1, 1);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('contractStatuses', 'in-procurement', 'Satın alma sürecinde', 'Teklif, müzakere veya onay aşamasında.', 'info', 1, 2);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('contractStatuses', 'active', 'Yürürlükte', 'İmzalandı, hizmet veya ürün alınıyor.', 'success', 1, 3);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('contractStatuses', 'expired', 'Sona erdi', 'Süresi doldu.', 'dark', 1, 4);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('contractStatuses', 'terminated', 'Feshedildi', 'Süresinden önce sonlandırıldı.', 'danger', 1, 5);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('billingFrequencies', 'one-time', 'Tek seferlik', NULL, NULL, 1, 1);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('billingFrequencies', 'monthly', 'Aylık', NULL, NULL, 1, 2);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('billingFrequencies', 'quarterly', 'Üç aylık', NULL, NULL, 1, 3);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('billingFrequencies', 'yearly', 'Yıllık', NULL, NULL, 1, 4);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('paymentStatuses', 'planned', 'Planlandı', NULL, 'neutral', 1, 1);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('paymentStatuses', 'invoiced', 'Faturalandı', NULL, 'warning', 1, 2);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('paymentStatuses', 'paid', 'Ödendi', NULL, 'success', 1, 3);
+INSERT INTO master_data_items (list_key, code, label, description, variant, active, sort_order) VALUES ('paymentStatuses', 'cancelled', 'İptal', NULL, 'dark', 1, 4);

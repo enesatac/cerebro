@@ -1,0 +1,67 @@
+# Defaults shared by every environment; values-<env>.yaml override them. Secrets are never put
+# here: the chart reads them from an existing OpenShift Secret (secret.name).
+
+replicaCount: 2
+
+image:
+  # The pipeline sets repository (Nexus) and tag (git commit) on every deploy.
+  repository: nexus.example.com:8443/cerebro/cerebro
+  tag: ""
+  pullPolicy: IfNotPresent
+
+# Pull secret for the Nexus registry, created once per namespace.
+imagePullSecrets:
+  - name: nexus-pull
+
+route:
+  enabled: true
+  # e.g. cerebro.apps.example.com; empty lets OpenShift generate one.
+  host: ""
+  # TLS ends at the router (edge); HTTP is redirected to HTTPS.
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+
+# Non-secret settings (ConfigMap → environment).
+config:
+  # jdbc:oracle:thin:@//db-host:1521/SERVICE_NAME
+  databaseUrl: ""
+  databasePoolSize: "10"
+  # Oracle Access Manager OIDC issuer, e.g. https://oam.example.com/oauth2/default
+  oidcIssuerUri: ""
+  # Claim matched against the Cerebro account email.
+  oidcUserClaim: email
+  # First deployment only: this email gets the system administrator role if nobody has it.
+  bootstrapAdminEmail: ""
+  timeZone: Europe/Istanbul
+
+# Existing Secret with CEREBRO_DB_USER, CEREBRO_DB_PASSWORD, CEREBRO_OIDC_CLIENT_ID and
+# CEREBRO_OIDC_CLIENT_SECRET (created by the platform team, Vault, or `oc create secret`).
+secret:
+  name: cerebro-secrets
+
+resources:
+  requests:
+    cpu: 250m
+    memory: 768Mi
+  limits:
+    memory: 1Gi
+
+# Flyway migrates the schema on start; give the first start time before liveness counts.
+startupProbe:
+  failureThreshold: 30
+  periodSeconds: 10
+
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 1
+
+autoscaling:
+  enabled: false
+  minReplicas: 2
+  maxReplicas: 4
+  targetCPUUtilizationPercentage: 75
+
+nodeSelector: {}
+tolerations: []
+affinity: {}

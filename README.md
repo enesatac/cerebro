@@ -7,8 +7,9 @@ risks, escalations and decisions surround them.
 Think application/project portfolio management + internal developer portal + architecture
 catalogue — kept simple.
 
-> **Status:** MVP running on an in-browser mock backend. No real backend or SSO yet — see
-> [Roadmap](docs/roadmap.md).
+**One repository, one deployable.** The web app (`frontend/`) is built into the Spring Boot jar
+(`backend/`), which serves it and the REST API from one origin, on Oracle. One container image,
+one Helm release on OpenShift, one Jenkins pipeline.
 
 ## Features
 
@@ -75,23 +76,60 @@ catalogue — kept simple.
 
 ## Tech stack
 
-React 19 · TypeScript 6 (strict) · Vite 8 · React Router 7 · TanStack Query 5 · React Hook Form +
-Zod 4 · date-fns 4 · Vitest + Testing Library · ESLint + Prettier
+| Part     | Technology                                                                                        |
+| -------- | ------------------------------------------------------------------------------------------------- |
+| Web app  | React 19 · TypeScript 6 · Vite 8 · React Router 7 · TanStack Query 5 · RHF + Zod · Takeoff UI v2  |
+| API      | Java 21 · Spring Boot 4 (MVC, Security, OAuth2 client, JDBC, Spring Session) · Flyway · springdoc |
+| Database | Oracle Database 19c or later (H2 in Oracle mode for tests and quick local runs)                   |
+| SSO      | Oracle Access Manager over OpenID Connect                                                         |
+| Delivery | Jenkins (`Jenkinsfile`) → OpenShift build → Nexus → Helm (`deploy/helm/cerebro`) on OpenShift     |
 
-Design system: **Takeoff UI v2** — `@takeoff-ui/react-spar`, `@takeoff-design/tokens`,
-`@takeoff-icons/react`.
+## Repository layout
+
+```
+frontend/   web app (React + Vite); `npm run build:api` → frontend/dist
+backend/    Spring Boot API; packs frontend/dist into target/cerebro.jar and serves it
+deploy/     Helm chart (values per environment) and the OpenShift BuildConfig
+docs/       architecture, backend, deployment, domain model, development guide, decisions
+Dockerfile  runtime image for target/cerebro.jar (UBI OpenJDK 21)
+Jenkinsfile build → test → contract → image → dev → test → prod
+docker-compose.yml  Oracle Database Free for local development
+```
 
 ## Getting started
 
-Requirements: **Node.js ≥ 22.12** (see `.nvmrc`) and npm 10+.
+Requirements: Node.js ≥ 22.12 and npm 10+ (web app), JDK 21 (API). Docker only for a local Oracle.
+
+**1. Web app alone, demo data in the browser** (no backend):
 
 ```bash
-npm install
-npm run dev
+cd frontend && npm install && npm run dev            # http://localhost:5173
 ```
 
-Open <http://localhost:5173> and sign in with one of the demo accounts (no password — account
-picker only):
+**2. Web app on the API, no database server** (H2 in Oracle mode, demo data loaded on start):
+
+```bash
+cd backend && ./mvnw spring-boot:run -Dspring-boot.run.profiles=h2
+cd frontend && npm run dev:api                       # http://localhost:5173, /api → :8080
+```
+
+**3. On Oracle** (Oracle Database Free in Docker):
+
+```bash
+docker compose up -d                                 # wait until healthy (~1 min)
+cd backend && ./mvnw spring-boot:run -Dspring-boot.run.profiles=local
+cd frontend && npm run dev:api
+```
+
+**4. The deployable itself** — one jar serving the web app and the API:
+
+```bash
+cd frontend && npm run build:api
+cd ../backend && ./mvnw package
+java -jar target/cerebro.jar --spring.profiles.active=h2   # http://localhost:8080
+```
+
+Sign in with one of the demo accounts (account picker, no password — local and `h2` only):
 
 | Account       | Roles                                  |
 | ------------- | -------------------------------------- |
@@ -102,70 +140,38 @@ picker only):
 | Elif Kaya     | İş birimi kullanıcısı, Çalışan         |
 | Nadia Petrova | Çalışan — deactivated (cannot sign in) |
 
-### Running against the API
+The demo organisation is fictional (`frontend/src/services/mock/data/`); the backend loads the
+same data, generated with `npm run generate:backend-seed`. In the browser-only mode, changes are
+kept in `localStorage`; clear the site data to reset.
 
-The same app runs on the real backend (repository **cerebro-api**: Spring Boot + PostgreSQL). Start
-the API with its local profile (see its README — it loads the same demo organisation into an empty
-database), then:
+## Checks
 
 ```bash
-npm run dev:api      # http://localhost:5173, /api proxied to http://localhost:8080
+cd frontend && npm run validate     # typecheck → lint → tests → build
+cd backend && ./mvnw verify         # unit tests + API integration test (H2 Oracle mode, or Oracle)
 ```
 
-`.env.api` sets `VITE_DATA_SOURCE=http`; `CEREBRO_API_TARGET` points the proxy elsewhere. A
-production build for the API is `vite build --mode api`, served from the same origin as `/api`.
+The contract test proves that the web app's in-browser backend and the real API answer every call
+the same way (run against a freshly started API, see [Development](docs/development.md)). Jenkins
+runs all three on every build; GitHub Actions runs them on pushes and pull requests.
 
-### Demo data
+## Deployment
 
-Seed data lives in `src/services/mock/data/` and is entirely fictional. In development, changes
-are persisted to `localStorage` (`cerebro.demo-db.v9`, session in `cerebro.demo-session.v2`). Clear
-those keys (or the site data) to reset to the seed.
-
-## Scripts
-
-| Command             | Description                         |
-| ------------------- | ----------------------------------- |
-| `npm run dev`       | Start the dev server (demo data)    |
-| `npm run dev:api`   | Start the dev server on the API     |
-| `npm run build`     | Type-check and build for production |
-| `npm run preview`   | Preview the production build        |
-| `npm run typecheck` | TypeScript project check            |
-| `npm run lint`      | ESLint                              |
-| `npm run test`      | Vitest (single run)                 |
-| `npm run format`    | Prettier (write)                    |
-| `npm run validate`  | typecheck → lint → test → build     |
-
-A change is complete only when `npm run validate` passes. CI runs the same checks on every push
-and pull request.
-
-## Project structure
-
-```
-src/
-  app/          composition root: providers, router, route paths, app shell
-  components/   cross-domain building blocks (layout, forms, feedback, data display)
-  domains/      one folder per domain: types, api, schemas, utils, components, pages
-  services/     repository registry + implementations (mock/ today, http/ later)
-  lib/          framework-agnostic helpers (dates, errors, validation, search, xlsx)
-  hooks/        shared React hooks
-  test/         test setup and route-level render helpers
-docs/           architecture, domain model, development guide, roadmap, decisions
-```
-
-Dependency direction is `app → domains → components/lib`; domains reach services only through the
-repository context (enforced by ESLint).
+Jenkins builds and tests, OpenShift builds the image and pushes it to Nexus, Helm deploys the same
+image to dev, then — after approval — to test and production. Configuration per environment is in
+`deploy/helm/cerebro/values-<env>.yaml`; secrets (database, OIDC client) are OpenShift Secrets.
+Setup checklist: [Deployment](docs/deployment.md).
 
 ## Documentation
 
-- [Architecture](docs/architecture.md)
-- [Domain model](docs/domain-model.md)
-- [Development guide](docs/development.md)
-- [Roadmap](docs/roadmap.md)
-- [Architecture decisions](docs/decisions.md)
-- [Database schema (PostgreSQL)](docs/database-schema.sql)
-- [`CLAUDE.md`](CLAUDE.md) / [`AGENTS.md`](AGENTS.md) — guidance for AI coding agents
-- `.claude/skills/` — project skills (architecture, Takeoff UI, features, domain model, quality,
-  review)
+- [Architecture](docs/architecture.md) · [Backend](docs/backend.md) ·
+  [Deployment](docs/deployment.md)
+- [Domain model](docs/domain-model.md) · [Development guide](docs/development.md) ·
+  [Roadmap](docs/roadmap.md) · [Decisions](docs/decisions.md)
+- Database schema: `backend/src/main/resources/db/migration/` (Flyway, Oracle)
+- API: `/v3/api-docs` and `/swagger-ui.html` (not in production)
+- [`CLAUDE.md`](CLAUDE.md) / [`frontend/AGENTS.md`](frontend/AGENTS.md) — guidance for AI coding
+  agents; `.claude/skills/` — project skills
 
 ## Security
 

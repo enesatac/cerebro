@@ -1,0 +1,7 @@
+# Test / UAT namespace.
+replicaCount: 2
+route:
+  host: cerebro-test.apps.example.com
+config:
+  databaseUrl: jdbc:oracle:thin:@//oracle-test.example.com:1521/CEREBRO_TEST
+  oidcIssuerUri: https://oam-test.example.com/oauth2/default

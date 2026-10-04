@@ -64,7 +64,7 @@ public class ContractService {
   public List<Contract> list(Long projectId, Long vendorId) {
     access.require("contracts:view");
     Map<String, Object> params = new HashMap<>();
-    String where = "WHERE true";
+    String where = "WHERE 1 = 1";
     if (projectId != null) {
       where += " AND project_id = :project";
       params.put("project", projectId);
@@ -92,6 +92,7 @@ public class ContractService {
     validate(input, null);
     Audit audit = stamp.created(user);
     long id =
+        Sql.insert(
         Sql.audit(
                 jdbc.sql(
                     "INSERT INTO contracts (title, project_id, vendor_id, type, status,"
@@ -103,11 +104,9 @@ public class ContractService {
                         + " :owner, :po, :signed, :start, :end, :notice, :autoRenewal, :total,"
                         + " :currency, :billing, "
                         + Sql.AUDIT_VALUES
-                        + ") RETURNING id"),
+                        + ")"),
                 audit)
-            .params(columns(input))
-            .query(Long.class)
-            .single();
+            .params(columns(input)));
     saveChildren(id, input);
     return find(id);
   }
@@ -277,7 +276,7 @@ public class ContractService {
     columns.put("start", Times.parseDate(input.startDate()));
     columns.put("end", Times.parseDate(input.endDate()));
     columns.put("notice", input.noticePeriodDays());
-    columns.put("autoRenewal", input.autoRenewal());
+    columns.put("autoRenewal", Sql.flag(input.autoRenewal()));
     columns.put("total", input.totalValue());
     columns.put("currency", input.currency());
     columns.put("billing", input.billingFrequency());
@@ -289,7 +288,7 @@ public class ContractService {
     int position = 0;
     for (Long application : new LinkedHashSet<>(input.relatedApplicationIds())) {
       jdbc.sql(
-              "INSERT INTO contract_applications (contract_id, application_id, position) VALUES"
+              "INSERT INTO contract_applications (contract_id, application_id, sort_order) VALUES"
                   + " (:id, :app, :position)")
           .param("id", id)
           .param("app", application)
@@ -314,6 +313,11 @@ public class ContractService {
                 .param("paid", Times.parseDate(row.paidDate())));
   }
 
+  /** The reference shown to users, derived from the id: {@code SZL-0007}. */
+  static String code(long id) {
+    return String.format("SZL-%04d", id);
+  }
+
   private Contract find(long id) {
     return load("WHERE id = :id", Map.of("id", id)).stream()
         .findFirst()
@@ -326,7 +330,7 @@ public class ContractService {
     jdbc.sql(
             "SELECT contract_id, application_id FROM contract_applications"
                 + filter
-                + " ORDER BY position, application_id")
+                + " ORDER BY sort_order, application_id")
         .params(params)
         .query(
             rs -> {
@@ -344,11 +348,11 @@ public class ContractService {
                             rs.getLong("contract_id"),
                             new Contract.Payment(
                                 rs.getLong("id"),
-                                rs.getString("description"),
+                                Sql.text(rs, "description"),
                                 Sql.date(rs, "due_date"),
                                 Sql.decimal(rs, "amount"),
                                 rs.getString("status"),
-                                rs.getString("invoice_number"),
+                                Sql.text(rs, "invoice_number"),
                                 Sql.date(rs, "paid_date"))))
                 .list());
     return jdbc.sql("SELECT * FROM contracts " + where + " ORDER BY id")
@@ -358,15 +362,15 @@ public class ContractService {
               long id = rs.getLong("id");
               return new Contract(
                   id,
-                  rs.getString("code"),
+                  code(id),
                   rs.getString("title"),
                   rs.getLong("project_id"),
                   rs.getLong("vendor_id"),
                   rs.getString("type"),
                   rs.getString("status"),
-                  rs.getString("description"),
+                  Sql.text(rs, "description"),
                   Sql.longOrNull(rs, "owner_person_id"),
-                  rs.getString("purchase_order_number"),
+                  Sql.text(rs, "purchase_order_number"),
                   Sql.date(rs, "signed_date"),
                   Sql.date(rs, "start_date"),
                   Sql.date(rs, "end_date"),
@@ -397,6 +401,7 @@ public class ContractService {
     validateVendor(raw, null);
     Vendor.Input input = raw.clean();
     long id =
+        Sql.insert(
         Sql.audit(
                 jdbc.sql(
                     "INSERT INTO vendors (name, tax_number, contact_name, contact_email,"
@@ -404,11 +409,9 @@ public class ContractService {
                         + Sql.AUDIT_COLUMNS
                         + ") VALUES (:name, :tax, :contact, :email, :phone, :website, :notes, "
                         + Sql.AUDIT_VALUES
-                        + ") RETURNING id"),
+                        + ")"),
                 stamp.created(user))
-            .params(vendorColumns(input))
-            .query(Long.class)
-            .single();
+            .params(vendorColumns(input)));
     return findVendor(id);
   }
 
@@ -507,12 +510,12 @@ public class ContractService {
                 new Vendor(
                     rs.getLong("id"),
                     rs.getString("name"),
-                    rs.getString("tax_number"),
-                    rs.getString("contact_name"),
-                    rs.getString("contact_email"),
-                    rs.getString("contact_phone"),
-                    rs.getString("website"),
-                    rs.getString("notes"),
+                    Sql.text(rs, "tax_number"),
+                    Sql.text(rs, "contact_name"),
+                    Sql.text(rs, "contact_email"),
+                    Sql.text(rs, "contact_phone"),
+                    Sql.text(rs, "website"),
+                    Sql.text(rs, "notes"),
                     Sql.audit(rs)))
         .list();
   }

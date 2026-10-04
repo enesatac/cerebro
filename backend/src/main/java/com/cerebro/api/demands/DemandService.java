@@ -75,6 +75,7 @@ public class DemandService {
     Demand.Input clean = clean(input);
     Audit audit = stamp.created(user);
     long id =
+        Sql.insert(
         Sql.audit(
                 jdbc.sql(
                     "INSERT INTO demands (title, type, business_unit_id, requester_person_id,"
@@ -87,12 +88,10 @@ public class DemandService {
                         + " :regulatory, :affectedUsers, :budget, :currency, 'submitted',"
                         + " :submittedAt, "
                         + Sql.AUDIT_VALUES
-                        + ") RETURNING id"),
+                        + ")"),
                 audit)
             .params(requestColumns(clean))
-            .param("submittedAt", Times.parseTimestamp(audit.createdAt()))
-            .query(Long.class)
-            .single();
+            .param("submittedAt", Times.parseTimestamp(audit.createdAt())));
     saveLinks(id, clean);
     event(id, user, "submitted", "");
     return find(id);
@@ -384,7 +383,7 @@ public class DemandService {
     columns.put("urgency", input.urgency());
     columns.put("desired", Times.parseDate(input.desiredDate()));
     columns.put("deadlineReason", input.deadlineReason());
-    columns.put("regulatory", input.regulatory());
+    columns.put("regulatory", Sql.flag(input.regulatory()));
     columns.put("affectedUsers", input.affectedUsers());
     columns.put("budget", input.estimatedBudget());
     columns.put("currency", input.currency() == null ? "TRY" : input.currency());
@@ -396,7 +395,7 @@ public class DemandService {
     int position = 0;
     for (String code : input.benefitTypes()) {
       jdbc.sql(
-              "INSERT INTO demand_benefit_types (demand_id, code, position) VALUES (:id, :code,"
+              "INSERT INTO demand_benefit_types (demand_id, code, sort_order) VALUES (:id, :code,"
                   + " :position)")
           .param("id", id)
           .param("code", code)
@@ -407,7 +406,7 @@ public class DemandService {
     position = 0;
     for (Long application : input.relatedApplicationIds()) {
       jdbc.sql(
-              "INSERT INTO demand_applications (demand_id, application_id, position) VALUES"
+              "INSERT INTO demand_applications (demand_id, application_id, sort_order) VALUES"
                   + " (:id, :app, :position)")
           .param("id", id)
           .param("app", application)
@@ -418,7 +417,7 @@ public class DemandService {
 
   private void event(long demandId, SessionUser user, String status, String note) {
     jdbc.sql(
-            "INSERT INTO demand_events (demand_id, at, by_person_id, status, note) VALUES (:id,"
+            "INSERT INTO demand_events (demand_id, occurred_at, by_person_id, status, note) VALUES (:id,"
                 + " :at, :by, :status, :note)")
         .param("id", demandId)
         .param("at", Times.parseTimestamp(stamp.now()))
@@ -426,6 +425,11 @@ public class DemandService {
         .param("status", status)
         .param("note", note == null ? "" : note.trim())
         .update();
+  }
+
+  /** The reference shown to users, derived from the id: {@code TLP-0012}. */
+  static String code(long id) {
+    return String.format("TLP-%04d", id);
   }
 
   private Demand find(long id) {
@@ -437,7 +441,7 @@ public class DemandService {
   private List<Demand> load(String where, Map<String, Object> params) {
     String filter = " WHERE demand_id IN (SELECT id FROM demands " + where + ")";
     Map<Long, List<String>> benefits = new HashMap<>();
-    jdbc.sql("SELECT demand_id, code FROM demand_benefit_types" + filter + " ORDER BY position, code")
+    jdbc.sql("SELECT demand_id, code FROM demand_benefit_types" + filter + " ORDER BY sort_order, code")
         .params(params)
         .query(
             rs -> {
@@ -447,7 +451,7 @@ public class DemandService {
     jdbc.sql(
             "SELECT demand_id, application_id FROM demand_applications"
                 + filter
-                + " ORDER BY position, application_id")
+                + " ORDER BY sort_order, application_id")
         .params(params)
         .query(
             rs -> {
@@ -456,7 +460,7 @@ public class DemandService {
                   .add(rs.getLong("application_id"));
             });
     Map<Long, List<Demand.Event>> history = new HashMap<>();
-    jdbc.sql("SELECT * FROM demand_events" + filter + " ORDER BY at, id")
+    jdbc.sql("SELECT * FROM demand_events" + filter + " ORDER BY occurred_at, id")
         .params(params)
         .query(
             rs -> {
@@ -465,10 +469,10 @@ public class DemandService {
                   .add(
                       new Demand.Event(
                           rs.getLong("id"),
-                          Sql.timestamp(rs, "at"),
+                          Sql.timestamp(rs, "occurred_at"),
                           Sql.longOrNull(rs, "by_person_id"),
                           rs.getString("status"),
-                          rs.getString("note")));
+                          Sql.text(rs, "note")));
             });
     return jdbc.sql("SELECT * FROM demands " + where + " ORDER BY id")
         .params(params)
@@ -477,19 +481,19 @@ public class DemandService {
               long id = rs.getLong("id");
               return new Demand(
                   id,
-                  rs.getString("code"),
+                  code(id),
                   rs.getString("title"),
                   rs.getString("type"),
                   rs.getLong("business_unit_id"),
                   rs.getLong("requester_person_id"),
                   Sql.longOrNull(rs, "sponsor_person_id"),
                   rs.getString("problem"),
-                  rs.getString("proposed_solution"),
+                  Sql.text(rs, "proposed_solution"),
                   rs.getString("expected_benefits"),
                   benefits.getOrDefault(id, List.of()),
                   rs.getString("urgency"),
                   Sql.date(rs, "desired_date"),
-                  rs.getString("deadline_reason"),
+                  Sql.text(rs, "deadline_reason"),
                   rs.getBoolean("regulatory"),
                   Sql.longOrNull(rs, "affected_users"),
                   Sql.decimal(rs, "estimated_budget"),
@@ -507,7 +511,7 @@ public class DemandService {
                       Sql.longOrNull(rs, "assessor_person_id"),
                       Sql.date(rs, "planned_start"),
                       Sql.date(rs, "planned_end"),
-                      rs.getString("decision_note"),
+                      Sql.text(rs, "decision_note"),
                       Sql.longOrNull(rs, "project_id")),
                   history.getOrDefault(id, List.of()),
                   Sql.audit(rs));

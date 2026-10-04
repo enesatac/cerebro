@@ -60,20 +60,19 @@ public class UserService {
     validate(input, null, actor);
     Audit audit = stamp.created(actor);
     long id =
+        Sql.insert(
         Sql.audit(
                 jdbc.sql(
                     "INSERT INTO user_accounts (display_name, email, person_id, active, "
                         + Sql.AUDIT_COLUMNS
                         + ") VALUES (:displayName, :email, :personId, :active, "
                         + Sql.AUDIT_VALUES
-                        + ") RETURNING id"),
+                        + ")"),
                 audit)
             .param("displayName", input.displayName())
             .param("email", input.email())
             .param("personId", input.personId())
-            .param("active", input.active())
-            .query(Long.class)
-            .single();
+            .param("active", Sql.flag(input.active())));
     saveRoles(id, input.roleIds());
     return find(id);
   }
@@ -92,7 +91,7 @@ public class UserService {
         .param("displayName", input.displayName())
         .param("email", input.email())
         .param("personId", input.personId())
-        .param("active", input.active())
+        .param("active", Sql.flag(input.active()))
         .param("id", id)
         .update();
     jdbc.sql("DELETE FROM user_roles WHERE user_account_id = :id").param("id", id).update();
@@ -161,7 +160,7 @@ public class UserService {
 
   private boolean holdsSystemRole(List<Long> roleIds) {
     Set<Long> system =
-        new HashSet<>(jdbc.sql("SELECT id FROM roles WHERE system").query(Long.class).list());
+        new HashSet<>(jdbc.sql("SELECT id FROM roles WHERE system_role = 1").query(Long.class).list());
     return roleIds.stream().anyMatch(system::contains);
   }
 
@@ -169,7 +168,7 @@ public class UserService {
     int position = 0;
     for (Long roleId : new LinkedHashSet<>(roleIds)) {
       jdbc.sql(
-              "INSERT INTO user_roles (user_account_id, role_id, position) VALUES (:user, :role,"
+              "INSERT INTO user_roles (user_account_id, role_id, sort_order) VALUES (:user, :role,"
                   + " :position)")
           .param("user", userId)
           .param("role", roleId)
@@ -190,7 +189,7 @@ public class UserService {
 
   private List<UserAccount> load(String where, Map<String, Object> params) {
     Map<Long, List<Long>> roles = new java.util.HashMap<>();
-    jdbc.sql("SELECT user_account_id, role_id FROM user_roles ORDER BY position, role_id")
+    jdbc.sql("SELECT user_account_id, role_id FROM user_roles ORDER BY sort_order, role_id")
         .query(
             rs -> {
               roles

@@ -58,18 +58,17 @@ public class RoleService {
     validate(input, null);
     Audit audit = stamp.created(actor);
     long id =
+        Sql.insert(
         Sql.audit(
                 jdbc.sql(
-                    "INSERT INTO roles (name, description, system, "
+                    "INSERT INTO roles (name, description, system_role, "
                         + Sql.AUDIT_COLUMNS
-                        + ") VALUES (:name, :description, false, "
+                        + ") VALUES (:name, :description, 0, "
                         + Sql.AUDIT_VALUES
-                        + ") RETURNING id"),
+                        + ")"),
                 audit)
             .param("name", input.name().trim())
-            .param("description", input.description().trim())
-            .query(Long.class)
-            .single();
+            .param("description", input.description().trim()));
     savePrivileges(id, input.privileges());
     return find(id);
   }
@@ -177,9 +176,9 @@ public class RoleService {
                 new Role(
                     rs.getLong("id"),
                     rs.getString("name"),
-                    rs.getString("description"),
+                    Sql.text(rs, "description"),
                     Privileges.normalize(privileges.getOrDefault(rs.getLong("id"), List.of())),
-                    rs.getBoolean("system"),
+                    rs.getInt("system_role") == 1,
                     rs.getInt("holders"),
                     Sql.audit(rs)))
         .list();

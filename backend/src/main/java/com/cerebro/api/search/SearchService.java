@@ -49,8 +49,8 @@ public class SearchService {
                         List.of(
                             rs.getString("name"),
                             rs.getString("code"),
-                            rs.getString("short_description")));
-                fields.addAll(Sql.textArray(rs, "tags"));
+                            Sql.text(rs, "short_description")));
+                fields.addAll(Sql.jsonList(rs, "tags"));
                 if (Texts.matchesSearch(term, fields)) {
                   results.add(
                       new SearchResult(
@@ -58,7 +58,7 @@ public class SearchService {
                           rs.getLong("id"),
                           rs.getString("name"),
                           rs.getString("code"),
-                          rs.getString("short_description")));
+                          Sql.text(rs, "short_description")));
                 }
               });
     }
@@ -71,9 +71,9 @@ public class SearchService {
                         List.of(
                             rs.getString("name"),
                             rs.getString("code"),
-                            rs.getString("short_name"),
-                            rs.getString("description")));
-                fields.addAll(Sql.textArray(rs, "tags"));
+                            Sql.text(rs, "short_name"),
+                            Sql.text(rs, "description")));
+                fields.addAll(Sql.jsonList(rs, "tags"));
                 if (Texts.matchesSearch(term, fields)) {
                   results.add(
                       new SearchResult(
@@ -81,7 +81,7 @@ public class SearchService {
                           rs.getLong("id"),
                           rs.getString("name"),
                           rs.getString("code"),
-                          rs.getString("description")));
+                          Sql.text(rs, "description")));
                 }
               });
     }
@@ -90,14 +90,14 @@ public class SearchService {
           .query(
               rs -> {
                 if (Texts.matchesSearch(
-                    term, List.of(rs.getString("name"), rs.getString("description")))) {
+                    term, List.of(rs.getString("name"), Sql.text(rs, "description")))) {
                   results.add(
                       new SearchResult(
                           "team",
                           rs.getLong("id"),
                           rs.getString("name"),
                           "Ekip",
-                          rs.getString("description")));
+                          Sql.text(rs, "description")));
                 }
               });
     }
@@ -106,13 +106,13 @@ public class SearchService {
           .query(
               rs -> {
                 if (Texts.matchesSearch(
-                    term, List.of(rs.getString("full_name"), rs.getString("job_title")))) {
+                    term, List.of(rs.getString("full_name"), Sql.text(rs, "job_title")))) {
                   results.add(
                       new SearchResult(
                           "person",
                           rs.getLong("id"),
                           rs.getString("full_name"),
-                          rs.getString("job_title"),
+                          Sql.text(rs, "job_title"),
                           null));
                 }
               });
@@ -128,7 +128,7 @@ public class SearchService {
                           rs.getLong("id"),
                           rs.getString("name"),
                           rs.getString("category"),
-                          rs.getString("description")));
+                          Sql.text(rs, "description")));
                 }
               });
     }

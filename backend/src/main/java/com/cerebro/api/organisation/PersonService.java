@@ -66,16 +66,15 @@ public class PersonService {
     access.require("people:edit");
     validate(input, null);
     long id =
+        Sql.insert(
         jdbc.sql(
                 "INSERT INTO people (full_name, job_title, email, business_unit_id, location)"
-                    + " VALUES (:fullName, :jobTitle, :email, :unit, :location) RETURNING id")
+                    + " VALUES (:fullName, :jobTitle, :email, :unit, :location)")
             .param("fullName", input.fullName())
             .param("jobTitle", input.jobTitle())
             .param("email", input.email())
             .param("unit", input.businessUnitId())
-            .param("location", input.location())
-            .query(Long.class)
-            .single();
+            .param("location", input.location()));
     return find(id);
   }
 
@@ -141,7 +140,8 @@ public class PersonService {
             ref(
                 "uygulama/proje rolü",
                 count(
-                    "SELECT count(DISTINCT coalesce('a' || application_id, 'p' || project_id))"
+                    "SELECT count(DISTINCT CASE WHEN application_id IS NOT NULL THEN 'a' || application_id"
+                        + " ELSE 'p' || project_id END)"
                         + " FROM role_assignments WHERE person_id = :id",
                     id)),
             ref(
@@ -222,16 +222,17 @@ public class PersonService {
 
     List<TeamLink> teams =
         jdbc.sql(
-                "SELECT t.id, t.name, t.manager_person_id = :id AS manager, EXISTS (SELECT 1"
-                    + " FROM team_members m WHERE m.team_id = t.id AND m.person_id = :id) AS"
-                    + " member FROM teams t ORDER BY t.id")
+                "SELECT t.id, t.name, CASE WHEN t.manager_person_id = :id THEN 1 ELSE 0 END AS"
+                    + " is_manager, CASE WHEN EXISTS (SELECT 1 FROM team_members m WHERE"
+                    + " m.team_id = t.id AND m.person_id = :id) THEN 1 ELSE 0 END AS is_member"
+                    + " FROM teams t ORDER BY t.id")
             .param("id", personId)
             .query(
                 (rs, row) ->
                     new TeamLink(
                         new EntityRef(rs.getLong("id"), rs.getString("name")),
-                        rs.getBoolean("manager"),
-                        rs.getBoolean("member")))
+                        rs.getInt("is_manager") == 1,
+                        rs.getInt("is_member") == 1))
             .list()
             .stream()
             .filter(link -> link.manager() || link.member())
@@ -363,12 +364,12 @@ public class PersonService {
 
     Load loadToday =
         jdbc.sql(
-                "SELECT count(*)::int AS count, coalesce(sum(percent), 0)::int AS percent FROM"
+                "SELECT count(*) AS allocation_count, coalesce(sum(percent), 0) AS load_percent FROM"
                     + " resource_allocations WHERE person_id = :id AND start_date <= :today AND"
                     + " :today <= end_date")
             .param("id", personId)
             .param("today", today)
-            .query((rs, row) -> new Load(rs.getInt("count"), rs.getInt("percent")))
+            .query((rs, row) -> new Load(rs.getInt("allocation_count"), rs.getInt("load_percent")))
             .single();
 
     List<LeaveItem> leaves =
@@ -429,11 +430,11 @@ public class PersonService {
       jdbc.sql(
               "SELECT "
                   + ownerColumn
-                  + " AS owner, team_id, responsibility FROM team_assignments WHERE team_id ="
-                  + " ANY(:teams) AND "
+                  + " AS owner, team_id, responsibility FROM team_assignments WHERE team_id IN"
+                  + " (:teams) AND "
                   + ownerColumn
                   + " IS NOT NULL ORDER BY id")
-          .param("teams", Sql.longs(teamIds))
+          .param("teams", teamIds)
           .query(
               rs -> {
                 EntityRef team = Names.ref(teamNames, rs.getLong("team_id"));
@@ -514,7 +515,7 @@ public class PersonService {
     return new Person(
         rs.getLong("id"),
         rs.getString("full_name"),
-        rs.getString("job_title"),
+        Sql.text(rs, "job_title"),
         rs.getString("email"),
         Sql.longOrNull(rs, "business_unit_id"),
         rs.getString("location"));

@@ -5,6 +5,7 @@ import com.cerebro.api.shared.error.ValidationException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -29,10 +30,7 @@ public class Checks {
   }
 
   public boolean exists(String table, long id) {
-    return jdbc.sql("SELECT EXISTS (SELECT 1 FROM " + table + " WHERE id = :id)")
-        .param("id", id)
-        .query(Boolean.class)
-        .single();
+    return Sql.exists(jdbc, "SELECT 1 FROM " + table + " WHERE id = :id", Map.of("id", id));
   }
 
   /** Throws when any non-null id does not exist in {@code table}. */
@@ -43,8 +41,8 @@ public class Checks {
     }
     Set<Long> known =
         new HashSet<>(
-            jdbc.sql("SELECT id FROM " + table + " WHERE id = ANY(:ids)")
-                .param("ids", Sql.longs(new HashSet<>(wanted)))
+            jdbc.sql("SELECT id FROM " + table + " WHERE id IN (:ids)")
+                .param("ids", new HashSet<>(wanted))
                 .query(Long.class)
                 .list());
     List<Long> unknown = wanted.stream().filter(id -> !known.contains(id)).toList();
@@ -64,11 +62,11 @@ public class Checks {
       String table, String column, String value, Long excludeId, String message, String field) {
     String needle = Texts.foldForCompare(value);
     boolean taken =
-        jdbc.sql("SELECT id, " + column + " AS value FROM " + table)
+        jdbc.sql("SELECT id, " + column + " AS val FROM " + table)
             .query(
                 (rs, row) ->
                     rs.getLong("id") != (excludeId == null ? -1 : excludeId)
-                        && Texts.foldForCompare(rs.getString("value")).equals(needle))
+                        && Texts.foldForCompare(rs.getString("val")).equals(needle))
             .list()
             .contains(true);
     if (taken) {

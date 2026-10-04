@@ -1,5 +1,6 @@
 package com.cerebro.api.access;
 
+import com.cerebro.api.security.SecurityProperties;
 import com.cerebro.api.shared.error.UnauthenticatedException;
 import java.util.Optional;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -12,7 +13,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 
 /**
  * Who is calling: the authenticated identity (corporate SSO, or the demo sign-in locally) mapped to
- * an active Cerebro account by email. Having an SSO identity is not enough — the person needs an
+ * an active Cerebro account by email (the OIDC claim in {@code cerebro.security.user-claim}). Having an SSO identity is not enough — the person needs an
  * active account with roles. Resolved once per request.
  */
 @Component
@@ -21,9 +22,11 @@ public class CurrentUser {
   private static final String CACHE = CurrentUser.class.getName();
 
   private final AccountRepository accounts;
+  private final SecurityProperties properties;
 
-  public CurrentUser(AccountRepository accounts) {
+  public CurrentUser(AccountRepository accounts, SecurityProperties properties) {
     this.accounts = accounts;
+    this.properties = properties;
   }
 
   public SessionUser require() {
@@ -61,7 +64,7 @@ public class CurrentUser {
     }
     String email =
         authentication.getPrincipal() instanceof OidcUser oidc
-            ? oidc.getEmail()
+            ? oidc.getClaimAsString(properties.userClaim())
             : authentication.getName();
     return email == null ? Optional.empty() : accounts.findActiveByEmail(email);
   }

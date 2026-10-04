@@ -1,13 +1,26 @@
+# Cerebro: the web app and its API in one deployable. Values that differ per environment come
+# from the environment (OpenShift ConfigMap / Secret), never from the repository.
 spring:
   application:
-    name: cerebro-api
+    name: cerebro
   datasource:
-    url: ${CEREBRO_DB_URL:jdbc:postgresql://localhost:5432/cerebro}
-    username: ${CEREBRO_DB_USER:cerebro}
+    url: ${CEREBRO_DB_URL:}
+    username: ${CEREBRO_DB_USER:}
     # Never commit a password: supplied by the environment or the secrets manager.
     password: ${CEREBRO_DB_PASSWORD:}
+    hikari:
+      maximum-pool-size: ${CEREBRO_DB_POOL_SIZE:10}
+      data-source-properties:
+        # Send the session time zone as an offset: avoids ORA-01882 on clients whose zone
+        # region the database does not know.
+        oracle.jdbc.timezoneAsRegion: false
   flyway:
     locations: classpath:db/migration
+  session:
+    jdbc:
+      # The tables are created by Flyway (V4__http_sessions.sql).
+      initialize-schema: never
+    timeout: 8h
   mvc:
     problemdetails:
       enabled: true
@@ -20,7 +33,12 @@ spring:
     default-property-inclusion: always
 
 server:
+  # TLS ends at the OpenShift route; trust its X-Forwarded-* headers for scheme and host.
   forward-headers-strategy: framework
+  shutdown: graceful
+  compression:
+    enabled: true
+    mime-types: text/html,text/css,application/javascript,application/json
   servlet:
     session:
       timeout: 8h
@@ -38,6 +56,10 @@ management:
     health:
       probes:
         enabled: true
+      group:
+        # Not ready (no traffic) while the database is unreachable; liveness stays independent.
+        readiness:
+          include: readinessState,db
 
 springdoc:
   api-docs:
@@ -52,3 +74,4 @@ cerebro:
   security:
     demo-sign-in: false
     bootstrap-admin-email: ${CEREBRO_BOOTSTRAP_ADMIN_EMAIL:}
+    user-claim: ${CEREBRO_OIDC_USER_CLAIM:email}

@@ -1,6 +1,6 @@
 /**
  * Contract test between the two implementations of `Repositories`: the in-memory mock and the
- * Cerebro API (cerebro-api). Both start from the same demo data, so every read must return the
+ * Cerebro API (../backend). Both start from the same demo data, so every read must return the
  * same thing and every write must have the same effect and the same validation errors.
  *
  * Opt-in: needs a freshly started API with the demo data (`cerebro.demo-data=true`, an empty

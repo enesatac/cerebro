@@ -1,5 +1,8 @@
 package com.cerebro.api.security;
 
+import com.cerebro.api.shared.Sql;
+import java.util.Locale;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;
@@ -36,37 +39,48 @@ class BootstrapAdministrator implements ApplicationRunner {
       return;
     }
     boolean administered =
-        jdbc.sql(
-                """
-                SELECT EXISTS (
-                  SELECT 1 FROM user_accounts u
-                  JOIN user_roles ur ON ur.user_account_id = u.id
-                  JOIN roles r ON r.id = ur.role_id
-                  WHERE u.active AND r.system)
-                """)
-            .query(Boolean.class)
-            .single();
+        Sql.exists(
+            jdbc,
+            """
+            SELECT 1 FROM user_accounts u
+            JOIN user_roles ur ON ur.user_account_id = u.id
+            JOIN roles r ON r.id = ur.role_id
+            WHERE u.active = 1 AND r.system_role = 1
+            """,
+            Map.of());
     if (administered) {
       return;
     }
-    long accountId =
-        jdbc.sql(
-                """
-                INSERT INTO user_accounts (display_name, email) VALUES (:email, lower(:email))
-                ON CONFLICT (email) DO UPDATE SET active = true
-                RETURNING id
-                """)
-            .param("email", email)
+    String address = email.trim().toLowerCase(Locale.ROOT);
+    Long existing =
+        jdbc.sql("SELECT id FROM user_accounts WHERE lower(email) = :email")
+            .param("email", address)
             .query(Long.class)
-            .single();
-    jdbc.sql(
-            """
-            INSERT INTO user_roles (user_account_id, role_id)
-            SELECT :account, id FROM roles WHERE system
-            ON CONFLICT DO NOTHING
-            """)
-        .param("account", accountId)
-        .update();
+            .optional()
+            .orElse(null);
+    long accountId;
+    if (existing == null) {
+      accountId =
+          Sql.insert(
+              jdbc.sql("INSERT INTO user_accounts (display_name, email) VALUES (:email, :email)")
+                  .param("email", address));
+    } else {
+      accountId = existing;
+      jdbc.sql("UPDATE user_accounts SET active = 1 WHERE id = :id").param("id", accountId).update();
+    }
+    boolean holds =
+        Sql.exists(
+            jdbc,
+            "SELECT 1 FROM user_roles ur JOIN roles r ON r.id = ur.role_id"
+                + " WHERE ur.user_account_id = :account AND r.system_role = 1",
+            Map.of("account", accountId));
+    if (!holds) {
+      jdbc.sql(
+              "INSERT INTO user_roles (user_account_id, role_id) SELECT :account, id FROM roles"
+                  + " WHERE system_role = 1")
+          .param("account", accountId)
+          .update();
+    }
     log.warn("Granted the system administrator role to {} (bootstrap)", email);
   }
 }

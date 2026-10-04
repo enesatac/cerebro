@@ -30,7 +30,7 @@ Demand ── businessUnitId ──► BusinessUnit;  requesterId, sponsorId, as
 
 1. **References are ids.** Never names. Names are resolved via lookups or read models. Ids are
    numeric primary keys, unique **per table** (application 2 and project 2 can coexist), each fed
-   by its own database sequence — see `docs/database-schema.sql`.
+   by its own database sequence — see `backend/src/main/resources/db/migration/`.
 2. **Roles are contextual** (`RoleAssignment { personId, role }` on applications and projects). A
    person can be technical owner of one application and stakeholder on another.
 3. **Team assignments carry a responsibility** (`development`, `support`, `operations`,

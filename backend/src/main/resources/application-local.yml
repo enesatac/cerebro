@@ -1,8 +1,8 @@
-# Local development: database from docker compose, no identity provider. The sign-in screen lists
-# the accounts (demo sign-in) and an empty database is filled with the demo organisation.
+# Local development on Oracle Database Free from docker compose (repo root), no identity provider:
+# the sign-in screen lists the accounts and an empty database gets the demo organisation.
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/cerebro
+    url: jdbc:oracle:thin:@//localhost:1521/FREEPDB1
     username: cerebro
     password: cerebro-local
 

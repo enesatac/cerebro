@@ -25,6 +25,7 @@ import com.cerebro.api.portfolio.PortfolioChildren;
 import com.cerebro.api.projects.Project;
 import com.cerebro.api.projects.ProjectStore;
 import com.cerebro.api.shared.Collation;
+import com.cerebro.api.shared.Sql;
 import com.cerebro.api.shared.EntityRef;
 import com.cerebro.api.technologies.Technology;
 import java.time.Clock;
@@ -197,7 +198,7 @@ public class GovernanceService {
                         rs.getLong("id"),
                         rs.getString("name"),
                         rs.getString("category"),
-                        rs.getString("description"),
+                        Sql.text(rs, "description"),
                         rs.getString("status")))
             .list();
     return new Snapshot(
