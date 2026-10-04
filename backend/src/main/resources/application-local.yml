@@ -1,0 +1,19 @@
+# Local development: database from docker compose, no identity provider. The sign-in screen lists
+# the accounts (demo sign-in) and an empty database is filled with the demo organisation.
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/cerebro
+    username: cerebro
+    password: cerebro-local
+
+server:
+  servlet:
+    session:
+      cookie:
+        secure: false
+
+cerebro:
+  demo-data: true
+  security:
+    demo-sign-in: true
+    bootstrap-admin-email: gelistirici@cerebro.local

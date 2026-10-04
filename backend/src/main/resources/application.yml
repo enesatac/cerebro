@@ -1,0 +1,54 @@
+spring:
+  application:
+    name: cerebro-api
+  datasource:
+    url: ${CEREBRO_DB_URL:jdbc:postgresql://localhost:5432/cerebro}
+    username: ${CEREBRO_DB_USER:cerebro}
+    # Never commit a password: supplied by the environment or the secrets manager.
+    password: ${CEREBRO_DB_PASSWORD:}
+  flyway:
+    locations: classpath:db/migration
+  mvc:
+    problemdetails:
+      enabled: true
+  servlet:
+    multipart:
+      # Attachments are at most 20 MB (checked again by the service).
+      max-file-size: 20MB
+      max-request-size: 21MB
+  jackson:
+    default-property-inclusion: always
+
+server:
+  forward-headers-strategy: framework
+  servlet:
+    session:
+      timeout: 8h
+      cookie:
+        http-only: true
+        secure: true
+        same-site: lax
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+
+cerebro:
+  # "Today" for overdue milestones, review intervals and upcoming leaves.
+  time-zone: ${CEREBRO_TIME_ZONE:Europe/Istanbul}
+  demo-data: false
+  security:
+    demo-sign-in: false
+    bootstrap-admin-email: ${CEREBRO_BOOTSTRAP_ADMIN_EMAIL:}

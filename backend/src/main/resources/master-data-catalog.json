@@ -1,0 +1,557 @@
+[
+  {
+    "key": "applicationLifecycles",
+    "label": "Yaşam döngüsü aşamaları",
+    "systemCodes": [
+      "planned",
+      "development",
+      "active",
+      "maintenance",
+      "deprecated",
+      "retired"
+    ],
+    "extensible": false,
+    "colored": true
+  },
+  {
+    "key": "applicationTypes",
+    "label": "Uygulama türleri",
+    "systemCodes": [
+      "web-application",
+      "api-service",
+      "integration-platform",
+      "data-platform",
+      "batch-processing",
+      "mobile-backend",
+      "saas-product"
+    ],
+    "extensible": true,
+    "colored": false
+  },
+  {
+    "key": "operationalStatuses",
+    "label": "Çalışma durumları",
+    "systemCodes": [
+      "operational",
+      "degraded",
+      "outage",
+      "not-deployed"
+    ],
+    "extensible": false,
+    "colored": true
+  },
+  {
+    "key": "hostingModels",
+    "label": "Barındırma modelleri",
+    "systemCodes": [
+      "on-premises",
+      "private-cloud",
+      "public-cloud",
+      "hybrid",
+      "saas"
+    ],
+    "extensible": true,
+    "colored": false
+  },
+  {
+    "key": "environmentTypes",
+    "label": "Ortam türleri",
+    "systemCodes": [
+      "development",
+      "test",
+      "uat",
+      "pre-production",
+      "production",
+      "disaster-recovery"
+    ],
+    "extensible": true,
+    "colored": false
+  },
+  {
+    "key": "environmentStatuses",
+    "label": "Ortam durumları",
+    "systemCodes": [
+      "available",
+      "degraded",
+      "unavailable",
+      "decommissioned"
+    ],
+    "extensible": true,
+    "colored": true
+  },
+  {
+    "key": "sourceRepositoryTypes",
+    "label": "Kod deposu türleri",
+    "systemCodes": [
+      "frontend",
+      "backend",
+      "infrastructure",
+      "documentation",
+      "library",
+      "other"
+    ],
+    "extensible": true,
+    "colored": false
+  },
+  {
+    "key": "technologyCategories",
+    "label": "Teknoloji kategorileri ve katmanları",
+    "systemCodes": [
+      "frontend",
+      "backend",
+      "database",
+      "messaging",
+      "infrastructure",
+      "devops",
+      "monitoring",
+      "testing"
+    ],
+    "extensible": true,
+    "colored": false
+  },
+  {
+    "key": "technologyStatuses",
+    "label": "Teknoloji durumları",
+    "systemCodes": [
+      "preferred",
+      "supported",
+      "deprecated",
+      "retired"
+    ],
+    "extensible": false,
+    "colored": true
+  },
+  {
+    "key": "projectStatuses",
+    "label": "Proje durumları",
+    "systemCodes": [
+      "proposed",
+      "approved",
+      "in-progress",
+      "on-hold",
+      "completed",
+      "cancelled"
+    ],
+    "extensible": false,
+    "colored": true
+  },
+  {
+    "key": "projectHealths",
+    "label": "Proje sağlık durumları",
+    "systemCodes": [
+      "on-track",
+      "at-risk",
+      "critical",
+      "completed"
+    ],
+    "extensible": false,
+    "colored": true
+  },
+  {
+    "key": "projectTypes",
+    "label": "Proje türleri",
+    "systemCodes": [
+      "new-product",
+      "modernisation",
+      "integration",
+      "regulatory",
+      "infrastructure",
+      "decommissioning"
+    ],
+    "extensible": true,
+    "colored": false
+  },
+  {
+    "key": "projectPhases",
+    "label": "Proje aşamaları",
+    "systemCodes": [
+      "initiation",
+      "analysis",
+      "design",
+      "build",
+      "test",
+      "deployment",
+      "hypercare",
+      "closure"
+    ],
+    "extensible": true,
+    "colored": false
+  },
+  {
+    "key": "milestoneStatuses",
+    "label": "Kilometre taşı durumları",
+    "systemCodes": [
+      "planned",
+      "in-progress",
+      "completed",
+      "at-risk",
+      "missed"
+    ],
+    "extensible": false,
+    "colored": true
+  },
+  {
+    "key": "applicationImpactTypes",
+    "label": "Uygulama etki türleri",
+    "systemCodes": [
+      "creates",
+      "modifies",
+      "integrates-with",
+      "decommissions"
+    ],
+    "extensible": true,
+    "colored": false
+  },
+  {
+    "key": "confidentialityLevels",
+    "label": "Gizlilik düzeyleri",
+    "systemCodes": [
+      "public",
+      "internal",
+      "confidential",
+      "restricted"
+    ],
+    "extensible": true,
+    "colored": false
+  },
+  {
+    "key": "currencies",
+    "label": "Para birimleri",
+    "systemCodes": [
+      "EUR",
+      "USD",
+      "GBP",
+      "TRY"
+    ],
+    "extensible": true,
+    "colored": false
+  },
+  {
+    "key": "riskCategories",
+    "label": "Risk kategorileri",
+    "systemCodes": [
+      "technical",
+      "security",
+      "operational",
+      "compliance",
+      "delivery",
+      "financial",
+      "vendor"
+    ],
+    "extensible": true,
+    "colored": false
+  },
+  {
+    "key": "riskStatuses",
+    "label": "Risk durumları",
+    "systemCodes": [
+      "open",
+      "monitoring",
+      "mitigated",
+      "accepted",
+      "closed"
+    ],
+    "extensible": false,
+    "colored": true
+  },
+  {
+    "key": "escalationStatuses",
+    "label": "Eskalasyon durumları",
+    "systemCodes": [
+      "open",
+      "in-progress",
+      "resolved",
+      "closed"
+    ],
+    "extensible": false,
+    "colored": true
+  },
+  {
+    "key": "decisionStatuses",
+    "label": "Karar durumları",
+    "systemCodes": [
+      "proposed",
+      "accepted",
+      "rejected",
+      "superseded",
+      "deprecated"
+    ],
+    "extensible": false,
+    "colored": true
+  },
+  {
+    "key": "dependencyTypes",
+    "label": "Bağımlılık türleri",
+    "systemCodes": [
+      "runtime",
+      "authentication",
+      "data",
+      "messaging",
+      "batch",
+      "build"
+    ],
+    "extensible": true,
+    "colored": false
+  },
+  {
+    "key": "integrationTypes",
+    "label": "Entegrasyon türleri",
+    "systemCodes": [
+      "rest-api",
+      "soap",
+      "graphql",
+      "kafka",
+      "rabbitmq",
+      "database",
+      "file-transfer",
+      "batch",
+      "event",
+      "other"
+    ],
+    "extensible": true,
+    "colored": false
+  },
+  {
+    "key": "integrationFrequencies",
+    "label": "Entegrasyon sıklıkları",
+    "systemCodes": [
+      "real-time",
+      "near-real-time",
+      "hourly",
+      "daily",
+      "on-demand"
+    ],
+    "extensible": true,
+    "colored": false
+  },
+  {
+    "key": "leaveTypes",
+    "label": "İzin türleri",
+    "systemCodes": [
+      "annual",
+      "sick",
+      "excuse",
+      "training",
+      "unpaid"
+    ],
+    "extensible": true,
+    "colored": true
+  },
+  {
+    "key": "criticalities",
+    "label": "Kritiklik ölçeği",
+    "systemCodes": [
+      "low",
+      "medium",
+      "high",
+      "critical"
+    ],
+    "extensible": false,
+    "colored": true
+  },
+  {
+    "key": "stakeholderRoles",
+    "label": "Paydaş rolleri",
+    "systemCodes": [
+      "business-owner",
+      "technical-owner",
+      "product-owner",
+      "sponsor",
+      "project-manager",
+      "technical-lead",
+      "analyst-lead",
+      "analyst",
+      "architect",
+      "developer",
+      "support",
+      "stakeholder"
+    ],
+    "extensible": true,
+    "colored": false
+  },
+  {
+    "key": "teamResponsibilities",
+    "label": "Ekip sorumlulukları",
+    "systemCodes": [
+      "development",
+      "support",
+      "operations",
+      "delivery"
+    ],
+    "extensible": true,
+    "colored": false
+  },
+  {
+    "key": "runbookLinkTypes",
+    "label": "Müdahale adres türleri",
+    "systemCodes": [
+      "monitoring",
+      "logs",
+      "health-check",
+      "dashboard",
+      "alerting",
+      "status-page",
+      "console",
+      "documentation",
+      "other"
+    ],
+    "extensible": true,
+    "colored": false
+  },
+  {
+    "key": "documentTypes",
+    "label": "Belge türleri",
+    "systemCodes": [
+      "architecture",
+      "security-assessment",
+      "operations-guide",
+      "user-guide",
+      "charter",
+      "requirements",
+      "design",
+      "test-report",
+      "go-live-approval",
+      "contract",
+      "license",
+      "meeting-notes",
+      "incident-report",
+      "business-case",
+      "offer",
+      "purchase-order",
+      "invoice",
+      "other"
+    ],
+    "extensible": true,
+    "colored": false
+  },
+  {
+    "key": "documentationLinkTypes",
+    "label": "Doküman türleri",
+    "systemCodes": [
+      "confluence",
+      "jira",
+      "repository",
+      "architecture",
+      "analysis",
+      "design",
+      "testing",
+      "deployment",
+      "runbook",
+      "monitoring",
+      "dashboard",
+      "other"
+    ],
+    "extensible": true,
+    "colored": false
+  },
+  {
+    "key": "demandStatuses",
+    "label": "Talep durumları",
+    "systemCodes": [
+      "submitted",
+      "in-review",
+      "needs-info",
+      "approved",
+      "scheduled",
+      "converted",
+      "rejected",
+      "withdrawn"
+    ],
+    "extensible": false,
+    "colored": true
+  },
+  {
+    "key": "demandTypes",
+    "label": "Talep türleri",
+    "systemCodes": [
+      "new-project",
+      "new-application",
+      "enhancement",
+      "integration",
+      "reporting",
+      "infrastructure",
+      "compliance"
+    ],
+    "extensible": true,
+    "colored": true
+  },
+  {
+    "key": "demandBenefitTypes",
+    "label": "Fayda türleri",
+    "systemCodes": [
+      "revenue",
+      "cost-saving",
+      "customer-experience",
+      "efficiency",
+      "compliance",
+      "risk-reduction"
+    ],
+    "extensible": true,
+    "colored": false
+  },
+  {
+    "key": "demandPriorities",
+    "label": "Talep öncelikleri",
+    "systemCodes": [
+      "p1",
+      "p2",
+      "p3",
+      "p4"
+    ],
+    "extensible": false,
+    "colored": true
+  },
+  {
+    "key": "contractTypes",
+    "label": "Sözleşme türleri",
+    "systemCodes": [
+      "license",
+      "subscription",
+      "professional-services",
+      "consulting",
+      "outsourcing",
+      "hardware",
+      "maintenance-support",
+      "other"
+    ],
+    "extensible": true,
+    "colored": true
+  },
+  {
+    "key": "contractStatuses",
+    "label": "Sözleşme durumları",
+    "systemCodes": [
+      "draft",
+      "in-procurement",
+      "active",
+      "expired",
+      "terminated"
+    ],
+    "extensible": false,
+    "colored": true
+  },
+  {
+    "key": "billingFrequencies",
+    "label": "Faturalama sıklıkları",
+    "systemCodes": [
+      "one-time",
+      "monthly",
+      "quarterly",
+      "yearly"
+    ],
+    "extensible": true,
+    "colored": false
+  },
+  {
+    "key": "paymentStatuses",
+    "label": "Ödeme durumları",
+    "systemCodes": [
+      "planned",
+      "invoiced",
+      "paid",
+      "cancelled"
+    ],
+    "extensible": false,
+    "colored": true
+  }
+]

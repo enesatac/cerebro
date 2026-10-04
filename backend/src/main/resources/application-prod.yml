@@ -1,0 +1,18 @@
+# Corporate SSO (OIDC). Values come from the environment / secrets manager, never from the repo.
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          corporate:
+            provider: corporate
+            client-id: ${CEREBRO_OIDC_CLIENT_ID}
+            client-secret: ${CEREBRO_OIDC_CLIENT_SECRET}
+            scope: openid,profile,email
+        provider:
+          corporate:
+            issuer-uri: ${CEREBRO_OIDC_ISSUER_URI}
+
+springdoc:
+  swagger-ui:
+    enabled: false
