@@ -22,6 +22,7 @@ import { ProjectsTab } from '../components/detail/ProjectsTab';
 import { RepositoriesTab } from '../components/detail/RepositoriesTab';
 import { RisksEscalationsTab } from '../components/detail/RisksEscalationsTab';
 import { TechnicalTab } from '../components/detail/TechnicalTab';
+import { RelatedReleasesTab } from '@/domains/releases/components/RelatedReleasesTab';
 import { RunbookTab } from '@/domains/runbooks/components/RunbookTab';
 import type { Application } from '../types';
 import {
@@ -29,6 +30,7 @@ import {
   APPLICATION_DETAIL_TABS,
   type ApplicationDetailTab,
 } from '../utils/applicationTabs';
+import { usePrivilege } from '@/domains/auth/api/queries';
 import { EditAction } from '@/domains/auth/components/RecordActions';
 import { GuardedActionMenu } from '@/domains/auth/components/GuardedActionMenu';
 import { MasterBadge } from '@/domains/master-data/components/MasterBadge';
@@ -46,6 +48,9 @@ const TAB_CONTENT: Record<ApplicationDetailTab, (application: Application) => Re
   repositories: (a) => <RepositoriesTab application={a} />,
   documentation: (a) => <DocumentationTab application={a} />,
   projects: (a) => <ProjectsTab application={a} />,
+  releases: (a) => (
+    <RelatedReleasesTab owner={{ type: 'application', id: a.id }} ownerName={a.name} />
+  ),
   risks: (a) => <RisksEscalationsTab application={a} />,
   history: (a) => <HistoryTab application={a} />,
 };
@@ -70,6 +75,7 @@ export default function ApplicationDetailPage() {
   // Unknown or malformed ids resolve to 0, which no sequence ever produces → "not found".
   const applicationId = parseId(requestedId) ?? 0;
   const [activeTab, selectTab] = useTabParam(APPLICATION_DETAIL_TAB_IDS);
+  const canSeeReleases = usePrivilege('releases:view');
   const query = useApplication(applicationId);
 
   if (query.isPending) return <LoadingState label="Uygulama yükleniyor" rows={6} />;
@@ -143,6 +149,11 @@ export default function ApplicationDetailPage() {
                   privilege: 'connections:edit',
                 },
                 {
+                  label: 'Canlı geçiş ekle',
+                  to: paths.releases.create({ application: application.id }),
+                  privilege: 'releases:edit',
+                },
+                {
                   label: 'Risk kaydet',
                   to: paths.riskForms.create({ application: application.id }),
                   privilege: 'risks:edit',
@@ -172,11 +183,13 @@ export default function ApplicationDetailPage() {
       />
       <DetailTabs
         label="Uygulama bölümleri"
-        tabs={APPLICATION_DETAIL_TABS.map((tab) => ({
-          ...tab,
-          count: tabCount(tab.id, application),
-        }))}
-        active={activeTab}
+        tabs={APPLICATION_DETAIL_TABS.filter((tab) => tab.id !== 'releases' || canSeeReleases).map(
+          (tab) => ({
+            ...tab,
+            count: tabCount(tab.id, application),
+          }),
+        )}
+        active={activeTab === 'releases' && !canSeeReleases ? 'overview' : activeTab}
         onSelect={selectTab}
         renderPanel={(tab) => TAB_CONTENT[tab](application)}
       />

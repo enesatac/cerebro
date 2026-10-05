@@ -170,6 +170,9 @@ public class ProjectService {
         ref(
             "kaynak talep (bağlantı kaldırılır)",
             count("SELECT count(*) FROM demands WHERE project_id = :id", id)),
+        ref(
+            "canlı geçiş (proje bağı kaldırılır)",
+            count("SELECT count(*) FROM releases WHERE project_id = :id", id)),
         ref("ek dosya (silinir)", count("SELECT count(*) FROM attachments WHERE project_id = :id", id)));
   }
 

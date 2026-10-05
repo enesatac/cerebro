@@ -2,6 +2,7 @@ import type { ApplicationInput } from '@/domains/applications/types';
 import type { ContractInput } from '@/domains/contracts/types';
 import type { DemandInput } from '@/domains/demands/types';
 import type { LeaveInput } from '@/domains/leaves/types';
+import type { ReleaseInput } from '@/domains/releases/types';
 import type { AllocationInput } from '@/domains/resources/types';
 import type { ProjectInput } from '@/domains/projects/types';
 import type { MasterDataRepository } from '@/domains/master-data/api/MasterDataRepository';
@@ -121,6 +122,10 @@ function codesInUse(db: MockDatabase, key: MasterDataListKey): string[] {
       return db.procurementSteps.map((s) => s.type);
     case 'procurementStepStatuses':
       return db.procurementSteps.map((s) => s.status);
+    case 'releaseTypes':
+      return db.releases.map((r) => r.type);
+    case 'releaseStatuses':
+      return db.releases.map((r) => r.status);
   }
 }
 
@@ -361,6 +366,10 @@ export const codeChecks = {
     { list: 'currencies', codes: [c.currency], field: 'currency' },
     { list: 'billingFrequencies', codes: [c.billingFrequency], field: 'billingFrequency' },
     { list: 'paymentStatuses', codes: c.payments.map((p) => p.status), field: 'payments' },
+  ],
+  release: (r: Pick<ReleaseInput, 'type' | 'status'>): CodeCheck[] => [
+    { list: 'releaseTypes', codes: [r.type], field: 'type' },
+    { list: 'releaseStatuses', codes: [r.status], field: 'status' },
   ],
   integration: (i: Omit<MockDatabase['integrations'][number], 'id' | 'audit'>): CodeCheck[] => [
     { list: 'integrationTypes', codes: [i.type], field: 'type' },

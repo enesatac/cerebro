@@ -27,6 +27,7 @@ import type { MasterDataList, MasterDataUsage } from '@/domains/master-data/type
 import type { Person, PersonWorkload } from '@/domains/people/types';
 import type { ApplicationProjectLink, Project, ProjectListItem } from '@/domains/projects/types';
 import type { Allocation } from '@/domains/resources/types';
+import type { Release } from '@/domains/releases/types';
 import type { RelatedEntityFilter, Risk } from '@/domains/risks/types';
 import type { Runbook } from '@/domains/runbooks/types';
 import type { SearchResult } from '@/domains/search/types';
@@ -281,6 +282,12 @@ export function createHttpRepositories(http: HttpClient): Repositories {
       addNote: (contractId, input) =>
         http.post<ProcurementNote>(`/api/procurement/${contractId}/notes`, input),
       removeNote: (noteId) => http.delete(`/api/procurement/notes/${noteId}`),
+    },
+    releases: {
+      list: ({ from, to, applicationId, projectId } = {}) =>
+        http.get<Release[]>('/api/releases', { from, to, applicationId, projectId }),
+      getById: (id) => http.get<Release>(`/api/releases/${id}`),
+      ...writes<Release, Parameters<Repositories['releases']['create']>[0]>(http, '/api/releases'),
     },
     vendors: {
       list: () => http.get<Vendor[]>('/api/vendors'),

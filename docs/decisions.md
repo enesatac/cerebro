@@ -3,6 +3,19 @@
 Short records of decisions that shape the codebase. Newest first. Entries `B-…` were taken over
 from the separate backend repository when it was merged into this one.
 
+## D-032 · Production releases as their own record on a shared calendar (2026-10-05)
+
+Teams want every production release (canlı geçiş) of every application and project in one place,
+the way leaves are planned. A release is its own audited record — not a milestone or an
+environment change — because it carries its own number from change management (unique,
+case-insensitive), a window (date plus `HH:mm` start and end; an end before the start runs past
+midnight), a status and type from master data, an owner, whether the service is interrupted, a
+rollback plan and the outcome. It belongs to one application (and goes with it) and optionally to
+the project that delivers it (deleting the project only clears the link). `/releases` reuses the
+leave calendar's period logic and table layout with applications or projects as rows; each
+application and project has its own tab pre-filling new releases. Its own privilege module
+(`releases`) lets business units follow it read-only.
+
 ## D-031 · Seed migrations are frozen; new catalogue entries get their own (2026-10-05)
 
 V2 (privileges) and V3 (master data) are released migrations, and Flyway refuses a changed one.

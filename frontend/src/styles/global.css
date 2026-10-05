@@ -3575,3 +3575,18 @@ code {
   align-items: flex-end;
   justify-content: space-between;
 }
+
+/* Release calendar: several releases can share a day, so marks stack inside the day cell. */
+.c-release-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xxs);
+}
+
+.c-release-chip {
+  min-height: var(--spacing-m-base);
+}
+
+.c-release-chip--interruption {
+  border-left-style: double;
+}

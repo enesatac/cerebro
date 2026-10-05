@@ -186,6 +186,9 @@ public class PersonService {
             ref(
                 "satın alma notu",
                 count("SELECT count(*) FROM procurement_notes WHERE author_person_id = :id", id)),
+            ref(
+                "canlı geçiş sorumluluğu",
+                count("SELECT count(*) FROM releases WHERE owner_person_id = :id", id)),
             ref("kayıt geçmişi", count("SELECT " + audited, id)));
     return new DeletionImpact(
         references.references(),

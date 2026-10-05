@@ -47,6 +47,8 @@ export const MASTER_DATA_LIST_KEYS = [
   'paymentStatuses',
   'procurementSteps',
   'procurementStepStatuses',
+  'releaseTypes',
+  'releaseStatuses',
 ] as const;
 export type MasterDataListKey = (typeof MASTER_DATA_LIST_KEYS)[number];
 

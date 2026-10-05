@@ -22,6 +22,7 @@ import {
 } from '@/domains/contracts/types';
 import { DECISION_STATUSES } from '@/domains/decisions/types';
 import { PROCUREMENT_STEP_STATUSES } from '@/domains/procurement/types';
+import { RELEASE_STATUSES } from '@/domains/releases/types';
 import {
   DEMAND_BENEFIT_TYPES,
   DEMAND_PRIORITIES,
@@ -502,6 +503,27 @@ export const MASTER_DATA_LISTS: readonly MasterDataListDefinition[] = [
     extensible: false,
     colored: true,
     usedIn: 'Satın alma takibi: adımlar ve panolar',
+  }),
+  define({
+    key: 'releaseTypes',
+    label: 'Canlı geçiş türleri',
+    description: 'Bir canlı geçişin niteliği: büyük sürüm, düzeltme, acil düzeltme, yapılandırma…',
+    group: 'applications',
+    systemCodes: [],
+    extensible: true,
+    colored: false,
+    usedIn: 'Canlı geçiş formu, takvimi ve listeleri',
+  }),
+  define({
+    key: 'releaseStatuses',
+    label: 'Canlı geçiş durumları',
+    description:
+      'Planlanan geçişten sonuca kadar. Tamamlanan ve geri alınan geçişler gerçekleşmiş sayılır; renkler takvimde kullanılır.',
+    group: 'applications',
+    systemCodes: RELEASE_STATUSES,
+    extensible: false,
+    colored: true,
+    usedIn: 'Canlı geçiş takvimi, listeleri ve özetleri',
   }),
 ];
 

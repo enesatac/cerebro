@@ -574,5 +574,26 @@
     ],
     "extensible": false,
     "colored": true
+  },
+  {
+    "key": "releaseTypes",
+    "label": "Canlı geçiş türleri",
+    "systemCodes": [],
+    "extensible": true,
+    "colored": false
+  },
+  {
+    "key": "releaseStatuses",
+    "label": "Canlı geçiş durumları",
+    "systemCodes": [
+      "planned",
+      "approved",
+      "in-progress",
+      "completed",
+      "rolled-back",
+      "cancelled"
+    ],
+    "extensible": false,
+    "colored": true
   }
 ]

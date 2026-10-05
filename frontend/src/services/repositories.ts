@@ -14,6 +14,7 @@ import type {
 } from '@/domains/contracts/api/ContractRepository';
 import type { LeaveRepository } from '@/domains/leaves/api/LeaveRepository';
 import type { ProcurementRepository } from '@/domains/procurement/api/ProcurementRepository';
+import type { ReleaseRepository } from '@/domains/releases/api/ReleaseRepository';
 import type { AttachmentRepository } from '@/domains/attachments/api/AttachmentRepository';
 import type { RunbookRepository } from '@/domains/runbooks/api/RunbookRepository';
 import type { AllocationRepository } from '@/domains/resources/api/AllocationRepository';
@@ -59,6 +60,7 @@ export interface Repositories {
   contracts: ContractRepository;
   vendors: VendorRepository;
   procurement: ProcurementRepository;
+  releases: ReleaseRepository;
 }
 
 /**

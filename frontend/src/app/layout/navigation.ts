@@ -9,6 +9,7 @@ import { FlagIconOutlinedRounded } from '@takeoff-icons/react/flag';
 import { FolderCopyIconOutlinedRounded } from '@takeoff-icons/react/folder-copy';
 import { GroupIconOutlinedRounded } from '@takeoff-icons/react/group';
 import { KeyIconOutlinedRounded } from '@takeoff-icons/react/key';
+import { SendIconOutlinedRounded } from '@takeoff-icons/react/send';
 import { ShoppingBagIconOutlinedRounded } from '@takeoff-icons/react/shopping-bag';
 import { StructureTreeIconOutlinedRounded } from '@takeoff-icons/react/structure-tree';
 import { TruckIconOutlinedRounded } from '@takeoff-icons/react/truck';
@@ -72,6 +73,12 @@ export const PRIMARY_NAVIGATION: NavigationItem[] = [
     to: paths.applications.list(),
     icon: CategoryIconOutlinedRounded,
     privilege: 'applications:view',
+  },
+  {
+    label: 'Canlı geçişler',
+    to: paths.releases.list(),
+    icon: SendIconOutlinedRounded,
+    privilege: 'releases:view',
   },
   {
     label: 'Bağlantılar',

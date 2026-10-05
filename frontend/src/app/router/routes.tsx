@@ -28,6 +28,9 @@ const DemandManagementPage = page(() => import('@/domains/demands/pages/DemandMa
 const ContractsPage = page(() => import('@/domains/contracts/pages/ContractsPage'));
 const ContractDetailPage = page(() => import('@/domains/contracts/pages/ContractDetailPage'));
 const ContractFormPage = page(() => import('@/domains/contracts/pages/ContractFormPage'));
+const ReleaseCalendarPage = page(() => import('@/domains/releases/pages/ReleaseCalendarPage'));
+const ReleaseDetailPage = page(() => import('@/domains/releases/pages/ReleaseDetailPage'));
+const ReleaseFormPage = page(() => import('@/domains/releases/pages/ReleaseFormPage'));
 const ProcurementDashboardPage = page(
   () => import('@/domains/procurement/pages/ProcurementDashboardPage'),
 );
@@ -126,6 +129,16 @@ export const routes: RouteObject[] = [
       {
         path: 'contracts/:contractId/edit',
         element: guarded(<ContractFormPage />, 'contracts:edit'),
+      },
+      { path: 'releases', element: guarded(<ReleaseCalendarPage />, 'releases:view') },
+      { path: 'releases/new', element: guarded(<ReleaseFormPage />, 'releases:edit') },
+      {
+        path: 'releases/:releaseId',
+        element: guarded(<ReleaseDetailPage />, 'releases:view'),
+      },
+      {
+        path: 'releases/:releaseId/edit',
+        element: guarded(<ReleaseFormPage />, 'releases:edit'),
       },
       {
         path: 'procurement',

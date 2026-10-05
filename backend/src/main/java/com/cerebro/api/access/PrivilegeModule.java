@@ -18,6 +18,7 @@ public enum PrivilegeModule {
   DASHBOARD("dashboard", VIEW),
   PROJECTS("projects", VIEW, EDIT, DELETE),
   APPLICATIONS("applications", VIEW, EDIT, DELETE),
+  RELEASES("releases", VIEW, EDIT, DELETE),
   CONNECTIONS("connections", VIEW, EDIT, DELETE),
   RISKS("risks", VIEW, EDIT, DELETE),
   CONTRACTS("contracts", VIEW, EDIT, DELETE),

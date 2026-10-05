@@ -51,6 +51,16 @@ export const PRIVILEGE_MODULES = [
     },
   },
   {
+    id: 'releases',
+    label: 'Canlı geçişler',
+    group: 'portfolio',
+    levels: {
+      view: 'Uygulama ve projelerin canlı geçiş takvimini ve geçiş detaylarını görür.',
+      edit: 'Canlı geçiş kaydeder, tarihini, durumunu ve sonucunu günceller.',
+      delete: 'Canlı geçiş kaydını siler.',
+    },
+  },
+  {
     id: 'connections',
     label: 'Bağlantılar',
     group: 'portfolio',

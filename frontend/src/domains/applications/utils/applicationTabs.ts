@@ -8,6 +8,7 @@ export const APPLICATION_DETAIL_TABS = [
   { id: 'repositories', label: 'Kod depoları' },
   { id: 'documentation', label: 'Dokümantasyon' },
   { id: 'projects', label: 'Projeler' },
+  { id: 'releases', label: 'Canlı geçişler' },
   { id: 'risks', label: 'Riskler ve Eskalasyonlar' },
   { id: 'history', label: 'Geçmiş' },
 ] as const;

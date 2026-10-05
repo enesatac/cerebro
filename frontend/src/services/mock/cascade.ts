@@ -68,6 +68,10 @@ export function applicationDeletionImpact(db: MockDatabase, id: EntityId): Delet
         label: 'sözleşme (bağlantı kaldırılır)',
         count: db.contracts.filter((c) => c.relatedApplicationIds.includes(id)).length,
       },
+      {
+        label: 'canlı geçiş (silinir)',
+        count: db.releases.filter((r) => r.applicationId === id).length,
+      },
       attachmentReference(db, { type: 'application', id }),
     ]),
   };
@@ -87,6 +91,7 @@ export function deleteApplicationCascade(db: MockDatabase, id: EntityId) {
   }
   unlinkRelated(db, 'relatedApplicationIds', id);
   db.runbooks = db.runbooks.filter((r) => r.applicationId !== id);
+  db.releases = db.releases.filter((r) => r.applicationId !== id);
   for (const row of [...db.demands, ...db.contracts]) {
     row.relatedApplicationIds = row.relatedApplicationIds.filter((value) => value !== id);
   }
@@ -118,6 +123,10 @@ export function projectDeletionImpact(db: MockDatabase, id: EntityId): DeletionI
         label: 'kaynak talep (bağlantı kaldırılır)',
         count: db.demands.filter((d) => d.assessment.projectId === id).length,
       },
+      {
+        label: 'canlı geçiş (proje bağı kaldırılır)',
+        count: db.releases.filter((r) => r.projectId === id).length,
+      },
       attachmentReference(db, { type: 'project', id }),
     ]),
   };
@@ -128,6 +137,9 @@ export function deleteProjectCascade(db: MockDatabase, id: EntityId) {
   db.allocations = db.allocations.filter((a) => a.projectId !== id);
   for (const demand of db.demands) {
     if (demand.assessment.projectId === id) demand.assessment.projectId = null;
+  }
+  for (const release of db.releases) {
+    if (release.projectId === id) release.projectId = null;
   }
   deleteAttachmentsOf(db, { type: 'project', id });
 }
@@ -297,6 +309,10 @@ export function personDeletionImpact(db: MockDatabase, id: EntityId): DeletionIm
     {
       label: 'satın alma notu',
       count: db.procurementNotes.filter((n) => n.authorId === id).length,
+    },
+    {
+      label: 'canlı geçiş sorumluluğu',
+      count: db.releases.filter((r) => r.ownerId === id).length,
     },
     {
       label: 'kayıt geçmişi',

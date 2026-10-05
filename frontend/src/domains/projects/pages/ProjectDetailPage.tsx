@@ -22,6 +22,7 @@ import { usePrivilege } from '@/domains/auth/api/queries';
 import { isNotFoundError } from '@/lib/errors';
 import { useProject } from '../api/queries';
 import { ProjectContractsTab } from '@/domains/contracts/components/ProjectContractsTab';
+import { RelatedReleasesTab } from '@/domains/releases/components/RelatedReleasesTab';
 import { ProjectApplicationsTab } from '../components/detail/ProjectApplicationsTab';
 import { ProjectKeyFacts } from '../components/detail/ProjectKeyFacts';
 import { ProjectMilestonesTab } from '../components/detail/ProjectMilestonesTab';
@@ -41,6 +42,7 @@ const TABS = [
   { id: 'milestones', label: 'Kilometre taşları' },
   { id: 'risks', label: 'Riskler ve Eskalasyonlar' },
   { id: 'decisions', label: 'Kararlar' },
+  { id: 'releases', label: 'Canlı geçişler' },
   { id: 'contracts', label: 'Satın alma' },
   { id: 'documentation', label: 'Dokümantasyon' },
   { id: 'history', label: 'Geçmiş' },
@@ -85,6 +87,7 @@ const TAB_CONTENT: Record<ProjectTab, (project: Project) => ReactNode> = {
   milestones: (p) => <ProjectMilestonesTab project={p} />,
   risks: (p) => <RelatedRisksAndEscalations filter={{ projectId: p.id }} subjectName={p.name} />,
   decisions: (p) => <ProjectDecisions project={p} />,
+  releases: (p) => <RelatedReleasesTab owner={{ type: 'project', id: p.id }} ownerName={p.name} />,
   contracts: (p) => <ProjectContractsTab project={p} />,
   documentation: (p) => (
     <div className="c-stack">
@@ -121,7 +124,10 @@ export default function ProjectDetailPage() {
   const query = useProject(projectId);
   // Commercial terms are only for roles that may see contracts.
   const canSeeContracts = usePrivilege('contracts:view');
-  const visibleTabs = TABS.filter((tab) => tab.id !== 'contracts' || canSeeContracts);
+  const canSeeReleases = usePrivilege('releases:view');
+  const hidden = (tab: ProjectTab) =>
+    (tab === 'contracts' && !canSeeContracts) || (tab === 'releases' && !canSeeReleases);
+  const visibleTabs = TABS.filter((tab) => !hidden(tab.id));
 
   if (query.isPending) return <LoadingState label="Proje yükleniyor" rows={6} />;
   if (query.isError) {
@@ -166,6 +172,11 @@ export default function ProjectDetailPage() {
             <GuardedActionMenu
               items={[
                 {
+                  label: 'Canlı geçiş ekle',
+                  to: paths.releases.create({ project: project.id }),
+                  privilege: 'releases:edit',
+                },
+                {
                   label: 'Risk kaydet',
                   to: paths.riskForms.create({ project: project.id }),
                   privilege: 'risks:edit',
@@ -196,7 +207,7 @@ export default function ProjectDetailPage() {
       <DetailTabs
         label="Proje bölümleri"
         tabs={visibleTabs.map((tab) => ({ ...tab, count: tabCount(tab.id, project) }))}
-        active={activeTab === 'contracts' && !canSeeContracts ? 'overview' : activeTab}
+        active={hidden(activeTab) ? 'overview' : activeTab}
         onSelect={selectTab}
         renderPanel={(tab) => TAB_CONTENT[tab](project)}
       />

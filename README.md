@@ -59,6 +59,12 @@ one Helm release on OpenShift, one Jenkins pipeline.
   invoices and payment dates; notice deadlines, auto-renewal and overdue payments flagged; signed
   contract as a required document; vendors register; Excel export. Visible only with the
   `contracts` privilege.
+- **Production releases** — `/releases`: every application's and project's go-lives on one
+  horizontal calendar (2 weeks / month / 3 months, rows by application or by project), coloured by
+  status; release number, title, version, window (past midnight too), owner, service
+  interruption, details, rollback plan and outcome; releases past their day without an outcome are
+  flagged; list view with filters and Excel export. Each application and project has a "Canlı
+  geçişler" tab with "Geçiş ekle" pre-filled; editors can also add from a free calendar day.
 - **Procurement tracker** — `/procurement`: where every purchase stands — ordered steps (need,
   market research, RFQ, evaluation, negotiation, approval, PO, signing, delivery, acceptance,
   invoicing; administrable) with owners and planned against actual dates, delays, the current step

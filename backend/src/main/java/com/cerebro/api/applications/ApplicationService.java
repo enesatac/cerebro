@@ -149,6 +149,9 @@ public class ApplicationService {
         ref(
             "sözleşme (bağlantı kaldırılır)",
             count("SELECT count(*) FROM contract_applications WHERE application_id = :id", id)),
+        ref(
+            "canlı geçiş (silinir)",
+            count("SELECT count(*) FROM releases WHERE application_id = :id", id)),
         ref("ek dosya (silinir)", count("SELECT count(*) FROM attachments WHERE application_id = :id", id)));
   }
 

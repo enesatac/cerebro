@@ -392,4 +392,20 @@ export const masterData: MasterDataList[] = [
     ['done', 'Tamamlandı', 'success'],
     ['skipped', 'Atlandı', 'dark', 'Bu satın almada gerekmedi.'],
   ]),
+  plain('releaseTypes', [
+    ['major', 'Büyük sürüm', 'Yeni özellikler veya kırıcı değişiklikler içeren sürüm.'],
+    ['minor', 'Küçük sürüm', 'Geriye uyumlu iyileştirmeler.'],
+    ['patch', 'Düzeltme', 'Planlı hata düzeltmeleri.'],
+    ['hotfix', 'Acil düzeltme', 'Canlıdaki bir sorunu gidermek için plan dışı geçiş.'],
+    ['configuration', 'Yapılandırma', 'Kod değişmeden ayar veya parametre değişikliği.'],
+    ['infrastructure', 'Altyapı', 'Sunucu, veritabanı, ağ veya platform değişikliği.'],
+  ]),
+  colored('releaseStatuses', [
+    ['planned', 'Planlandı', 'neutral'],
+    ['approved', 'Onaylandı', 'info', 'Değişiklik onayı alındı, geçiş penceresi kesinleşti.'],
+    ['in-progress', 'Devam ediyor', 'warning'],
+    ['completed', 'Tamamlandı', 'success'],
+    ['rolled-back', 'Geri alındı', 'danger', 'Geçiş yapıldı ama geri alındı.'],
+    ['cancelled', 'İptal edildi', 'dark'],
+  ]),
 ];

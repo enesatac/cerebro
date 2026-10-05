@@ -416,6 +416,18 @@
     },
     {
      "role_id": 2,
+     "privilege_code": "releases:view"
+    },
+    {
+     "role_id": 2,
+     "privilege_code": "releases:edit"
+    },
+    {
+     "role_id": 2,
+     "privilege_code": "releases:delete"
+    },
+    {
+     "role_id": 2,
      "privilege_code": "connections:view"
     },
     {
@@ -548,6 +560,14 @@
     },
     {
      "role_id": 3,
+     "privilege_code": "releases:view"
+    },
+    {
+     "role_id": 3,
+     "privilege_code": "releases:edit"
+    },
+    {
+     "role_id": 3,
      "privilege_code": "connections:view"
     },
     {
@@ -628,6 +648,10 @@
     },
     {
      "role_id": 4,
+     "privilege_code": "releases:view"
+    },
+    {
+     "role_id": 4,
      "privilege_code": "procurement:view"
     },
     {
@@ -653,6 +677,10 @@
     {
      "role_id": 5,
      "privilege_code": "applications:view"
+    },
+    {
+     "role_id": 5,
+     "privilege_code": "releases:view"
     },
     {
      "role_id": 5,
@@ -701,6 +729,10 @@
     {
      "role_id": 6,
      "privilege_code": "applications:view"
+    },
+    {
+     "role_id": 6,
+     "privilege_code": "releases:view"
     },
     {
      "role_id": 6,
@@ -12831,6 +12863,461 @@
      "author_person_id": 11,
      "note_text": "Tedarikçi model iyileştirmesini 15 Ekim’e kadar teslim edecek.",
      "internal": 0
+    }
+   ]
+  },
+  {
+   "table": "releases",
+   "rows": [
+    {
+     "id": 1,
+     "release_number": "CHG-2026-0311",
+     "title": "Ödeme yönlendirme 3DS2 güncellemesi",
+     "application_id": 2,
+     "project_id": 2,
+     "type": "minor",
+     "status": "completed",
+     "planned_date": {
+      "$date": "2026-09-08"
+     },
+     "start_time": "23:00",
+     "end_time": "01:00",
+     "version": "5.4.0",
+     "owner_person_id": 21,
+     "service_interruption": 1,
+     "description": "3D Secure 2.2 akışı tüm kart markaları için açıldı; eski 3DS1 uçları kapatıldı.",
+     "rollback_plan": "Önceki imaja dönüş ve 3DS1 bayrağının açılması (15 dk).",
+     "outcome_note": "Sorunsuz tamamlandı; ilk saatte ödeme başarı oranı %98,7.",
+     "created_at": {
+      "$ts": "2026-08-20T09:00:00Z"
+     },
+     "created_by_person_id": 24,
+     "updated_at": {
+      "$ts": "2026-09-30T14:30:00Z"
+     },
+     "updated_by_person_id": 24,
+     "last_reviewed_at": null,
+     "last_reviewed_by_person_id": null
+    },
+    {
+     "id": 2,
+     "release_number": "CHG-2026-0318",
+     "title": "Müşteri portalı arama iyileştirmesi",
+     "application_id": 4,
+     "project_id": 1,
+     "type": "minor",
+     "status": "completed",
+     "planned_date": {
+      "$date": "2026-09-15"
+     },
+     "start_time": "10:00",
+     "end_time": "10:30",
+     "version": "2.18.0",
+     "owner_person_id": 10,
+     "service_interruption": 0,
+     "description": "Uçuş arama sonuçlarında filtreleme ve sıralama yenilendi.",
+     "rollback_plan": null,
+     "outcome_note": null,
+     "created_at": {
+      "$ts": "2026-08-20T09:00:00Z"
+     },
+     "created_by_person_id": 24,
+     "updated_at": {
+      "$ts": "2026-09-30T14:30:00Z"
+     },
+     "updated_by_person_id": 24,
+     "last_reviewed_at": null,
+     "last_reviewed_by_person_id": null
+    },
+    {
+     "id": 3,
+     "release_number": "CHG-2026-0326",
+     "title": "Bildirim servisi kuyruk göçü",
+     "application_id": 3,
+     "project_id": 8,
+     "type": "infrastructure",
+     "status": "rolled-back",
+     "planned_date": {
+      "$date": "2026-09-19"
+     },
+     "start_time": "02:00",
+     "end_time": "04:00",
+     "version": "3.0.0",
+     "owner_person_id": 13,
+     "service_interruption": 1,
+     "description": "Bildirim kuyruğu yeni küme üzerine taşındı.",
+     "rollback_plan": "Üreticiler eski kümeye yönlendirilir, bekleyen mesajlar yeniden oynatılır.",
+     "outcome_note": "Yeni kümede tüketici gecikmesi eşiği aştı; 03:10’da geri alındı. Kapasite ayarı sonrası yeniden planlanacak.",
+     "created_at": {
+      "$ts": "2026-08-20T09:00:00Z"
+     },
+     "created_by_person_id": 24,
+     "updated_at": {
+      "$ts": "2026-09-30T14:30:00Z"
+     },
+     "updated_by_person_id": 24,
+     "last_reviewed_at": null,
+     "last_reviewed_by_person_id": null
+    },
+    {
+     "id": 4,
+     "release_number": "HF-2026-0042",
+     "title": "Kimlik doğrulama token süresi düzeltmesi",
+     "application_id": 1,
+     "project_id": null,
+     "type": "hotfix",
+     "status": "completed",
+     "planned_date": {
+      "$date": "2026-09-24"
+     },
+     "start_time": "16:30",
+     "end_time": "17:00",
+     "version": "7.2.1",
+     "owner_person_id": 9,
+     "service_interruption": 0,
+     "description": "Yenileme token’ı süresinin yanlış hesaplanması nedeniyle oluşan oturum düşmeleri.",
+     "rollback_plan": null,
+     "outcome_note": "Düzeltme sonrası oturum düşmeleri sona erdi.",
+     "created_at": {
+      "$ts": "2026-08-20T09:00:00Z"
+     },
+     "created_by_person_id": 24,
+     "updated_at": {
+      "$ts": "2026-09-30T14:30:00Z"
+     },
+     "updated_by_person_id": 24,
+     "last_reviewed_at": null,
+     "last_reviewed_by_person_id": null
+    },
+    {
+     "id": 5,
+     "release_number": "CHG-2026-0334",
+     "title": "Sipariş yönetimi rezervasyon verisi okuma uçları",
+     "application_id": 6,
+     "project_id": 4,
+     "type": "minor",
+     "status": "completed",
+     "planned_date": {
+      "$date": "2026-09-29"
+     },
+     "start_time": "22:00",
+     "end_time": "23:00",
+     "version": "9.6.0",
+     "owner_person_id": 25,
+     "service_interruption": 0,
+     "description": "Eski rezervasyon konsolundan taşınan kayıtlar için salt okunur uçlar.",
+     "rollback_plan": null,
+     "outcome_note": null,
+     "created_at": {
+      "$ts": "2026-08-20T09:00:00Z"
+     },
+     "created_by_person_id": 24,
+     "updated_at": {
+      "$ts": "2026-09-30T14:30:00Z"
+     },
+     "updated_by_person_id": 24,
+     "last_reviewed_at": null,
+     "last_reviewed_by_person_id": null
+    },
+    {
+     "id": 6,
+     "release_number": "CHG-2026-0341",
+     "title": "Sadakat motoru puan kuralları",
+     "application_id": 13,
+     "project_id": 3,
+     "type": "major",
+     "status": "approved",
+     "planned_date": {
+      "$date": "2026-10-07"
+     },
+     "start_time": "23:30",
+     "end_time": "02:00",
+     "version": "1.0.0",
+     "owner_person_id": 12,
+     "service_interruption": 1,
+     "description": "Lansman için puan kazanma ve harcama kuralları; kampanya motoru açılışı.",
+     "rollback_plan": "Özellik bayrakları kapatılır, veritabanı göçü geri alma betiğiyle döndürülür.",
+     "outcome_note": null,
+     "created_at": {
+      "$ts": "2026-08-20T09:00:00Z"
+     },
+     "created_by_person_id": 24,
+     "updated_at": {
+      "$ts": "2026-09-30T14:30:00Z"
+     },
+     "updated_by_person_id": 24,
+     "last_reviewed_at": null,
+     "last_reviewed_by_person_id": null
+    },
+    {
+     "id": 7,
+     "release_number": "CHG-2026-0342",
+     "title": "API geçidi hız sınırı politikaları",
+     "application_id": 12,
+     "project_id": 5,
+     "type": "configuration",
+     "status": "approved",
+     "planned_date": {
+      "$date": "2026-10-08"
+     },
+     "start_time": "14:00",
+     "end_time": "14:30",
+     "version": null,
+     "owner_person_id": 13,
+     "service_interruption": 0,
+     "description": "İş ortağı uçları için istemci bazlı hız sınırları.",
+     "rollback_plan": null,
+     "outcome_note": null,
+     "created_at": {
+      "$ts": "2026-08-20T09:00:00Z"
+     },
+     "created_by_person_id": 24,
+     "updated_at": {
+      "$ts": "2026-09-30T14:30:00Z"
+     },
+     "updated_by_person_id": 24,
+     "last_reviewed_at": null,
+     "last_reviewed_by_person_id": null
+    },
+    {
+     "id": 8,
+     "release_number": "CHG-2026-0347",
+     "title": "Bildirim servisi kuyruk göçü (yeniden)",
+     "application_id": 3,
+     "project_id": 8,
+     "type": "infrastructure",
+     "status": "planned",
+     "planned_date": {
+      "$date": "2026-10-10"
+     },
+     "start_time": "02:00",
+     "end_time": "05:00",
+     "version": "3.0.1",
+     "owner_person_id": 13,
+     "service_interruption": 1,
+     "description": "Kapasite ayarı yapılmış yeni kümeye ikinci deneme.",
+     "rollback_plan": "Üreticiler eski kümeye yönlendirilir.",
+     "outcome_note": null,
+     "created_at": {
+      "$ts": "2026-08-20T09:00:00Z"
+     },
+     "created_by_person_id": 24,
+     "updated_at": {
+      "$ts": "2026-09-30T14:30:00Z"
+     },
+     "updated_by_person_id": 24,
+     "last_reviewed_at": null,
+     "last_reviewed_by_person_id": null
+    },
+    {
+     "id": 9,
+     "release_number": "CHG-2026-0350",
+     "title": "Müşteri portalı e-KYC adımı",
+     "application_id": 4,
+     "project_id": 1,
+     "type": "major",
+     "status": "planned",
+     "planned_date": {
+      "$date": "2026-10-14"
+     },
+     "start_time": "22:00",
+     "end_time": "00:00",
+     "version": "3.0.0",
+     "owner_person_id": 10,
+     "service_interruption": 0,
+     "description": "Uzaktan kimlik doğrulama ile dijital üyelik; yeni kayıt akışı.",
+     "rollback_plan": "Kayıt akışı bayrağı eski akışa çevrilir.",
+     "outcome_note": null,
+     "created_at": {
+      "$ts": "2026-08-20T09:00:00Z"
+     },
+     "created_by_person_id": 24,
+     "updated_at": {
+      "$ts": "2026-09-30T14:30:00Z"
+     },
+     "updated_by_person_id": 24,
+     "last_reviewed_at": null,
+     "last_reviewed_by_person_id": null
+    },
+    {
+     "id": 10,
+     "release_number": "CHG-2026-0351",
+     "title": "Kimlik servisi e-KYC entegrasyonu",
+     "application_id": 1,
+     "project_id": 1,
+     "type": "minor",
+     "status": "planned",
+     "planned_date": {
+      "$date": "2026-10-14"
+     },
+     "start_time": "21:00",
+     "end_time": "22:00",
+     "version": "7.3.0",
+     "owner_person_id": 9,
+     "service_interruption": 0,
+     "description": "e-KYC sağlayıcısından gelen doğrulama sonucunun kimliğe işlenmesi.",
+     "rollback_plan": null,
+     "outcome_note": null,
+     "created_at": {
+      "$ts": "2026-08-20T09:00:00Z"
+     },
+     "created_by_person_id": 24,
+     "updated_at": {
+      "$ts": "2026-09-30T14:30:00Z"
+     },
+     "updated_by_person_id": 24,
+     "last_reviewed_at": null,
+     "last_reviewed_by_person_id": null
+    },
+    {
+     "id": 11,
+     "release_number": "CHG-2026-0355",
+     "title": "Yönetim raporlama merkezi ilk sürüm",
+     "application_id": 16,
+     "project_id": 6,
+     "type": "major",
+     "status": "planned",
+     "planned_date": {
+      "$date": "2026-10-21"
+     },
+     "start_time": "09:00",
+     "end_time": "12:00",
+     "version": "1.0.0",
+     "owner_person_id": 22,
+     "service_interruption": 0,
+     "description": "Finans ve operasyon panolarının ilk sürümü.",
+     "rollback_plan": null,
+     "outcome_note": null,
+     "created_at": {
+      "$ts": "2026-08-20T09:00:00Z"
+     },
+     "created_by_person_id": 24,
+     "updated_at": {
+      "$ts": "2026-09-30T14:30:00Z"
+     },
+     "updated_by_person_id": 24,
+     "last_reviewed_at": null,
+     "last_reviewed_by_person_id": null
+    },
+    {
+     "id": 12,
+     "release_number": "CHG-2026-0358",
+     "title": "Çalışan portalı MFA zorunluluğu",
+     "application_id": 5,
+     "project_id": 7,
+     "type": "configuration",
+     "status": "planned",
+     "planned_date": {
+      "$date": "2026-10-26"
+     },
+     "start_time": "08:00",
+     "end_time": "08:30",
+     "version": null,
+     "owner_person_id": 16,
+     "service_interruption": 0,
+     "description": "Tüm çalışanlar için çok faktörlü doğrulamanın zorunlu hale getirilmesi.",
+     "rollback_plan": null,
+     "outcome_note": null,
+     "created_at": {
+      "$ts": "2026-08-20T09:00:00Z"
+     },
+     "created_by_person_id": 24,
+     "updated_at": {
+      "$ts": "2026-09-30T14:30:00Z"
+     },
+     "updated_by_person_id": 24,
+     "last_reviewed_at": null,
+     "last_reviewed_by_person_id": null
+    },
+    {
+     "id": 13,
+     "release_number": "CHG-2026-0362",
+     "title": "Finans platformu dönem sonu yaması",
+     "application_id": 7,
+     "project_id": null,
+     "type": "patch",
+     "status": "planned",
+     "planned_date": {
+      "$date": "2026-10-28"
+     },
+     "start_time": "20:00",
+     "end_time": "21:00",
+     "version": "12.4.3",
+     "owner_person_id": 20,
+     "service_interruption": 0,
+     "description": "Dönem kapanışı raporundaki kur farkı hesaplaması düzeltmesi.",
+     "rollback_plan": null,
+     "outcome_note": null,
+     "created_at": {
+      "$ts": "2026-08-20T09:00:00Z"
+     },
+     "created_by_person_id": 24,
+     "updated_at": {
+      "$ts": "2026-09-30T14:30:00Z"
+     },
+     "updated_by_person_id": 24,
+     "last_reviewed_at": null,
+     "last_reviewed_by_person_id": null
+    },
+    {
+     "id": 14,
+     "release_number": "CHG-2026-0370",
+     "title": "Ödeme yönlendirme yeni sağlayıcı",
+     "application_id": 2,
+     "project_id": 2,
+     "type": "major",
+     "status": "planned",
+     "planned_date": {
+      "$date": "2026-11-04"
+     },
+     "start_time": "23:00",
+     "end_time": "03:00",
+     "version": "6.0.0",
+     "owner_person_id": 21,
+     "service_interruption": 1,
+     "description": "Yedek ödeme sağlayıcısına otomatik yönlendirme.",
+     "rollback_plan": "Yönlendirme kuralları eski sürüme alınır.",
+     "outcome_note": null,
+     "created_at": {
+      "$ts": "2026-08-20T09:00:00Z"
+     },
+     "created_by_person_id": 24,
+     "updated_at": {
+      "$ts": "2026-09-30T14:30:00Z"
+     },
+     "updated_by_person_id": 24,
+     "last_reviewed_at": null,
+     "last_reviewed_by_person_id": null
+    },
+    {
+     "id": 15,
+     "release_number": "CHG-2026-0377",
+     "title": "Veri platformu depolama genişletmesi",
+     "application_id": 11,
+     "project_id": 6,
+     "type": "infrastructure",
+     "status": "planned",
+     "planned_date": {
+      "$date": "2026-11-11"
+     },
+     "start_time": "01:00",
+     "end_time": "04:00",
+     "version": null,
+     "owner_person_id": 7,
+     "service_interruption": 1,
+     "description": "Analitik depolama kümesine iki düğüm eklenmesi.",
+     "rollback_plan": null,
+     "outcome_note": null,
+     "created_at": {
+      "$ts": "2026-08-20T09:00:00Z"
+     },
+     "created_by_person_id": 24,
+     "updated_at": {
+      "$ts": "2026-09-30T14:30:00Z"
+     },
+     "updated_by_person_id": 24,
+     "last_reviewed_at": null,
+     "last_reviewed_by_person_id": null
     }
    ]
   },

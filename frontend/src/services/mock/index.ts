@@ -12,6 +12,7 @@ import { createMockLeaveRepository } from './MockLeaveRepository';
 import { createMockDemandRepository } from './MockDemandRepository';
 import { createMockContractRepositories } from './MockContractRepositories';
 import { createMockProcurementRepository } from './MockProcurementRepository';
+import { createMockReleaseRepository } from './MockReleaseRepository';
 import { createMockMasterDataRepository } from './MockMasterDataRepository';
 import { createMockAuthRepositories } from './MockAuthRepositories';
 import { createMockOperationalRepositories } from './MockOperationalRepositories';
@@ -56,6 +57,7 @@ export function createMockRepositories({
     demands: createMockDemandRepository(db, latencyMs, kit),
     ...createMockContractRepositories(db, kit),
     procurement: createMockProcurementRepository(db, kit),
+    releases: createMockReleaseRepository(db, latencyMs, kit),
     attachments: createMockAttachmentRepository(db, blobs ?? createMemoryBlobStore(), kit),
     ...createMockReferenceRepositories(db, lookup, latencyMs, kit),
     ...createMockOperationalRepositories(db, latencyMs, kit),

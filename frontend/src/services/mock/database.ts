@@ -8,6 +8,7 @@ import { contracts } from './data/contracts';
 import { procurementNotes, procurementSteps } from './data/procurement';
 import { vendors } from './data/vendors';
 import { leaves } from './data/leaves';
+import { releases } from './data/releases';
 import { dependencies, integrations } from './data/connections';
 import { masterData } from './data/masterData';
 import { decisionHistory, escalationHistory, riskHistory } from './data/history';
@@ -44,6 +45,7 @@ export const seedTables = {
   contracts,
   procurementSteps,
   procurementNotes,
+  releases,
 };
 
 /**
@@ -89,6 +91,7 @@ export const SEQUENCES = [
   'contractPayments',
   'procurementSteps',
   'procurementNotes',
+  'releases',
 ] as const;
 export type SequenceName = (typeof SEQUENCES)[number];
 
@@ -144,6 +147,7 @@ export function sequencesOf(tables: typeof seedTables): Sequences {
     contractPayments: maxId(tables.contracts.flatMap((c) => c.payments)),
     procurementSteps: maxId(tables.procurementSteps),
     procurementNotes: maxId(tables.procurementNotes),
+    releases: maxId(tables.releases),
   };
 }
 

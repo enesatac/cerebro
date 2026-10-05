@@ -255,4 +255,59 @@ class ApiIntegrationTest {
     mvc.perform(delete("/api/procurement/notes/" + noteId).cookie(zeynep).with(csrf()))
         .andExpect(status().isNoContent());
   }
+
+  @Test
+  void recordsReleasesAndOpensTheCalendarToEveryone() throws Exception {
+    Cookie elif = signIn(3);
+    mvc.perform(get("/api/releases?from=2026-10-01&to=2026-10-31").cookie(elif))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$[0].plannedDate").value("2026-10-07"));
+    String body =
+        "{\"releaseNumber\":\" CHG-TEST-1 \",\"title\":\"Test\",\"applicationId\":2,"
+            + "\"projectId\":null,\"type\":\"patch\",\"status\":\"planned\","
+            + "\"plannedDate\":\"2026-12-01\",\"startTime\":\"23:00\",\"endTime\":\"01:00\","
+            + "\"version\":\"\",\"ownerId\":null,\"serviceInterruption\":true,"
+            + "\"description\":\"\",\"rollbackPlan\":\"\",\"outcomeNote\":\"\"}";
+    mvc.perform(
+            post("/api/releases")
+                .cookie(elif)
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body))
+        .andExpect(status().isForbidden());
+
+    Cookie zeynep = signIn(6);
+    String created =
+        mvc.perform(
+                post("/api/releases")
+                    .cookie(zeynep)
+                    .with(csrf())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(body))
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.releaseNumber").value("CHG-TEST-1"))
+            .andExpect(jsonPath("$.serviceInterruption").value(true))
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+    long id = Long.parseLong(created.replaceAll("^\\{\"id\":(\\d+).*$", "$1"));
+    mvc.perform(
+            post("/api/releases")
+                .cookie(zeynep)
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body.replace("CHG-TEST-1", "chg-test-1")))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.field").value("releaseNumber"));
+    mvc.perform(
+            put("/api/releases/" + id)
+                .cookie(zeynep)
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body.replace("\"23:00\"", "\"24:00\"")))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.field").value("startTime"));
+    mvc.perform(delete("/api/releases/" + id).cookie(zeynep).with(csrf()))
+        .andExpect(status().isNoContent());
+  }
 }

@@ -228,6 +228,17 @@ describe.skipIf(!API_URL)('mock and API return the same', () => {
       );
     }
     await same('missing procurement', (r) => r.procurement.getById(99_999));
+    await same('releases', (r) => r.releases.list());
+    await same('releases of October', (r) =>
+      r.releases.list({ from: '2026-10-01', to: '2026-10-31' }),
+    );
+    await same('releases of application 2', (r) => r.releases.list({ applicationId: 2 }));
+    await same('releases of project 1', (r) => r.releases.list({ projectId: 1 }));
+    for (const release of await mock.releases.list()) {
+      await same(`release ${release.id}`, (r) => r.releases.getById(release.id));
+      await same(`release impact ${release.id}`, (r) => r.releases.getDeletionImpact(release.id));
+    }
+    await same('missing release', (r) => r.releases.getById(99_999));
     for (const type of ATTACHMENT_OWNER_TYPES) {
       await same(`file counts ${type}`, (r) => r.attachments.countByOwner(type));
     }
@@ -576,6 +587,62 @@ describe.skipIf(!API_URL)('mock and API return the same', () => {
     await same('procurement missing note', (r) => r.procurement.removeNote(note.id));
     await same('contract impact with process', (r) => r.contracts.getDeletionImpact(contract.id));
     await same('person impact with process', (r) => r.people.getDeletionImpact(2));
+    const releaseInput = {
+      releaseNumber: ' CHG-TEST-1 ',
+      title: 'Sözleşme testi geçişi',
+      applicationId: created.id,
+      projectId: project.id,
+      type: 'patch',
+      status: 'planned',
+      plannedDate: '2027-02-01',
+      startTime: '23:00',
+      endTime: '01:00',
+      version: ' 1.0.1 ',
+      ownerId: 2,
+      serviceInterruption: true,
+      description: ' Kapsam ',
+      rollbackPlan: '',
+      outcomeNote: '',
+    };
+    const release = (await same('create release', (r) => r.releases.create(releaseInput))) as {
+      id: number;
+    };
+    await same('duplicate release number', (r) =>
+      r.releases.create({ ...releaseInput, releaseNumber: 'chg-test-1' }),
+    );
+    await same('release bad time', (r) =>
+      r.releases.create({ ...releaseInput, releaseNumber: 'X-2', startTime: '7:00' }),
+    );
+    await same('release end without start', (r) =>
+      r.releases.create({ ...releaseInput, releaseNumber: 'X-3', startTime: '' }),
+    );
+    await same('release unknown status', (r) =>
+      r.releases.create({ ...releaseInput, releaseNumber: 'X-4', status: 'nope' }),
+    );
+    await same('release unknown project', (r) =>
+      r.releases.create({ ...releaseInput, releaseNumber: 'X-5', projectId: 99_999 }),
+    );
+    await same('release secret', (r) =>
+      r.releases.create({
+        ...releaseInput,
+        releaseNumber: 'X-6',
+        rollbackPlan: 'password=Abc12345!',
+      }),
+    );
+    await same('update release', (r) =>
+      r.releases.update(release.id, {
+        ...releaseInput,
+        status: 'completed',
+        startTime: '',
+        endTime: '',
+        outcomeNote: 'Sorunsuz.',
+      }),
+    );
+    await same('releases of new application', (r) =>
+      r.releases.list({ applicationId: created.id }),
+    );
+    await same('project impact with release', (r) => r.projects.getDeletionImpact(project.id));
+    await same('person impact with release', (r) => r.people.getDeletionImpact(2));
     await same('contract over budget', (r) =>
       r.contracts.create({
         title: 'x',

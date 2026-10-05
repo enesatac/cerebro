@@ -62,6 +62,12 @@ const LATER_SEEDS: { file: string; title: string; modules: string[]; lists: stri
     modules: ['procurement'],
     lists: ['procurementSteps', 'procurementStepStatuses'],
   },
+  {
+    file: 'V8__releases_seed.sql',
+    title: 'Production releases: their privileges (granted to the system role) and value lists.',
+    modules: ['releases'],
+    lists: ['releaseTypes', 'releaseStatuses'],
+  },
 ];
 const laterModules = new Set(LATER_SEEDS.flatMap((seed) => seed.modules));
 const laterLists = new Set(LATER_SEEDS.flatMap((seed) => seed.lists));
@@ -760,6 +766,28 @@ it('generates the backend seeds', async () => {
       author_person_id: x.authorId,
       note_text: x.text,
       internal: b(x.internal),
+    })),
+  );
+  add(
+    'releases',
+    db.releases.map((x) => ({
+      id: x.id,
+      release_number: x.releaseNumber,
+      title: x.title,
+      application_id: x.applicationId,
+      project_id: x.projectId,
+      type: x.type,
+      status: x.status,
+      planned_date: d(x.plannedDate),
+      start_time: t(x.startTime),
+      end_time: t(x.endTime),
+      version: t(x.version),
+      owner_person_id: x.ownerId,
+      service_interruption: b(x.serviceInterruption),
+      description: t(x.description),
+      rollback_plan: t(x.rollbackPlan),
+      outcome_note: t(x.outcomeNote),
+      ...audit(x.audit),
     })),
   );
   add(

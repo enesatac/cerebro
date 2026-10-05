@@ -53,6 +53,16 @@ export const paths = {
     create: (project?: EntityId) => withQuery('/contracts/new', { project }),
     edit: (contractId: EntityId) => `/contracts/${id(contractId)}/edit`,
   },
+  releases: {
+    /** `tab`: `calendar` (default) or `list`; `rows`: `application` (default) or `project`. */
+    list: (view?: { tab?: 'list'; rows?: 'project' }) =>
+      withQuery('/releases', { tab: view?.tab, rows: view?.rows }),
+    detail: (releaseId: EntityId) => `/releases/${id(releaseId)}`,
+    /** Pre-fills the application, project and date (from a detail tab or a calendar day). */
+    create: (prefill?: { application?: EntityId; project?: EntityId; date?: string }) =>
+      withQuery('/releases/new', { ...prefill }),
+    edit: (releaseId: EntityId) => `/releases/${id(releaseId)}/edit`,
+  },
   procurement: {
     /** `tab`: `purchases` (default) or `deadlines`. */
     list: (tab?: 'deadlines') => withQuery('/procurement', { tab }),
