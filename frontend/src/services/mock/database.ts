@@ -5,6 +5,7 @@ import { runbooks } from './data/runbooks';
 import { attachments } from './data/attachments';
 import { demands } from './data/demands';
 import { contracts } from './data/contracts';
+import { procurementNotes, procurementSteps } from './data/procurement';
 import { vendors } from './data/vendors';
 import { leaves } from './data/leaves';
 import { dependencies, integrations } from './data/connections';
@@ -41,6 +42,8 @@ export const seedTables = {
   demands,
   vendors,
   contracts,
+  procurementSteps,
+  procurementNotes,
 };
 
 /**
@@ -84,6 +87,8 @@ export const SEQUENCES = [
   'vendors',
   'contracts',
   'contractPayments',
+  'procurementSteps',
+  'procurementNotes',
 ] as const;
 export type SequenceName = (typeof SEQUENCES)[number];
 
@@ -137,6 +142,8 @@ export function sequencesOf(tables: typeof seedTables): Sequences {
     vendors: maxId(tables.vendors),
     contracts: maxId(tables.contracts),
     contractPayments: maxId(tables.contracts.flatMap((c) => c.payments)),
+    procurementSteps: maxId(tables.procurementSteps),
+    procurementNotes: maxId(tables.procurementNotes),
   };
 }
 

@@ -117,6 +117,10 @@ function codesInUse(db: MockDatabase, key: MasterDataListKey): string[] {
       return db.contracts.map((c) => c.billingFrequency);
     case 'paymentStatuses':
       return db.contracts.flatMap((c) => c.payments.map((p) => p.status));
+    case 'procurementSteps':
+      return db.procurementSteps.map((s) => s.type);
+    case 'procurementStepStatuses':
+      return db.procurementSteps.map((s) => s.status);
   }
 }
 

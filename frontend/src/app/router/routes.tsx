@@ -28,6 +28,15 @@ const DemandManagementPage = page(() => import('@/domains/demands/pages/DemandMa
 const ContractsPage = page(() => import('@/domains/contracts/pages/ContractsPage'));
 const ContractDetailPage = page(() => import('@/domains/contracts/pages/ContractDetailPage'));
 const ContractFormPage = page(() => import('@/domains/contracts/pages/ContractFormPage'));
+const ProcurementDashboardPage = page(
+  () => import('@/domains/procurement/pages/ProcurementDashboardPage'),
+);
+const ProcurementDetailPage = page(
+  () => import('@/domains/procurement/pages/ProcurementDetailPage'),
+);
+const ProcurementStepsFormPage = page(
+  () => import('@/domains/procurement/pages/ProcurementStepsFormPage'),
+);
 const ConnectionsPage = page(() => import('@/domains/connections/pages/ConnectionsPage'));
 const DependencyFormPage = page(() => import('@/domains/connections/pages/DependencyFormPage'));
 const IntegrationFormPage = page(() => import('@/domains/connections/pages/IntegrationFormPage'));
@@ -117,6 +126,18 @@ export const routes: RouteObject[] = [
       {
         path: 'contracts/:contractId/edit',
         element: guarded(<ContractFormPage />, 'contracts:edit'),
+      },
+      {
+        path: 'procurement',
+        element: guarded(<ProcurementDashboardPage />, 'procurement:view'),
+      },
+      {
+        path: 'procurement/:contractId',
+        element: guarded(<ProcurementDetailPage />, 'procurement:view'),
+      },
+      {
+        path: 'procurement/:contractId/steps',
+        element: guarded(<ProcurementStepsFormPage />, 'procurement:edit'),
       },
       { path: 'demands', element: guarded(<DemandsPage />, 'demands:view') },
       { path: 'demands/new', element: guarded(<DemandFormPage />, 'demands:edit') },

@@ -195,4 +195,64 @@ class ApiIntegrationTest {
         .andExpect(status().isNotFound())
         .andExpect(jsonPath("$.code").value("not-found"));
   }
+
+  @Test
+  void opensTheProcurementTrackerToBusinessUnitsReadOnly() throws Exception {
+    // Elif (business unit): reads the process without internal notes, cannot change it.
+    Cookie elif = signIn(3);
+    mvc.perform(get("/api/procurement").cookie(elif))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$[4].code").value("SZL-0005"))
+        .andExpect(jsonPath("$[4].totalValue").doesNotExist());
+    mvc.perform(get("/api/procurement/5").cookie(elif))
+        .andExpect(jsonPath("$.notes[?(@.internal == true)]").isEmpty());
+    mvc.perform(
+            put("/api/procurement/2/steps")
+                .cookie(elif)
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("[]"))
+        .andExpect(status().isForbidden());
+
+    // Zeynep (portfolio office): sees internal notes, writes steps and notes.
+    Cookie zeynep = signIn(6);
+    mvc.perform(get("/api/procurement/5").cookie(zeynep))
+        .andExpect(jsonPath("$.notes[?(@.internal == true)]").isNotEmpty());
+    String step =
+        "{\"id\":null,\"type\":\"rfq\",\"status\":\"in-progress\",\"ownerId\":6,"
+            + "\"plannedStart\":\"2026-10-01\",\"plannedEnd\":\"2026-10-20\","
+            + "\"actualStart\":%s,\"actualEnd\":null,\"note\":\"\"}";
+    mvc.perform(
+            put("/api/procurement/2/steps")
+                .cookie(zeynep)
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("[" + step.formatted("null") + "]"))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.field").value("steps.0.actualStart"));
+    mvc.perform(
+            put("/api/procurement/2/steps")
+                .cookie(zeynep)
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("[" + step.formatted("\"2026-10-02\"") + "]"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.steps[0].type").value("rfq"))
+        .andExpect(jsonPath("$.steps[0].actualStart").value("2026-10-02"));
+    String note =
+        mvc.perform(
+                post("/api/procurement/2/notes")
+                    .cookie(zeynep)
+                    .with(csrf())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("{\"text\":\"Teklifler açıldı.\",\"internal\":true}"))
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.authorId").isNumber())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+    long noteId = Long.parseLong(note.replaceAll("^\\{\"id\":(\\d+).*$", "$1"));
+    mvc.perform(delete("/api/procurement/notes/" + noteId).cookie(zeynep).with(csrf()))
+        .andExpect(status().isNoContent());
+  }
 }

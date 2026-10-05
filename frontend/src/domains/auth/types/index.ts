@@ -81,6 +81,15 @@ export const PRIVILEGE_MODULES = [
     },
   },
   {
+    id: 'procurement',
+    label: 'Satın alma takibi',
+    group: 'portfolio',
+    levels: {
+      view: 'Satın alma süreçlerinin adımlarını, tarihlerini ve notlarını görür (bedeller hariç).',
+      edit: 'Süreç adımlarını ve tarihlerini girer, not ekler ve siler; iç notları görür.',
+    },
+  },
+  {
     id: 'reports',
     label: 'Raporlar',
     group: 'portfolio',

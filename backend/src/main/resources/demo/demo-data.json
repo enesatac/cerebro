@@ -452,6 +452,14 @@
     },
     {
      "role_id": 2,
+     "privilege_code": "procurement:view"
+    },
+    {
+     "role_id": 2,
+     "privilege_code": "procurement:edit"
+    },
+    {
+     "role_id": 2,
      "privilege_code": "reports:view"
     },
     {
@@ -556,6 +564,10 @@
     },
     {
      "role_id": 3,
+     "privilege_code": "procurement:view"
+    },
+    {
+     "role_id": 3,
      "privilege_code": "reports:view"
     },
     {
@@ -613,6 +625,10 @@
     {
      "role_id": 4,
      "privilege_code": "applications:view"
+    },
+    {
+     "role_id": 4,
+     "privilege_code": "procurement:view"
     },
     {
      "role_id": 4,
@@ -697,6 +713,10 @@
     {
      "role_id": 6,
      "privilege_code": "contracts:view"
+    },
+    {
+     "role_id": 6,
+     "privilege_code": "procurement:view"
     },
     {
      "role_id": 6,
@@ -12048,6 +12068,769 @@
      "status": "invoiced",
      "invoice_number": "KZY-2026-0911",
      "paid_date": null
+    }
+   ]
+  },
+  {
+   "table": "procurement_steps",
+   "rows": [
+    {
+     "id": 28,
+     "contract_id": 1,
+     "sort_order": 0,
+     "step_type": "need-definition",
+     "status": "done",
+     "owner_person_id": 11,
+     "planned_start": {
+      "$date": "2025-10-01"
+     },
+     "planned_end": {
+      "$date": "2025-10-17"
+     },
+     "actual_start": {
+      "$date": "2025-10-01"
+     },
+     "actual_end": {
+      "$date": "2025-10-17"
+     },
+     "note": null
+    },
+    {
+     "id": 29,
+     "contract_id": 1,
+     "sort_order": 1,
+     "step_type": "rfq",
+     "status": "done",
+     "owner_person_id": 11,
+     "planned_start": {
+      "$date": "2025-10-20"
+     },
+     "planned_end": {
+      "$date": "2025-11-14"
+     },
+     "actual_start": {
+      "$date": "2025-10-20"
+     },
+     "actual_end": {
+      "$date": "2025-11-18"
+     },
+     "note": null
+    },
+    {
+     "id": 30,
+     "contract_id": 1,
+     "sort_order": 2,
+     "step_type": "offer-evaluation",
+     "status": "done",
+     "owner_person_id": 11,
+     "planned_start": {
+      "$date": "2025-11-17"
+     },
+     "planned_end": {
+      "$date": "2025-12-05"
+     },
+     "actual_start": {
+      "$date": "2025-11-17"
+     },
+     "actual_end": {
+      "$date": "2025-12-05"
+     },
+     "note": null
+    },
+    {
+     "id": 31,
+     "contract_id": 1,
+     "sort_order": 3,
+     "step_type": "negotiation",
+     "status": "skipped",
+     "owner_person_id": null,
+     "planned_start": {
+      "$date": "2025-12-08"
+     },
+     "planned_end": {
+      "$date": "2025-12-12"
+     },
+     "actual_start": null,
+     "actual_end": null,
+     "note": "Çerçeve anlaşma fiyatı geçerli."
+    },
+    {
+     "id": 32,
+     "contract_id": 1,
+     "sort_order": 4,
+     "step_type": "approval",
+     "status": "done",
+     "owner_person_id": 24,
+     "planned_start": {
+      "$date": "2025-12-08"
+     },
+     "planned_end": {
+      "$date": "2025-12-19"
+     },
+     "actual_start": {
+      "$date": "2025-12-08"
+     },
+     "actual_end": {
+      "$date": "2026-01-09"
+     },
+     "note": null
+    },
+    {
+     "id": 33,
+     "contract_id": 1,
+     "sort_order": 5,
+     "step_type": "contract-signing",
+     "status": "done",
+     "owner_person_id": 11,
+     "planned_start": {
+      "$date": "2026-01-05"
+     },
+     "planned_end": {
+      "$date": "2026-01-20"
+     },
+     "actual_start": {
+      "$date": "2026-01-12"
+     },
+     "actual_end": {
+      "$date": "2026-01-20"
+     },
+     "note": null
+    },
+    {
+     "id": 34,
+     "contract_id": 1,
+     "sort_order": 6,
+     "step_type": "delivery",
+     "status": "done",
+     "owner_person_id": 11,
+     "planned_start": {
+      "$date": "2026-01-21"
+     },
+     "planned_end": {
+      "$date": "2026-02-01"
+     },
+     "actual_start": {
+      "$date": "2026-01-21"
+     },
+     "actual_end": {
+      "$date": "2026-02-01"
+     },
+     "note": null
+    },
+    {
+     "id": 35,
+     "contract_id": 1,
+     "sort_order": 7,
+     "step_type": "acceptance",
+     "status": "waiting",
+     "owner_person_id": 11,
+     "planned_start": {
+      "$date": "2026-02-02"
+     },
+     "planned_end": {
+      "$date": "2026-02-28"
+     },
+     "actual_start": {
+      "$date": "2026-02-02"
+     },
+     "actual_end": null,
+     "note": "Doğrulama başarı oranı kabul ölçütünün altında (%92, hedef %95)."
+    },
+    {
+     "id": 1,
+     "contract_id": 5,
+     "sort_order": 0,
+     "step_type": "need-definition",
+     "status": "done",
+     "owner_person_id": 25,
+     "planned_start": {
+      "$date": "2026-06-01"
+     },
+     "planned_end": {
+      "$date": "2026-06-20"
+     },
+     "actual_start": {
+      "$date": "2026-06-01"
+     },
+     "actual_end": {
+      "$date": "2026-06-18"
+     },
+     "note": null
+    },
+    {
+     "id": 2,
+     "contract_id": 5,
+     "sort_order": 1,
+     "step_type": "market-research",
+     "status": "done",
+     "owner_person_id": 25,
+     "planned_start": {
+      "$date": "2026-06-22"
+     },
+     "planned_end": {
+      "$date": "2026-07-10"
+     },
+     "actual_start": {
+      "$date": "2026-06-22"
+     },
+     "actual_end": {
+      "$date": "2026-07-15"
+     },
+     "note": "Dört veri taşıma firması incelendi."
+    },
+    {
+     "id": 3,
+     "contract_id": 5,
+     "sort_order": 2,
+     "step_type": "rfq",
+     "status": "done",
+     "owner_person_id": 14,
+     "planned_start": {
+      "$date": "2026-07-13"
+     },
+     "planned_end": {
+      "$date": "2026-08-05"
+     },
+     "actual_start": {
+      "$date": "2026-07-20"
+     },
+     "actual_end": {
+      "$date": "2026-08-08"
+     },
+     "note": null
+    },
+    {
+     "id": 4,
+     "contract_id": 5,
+     "sort_order": 3,
+     "step_type": "offer-evaluation",
+     "status": "done",
+     "owner_person_id": 25,
+     "planned_start": {
+      "$date": "2026-08-10"
+     },
+     "planned_end": {
+      "$date": "2026-08-31"
+     },
+     "actual_start": {
+      "$date": "2026-08-11"
+     },
+     "actual_end": {
+      "$date": "2026-09-04"
+     },
+     "note": "Teknik puanlama: Nova 82, Atlas 76, Delta 61."
+    },
+    {
+     "id": 5,
+     "contract_id": 5,
+     "sort_order": 4,
+     "step_type": "negotiation",
+     "status": "in-progress",
+     "owner_person_id": 14,
+     "planned_start": {
+      "$date": "2026-09-01"
+     },
+     "planned_end": {
+      "$date": "2026-09-20"
+     },
+     "actual_start": {
+      "$date": "2026-09-07"
+     },
+     "actual_end": null,
+     "note": "İkinci tur fiyat teklifi bekleniyor."
+    },
+    {
+     "id": 6,
+     "contract_id": 5,
+     "sort_order": 5,
+     "step_type": "approval",
+     "status": "not-started",
+     "owner_person_id": 24,
+     "planned_start": {
+      "$date": "2026-09-21"
+     },
+     "planned_end": {
+      "$date": "2026-10-05"
+     },
+     "actual_start": null,
+     "actual_end": null,
+     "note": null
+    },
+    {
+     "id": 7,
+     "contract_id": 5,
+     "sort_order": 6,
+     "step_type": "purchase-order",
+     "status": "not-started",
+     "owner_person_id": 14,
+     "planned_start": {
+      "$date": "2026-10-06"
+     },
+     "planned_end": {
+      "$date": "2026-10-10"
+     },
+     "actual_start": null,
+     "actual_end": null,
+     "note": null
+    },
+    {
+     "id": 8,
+     "contract_id": 5,
+     "sort_order": 7,
+     "step_type": "contract-signing",
+     "status": "not-started",
+     "owner_person_id": 25,
+     "planned_start": {
+      "$date": "2026-10-12"
+     },
+     "planned_end": {
+      "$date": "2026-10-25"
+     },
+     "actual_start": null,
+     "actual_end": null,
+     "note": null
+    },
+    {
+     "id": 9,
+     "contract_id": 5,
+     "sort_order": 8,
+     "step_type": "delivery",
+     "status": "not-started",
+     "owner_person_id": 25,
+     "planned_start": {
+      "$date": "2026-11-01"
+     },
+     "planned_end": {
+      "$date": "2026-12-15"
+     },
+     "actual_start": null,
+     "actual_end": null,
+     "note": null
+    },
+    {
+     "id": 20,
+     "contract_id": 6,
+     "sort_order": 0,
+     "step_type": "need-definition",
+     "status": "done",
+     "owner_person_id": 9,
+     "planned_start": {
+      "$date": "2025-11-03"
+     },
+     "planned_end": {
+      "$date": "2025-11-21"
+     },
+     "actual_start": {
+      "$date": "2025-11-03"
+     },
+     "actual_end": {
+      "$date": "2025-11-21"
+     },
+     "note": null
+    },
+    {
+     "id": 21,
+     "contract_id": 6,
+     "sort_order": 1,
+     "step_type": "rfq",
+     "status": "done",
+     "owner_person_id": 9,
+     "planned_start": {
+      "$date": "2025-11-24"
+     },
+     "planned_end": {
+      "$date": "2025-12-19"
+     },
+     "actual_start": {
+      "$date": "2025-11-24"
+     },
+     "actual_end": {
+      "$date": "2025-12-22"
+     },
+     "note": null
+    },
+    {
+     "id": 22,
+     "contract_id": 6,
+     "sort_order": 2,
+     "step_type": "offer-evaluation",
+     "status": "done",
+     "owner_person_id": 9,
+     "planned_start": {
+      "$date": "2026-01-05"
+     },
+     "planned_end": {
+      "$date": "2026-01-23"
+     },
+     "actual_start": {
+      "$date": "2026-01-05"
+     },
+     "actual_end": {
+      "$date": "2026-01-30"
+     },
+     "note": null
+    },
+    {
+     "id": 23,
+     "contract_id": 6,
+     "sort_order": 3,
+     "step_type": "approval",
+     "status": "done",
+     "owner_person_id": 24,
+     "planned_start": {
+      "$date": "2026-01-26"
+     },
+     "planned_end": {
+      "$date": "2026-02-06"
+     },
+     "actual_start": {
+      "$date": "2026-02-02"
+     },
+     "actual_end": {
+      "$date": "2026-02-10"
+     },
+     "note": null
+    },
+    {
+     "id": 24,
+     "contract_id": 6,
+     "sort_order": 4,
+     "step_type": "contract-signing",
+     "status": "done",
+     "owner_person_id": 9,
+     "planned_start": {
+      "$date": "2026-02-09"
+     },
+     "planned_end": {
+      "$date": "2026-02-27"
+     },
+     "actual_start": {
+      "$date": "2026-02-16"
+     },
+     "actual_end": {
+      "$date": "2026-03-01"
+     },
+     "note": null
+    },
+    {
+     "id": 25,
+     "contract_id": 6,
+     "sort_order": 5,
+     "step_type": "delivery",
+     "status": "done",
+     "owner_person_id": 9,
+     "planned_start": {
+      "$date": "2026-03-02"
+     },
+     "planned_end": {
+      "$date": "2026-03-14"
+     },
+     "actual_start": {
+      "$date": "2026-03-02"
+     },
+     "actual_end": {
+      "$date": "2026-03-14"
+     },
+     "note": null
+    },
+    {
+     "id": 26,
+     "contract_id": 6,
+     "sort_order": 6,
+     "step_type": "acceptance",
+     "status": "done",
+     "owner_person_id": 9,
+     "planned_start": {
+      "$date": "2026-03-15"
+     },
+     "planned_end": {
+      "$date": "2026-03-31"
+     },
+     "actual_start": {
+      "$date": "2026-03-16"
+     },
+     "actual_end": {
+      "$date": "2026-04-03"
+     },
+     "note": "Felaket kurtarma tatbikatı başarılı."
+    },
+    {
+     "id": 27,
+     "contract_id": 6,
+     "sort_order": 7,
+     "step_type": "invoicing",
+     "status": "done",
+     "owner_person_id": 9,
+     "planned_start": {
+      "$date": "2026-04-01"
+     },
+     "planned_end": {
+      "$date": "2026-04-15"
+     },
+     "actual_start": {
+      "$date": "2026-04-07"
+     },
+     "actual_end": {
+      "$date": "2026-04-14"
+     },
+     "note": null
+    },
+    {
+     "id": 16,
+     "contract_id": 7,
+     "sort_order": 0,
+     "step_type": "need-definition",
+     "status": "done",
+     "owner_person_id": 27,
+     "planned_start": {
+      "$date": "2026-08-01"
+     },
+     "planned_end": {
+      "$date": "2026-08-15"
+     },
+     "actual_start": {
+      "$date": "2026-08-01"
+     },
+     "actual_end": {
+      "$date": "2026-08-12"
+     },
+     "note": "Kullanım verisiyle lisans ihtiyacı yeniden hesaplandı."
+    },
+    {
+     "id": 17,
+     "contract_id": 7,
+     "sort_order": 1,
+     "step_type": "negotiation",
+     "status": "blocked",
+     "owner_person_id": 27,
+     "planned_start": {
+      "$date": "2026-08-18"
+     },
+     "planned_end": {
+      "$date": "2026-09-30"
+     },
+     "actual_start": {
+      "$date": "2026-08-20"
+     },
+     "actual_end": null,
+     "note": "Yeni fiyat listesi %22 artış içeriyor; yönetim kararı bekleniyor."
+    },
+    {
+     "id": 18,
+     "contract_id": 7,
+     "sort_order": 2,
+     "step_type": "approval",
+     "status": "not-started",
+     "owner_person_id": 24,
+     "planned_start": {
+      "$date": "2026-10-01"
+     },
+     "planned_end": {
+      "$date": "2026-10-15"
+     },
+     "actual_start": null,
+     "actual_end": null,
+     "note": null
+    },
+    {
+     "id": 19,
+     "contract_id": 7,
+     "sort_order": 3,
+     "step_type": "contract-signing",
+     "status": "not-started",
+     "owner_person_id": 27,
+     "planned_start": {
+      "$date": "2026-10-16"
+     },
+     "planned_end": {
+      "$date": "2026-11-07"
+     },
+     "actual_start": null,
+     "actual_end": null,
+     "note": null
+    },
+    {
+     "id": 10,
+     "contract_id": 8,
+     "sort_order": 0,
+     "step_type": "need-definition",
+     "status": "done",
+     "owner_person_id": 18,
+     "planned_start": {
+      "$date": "2026-08-15"
+     },
+     "planned_end": {
+      "$date": "2026-09-05"
+     },
+     "actual_start": {
+      "$date": "2026-08-15"
+     },
+     "actual_end": {
+      "$date": "2026-09-03"
+     },
+     "note": null
+    },
+    {
+     "id": 11,
+     "contract_id": 8,
+     "sort_order": 1,
+     "step_type": "market-research",
+     "status": "in-progress",
+     "owner_person_id": 18,
+     "planned_start": {
+      "$date": "2026-09-08"
+     },
+     "planned_end": {
+      "$date": "2026-10-10"
+     },
+     "actual_start": {
+      "$date": "2026-09-10"
+     },
+     "actual_end": null,
+     "note": "Üç ürün kısa listede; referans görüşmeleri sürüyor."
+    },
+    {
+     "id": 12,
+     "contract_id": 8,
+     "sort_order": 2,
+     "step_type": "rfq",
+     "status": "not-started",
+     "owner_person_id": 14,
+     "planned_start": {
+      "$date": "2026-10-13"
+     },
+     "planned_end": {
+      "$date": "2026-11-07"
+     },
+     "actual_start": null,
+     "actual_end": null,
+     "note": null
+    },
+    {
+     "id": 13,
+     "contract_id": 8,
+     "sort_order": 3,
+     "step_type": "offer-evaluation",
+     "status": "not-started",
+     "owner_person_id": 18,
+     "planned_start": {
+      "$date": "2026-11-10"
+     },
+     "planned_end": {
+      "$date": "2026-11-28"
+     },
+     "actual_start": null,
+     "actual_end": null,
+     "note": null
+    },
+    {
+     "id": 14,
+     "contract_id": 8,
+     "sort_order": 4,
+     "step_type": "approval",
+     "status": "not-started",
+     "owner_person_id": 24,
+     "planned_start": {
+      "$date": "2026-12-01"
+     },
+     "planned_end": {
+      "$date": "2026-12-12"
+     },
+     "actual_start": null,
+     "actual_end": null,
+     "note": null
+    },
+    {
+     "id": 15,
+     "contract_id": 8,
+     "sort_order": 5,
+     "step_type": "contract-signing",
+     "status": "not-started",
+     "owner_person_id": 18,
+     "planned_start": {
+      "$date": "2026-12-15"
+     },
+     "planned_end": {
+      "$date": "2026-12-31"
+     },
+     "actual_start": null,
+     "actual_end": null,
+     "note": null
+    }
+   ]
+  },
+  {
+   "table": "procurement_notes",
+   "rows": [
+    {
+     "id": 1,
+     "contract_id": 5,
+     "created_at": {
+      "$ts": "2026-09-04T10:00:00Z"
+     },
+     "author_person_id": 25,
+     "note_text": "Üç tedarikçiden teklif alındı; ikisi teknik değerlendirmeyi geçti.",
+     "internal": 0
+    },
+    {
+     "id": 2,
+     "contract_id": 5,
+     "created_at": {
+      "$ts": "2026-09-15T14:20:00Z"
+     },
+     "author_person_id": 24,
+     "note_text": "Hedef fiyat bütçenin %8 üzerinde; pazarlıkta kapsam daraltma seçeneği de konuşulacak.",
+     "internal": 1
+    },
+    {
+     "id": 3,
+     "contract_id": 8,
+     "created_at": {
+      "$ts": "2026-09-20T09:30:00Z"
+     },
+     "author_person_id": 18,
+     "note_text": "Analist raporu incelendi; iki referans müşteri görüşmesi planlandı.",
+     "internal": 0
+    },
+    {
+     "id": 4,
+     "contract_id": 7,
+     "created_at": {
+      "$ts": "2026-09-28T11:00:00Z"
+     },
+     "author_person_id": 27,
+     "note_text": "Alternatif olarak açık kaynak yığına geçişin maliyeti çıkarılıyor.",
+     "internal": 1
+    },
+    {
+     "id": 5,
+     "contract_id": 7,
+     "created_at": {
+      "$ts": "2026-09-30T08:45:00Z"
+     },
+     "author_person_id": 27,
+     "note_text": "Mevcut abonelik 14 Kasım’da bitiyor; karar Ekim ortasına kadar verilmeli.",
+     "internal": 0
+    },
+    {
+     "id": 6,
+     "contract_id": 6,
+     "created_at": {
+      "$ts": "2026-04-03T16:00:00Z"
+     },
+     "author_person_id": 9,
+     "note_text": "Kabul testleri tamamlandı, felaket kurtarma tatbikatı başarılı.",
+     "internal": 0
+    },
+    {
+     "id": 7,
+     "contract_id": 1,
+     "created_at": {
+      "$ts": "2026-09-25T13:15:00Z"
+     },
+     "author_person_id": 11,
+     "note_text": "Tedarikçi model iyileştirmesini 15 Ekim’e kadar teslim edecek.",
+     "internal": 0
     }
    ]
   },

@@ -2,23 +2,20 @@ package com.cerebro.api.masterdata;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.cerebro.api.shared.Migrations;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
-import org.springframework.core.io.ClassPathResource;
 
 class MasterDataCatalogTest {
 
   @Test
   void everySeededListIsInTheCatalogueWithItsSystemCodes() throws IOException {
     MasterDataCatalog catalog = new MasterDataCatalog();
-    String sql =
-        new ClassPathResource("db/migration/V3__master_data.sql")
-            .getContentAsString(StandardCharsets.UTF_8);
+    String sql = Migrations.all();
     var seeded =
-        Pattern.compile("\\('([A-Za-z]+)', '([^']+)'")
+        Pattern.compile("INSERT INTO master_data_items .* VALUES \\('([A-Za-z]+)', '([^']+)'")
             .matcher(sql)
             .results()
             .collect(

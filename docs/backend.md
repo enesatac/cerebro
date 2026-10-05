@@ -29,7 +29,7 @@ com.cerebro.api
   operations/    risks, escalations, decisions
   planning/      leaves, resource allocations
   runbooks/      attachments/ (bytes: AttachmentContentStore)
-  demands/       contracts/ (and vendors)
+  demands/       contracts/ (and vendors)   procurement/ (tracker: steps, notes)
   governance/    dashboard, health report, trends
   search/        demo/ (demo data, demo profiles only)
   shared/        errors, audit, SQL helpers, text rules, Turkish collation
@@ -80,7 +80,8 @@ specification; the contract test keeps the two equal.
 - **Every API call needs an active account** (`SignedInInterceptor`; an SSO identity alone is not
   enough). **Every write checks its screen privilege**. Reads of portfolio data are open to any
   signed-in account (forms pick people, teams and applications everywhere); contracts and vendors
-  need `contracts:view`, users and roles `users:view` / `roles:view`, attachments the `view`
+  need `contracts:view`, the procurement tracker `procurement:view` (internal notes only with
+  `procurement:edit`), users and roles `users:view` / `roles:view`, attachments the `view`
   privilege of their record's screen; search returns only the kinds the user may view.
 - **Identity** — production: Oracle Access Manager over OIDC (`/oauth2/authorization/corporate`).
   The claim in `CEREBRO_OIDC_USER_CLAIM` (default `email`) must match an active `user_accounts`
@@ -94,8 +95,10 @@ specification; the contract test keeps the two equal.
 ## Database (Oracle)
 
 - Flyway migrations in `src/main/resources/db/migration`: `V1` schema, `V2` privilege catalogue and
-  system role, `V3` master data (both generated from the frontend), `V4` session tables. Schema
-  changes are new migrations, never edits of applied ones.
+  system role, `V3` master data (both generated from the frontend), `V4` session tables, `V5`
+  procurement tracker tables, `V6` its privileges and value lists (generated). Schema changes are
+  new migrations, never edits of applied ones; new privilege modules and value lists go into a new
+  generated seed migration (`LATER_SEEDS` in the generator), never into V2/V3.
 - Written for **Oracle 19c**: identity columns, `NUMBER(1)` booleans, string lists as JSON in
   `CLOB`, `VARCHAR2(n CHAR)`, named constraints and indexes, no 23ai-only syntax.
 - Oracle stores `''` as NULL: optional text columns are nullable and read back as `""`

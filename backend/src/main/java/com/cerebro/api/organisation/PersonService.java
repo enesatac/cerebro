@@ -180,6 +180,12 @@ public class PersonService {
             ref(
                 "müdahale rehberi kişisi",
                 count("SELECT count(*) FROM runbook_contacts WHERE person_id = :id", id)),
+            ref(
+                "satın alma adımı sorumluluğu",
+                count("SELECT count(*) FROM procurement_steps WHERE owner_person_id = :id", id)),
+            ref(
+                "satın alma notu",
+                count("SELECT count(*) FROM procurement_notes WHERE author_person_id = :id", id)),
             ref("kayıt geçmişi", count("SELECT " + audited, id)));
     return new DeletionImpact(
         references.references(),

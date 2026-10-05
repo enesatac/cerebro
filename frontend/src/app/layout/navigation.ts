@@ -11,6 +11,7 @@ import { GroupIconOutlinedRounded } from '@takeoff-icons/react/group';
 import { KeyIconOutlinedRounded } from '@takeoff-icons/react/key';
 import { ShoppingBagIconOutlinedRounded } from '@takeoff-icons/react/shopping-bag';
 import { StructureTreeIconOutlinedRounded } from '@takeoff-icons/react/structure-tree';
+import { TruckIconOutlinedRounded } from '@takeoff-icons/react/truck';
 import { UserSettingsIconOutlinedRounded } from '@takeoff-icons/react/user-settings';
 import { WarningIconOutlinedRounded } from '@takeoff-icons/react/warning';
 import type { ComponentType, SVGProps } from 'react';
@@ -59,6 +60,12 @@ export const PRIMARY_NAVIGATION: NavigationItem[] = [
     to: paths.contracts.list(),
     icon: ShoppingBagIconOutlinedRounded,
     privilege: 'contracts:view',
+  },
+  {
+    label: 'Satın alma takibi',
+    to: paths.procurement.list(),
+    icon: TruckIconOutlinedRounded,
+    privilege: 'procurement:view',
   },
   {
     label: 'Uygulamalar',

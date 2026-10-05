@@ -220,6 +220,14 @@ describe.skipIf(!API_URL)('mock and API return the same', () => {
     await same('contracts', (r) => r.contracts.list());
     await same('contracts of project 1', (r) => r.contracts.list({ projectId: 1 }));
     await same('vendors', (r) => r.vendors.list());
+    await same('procurement', (r) => r.procurement.list());
+    for (const contract of await mock.contracts.list()) {
+      await same(`procurement ${contract.id}`, (r) => r.procurement.getById(contract.id));
+      await same(`contract impact ${contract.id}`, (r) =>
+        r.contracts.getDeletionImpact(contract.id),
+      );
+    }
+    await same('missing procurement', (r) => r.procurement.getById(99_999));
     for (const type of ATTACHMENT_OWNER_TYPES) {
       await same(`file counts ${type}`, (r) => r.attachments.countByOwner(type));
     }
@@ -477,7 +485,7 @@ describe.skipIf(!API_URL)('mock and API return the same', () => {
         notes: '',
       }),
     )) as { id: number };
-    await same('create contract', (r) =>
+    const contract = (await same('create contract', (r) =>
       r.contracts.create({
         title: 'Test sözleşmesi',
         projectId: project.id,
@@ -517,7 +525,57 @@ describe.skipIf(!API_URL)('mock and API return the same', () => {
           },
         ],
       }),
+    )) as { id: number };
+
+    const step = {
+      id: null,
+      type: 'rfq',
+      status: 'done',
+      ownerId: 2,
+      plannedStart: '2027-01-01',
+      plannedEnd: '2027-01-10',
+      actualStart: '2027-01-02',
+      actualEnd: '2027-01-12',
+      note: ' Üç teklif ',
+    };
+    await same('procurement steps without end', (r) =>
+      r.procurement.saveSteps(contract.id, [{ ...step, actualEnd: null }]),
     );
+    await same('procurement steps reversed', (r) =>
+      r.procurement.saveSteps(contract.id, [{ ...step, plannedEnd: '2026-12-01' }]),
+    );
+    await same('procurement unknown status', (r) =>
+      r.procurement.saveSteps(contract.id, [{ ...step, status: 'lost' }]),
+    );
+    await same('procurement unknown owner', (r) =>
+      r.procurement.saveSteps(contract.id, [{ ...step, ownerId: 99_999 }]),
+    );
+    const saved = (await same('procurement steps', (r) =>
+      r.procurement.saveSteps(contract.id, [
+        step,
+        { ...step, type: 'approval', status: 'in-progress', actualEnd: null, note: '' },
+      ]),
+    )) as { steps: { id: number }[] };
+    await same('procurement steps reordered', (r) =>
+      r.procurement.saveSteps(contract.id, [...saved.steps].reverse() as never),
+    );
+    await same('procurement foreign step', (r) =>
+      r.procurement.saveSteps(contract.id, [{ ...step, id: 1 }]),
+    );
+    const note = (await same('procurement internal note', (r) =>
+      r.procurement.addNote(contract.id, { text: ' Bütçe aşımı riski ', internal: true }),
+    )) as { id: number };
+    await same('procurement public note', (r) =>
+      r.procurement.addNote(contract.id, { text: 'Teklifler açıldı.', internal: false }),
+    );
+    await same('procurement empty note', (r) =>
+      r.procurement.addNote(contract.id, { text: '  ', internal: false }),
+    );
+    await same('procurement after notes', (r) => r.procurement.getById(contract.id));
+    await same('procurement remove note', (r) => r.procurement.removeNote(note.id));
+    await same('procurement missing note', (r) => r.procurement.removeNote(note.id));
+    await same('contract impact with process', (r) => r.contracts.getDeletionImpact(contract.id));
+    await same('person impact with process', (r) => r.people.getDeletionImpact(2));
     await same('contract over budget', (r) =>
       r.contracts.create({
         title: 'x',

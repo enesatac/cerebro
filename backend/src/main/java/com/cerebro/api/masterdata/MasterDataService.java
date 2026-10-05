@@ -90,6 +90,8 @@ public class MasterDataService {
     use("contractStatuses", "SELECT status AS code FROM contracts");
     use("billingFrequencies", "SELECT billing_frequency AS code FROM contracts");
     use("paymentStatuses", "SELECT status AS code FROM contract_payments");
+    use("procurementSteps", "SELECT step_type AS code FROM procurement_steps");
+    use("procurementStepStatuses", "SELECT status AS code FROM procurement_steps");
   }
 
   private static void use(String list, String... selects) {

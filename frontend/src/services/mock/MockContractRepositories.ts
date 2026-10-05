@@ -6,7 +6,7 @@ import type { Contract, ContractInput, Vendor, VendorInput } from '@/domains/con
 import type { DeletionImpact } from '@/domains/shared/types';
 import { ValidationError } from '@/lib/errors';
 import { isHttpUrl, looksLikeSecret, NO_SECRETS_MESSAGE } from '@/lib/validation';
-import { attachmentsOnlyImpact, deleteAttachmentsOf } from './cascade';
+import { contractDeletionImpact, deleteContractCascade } from './cascade';
 import type { MockDatabase } from './database';
 import { assertCodeChecks, codeChecks } from './MockMasterDataRepository';
 import { copy, findOrThrow } from './query';
@@ -143,13 +143,13 @@ export function createMockContractRepositories(db: MockDatabase, kit: WriteKit) 
     async remove(id) {
       await kit.begin('contracts:delete');
       findOrThrow(db.contracts, id, 'Sözleşme');
-      deleteAttachmentsOf(db, { type: 'contract', id });
+      deleteContractCascade(db, id);
       removeRow(db.contracts, id);
     },
     async getDeletionImpact(id) {
       await kit.begin('contracts:view');
       findOrThrow(db.contracts, id, 'Sözleşme');
-      return attachmentsOnlyImpact(db, { type: 'contract', id });
+      return contractDeletionImpact(db, id);
     },
   };
 

@@ -143,12 +143,18 @@ public class ContractService {
   public DeletionImpact deletionImpact(long id) {
     access.require("contracts:view");
     find(id);
-    long files =
-        jdbc.sql("SELECT count(*) FROM attachments WHERE contract_id = :id")
-            .param("id", id)
-            .query(Long.class)
-            .single();
-    return DeletionImpact.of(DeletionImpact.ref("ek dosya (silinir)", files));
+    return DeletionImpact.of(
+        DeletionImpact.ref(
+            "satın alma adımı (silinir)", count("procurement_steps", id)),
+        DeletionImpact.ref("satın alma notu (silinir)", count("procurement_notes", id)),
+        DeletionImpact.ref("ek dosya (silinir)", count("attachments", id)));
+  }
+
+  private long count(String table, long contractId) {
+    return jdbc.sql("SELECT count(*) FROM " + table + " WHERE contract_id = :id")
+        .param("id", contractId)
+        .query(Long.class)
+        .single();
   }
 
   private void validate(Contract.Input input, Contract previous) {

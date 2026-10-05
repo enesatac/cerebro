@@ -53,6 +53,12 @@ export const paths = {
     create: (project?: EntityId) => withQuery('/contracts/new', { project }),
     edit: (contractId: EntityId) => `/contracts/${id(contractId)}/edit`,
   },
+  procurement: {
+    /** `tab`: `purchases` (default) or `deadlines`. */
+    list: (tab?: 'deadlines') => withQuery('/procurement', { tab }),
+    detail: (contractId: EntityId) => `/procurement/${id(contractId)}`,
+    editSteps: (contractId: EntityId) => `/procurement/${id(contractId)}/steps`,
+  },
   demands: {
     /** `tab`: `mine` (default) or `all`. */
     list: (tab?: 'all') => withQuery('/demands', { tab }),

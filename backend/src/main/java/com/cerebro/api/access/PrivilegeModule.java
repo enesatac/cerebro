@@ -10,8 +10,8 @@ import java.util.Optional;
 
 /**
  * The privilege catalogue: one module per screen and the levels it supports. Mirrors the
- * frontend's {@code PRIVILEGE_MODULES} (cerebro: src/domains/auth/types) and the {@code privileges}
- * table seeded by {@code V2__privileges_and_system_role.sql}; {@code PrivilegeCatalogTest} keeps the
+ * frontend's {@code PRIVILEGE_MODULES} (cerebro: src/domains/auth/types) and the {@code access_privileges}
+ * table seeded by {@code V2__privileges_and_system_role.sql} and later seed migrations; {@code PrivilegeCatalogTest} keeps the
  * three in step.
  */
 public enum PrivilegeModule {
@@ -21,6 +21,7 @@ public enum PrivilegeModule {
   CONNECTIONS("connections", VIEW, EDIT, DELETE),
   RISKS("risks", VIEW, EDIT, DELETE),
   CONTRACTS("contracts", VIEW, EDIT, DELETE),
+  PROCUREMENT("procurement", VIEW, EDIT),
   REPORTS("reports", VIEW),
   TEAMS("teams", VIEW, EDIT, DELETE),
   PEOPLE("people", VIEW, EDIT, DELETE),

@@ -3,6 +3,26 @@
 Short records of decisions that shape the codebase. Newest first. Entries `B-…` were taken over
 from the separate backend repository when it was merged into this one.
 
+## D-031 · Seed migrations are frozen; new catalogue entries get their own (2026-10-05)
+
+V2 (privileges) and V3 (master data) are released migrations, and Flyway refuses a changed one.
+The seed generator still produces them from the frontend, but byte for byte as released: a new
+privilege module or value list is listed in `LATER_SEEDS` (`frontend/scripts/backend-seed.gen.ts`)
+and generated into a new migration (V6 for the procurement tracker), which also grants it to the
+system role. The catalogue tests read every migration.
+
+## D-030 · Procurement tracker: the process without the price (2026-10-05)
+
+Business units want to see where their purchases stand without being able to see what they cost.
+The tracker is its own screen and privilege module (`procurement`, view/edit) on top of contracts:
+a purchase is a contract, its process is ordered steps (type and status from master data, owner,
+planned and actual dates, a short note) plus a log of notes. Its read model carries the contract's
+identity, project, business unit and supplier but no amounts, so `procurement:view` can be given to
+business units while `contracts:view` stays with the portfolio office. Where a purchase stands
+(not started, in progress, late, blocked, completed) is derived from the steps, not stored.
+Internal notes are only returned to `procurement:edit`. Steps and notes are deleted with their
+contract; people in them cannot be deleted.
+
 ## D-029 · Sessions in the database (2026-10-04)
 
 OpenShift runs two or more pods and replaces them one by one on every deploy. In-memory sessions

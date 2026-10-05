@@ -189,6 +189,30 @@ export function technologyDeletionImpact(db: MockDatabase, id: EntityId): Deleti
   };
 }
 
+/** A contract takes its procurement process (steps, notes) and its files with it. */
+export function contractDeletionImpact(db: MockDatabase, id: EntityId): DeletionImpact {
+  return {
+    blockedReason: null,
+    references: nonZero([
+      {
+        label: 'satın alma adımı (silinir)',
+        count: db.procurementSteps.filter((s) => s.contractId === id).length,
+      },
+      {
+        label: 'satın alma notu (silinir)',
+        count: db.procurementNotes.filter((n) => n.contractId === id).length,
+      },
+      attachmentReference(db, { type: 'contract', id }),
+    ]),
+  };
+}
+
+export function deleteContractCascade(db: MockDatabase, id: EntityId) {
+  db.procurementSteps = db.procurementSteps.filter((s) => s.contractId !== id);
+  db.procurementNotes = db.procurementNotes.filter((n) => n.contractId !== id);
+  deleteAttachmentsOf(db, { type: 'contract', id });
+}
+
 export const NO_IMPACT: DeletionImpact = { references: [], blockedReason: null };
 
 export const sameOwner = (a: AttachmentOwner, b: AttachmentOwner) =>
@@ -265,6 +289,14 @@ export function personDeletionImpact(db: MockDatabase, id: EntityId): DeletionIm
     {
       label: 'müdahale rehberi kişisi',
       count: db.runbooks.flatMap((r) => r.contacts).filter((c) => c.personId === id).length,
+    },
+    {
+      label: 'satın alma adımı sorumluluğu',
+      count: db.procurementSteps.filter((s) => s.ownerId === id).length,
+    },
+    {
+      label: 'satın alma notu',
+      count: db.procurementNotes.filter((n) => n.authorId === id).length,
     },
     {
       label: 'kayıt geçmişi',

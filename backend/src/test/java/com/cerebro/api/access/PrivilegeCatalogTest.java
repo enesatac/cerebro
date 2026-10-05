@@ -3,12 +3,11 @@ package com.cerebro.api.access;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.cerebro.api.shared.Migrations;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.regex.Pattern;
 import org.junit.jupiter.api.Test;
-import org.springframework.core.io.ClassPathResource;
 
 class PrivilegeCatalogTest {
 
@@ -16,12 +15,10 @@ class PrivilegeCatalogTest {
 
   @Test
   void javaCatalogueMatchesTheSeededPrivileges() throws IOException {
-    String sql =
-        new ClassPathResource("db/migration/V2__privileges_and_system_role.sql")
-            .getContentAsString(StandardCharsets.UTF_8);
-    List<String> seeded = CODE.matcher(sql).results().map(match -> match.group(1)).toList();
+    List<String> seeded =
+        CODE.matcher(Migrations.all()).results().map(match -> match.group(1)).toList();
 
-    assertThat(PrivilegeModule.allPrivileges()).containsExactlyElementsOf(seeded);
+    assertThat(PrivilegeModule.allPrivileges()).containsExactlyInAnyOrderElementsOf(seeded);
   }
 
   @Test

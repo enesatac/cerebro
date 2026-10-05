@@ -21,6 +21,7 @@ import {
   PAYMENT_STATUSES,
 } from '@/domains/contracts/types';
 import { DECISION_STATUSES } from '@/domains/decisions/types';
+import { PROCUREMENT_STEP_STATUSES } from '@/domains/procurement/types';
 import {
   DEMAND_BENEFIT_TYPES,
   DEMAND_PRIORITIES,
@@ -479,6 +480,28 @@ export const MASTER_DATA_LISTS: readonly MasterDataListDefinition[] = [
     extensible: false,
     colored: true,
     usedIn: 'Sözleşmenin ödeme planı',
+  }),
+  define({
+    key: 'procurementSteps',
+    label: 'Satın alma adımları',
+    description:
+      'Bir satın almanın geçtiği adımlar. Aktif adımlar bu sırayla yeni sürecin şablonudur.',
+    group: 'procurement',
+    systemCodes: [],
+    extensible: true,
+    colored: false,
+    usedIn: 'Satın alma takibi: süreç adımları ve şablon',
+  }),
+  define({
+    key: 'procurementStepStatuses',
+    label: 'Satın alma adım durumları',
+    description:
+      'Her adımın durumu. Tamamlanan ve atlanan adımlar süreci bekletmez; tamamlanan adımın bitiş tarihi olur.',
+    group: 'procurement',
+    systemCodes: PROCUREMENT_STEP_STATUSES,
+    extensible: false,
+    colored: true,
+    usedIn: 'Satın alma takibi: adımlar ve panolar',
   }),
 ];
 

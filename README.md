@@ -59,6 +59,12 @@ one Helm release on OpenShift, one Jenkins pipeline.
   invoices and payment dates; notice deadlines, auto-renewal and overdue payments flagged; signed
   contract as a required document; vendors register; Excel export. Visible only with the
   `contracts` privilege.
+- **Procurement tracker** — `/procurement`: where every purchase stands — ordered steps (need,
+  market research, RFQ, evaluation, negotiation, approval, PO, signing, delivery, acceptance,
+  invoicing; administrable) with owners and planned against actual dates, delays, the current step
+  and a log of notes (internal notes for the procurement team only); dashboard with late and
+  upcoming steps, filters and Excel export. Business units get it read-only (`procurement:view`),
+  opening on their own unit and without amounts.
 - **Demands** — `/demands`: business units raise project, application and change requests with
   every detail (need, benefits, urgency, date, budget, related systems, files) and follow them;
   `/demands/manage` (portfolio office): triage inbox, WSJF scoring with a suggested priority,

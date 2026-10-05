@@ -3535,3 +3535,43 @@ code {
 .c-access-preview__item dd {
   margin: 0;
 }
+
+/* Procurement tracker: the note log and the note form's action row. */
+.c-procurement-notes {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.c-procurement-notes__item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xxs);
+  padding: var(--spacing-m-base) 0;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.c-procurement-notes__item:last-child {
+  border-bottom: 0;
+}
+
+.c-procurement-notes__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+  align-items: center;
+}
+
+.c-procurement-notes__delete {
+  margin-inline-start: auto;
+}
+
+.c-procurement-note-form__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-m-base);
+  align-items: flex-end;
+  justify-content: space-between;
+}

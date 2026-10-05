@@ -5,7 +5,7 @@ import type { MockDatabase } from './database';
  * reload. Bump the key when the seed data or its shape changes. Storage can be unavailable
  * (private mode, blocked site data) — every access is guarded and falls back to seed data.
  */
-const STORAGE_KEY = 'cerebro.demo-db.v12';
+const STORAGE_KEY = 'cerebro.demo-db.v13';
 
 export interface DatabaseStore {
   load(): MockDatabase | null;
@@ -40,6 +40,9 @@ const WRITE_METHODS = new Set([
   'signIn',
   'assess',
   'withdraw',
+  'saveSteps',
+  'addNote',
+  'removeNote',
 ]);
 
 /**

@@ -553,5 +553,26 @@
     ],
     "extensible": false,
     "colored": true
+  },
+  {
+    "key": "procurementSteps",
+    "label": "Satın alma adımları",
+    "systemCodes": [],
+    "extensible": true,
+    "colored": false
+  },
+  {
+    "key": "procurementStepStatuses",
+    "label": "Satın alma adım durumları",
+    "systemCodes": [
+      "not-started",
+      "in-progress",
+      "waiting",
+      "blocked",
+      "done",
+      "skipped"
+    ],
+    "extensible": false,
+    "colored": true
   }
 ]

@@ -18,6 +18,11 @@ import type {
   PortfolioTrends,
 } from '@/domains/governance/types';
 import type { LeaveRecord } from '@/domains/leaves/types';
+import type {
+  ProcurementNote,
+  ProcurementProcess,
+  ProcurementSummary,
+} from '@/domains/procurement/types';
 import type { MasterDataList, MasterDataUsage } from '@/domains/master-data/types';
 import type { Person, PersonWorkload } from '@/domains/people/types';
 import type { ApplicationProjectLink, Project, ProjectListItem } from '@/domains/projects/types';
@@ -267,6 +272,15 @@ export function createHttpRepositories(http: HttpClient): Repositories {
         http,
         '/api/contracts',
       ),
+    },
+    procurement: {
+      list: () => http.get<ProcurementSummary[]>('/api/procurement'),
+      getById: (contractId) => http.get<ProcurementProcess>(`/api/procurement/${contractId}`),
+      saveSteps: (contractId, steps) =>
+        http.put<ProcurementProcess>(`/api/procurement/${contractId}/steps`, steps),
+      addNote: (contractId, input) =>
+        http.post<ProcurementNote>(`/api/procurement/${contractId}/notes`, input),
+      removeNote: (noteId) => http.delete(`/api/procurement/notes/${noteId}`),
     },
     vendors: {
       list: () => http.get<Vendor[]>('/api/vendors'),

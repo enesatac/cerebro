@@ -11,6 +11,7 @@ import { createMemoryBlobStore, type BlobStore } from './blobStore';
 import { createMockLeaveRepository } from './MockLeaveRepository';
 import { createMockDemandRepository } from './MockDemandRepository';
 import { createMockContractRepositories } from './MockContractRepositories';
+import { createMockProcurementRepository } from './MockProcurementRepository';
 import { createMockMasterDataRepository } from './MockMasterDataRepository';
 import { createMockAuthRepositories } from './MockAuthRepositories';
 import { createMockOperationalRepositories } from './MockOperationalRepositories';
@@ -54,6 +55,7 @@ export function createMockRepositories({
     runbooks: createMockRunbookRepository(db, latencyMs, kit),
     demands: createMockDemandRepository(db, latencyMs, kit),
     ...createMockContractRepositories(db, kit),
+    procurement: createMockProcurementRepository(db, kit),
     attachments: createMockAttachmentRepository(db, blobs ?? createMemoryBlobStore(), kit),
     ...createMockReferenceRepositories(db, lookup, latencyMs, kit),
     ...createMockOperationalRepositories(db, latencyMs, kit),
