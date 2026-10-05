@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import { Link, Outlet } from 'react-router';
+import { Link, Outlet, ScrollRestoration } from 'react-router';
 import { LoadingState } from '@/components/feedback/LoadingState';
 import { RequireAuth } from '@/domains/auth/components/RequireAuth';
 import { UserMenu } from '@/domains/auth/components/UserMenu';
@@ -13,6 +13,9 @@ import { Sidebar } from './Sidebar';
 export function AppShell() {
   return (
     <div className="c-shell">
+      {/* A new page opens at the top; back and forward return to where the reader was. Keyed by
+          path only, so tabs and filters (query string) do not jump the page. */}
+      <ScrollRestoration getKey={(location) => location.pathname} />
       <a className="c-skip-link" href="#main-content">
         Ana içeriğe geç
       </a>

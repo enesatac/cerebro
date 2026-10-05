@@ -1,11 +1,15 @@
 package com.cerebro.api.shared.error;
 
 import java.net.URI;
+import java.sql.SQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.TransientDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.ProblemDetail;
@@ -52,14 +56,41 @@ public class ApiExceptionHandler {
     return problem;
   }
 
-  /** A database rule the service checks did not catch (a constraint, a concurrent write). */
+  /**
+   * A database rule the service checks did not catch (a constraint, a concurrent write). Some
+   * drivers report other failures under this type too (H2 files a closed database here), so only
+   * SQLState class 23 — integrity constraint violation — is the user's to fix.
+   */
   @ExceptionHandler(DataIntegrityViolationException.class)
   ProblemDetail integrity(DataIntegrityViolationException error) {
+    if (!isConstraintViolation(error)) {
+      return unavailable(error);
+    }
     log.warn("Constraint violation: {}", error.getMostSpecificCause().getMessage());
     return problem(
         HttpStatus.BAD_REQUEST,
         "validation",
         "Kayıt kaydedilemedi: bilgiler başka bir kayıtla çakışıyor veya geçersiz.");
+  }
+
+  /** The database cannot be reached or refused the connection: the request may work later. */
+  @ExceptionHandler({DataAccessResourceFailureException.class, TransientDataAccessException.class})
+  ProblemDetail unavailable(DataAccessException error) {
+    log.error("Database unavailable", error);
+    return problem(
+        HttpStatus.SERVICE_UNAVAILABLE,
+        "unexpected",
+        "Veritabanına şu anda ulaşılamıyor. Biraz sonra tekrar deneyin.");
+  }
+
+  private static boolean isConstraintViolation(DataIntegrityViolationException error) {
+    for (Throwable cause = error; cause != null; cause = cause.getCause()) {
+      if (cause instanceof SQLException sql && sql.getSQLState() != null) {
+        return sql.getSQLState().startsWith("23");
+      }
+    }
+    // No SQLState to go by (e.g. a translated duplicate key): keep it the user's to fix.
+    return true;
   }
 
   @ExceptionHandler({

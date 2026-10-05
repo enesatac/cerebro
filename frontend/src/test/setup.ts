@@ -31,3 +31,5 @@ if (!window.matchMedia) {
 }
 
 Element.prototype.scrollIntoView ??= function scrollIntoView() {};
+// jsdom has no layout: page scrolling (the shell's scroll restoration) is a no-op in tests.
+window.scrollTo = () => {};

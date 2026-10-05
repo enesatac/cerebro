@@ -4,7 +4,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.sql.SQLException;
 import org.junit.jupiter.api.Test;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,6 +24,12 @@ class ApiExceptionHandlerTest {
         case "missing" -> new NotFoundException("Proje", 42);
         case "forbidden" -> new ForbiddenException();
         case "signed-out" -> new UnauthenticatedException();
+        case "duplicate" ->
+            new DataIntegrityViolationException(
+                "insert", new SQLException("unique constraint violated", "23505"));
+        case "closed" ->
+            new DataIntegrityViolationException(
+                "select", new SQLException("The database has been closed", "90098"));
         default -> new IllegalStateException("database password leaked in stack trace");
       };
     }
@@ -59,5 +67,15 @@ class ApiExceptionHandlerTest {
     mvc.perform(get("/fail/boom"))
         .andExpect(status().isInternalServerError())
         .andExpect(jsonPath("$.detail").value("Beklenmeyen bir hata oluştu."));
+  }
+
+  @Test
+  void tellsConstraintViolationsFromAnUnavailableDatabase() throws Exception {
+    mvc.perform(get("/fail/duplicate"))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.code").value("validation"));
+    mvc.perform(get("/fail/closed"))
+        .andExpect(status().isServiceUnavailable())
+        .andExpect(jsonPath("$.detail").value("Veritabanına şu anda ulaşılamıyor. Biraz sonra tekrar deneyin."));
   }
 }
