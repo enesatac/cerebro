@@ -84,3 +84,71 @@ export interface ApplicationIntegrations {
 
 export type DependencyInput = Omit<ApplicationDependency, 'id' | 'audit'>;
 export type IntegrationInput = Omit<Integration, 'id' | 'audit'>;
+
+/** An application on the portfolio map. */
+export interface MapApplication {
+  id: ApplicationId;
+  code: string;
+  name: string;
+  /** `applicationLifecycles` code. */
+  lifecycle: string;
+  /** `criticalities` code. */
+  criticality: string;
+  businessUnitId: EntityId | null;
+}
+
+/** A project on the portfolio map. */
+export interface MapProject {
+  id: EntityId;
+  code: string;
+  name: string;
+  /** `projectStatuses` code. */
+  status: string;
+  /** `projectHealths` code. */
+  health: string;
+  businessUnitId: EntityId | null;
+}
+
+/**
+ * One line on the map. Dependencies and integrations join applications (integrations with an
+ * external party are left out); impacts join a project to an application it changes.
+ */
+export type MapLink =
+  | {
+      kind: 'dependency';
+      id: EntityId;
+      fromApplicationId: ApplicationId;
+      toApplicationId: ApplicationId;
+      /** `dependencyTypes` code. */
+      type: string;
+      /** `criticalities` code. */
+      criticality: string;
+    }
+  | {
+      kind: 'integration';
+      id: EntityId;
+      fromApplicationId: ApplicationId;
+      toApplicationId: ApplicationId;
+      name: string;
+      /** `integrationTypes` code. */
+      type: string;
+    }
+  | {
+      kind: 'impact';
+      id: EntityId;
+      projectId: EntityId;
+      applicationId: ApplicationId;
+      /** `applicationImpactTypes` code. */
+      type: string;
+    };
+
+/**
+ * Every application and project with the links between them, in one read: the portfolio map. Small
+ * by design (ids, names and the codes the map colours by), so the whole portfolio fits.
+ */
+export interface PortfolioMap {
+  applications: MapApplication[];
+  projects: MapProject[];
+  /** Dependencies, then integrations, then impacts, each in id order. */
+  links: MapLink[];
+}

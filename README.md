@@ -59,6 +59,11 @@ one Helm release on OpenShift, one Jenkins pipeline.
   invoices and payment dates; notice deadlines, auto-renewal and overdue payments flagged; signed
   contract as a required document; vendors register; Excel export. Visible only with the
   `contracts` privilege.
+- **Portfolio map** — `/architecture` opens on a network of every application and project:
+  dependencies (arrows), integrations (dashed) and project impacts (dotted); applications coloured
+  by criticality and sized by their links, projects framed by health. Click a node to light up
+  what it touches (direct or two steps away) and list those links; pan, zoom, drag nodes, filter by
+  link kind and business unit; "Bağlantı haritasında göster" on every application and project.
 - **Production releases** — `/releases`: every application's and project's go-lives on one
   horizontal calendar (2 weeks / month / 3 months, rows by application or by project), coloured by
   status; release number, title, version, window (past midnight too), owner, service

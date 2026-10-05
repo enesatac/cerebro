@@ -58,3 +58,11 @@ export function useIntegration(id: EntityId) {
     queryFn: () => connections.integrations.getById(id),
   });
 }
+
+export function usePortfolioMap() {
+  const { connections } = useRepositories();
+  return useQuery({
+    queryKey: [...connectionKeys.all, 'map'],
+    queryFn: () => connections.getPortfolioMap(),
+  });
+}

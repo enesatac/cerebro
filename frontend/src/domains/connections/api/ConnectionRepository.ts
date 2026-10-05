@@ -7,6 +7,7 @@ import type {
   DependencyInput,
   Integration,
   IntegrationInput,
+  PortfolioMap,
 } from '../types';
 
 export interface DependencyRepository extends WriteRepository<
@@ -28,6 +29,8 @@ export interface ConnectionRepository {
   /** Every dependency in the portfolio (bounded by the number of relationships, used for impact analysis). */
   listDependencies(): Promise<ApplicationDependency[]>;
   listIntegrations(): Promise<Integration[]>;
+  /** Applications, projects and every link between them (the portfolio map). */
+  getPortfolioMap(): Promise<PortfolioMap>;
   dependencies: DependencyRepository;
   integrations: IntegrationRepository;
 }

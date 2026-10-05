@@ -62,7 +62,7 @@ specification; the contract test keeps the two equal.
 - Resources follow the repository contracts: `/api/<resource>` (`GET` list, `POST` create),
   `/api/<resource>/{id}` (`GET`, `PUT`, `DELETE`), `/api/<resource>/{id}/deletion-impact`, and read
   models at their own paths (`/api/applications/{id}/dependencies`,
-  `/api/people/{id}/workload?today=`, `/api/governance/trends`, `/api/demands/{id}/assessment`…).
+  `/api/people/{id}/workload?today=`, `/api/governance/trends`, `/api/portfolio-map`, `/api/demands/{id}/assessment`…).
   OpenAPI: `/v3/api-docs` (Swagger UI outside production).
 - JSON matches the frontend types field for field; dates are `yyyy-MM-dd`, timestamps UTC with
   milliseconds (`2026-03-14T09:30:00.000Z`).

@@ -220,6 +220,7 @@ describe.skipIf(!API_URL)('mock and API return the same', () => {
     await same('contracts', (r) => r.contracts.list());
     await same('contracts of project 1', (r) => r.contracts.list({ projectId: 1 }));
     await same('vendors', (r) => r.vendors.list());
+    await same('portfolio map', (r) => r.connections.getPortfolioMap());
     await same('procurement', (r) => r.procurement.list());
     for (const contract of await mock.contracts.list()) {
       await same(`procurement ${contract.id}`, (r) => r.procurement.getById(contract.id));
@@ -714,6 +715,7 @@ describe.skipIf(!API_URL)('mock and API return the same', () => {
     });
 
     await same('impact after writes', (r) => r.applications.getDeletionImpact(created.id));
+    await same('portfolio map after writes', (r) => r.connections.getPortfolioMap());
     await same('workload after writes', (r) => r.people.getWorkload(2, today));
     await same('overview after writes', (r) => r.governance.getPortfolioOverview());
     await same('delete application', (r) => r.applications.remove(created.id));

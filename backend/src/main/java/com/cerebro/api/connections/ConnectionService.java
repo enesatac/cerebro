@@ -11,6 +11,7 @@ import com.cerebro.api.shared.DeletionImpact;
 import com.cerebro.api.shared.Sql;
 import com.cerebro.api.shared.error.NotFoundException;
 import com.cerebro.api.shared.error.ValidationException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +40,93 @@ public class ConnectionService {
     this.checks = checks;
     this.codes = codes;
     this.stamp = stamp;
+  }
+
+  // ---------------------------------------------------------------------------------------------
+  // Portfolio map
+  // ---------------------------------------------------------------------------------------------
+
+  /** Applications, projects and every link between them, for the portfolio map. */
+  @Transactional(readOnly = true)
+  public PortfolioMap portfolioMap() {
+    access.current();
+    List<PortfolioMap.MapApplication> applications =
+        jdbc.sql(
+                "SELECT id, code, name, lifecycle, criticality, business_unit_id FROM applications"
+                    + " ORDER BY id")
+            .query(
+                (rs, row) ->
+                    new PortfolioMap.MapApplication(
+                        rs.getLong("id"),
+                        rs.getString("code"),
+                        rs.getString("name"),
+                        rs.getString("lifecycle"),
+                        rs.getString("criticality"),
+                        Sql.longOrNull(rs, "business_unit_id")))
+            .list();
+    List<PortfolioMap.MapProject> projects =
+        jdbc.sql("SELECT id, code, name, status, health, business_unit_id FROM projects ORDER BY id")
+            .query(
+                (rs, row) ->
+                    new PortfolioMap.MapProject(
+                        rs.getLong("id"),
+                        rs.getString("code"),
+                        rs.getString("name"),
+                        rs.getString("status"),
+                        rs.getString("health"),
+                        Sql.longOrNull(rs, "business_unit_id")))
+            .list();
+    List<PortfolioMap.Link> links = new ArrayList<>();
+    links.addAll(
+        jdbc.sql(
+                "SELECT id, source_application_id, target_application_id, type, criticality FROM"
+                    + " dependencies ORDER BY id")
+            .query(
+                (rs, row) ->
+                    new PortfolioMap.Link(
+                        "dependency",
+                        rs.getLong("id"),
+                        rs.getLong("source_application_id"),
+                        rs.getLong("target_application_id"),
+                        null,
+                        null,
+                        rs.getString("type"),
+                        rs.getString("criticality"),
+                        null))
+            .list());
+    links.addAll(
+        jdbc.sql(
+                "SELECT id, from_application_id, to_application_id, type, name FROM integrations"
+                    + " WHERE to_application_id IS NOT NULL ORDER BY id")
+            .query(
+                (rs, row) ->
+                    new PortfolioMap.Link(
+                        "integration",
+                        rs.getLong("id"),
+                        rs.getLong("from_application_id"),
+                        rs.getLong("to_application_id"),
+                        null,
+                        null,
+                        rs.getString("type"),
+                        null,
+                        rs.getString("name")))
+            .list());
+    links.addAll(
+        jdbc.sql("SELECT id, project_id, application_id, impact_type FROM application_impacts ORDER BY id")
+            .query(
+                (rs, row) ->
+                    new PortfolioMap.Link(
+                        "impact",
+                        rs.getLong("id"),
+                        null,
+                        null,
+                        rs.getLong("project_id"),
+                        rs.getLong("application_id"),
+                        rs.getString("impact_type"),
+                        null,
+                        null))
+            .list());
+    return new PortfolioMap(applications, projects, links);
   }
 
   // ---------------------------------------------------------------------------------------------

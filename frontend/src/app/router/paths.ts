@@ -78,7 +78,14 @@ export const paths = {
     /** The portfolio office's screen; `tab`: `inbox` (default), `backlog` or `roadmap`. */
     manage: (tab?: 'backlog' | 'roadmap') => withQuery('/demands/manage', { tab }),
   },
-  architecture: (applicationId?: EntityId) => withQuery('/architecture', { app: applicationId }),
+  /** The connections screen; with an application it opens that application's impact analysis. */
+  architecture: (applicationId?: EntityId) =>
+    withQuery('/architecture', {
+      tab: applicationId === undefined ? undefined : 'impact',
+      app: applicationId,
+    }),
+  /** The portfolio map, optionally with an application or project selected (`a-3`, `p-2`). */
+  portfolioMap: (focus?: string) => withQuery('/architecture', { focus }),
   dependencies: {
     create: (sourceApplicationId?: EntityId) =>
       withQuery('/architecture/dependencies/new', { source: sourceApplicationId }),

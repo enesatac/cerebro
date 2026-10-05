@@ -3,6 +3,17 @@
 Short records of decisions that shape the codebase. Newest first. Entries `B-…` were taken over
 from the separate backend repository when it was merged into this one.
 
+## D-033 · Portfolio map drawn in-house, from one read (2026-10-05)
+
+The connections screen opens on a network of applications and projects: dependencies, internal
+integrations and project impacts as lines; clicking a node highlights what it touches one or two
+steps away and lists those links. One read model (`GET /api/portfolio-map`: ids, names, the codes
+the map colours by, and every link) keeps it to a single request however large the portfolio. The
+layout is a small deterministic force simulation (`portfolioGraph.ts`, tested) drawn as SVG rather
+than a graph library: a few dozen to a few hundred nodes need no more, nothing is downloaded, and
+the drawing follows Takeoff's colour tokens. Old `/architecture?app=` links still open the impact
+analysis.
+
 ## D-032 · Production releases as their own record on a shared calendar (2026-10-05)
 
 Teams want every production release (canlı geçiş) of every application and project in one place,

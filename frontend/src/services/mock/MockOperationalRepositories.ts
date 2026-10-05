@@ -1,6 +1,6 @@
 import { attachmentsOnlyImpact, deleteAttachmentsOf } from './cascade';
 import type { ConnectionRepository } from '@/domains/connections/api/ConnectionRepository';
-import type { ApplicationDependency, Integration } from '@/domains/connections/types';
+import type { ApplicationDependency, Integration, MapLink } from '@/domains/connections/types';
 import type { DecisionRepository } from '@/domains/decisions/api/DecisionRepository';
 import type { Decision } from '@/domains/decisions/types';
 import type { EscalationRepository } from '@/domains/escalations/api/EscalationRepository';
@@ -145,6 +145,64 @@ export function createMockOperationalRepositories(
     },
     listDependencies: async () => (await wait(), copy(db.dependencies)),
     listIntegrations: async () => (await wait(), copy(db.integrations)),
+    async getPortfolioMap() {
+      await wait();
+      const byId = <T extends { id: number }>(a: T, b: T) => a.id - b.id;
+      const links: MapLink[] = [
+        ...[...db.dependencies].sort(byId).map((d): MapLink => ({
+          kind: 'dependency',
+          id: d.id,
+          fromApplicationId: d.sourceApplicationId,
+          toApplicationId: d.targetApplicationId,
+          type: d.type,
+          criticality: d.criticality,
+        })),
+        ...[...db.integrations].sort(byId).flatMap((i): MapLink[] =>
+          i.toApplicationId === null
+            ? []
+            : [
+                {
+                  kind: 'integration',
+                  id: i.id,
+                  fromApplicationId: i.fromApplicationId,
+                  toApplicationId: i.toApplicationId,
+                  name: i.name,
+                  type: i.type,
+                },
+              ],
+        ),
+        ...db.projects
+          .flatMap((p) =>
+            p.applicationImpacts.map((impact): MapLink => ({
+              kind: 'impact',
+              id: impact.id,
+              projectId: p.id,
+              applicationId: impact.applicationId,
+              type: impact.impactType,
+            })),
+          )
+          .sort(byId),
+      ];
+      return copy({
+        applications: [...db.applications].sort(byId).map((a) => ({
+          id: a.id,
+          code: a.code,
+          name: a.name,
+          lifecycle: a.lifecycle,
+          criticality: a.criticality,
+          businessUnitId: a.businessUnitId,
+        })),
+        projects: [...db.projects].sort(byId).map((p) => ({
+          id: p.id,
+          code: p.code,
+          name: p.name,
+          status: p.status,
+          health: p.health,
+          businessUnitId: p.businessUnitId,
+        })),
+        links,
+      });
+    },
     dependencies: {
       getById: async (id) => (await wait(), copy(findOrThrow(db.dependencies, id, 'Bağımlılık'))),
       ...createAuditedWriteRepository<

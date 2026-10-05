@@ -36,6 +36,11 @@ public class ConnectionController {
     return service.integrationsOf(id);
   }
 
+  @GetMapping("/portfolio-map")
+  public PortfolioMap portfolioMap() {
+    return service.portfolioMap();
+  }
+
   @GetMapping("/dependencies")
   public List<Dependency> dependencies() {
     return service.dependencies();

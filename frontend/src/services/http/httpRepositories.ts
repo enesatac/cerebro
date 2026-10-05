@@ -7,6 +7,7 @@ import type {
   ApplicationDependency,
   ApplicationIntegrations,
   Integration,
+  PortfolioMap,
 } from '@/domains/connections/types';
 import type { Contract, Vendor } from '@/domains/contracts/types';
 import type { Decision } from '@/domains/decisions/types';
@@ -156,6 +157,7 @@ export function createHttpRepositories(http: HttpClient): Repositories {
         http.get<ApplicationIntegrations>(`/api/applications/${id}/integrations`),
       listDependencies: () => http.get<ApplicationDependency[]>('/api/dependencies'),
       listIntegrations: () => http.get<Integration[]>('/api/integrations'),
+      getPortfolioMap: () => http.get<PortfolioMap>('/api/portfolio-map'),
       dependencies: {
         getById: (id) => http.get<ApplicationDependency>(`/api/dependencies/${id}`),
         ...writes<

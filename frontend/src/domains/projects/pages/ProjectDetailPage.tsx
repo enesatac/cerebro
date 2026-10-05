@@ -172,6 +172,11 @@ export default function ProjectDetailPage() {
             <GuardedActionMenu
               items={[
                 {
+                  label: 'Bağlantı haritasında göster',
+                  to: paths.portfolioMap(`p-${project.id}`),
+                  privilege: 'connections:view',
+                },
+                {
                   label: 'Canlı geçiş ekle',
                   to: paths.releases.create({ project: project.id }),
                   privilege: 'releases:edit',

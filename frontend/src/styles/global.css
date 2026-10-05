@@ -3590,3 +3590,318 @@ code {
 .c-release-chip--interruption {
   border-left-style: double;
 }
+
+/* Portfolio map: the network canvas beside the selected node's links. */
+.c-map-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: var(--spacing-m-base);
+  align-items: start;
+}
+
+@media (max-width: 1100px) {
+  .c-map-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.c-map {
+  position: relative;
+  min-width: 0;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-m-base);
+  background: var(--background-lightest);
+  overflow: hidden;
+}
+
+.c-map__svg {
+  display: block;
+  width: 100%;
+  height: clamp(420px, 68vh, 760px);
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+
+.c-map__svg:active {
+  cursor: grabbing;
+}
+
+.c-map__zoom {
+  position: absolute;
+  top: var(--spacing-s);
+  right: var(--spacing-s);
+  display: flex;
+  gap: var(--spacing-xxs);
+  z-index: 1;
+}
+
+.c-map__edge {
+  vector-effect: non-scaling-stroke;
+  fill: none;
+  stroke: var(--neutral-400);
+  stroke-width: 1.4;
+  transition:
+    opacity 0.15s,
+    stroke 0.15s;
+}
+
+.c-map__edge--integration {
+  stroke: var(--blue-400);
+  stroke-dasharray: 6 4;
+}
+
+.c-map__edge--impact {
+  stroke: var(--purple-400);
+  stroke-dasharray: 2 4;
+  stroke-linecap: round;
+}
+
+.c-map__edge.is-hot {
+  stroke-width: 2.6;
+  stroke: var(--primary-500);
+}
+
+.c-map__edge--integration.is-hot {
+  stroke: var(--blue-600);
+}
+
+.c-map__edge--impact.is-hot {
+  stroke: var(--purple-600);
+}
+
+.c-map__arrow--base {
+  fill: var(--neutral-500);
+}
+
+.c-map__arrow--hot {
+  fill: var(--primary-600);
+}
+
+.c-map__node {
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.c-map__node:focus {
+  outline: none;
+}
+
+.c-map__node:focus-visible .c-map__shape,
+.c-map__node.is-focus .c-map__shape {
+  stroke: var(--text-darkest);
+  stroke-width: 3.5;
+}
+
+.c-map__shape {
+  vector-effect: non-scaling-stroke;
+  fill: var(--c-map-fill);
+  stroke: var(--c-map-stroke);
+  stroke-width: 2;
+}
+
+.c-map__node--project .c-map__shape {
+  fill: var(--purple-500);
+  stroke: var(--c-map-stroke);
+  stroke-width: 3;
+}
+
+.c-map__label {
+  font-size: 11px;
+  font-weight: 500;
+  text-anchor: middle;
+  fill: var(--text-darkest);
+  paint-order: stroke;
+  stroke: var(--background-lightest);
+  stroke-width: 3px;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+
+.c-map__node.is-focus .c-map__label {
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.c-map__edge.is-dim {
+  opacity: 0.12;
+}
+
+.c-map__node.is-dim {
+  opacity: 0.25;
+}
+
+.c-map-tone--neutral {
+  --c-map-fill: var(--neutral-400);
+  --c-map-stroke: var(--neutral-600);
+}
+.c-map-tone--info {
+  --c-map-fill: var(--blue-400);
+  --c-map-stroke: var(--blue-600);
+}
+.c-map-tone--primary {
+  --c-map-fill: var(--primary-400);
+  --c-map-stroke: var(--primary-600);
+}
+.c-map-tone--secondary {
+  --c-map-fill: var(--secondary-400);
+  --c-map-stroke: var(--secondary-600);
+}
+.c-map-tone--success {
+  --c-map-fill: var(--green-400);
+  --c-map-stroke: var(--green-600);
+}
+.c-map-tone--warning {
+  --c-map-fill: var(--yellow-400);
+  --c-map-stroke: var(--yellow-600);
+}
+.c-map-tone--danger {
+  --c-map-fill: var(--red-400);
+  --c-map-stroke: var(--red-600);
+}
+.c-map-tone--purple {
+  --c-map-fill: var(--purple-400);
+  --c-map-stroke: var(--purple-600);
+}
+.c-map-tone--cyan {
+  --c-map-fill: var(--cyan-400);
+  --c-map-stroke: var(--cyan-600);
+}
+.c-map-tone--teal {
+  --c-map-fill: var(--teal-400);
+  --c-map-stroke: var(--teal-600);
+}
+.c-map-tone--business {
+  --c-map-fill: var(--business-400);
+  --c-map-stroke: var(--business-600);
+}
+.c-map-tone--dark {
+  --c-map-fill: var(--neutral-700);
+  --c-map-stroke: var(--neutral-900);
+}
+
+.c-map-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs) var(--spacing-m-base);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--size-xs);
+  color: var(--text-dark);
+}
+
+.c-map-legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.c-map-legend__dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--c-map-fill);
+  border: 2px solid var(--c-map-stroke);
+}
+
+.c-map-legend__diamond {
+  width: 10px;
+  height: 10px;
+  transform: rotate(45deg);
+  background: var(--purple-500);
+  border: 2px solid var(--green-600);
+}
+
+.c-map-legend__line {
+  width: 26px;
+  border-top: 2px solid var(--neutral-500);
+}
+
+.c-map-legend__line--integration {
+  border-top: 2px dashed var(--blue-500);
+}
+
+.c-map-legend__line--impact {
+  border-top: 2px dotted var(--purple-500);
+}
+
+.c-map-details,
+.c-map-hint {
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-m-base);
+  padding: var(--spacing-m-base);
+}
+
+.c-map-details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-s);
+  max-height: clamp(420px, 68vh, 760px);
+  overflow: auto;
+}
+
+.c-map-details__head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xxs);
+}
+
+.c-map-details__title {
+  margin: 0;
+  font-size: var(--size-l, 1.125rem);
+  color: var(--text-darkest);
+}
+
+.c-map-details__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+}
+
+.c-map-details__summary {
+  margin: 0;
+  font-size: var(--size-xs);
+}
+
+.c-map-details__group-title {
+  margin: 0 0 var(--spacing-xxs);
+  font-size: var(--size-s, 0.875rem);
+  color: var(--text-darkest);
+}
+
+.c-map-details__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.c-map-details__item {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: var(--spacing-xs);
+  border: 0;
+  border-radius: var(--radius-s);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.c-map-details__item:hover,
+.c-map-details__item:focus-visible {
+  background: var(--background-lightest);
+}
+
+.c-map-details__name {
+  color: var(--text-darkest);
+  font-weight: 500;
+}
+
+.c-map-details__meta {
+  font-size: var(--size-xs);
+}

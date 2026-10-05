@@ -128,6 +128,11 @@ class ApiIntegrationTest {
         .andExpect(jsonPath("$.items.length()").value(5))
         .andExpect(jsonPath("$.pageSize").value(5));
     mvc.perform(get("/api/governance/overview").cookie(admin)).andExpect(status().isOk());
+    mvc.perform(get("/api/portfolio-map").cookie(admin))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.applications.length()").value(17))
+        .andExpect(jsonPath("$.links[?(@.kind == 'impact')].projectId").isNotEmpty())
+        .andExpect(jsonPath("$.links[0].projectId").doesNotExist());
 
     // Elif (business unit + employee roles) has no contract privileges and cannot edit projects.
     Cookie elif = signIn(3);

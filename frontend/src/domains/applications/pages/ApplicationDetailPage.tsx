@@ -139,6 +139,11 @@ export default function ApplicationDetailPage() {
             <GuardedActionMenu
               items={[
                 {
+                  label: 'Bağlantı haritasında göster',
+                  to: paths.portfolioMap(`a-${application.id}`),
+                  privilege: 'connections:view',
+                },
+                {
                   label: 'Bağımlılık ekle',
                   to: paths.dependencies.create(application.id),
                   privilege: 'connections:edit',
