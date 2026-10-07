@@ -146,6 +146,11 @@ cd ../backend && ./mvnw package
 java -jar target/cerebro.jar --spring.profiles.active=h2   # http://localhost:8080
 ```
 
+The `h2` profile keeps everything in memory: a restart brings back the demo data. If the computer
+slept for a long time, H2 may have closed its in-memory database; screens then say "Veritabanına
+şu anda ulaşılamıyor" (503) and sign-in fails. Restart the jar. For data that survives restarts
+use the `local` profile (Oracle Free in Docker).
+
 Sign in with one of the demo accounts (account picker, no password — local and `h2` only):
 
 | Account       | Roles                                  |

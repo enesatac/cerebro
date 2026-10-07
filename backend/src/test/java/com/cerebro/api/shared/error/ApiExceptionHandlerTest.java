@@ -27,6 +27,13 @@ class ApiExceptionHandlerTest {
         case "duplicate" ->
             new DataIntegrityViolationException(
                 "insert", new SQLException("unique constraint violated", "23505"));
+        case "closed-as-duplicate" -> {
+          // What H2 reports when a session row is written to a database that has been closed.
+          SQLException closed = new SQLException("The database has been closed [90098-240]", "90098");
+          SQLException duplicate = new SQLException("Unique index or primary key violation", "23505");
+          duplicate.initCause(closed);
+          yield new DataIntegrityViolationException("insert", duplicate);
+        }
         case "closed" ->
             new DataIntegrityViolationException(
                 "select", new SQLException("The database has been closed", "90098"));
@@ -74,6 +81,8 @@ class ApiExceptionHandlerTest {
     mvc.perform(get("/fail/duplicate"))
         .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.code").value("validation"));
+    mvc.perform(get("/fail/closed-as-duplicate"))
+        .andExpect(status().isServiceUnavailable());
     mvc.perform(get("/fail/closed"))
         .andExpect(status().isServiceUnavailable())
         .andExpect(jsonPath("$.detail").value("Veritabanına şu anda ulaşılamıyor. Biraz sonra tekrar deneyin."));

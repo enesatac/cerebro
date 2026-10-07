@@ -2,6 +2,7 @@ package com.cerebro.api.shared.error;
 
 import java.net.URI;
 import java.sql.SQLException;
+import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.Ordered;
@@ -9,6 +10,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.TransientDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -57,9 +59,10 @@ public class ApiExceptionHandler {
   }
 
   /**
-   * A database rule the service checks did not catch (a constraint, a concurrent write). Some
-   * drivers report other failures under this type too (H2 files a closed database here), so only
-   * SQLState class 23 — integrity constraint violation — is the user's to fix.
+   * A database rule the service checks did not catch (a constraint, a concurrent write). Drivers
+   * also report other failures under this type: H2 files a write to a closed database as a key
+   * violation whose cause says the database is closed. Only a violation (SQLState class 23) with no
+   * connection failure anywhere in its causes is the user's to fix.
    */
   @ExceptionHandler(DataIntegrityViolationException.class)
   ProblemDetail integrity(DataIntegrityViolationException error) {
@@ -83,14 +86,24 @@ public class ApiExceptionHandler {
         "Veritabanına şu anda ulaşılamıyor. Biraz sonra tekrar deneyin.");
   }
 
-  private static boolean isConstraintViolation(DataIntegrityViolationException error) {
-    for (Throwable cause = error; cause != null; cause = cause.getCause()) {
+  private static final Pattern CONNECTION_LOST =
+      Pattern.compile("(database|connection) (has been|is already|is) closed", Pattern.CASE_INSENSITIVE);
+
+  static boolean isConstraintViolation(DataIntegrityViolationException error) {
+    boolean violation = error instanceof DuplicateKeyException;
+    for (Throwable cause = error.getCause(); cause != null; cause = cause.getCause()) {
       if (cause instanceof SQLException sql && sql.getSQLState() != null) {
-        return sql.getSQLState().startsWith("23");
+        String state = sql.getSQLState();
+        if (state.startsWith("08") || state.equals("90098") || state.equals("90121")) {
+          return false; // connection exception, H2: database closed
+        }
+        violation |= state.startsWith("23");
+      }
+      if (cause.getMessage() != null && CONNECTION_LOST.matcher(cause.getMessage()).find()) {
+        return false;
       }
     }
-    // No SQLState to go by (e.g. a translated duplicate key): keep it the user's to fix.
-    return true;
+    return violation;
   }
 
   @ExceptionHandler({
